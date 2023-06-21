@@ -1,0 +1,168 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  waddlefy
+  Sample SAM Template for waddlefy
+
+Parameters:
+  ServiceRoleArn:
+    Type: String
+  ApiId:
+    Type: String
+  ConnectionTableName:
+    Type: String
+  RoomTableName:
+    Type: String
+  UserTableName:
+    Type: String
+  ChatTableName:
+    Type: String
+
+Resources:
+  # DataSource
+  ConnectionTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: ConnectionTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref ConnectionTableName
+        AwsRegion: !Ref AWS::Region
+  RoomTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: RoomTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref RoomTableName
+        AwsRegion: !Ref AWS::Region
+  UserTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: UserTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref UserTableName
+        AwsRegion: !Ref AWS::Region
+  ChatTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: ChatTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref ChatTableName
+        AwsRegion: !Ref AWS::Region
+
+  # Relations
+  RelationsResolverStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: relations.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        ConnectionTableDataSourceName: !GetAtt ConnectionTableDataSource.Name
+        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+
+  # Functions
+  FunctionsResolverStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: functions.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        ConnectionTableDataSourceName: !GetAtt ConnectionTableDataSource.Name
+        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+
+  # mutation init
+  MutationInitStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/init.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        ConnectionTableDataSourceName: !GetAtt ConnectionTableDataSource.Name
+
+  # mutation addRoom
+  MutationAddRoomStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/add-room.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+        UpdateConnectionRoomFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionRoomFunctionId
+
+  # mutation entryRoom
+  MutationEntryRoomStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/entry-room.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+        UpdateConnectionRoomFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionRoomFunctionId
+
+  # mutation signUp
+  MutationSignUpStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/sign-up.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+        UpdateConnectionUserFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionUserFunctionId
+
+  # mutation signIn
+  MutationSignInStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/sign-in.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+        UpdateConnectionUserFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionUserFunctionId
+
+  # query getRooms
+  QueryGetRoomsStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/get-rooms.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+
+  # query getRoom
+  QueryGetRoomStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/get-room.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+
+  # query getUsers
+  QueryGetUsersStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/get-users.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+
+  # query getUser
+  QueryGetUserStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/get-user.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name

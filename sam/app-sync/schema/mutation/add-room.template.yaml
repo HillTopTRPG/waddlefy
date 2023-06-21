@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: waddlefy AppSync::Resolver 'addRoom' mutation
+
+Parameters:
+  ApiId:
+    Type: String
+  RoomTableDataSourceName:
+    Type: String
+  UpdateConnectionRoomFunctionId:
+    Type: String
+
+Resources:
+  AddRoomMutationResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Mutation
+      FieldName: addRoom
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt AddRoomFunction.FunctionId
+          - !Ref UpdateConnectionRoomFunctionId
+      RequestMappingTemplate: '{}'
+      ResponseMappingTemplateS3Location: ../vtl/return-stash-room.vm
+
+  AddRoomFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: add_room_function
+      DataSourceName: !Ref RoomTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: ../vtl/put-item-room.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        $util.qr($ctx.stash.put("id", $ctx.result.id))
+        $util.qr($ctx.stash.put("room", $ctx.result))
+        {}

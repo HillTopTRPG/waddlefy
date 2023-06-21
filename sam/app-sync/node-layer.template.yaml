@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: waddlefy Lambda Layer
+
+Parameters:
+  LayerName:
+    Type: String
+
+Resources:
+  NodeBaseLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Base Layer for Node.js
+      LayerName: !Ref LayerName
+      ContentUri: ../lambda/
+      RetentionPolicy: Delete
+      CompatibleRuntimes:
+        - nodejs18.x
+
+  NodeBaseLayerPermission:
+    Type: AWS::Lambda::LayerVersionPermission
+    Properties:
+      Action: lambda:GetLayerVersion
+      LayerVersionArn: !Ref NodeBaseLayer
+      Principal: !Ref AWS::AccountId
+
+Outputs:
+  Arn:
+    Value: !Ref NodeBaseLayer

@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  sam:
+    build: ./sam
+    container_name: waddlefy-aws-sam
+    ports:
+      - '3000:3000'
+    volumes:
+      - './sam:/sam/waddlefy'
+    env_file:
+      - .env.sam
+    command:
+      - bash
+      - -c
+      - |
+        echo "Launching aws-tools"
+        sleep infinity
+    environment:
+      AWS_DEFAULT_REGION: ap-northeast-1
+      AWS_DEFAULT_OUTPUT: yaml
+  client:
+    build: ./client
+    container_name: waddlefy-client
+    tty: true
+    ports:
+      - "82:82"
+      - "83:83"
+    volumes:
+      - './client:/app/waddlefy'
+    command: bash -c "npm i && npm run dev"

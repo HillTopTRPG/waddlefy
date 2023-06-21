@@ -1,0 +1,149 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  waddlefy
+  Sample SAM Template for waddlefy
+
+Parameters:
+  ApiId:
+    Type: String
+  ConnectionTableDataSourceName:
+    Type: String
+  RoomTableDataSourceName:
+    Type: String
+  UserTableDataSourceName:
+    Type: String
+
+Resources:
+  # Connection.room
+  RelationConnectionRoom:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Connection
+      FieldName: room
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result)
+
+  # Connection.user
+  RelationConnectionUser:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Connection
+      FieldName: user
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-user-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result)
+
+  # Room.connections
+  RelationRoomConnections:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Room
+      FieldName: connections
+      DataSourceName: !Ref ConnectionTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+
+  # Room.users
+  RelationRoomUsers:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Room
+      FieldName: users
+      DataSourceName: !Ref UserTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+
+  # EntryRoomResult.connections
+  RelationEntryRoomResultConnections:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: EntryRoomResult
+      FieldName: connections
+      DataSourceName: !Ref ConnectionTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+
+  # EntryRoomResult.users
+  RelationEntryRoomResultUsers:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: EntryRoomResult
+      FieldName: users
+      DataSourceName: !Ref UserTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+
+  # User.room
+  RelationUserRoom:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: User
+      FieldName: room
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result)
+
+  # User.connections
+  RelationUserConnections:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: User
+      FieldName: connections
+      DataSourceName: !Ref ConnectionTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+
+  # LoginResult.room
+  RelationLoginResultRoom:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: LoginResult
+      FieldName: room
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result)
+
+  # LoginResult.connections
+  RelationLoginResultConnections:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: LoginResult
+      FieldName: connections
+      DataSourceName: !Ref ConnectionTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+
+  # Chat.room
+  RelationChatRoom:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Chat
+      FieldName: room
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result)
+
+  # Chat.owner
+  RelationChatOwner:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Chat
+      FieldName: owner
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-owner.vm
+      ResponseMappingTemplate: $util.toJson($ctx.result)
+

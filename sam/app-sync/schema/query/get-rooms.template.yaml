@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  waddlefy
+  Sample SAM Template for waddlefy
+
+Parameters:
+  ApiId:
+    Type: String
+  RoomTableDataSourceName:
+    Type: String
+
+Resources:
+  GetRoomsQueryResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Query
+      FieldName: getRooms
+      DataSourceName: !Ref RoomTableDataSourceName
+      RequestMappingTemplateS3Location: ../vtl/scan-with-next-token.vm
+      ResponseMappingTemplateS3Location: ../vtl/return-result-items.vm

@@ -1,0 +1,119 @@
+type Connection {
+  id: ID!
+  room: Room
+  user: User
+}
+
+type ConnectionId {
+  connectionId: String
+}
+
+type Room {
+  id: ID!
+  name: String!
+  createdAt: AWSTimestamp!
+  connections: [Connection]
+  users: [User]
+}
+
+type EntryRoomResult {
+  id: ID!
+  token: String!
+  name: String!
+  createdAt: AWSTimestamp!
+  connections: [Connection]
+  users: [User]
+}
+
+type User {
+  id: ID!
+  name: String!
+  type: String!
+  room: Room!
+  createdAt: AWSTimestamp!
+  lastLoggedIn: AWSTimestamp
+  lastLoggedOut: AWSTimestamp
+  connections: [Connection]
+}
+
+type LoginResult {
+  id: ID!
+  token: String!
+  name: String!
+  room: Room!
+  createdAt: AWSTimestamp!
+  lastLoggedIn: AWSTimestamp
+  lastLoggedOut: AWSTimestamp
+  connections: [Connection]
+}
+
+input AddRoomInput {
+  name: String!
+  password: String!
+}
+
+input EntryRoomInput {
+  roomId: String!
+  password: String!
+}
+
+input SignUpInput {
+  name: String!
+  password: String!
+}
+
+input SignInInput {
+  userId: String!
+  password: String!
+}
+
+type Chat {
+  id: ID!
+  room: Room!
+  owner: User
+  text: String!
+}
+
+input AddChatInput {
+  text: String!
+}
+
+type Query {
+  getRooms(limit: Int, nextToken: String): [Room]
+  getRoom(roomToken: String!): Room
+  getUsers(roomId: ID!, limit: Int, nextToken: String): [User]
+  getUser(userToken: String!): User
+  getChats(roomId: ID!, nextToken: String): [Chat]
+}
+
+type Mutation {
+  # 接続ID払い出し
+  init: ConnectionId
+  # 部屋作成
+  addRoom(input: AddRoomInput): EntryRoomResult
+  # 入室
+  entryRoom(input: EntryRoomInput): EntryRoomResult
+  # サインアップ
+  signUp(input: SignUpInput): LoginResult
+  # サインイン
+  signIn(input: SignInInput): LoginResult
+  # チャット発言
+  addChat(input: AddChatInput): Chat
+}
+
+type Subscription {
+  onAddRoom: EntryRoomResult
+    @aws_subscribe(mutations: ["addRoom"])
+  onEntryRoom(token: String!): EntryRoomResult
+    @aws_subscribe(mutations: ["entryRoom"])
+  onLogin(token: String!): LoginResult
+    @aws_subscribe(mutations: ["signUp", "signIn"])
+  onAddChat: Chat
+    @aws_subscribe(mutations: ["addChat"])
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}

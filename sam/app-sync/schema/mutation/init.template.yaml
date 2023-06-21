@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  waddlefy
+  Sample SAM Template for waddlefy
+
+Parameters:
+  ApiId:
+    Type: String
+  ConnectionTableDataSourceName:
+    Type: String
+
+Resources:
+  InitMutationResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Mutation
+      FieldName: init
+      DataSourceName: !Ref ConnectionTableDataSourceName
+      RequestMappingTemplate: |
+        {
+          "version": "2017-02-28",
+          "operation": "PutItem",
+          "key" : {
+            "id": $util.dynamodb.toDynamoDBJson($util.autoId()),
+            "roomId": $util.dynamodb.toDynamoDBJson("Empty"),
+            "userId": $util.dynamodb.toDynamoDBJson("Empty"),
+          }
+        }
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        $util.toJson({ "connectionId": $ctx.result.id })

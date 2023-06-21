@@ -1,0 +1,7 @@
+.env.sam
+.aws-sam
+node_modules
+.idea
+__work
+dist
+.DS_Store
