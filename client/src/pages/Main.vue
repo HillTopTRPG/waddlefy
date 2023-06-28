@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts" setup>
-import GraphQlProvider from '@/views/graphql/provider/index.vue'
-import LoginMain from '@/views/graphql/provider/LoginMain.vue'
-import PlayMain from "@/views/graphql/provider/PlayMain.vue";
+import GraphQlProvider from '@/components/graphql/provider/index.vue'
+import LoginMain from '@/components/graphql/provider/LoginMain.vue'
+import PlayMain from "@/components/graphql/provider/PlayMain.vue";
 
 defineProps<{
   connectionId?: string,

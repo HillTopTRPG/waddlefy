@@ -105,18 +105,22 @@
 
 <script lang="ts" setup>
 import {inject, ref, computed} from 'vue'
-import { GraphQlKey, GraphQlStore } from '@/views/graphql/graphql'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import {format, isToday} from 'date-fns'
 import LoginSelectionComponent from '@/components/entry/LoginSelectionComponent.vue'
 import EntryComponent from '@/components/entry/EntryComponent.vue'
-import {Room, User} from "@/views/graphql/schema";
+import {Room, User} from "@/components/graphql/schema";
 
 const operation = ref<string | null>(null)
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-const selectedRoom = computed<Room | undefined>(() => graphQlStore?.state.rooms.find(r => r.id === operation.value))
-const selectedUser = computed<User | undefined>(() => graphQlStore?.state.users.find(u => u.id === operation.value))
+const selectedRoom = computed<Room | undefined>(
+  () => !graphQlStore ? undefined : graphQlStore.state.rooms.find(r => r.id === operation.value)
+)
+const selectedUser = computed<User | undefined>(
+  () => !graphQlStore ? undefined : graphQlStore.state.users.find(u => u.id === operation.value)
+)
 
 function formatDate(unixTime: number) {
   const date = new Date(unixTime * 1000)

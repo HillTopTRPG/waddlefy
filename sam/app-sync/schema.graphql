@@ -1,3 +1,4 @@
+# noinspection GraphQLUnresolvedReference,GraphQLMissingType
 type Connection {
   id: ID!
   room: Room

@@ -18,6 +18,7 @@ const emits = defineEmits<{
   'change-layout': [newLayout: Layout]
 }>()
 
+// noinspection TypeScriptValidateTypes
 const props = withDefaults(defineProps<Props>(), {
   isNest         : false,
   showBar        : true,
@@ -49,13 +50,13 @@ const addChildPane = (idx: number, direction: string | undefined = '') => {
     size          : 50,
   }
 
-  cLayout.value.panes[idx].type = ['up', 'down'].includes(direction) ? 'horizontal' : 'vertical'
+  cLayout.value.panes[idx].type = ['up', 'down'].includes(direction || '') ? 'horizontal' : 'vertical'
   cLayout.value.panes[idx].uuid = uuid.v4()
   cLayout.value.panes[idx].panes.splice(
     0,
     cLayout.value.panes[idx].panes.length,
     ...(
-      ['right', 'down'].includes(direction) ? [oldObj, newObj] : [newObj, oldObj]
+      ['right', 'down'].includes(direction || '') ? [oldObj, newObj] : [newObj, oldObj]
     ),
   )
   delete cLayout.value.panes[idx].componentGroup
@@ -64,7 +65,7 @@ const addChildPane = (idx: number, direction: string | undefined = '') => {
 }
 
 const addBrotherPane = (idx: number, direction: string | undefined = '', toParent: boolean) => {
-  const addIdx         = ['right', 'down'].includes(direction) ? 1 : 0
+  const addIdx         = ['right', 'down'].includes(direction || '') ? 1 : 0
   const addObj: Layout = {
     type          : 'normal',
     uuid          : uuid.v4(),
@@ -223,7 +224,7 @@ defineExpose({
             style='gap: 1em; top: 0; left: 0;'
           >
             <template v-if="pane.type === 'horizontal' || pane.type === 'vertical'">
-              <v-defaults-provider :defaults='{ VBtn: { size: "x-small" } }'>
+              <v-defaults-provider :defaults='{ VBtn: { size: "x-small" } } as any'>
                 <v-tooltip>
                   <template #activator='{ props }'>
                     <v-btn
@@ -259,7 +260,7 @@ defineExpose({
                 </v-tooltip>
               </template>
               <v-container class='text-center'>
-                <v-defaults-provider :defaults='{ VBtn: { rounded: 0, variant: "text" } }'>
+                <v-defaults-provider :defaults='{ VBtn: { rounded: 0, variant: "text" } } as any'>
                   <v-row>
                     <v-col class='pa-0'>
                       <v-btn
@@ -424,7 +425,7 @@ defineExpose({
   </keep-alive>
 </template>
 
-<!--suppress HtmlUnknownAttribute, CssUnusedSymbol -->
+<!--suppress HtmlUnknownAttribute, CssUnusedSymbol, CssUnresolvedCustomProperty -->
 <style deep lang='css'>
 .splitpanes.root {
   height: 100%;

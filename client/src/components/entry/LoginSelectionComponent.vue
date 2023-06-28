@@ -52,8 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import {inject} from 'vue'
-import {GraphQlKey, GraphQlStore} from '@/views/graphql/graphql'
+import {computed, inject} from 'vue'
+import {GraphQlKey, GraphQlStore} from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -66,7 +66,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:modelValue'])
-const dataList: any[] = graphQlStore?.state[props.property] || []
+const dataList = computed(() => graphQlStore?.state[props.property] || [])
 
 function change(value: string) {
   emit('update:modelValue', value)

@@ -1,5 +1,5 @@
-import ChatLayout from '@/pages/PaneLayoutTemplate/ChatLayout'
-import DefaultLayout from '@/pages/PaneLayoutTemplate/DefaultLayout'
+import ChatLayout from '@/PaneLayoutTemplate/ChatLayout'
+import DefaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 
 export default [
   {

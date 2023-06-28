@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import UserIcon from '@/pages/Room/Components/UserIcon.vue'
-import {User, userTypeSelection} from "@/views/graphql/schema";
+import UserIcon from '@/components/UserIcon.vue'
+import {User, userTypeSelection} from "@/components/graphql/schema";
 
 defineProps<{
   user?: User
@@ -22,7 +22,7 @@ const emits = defineEmits<{
         variant='elevated'
         v-bind='props'
         @click='emits("select")'
-        @keydown.enter.stop='($event: any) => $event.target.click()'
+        @keydown.enter.stop='$event.target.click()'
       >
         <template #prepend>
           <user-icon :user='user!' />

@@ -112,10 +112,10 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, watch} from 'vue'
+import {reactive} from 'vue'
 import { Layout } from '@/components/panes'
 import 'splitpanes/dist/splitpanes.css'
-import defaultLayout from '@/pages/PaneLayoutTemplate/DefaultLayout'
+import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 let layout = reactive<Layout>({ ...JSON.parse(JSON.stringify(defaultLayout)) })
 
 console.log(JSON.stringify(layout, null, 2))
@@ -125,10 +125,10 @@ const props = defineProps<{
 }>()
 
 import {inject, ref, computed} from 'vue'
-import { GraphQlKey, GraphQlStore } from '@/views/graphql/graphql'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import SplitPanesLayer from "@/components/SplitPanesLayer.vue";
-import UserNavItem from "@/pages/Room/Components/UserNavItem.vue";
-import UserListItem from "@/pages/Room/Components/UserListItem.vue";
+import UserNavItem from "@/components/UserNavItem.vue";
+import UserListItem from "@/components/UserListItem.vue";
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const drawerRail = ref<boolean | null>(parseInt(props.rail || '0') > 0)
@@ -148,8 +148,12 @@ const rootClass = computed(() => {
 
 const users = computed(() => graphQlStore?.state.users)
 const user_uuid = computed(() => graphQlStore?.state.userId)
-const room = computed(() => graphQlStore?.state.rooms.find(r => r.id === graphQlStore?.state.roomId))
-const user = computed(() => graphQlStore?.state.users.find(u => u.id === graphQlStore?.state.userId))
+const room = computed(
+  () => !graphQlStore ? undefined : graphQlStore.state.rooms.find(r => r.id === graphQlStore?.state.roomId)
+)
+const user = computed(
+  () => !graphQlStore ? undefined : graphQlStore.state.users.find(u => u.id === graphQlStore?.state.userId)
+)
 
 const breadcrumbsItems = computed(() => {
   return [
@@ -161,7 +165,7 @@ const breadcrumbsItems = computed(() => {
       },
     ], user.value ? [
       {
-        title   : user.value.name,
+        title   : user.value?.name || '',
         disabled: false,
         href    : '',
       },
@@ -170,7 +174,8 @@ const breadcrumbsItems = computed(() => {
 })
 </script>
 
-<style lang="scss" deep>
+<!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
+<style deep lang="scss">
 .splitpanes--vertical > .splitpanes__splitter {
   min-width: 7px;
   background: linear-gradient(90deg, #cccccc, #111111);

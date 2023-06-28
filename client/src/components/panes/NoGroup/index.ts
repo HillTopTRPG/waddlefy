@@ -1,3 +1,4 @@
+// noinspection TypeScriptCheckImport
 import DefaultPane, { componentInfo as DefaultPaneInfo } from './DefaultPane.vue'
 
 const group = ''

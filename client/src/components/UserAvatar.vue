@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
 import Avatar from 'vue-boring-avatars'
-import {User} from "@/views/graphql/schema"
+import {User} from "@/components/graphql/schema"
 
 const props = defineProps<{
   user?: User
@@ -31,7 +31,7 @@ const colors = ['#92a1c6', '#146a7c', '#f0ab3d', '#c271b4', '#c20d90']
     :icon='icon'
     color='white'
   >
-    <Avatar variant='beam' :size='40' :name='user?.id' :colors='colors' ref='avatar' />
+    <Avatar variant='beam' :size='40' :name='user?.id || ""' :colors='colors' ref='avatar' />
   </v-badge>
 </template>
 

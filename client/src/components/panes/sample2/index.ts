@@ -1,4 +1,5 @@
 import Sample3, { componentInfo as Sample3Info } from './Sample3.vue'
+// noinspection TypeScriptCheckImport
 import Sample4, { componentInfo as Sample4Info } from './Sample4.vue'
 
 const group = 'smpl2'

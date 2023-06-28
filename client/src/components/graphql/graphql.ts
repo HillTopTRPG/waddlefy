@@ -1,5 +1,5 @@
 import {AuthOptions, createAuthLink} from 'aws-appsync-auth-link'
-import {ApolloClient, ApolloLink, InMemoryCache} from '@apollo/client/core'
+import {ApolloClient, ApolloError, ApolloLink, InMemoryCache, NormalizedCacheObject} from '@apollo/client/core'
 import {createSubscriptionHandshakeLink} from 'aws-appsync-subscription-link'
 import {InjectionKey, reactive} from 'vue'
 import {
@@ -15,7 +15,7 @@ import {
   SignInMutationResult,
   Mutations,
   Queries, Chat,
-} from "@/views/graphql/schema";
+} from "@/components/graphql/schema";
 
 function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: () => string) {
   const auth: AuthOptions = {
@@ -32,15 +32,14 @@ function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: ()
   })
 }
 
-const DEFAULT_URL = 'https://qvbahzn7k5enjpx5rr6thxgcz4.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+// ローカル開発時のみ有効な値であり、流出しても問題ない情報
+const DEFAULT_URL = 'https://ossf36uukbbldn5ieraulzvima.appsync-api.ap-northeast-1.amazonaws.com/graphql'
 const DEFAULT_REGION = 'ap-northeast-1'
 
 export default function useGraphQl(
   connectionId: string,
   roomToken: string,
-  userToken: string,
-  graphQlUrl: string = DEFAULT_URL,
-  region: string = DEFAULT_REGION
+  userToken: string
 ) {
   // 状態
   const state = reactive<{
@@ -66,14 +65,15 @@ export default function useGraphQl(
   })
 
   // ロジック
-  let appSyncClient = makeGraphQlClient(graphQlUrl, region, getAuthToken)
+  let appSyncClient: ApolloClient<NormalizedCacheObject> | null = null
 
   function getAuthToken(): string {
     if (!state.connectionId) {
       return '1'
     }
-    // console.log(JSON.stringify({ authorize }))
-    return [state.connectionId, state.roomToken, state.userToken].filter(s => s).join('/')
+    const authorize = [state.connectionId, state.roomToken, state.userToken].filter(s => s).join('/')
+    console.log(JSON.stringify({ authorize }))
+    return authorize
   }
 
   async function initialize() {
@@ -88,8 +88,19 @@ export default function useGraphQl(
       appSyncClient.stop()
     }
 
-    const result = await fetch('/api')
-    console.log(JSON.stringify(result, null, 2))
+    let graphql: string = DEFAULT_URL
+    let region: string = DEFAULT_REGION
+    const apiInfoResult = await fetch('/api')
+    try {
+      const apiInfoJson: { graphql: string, region: string } = await apiInfoResult.json()
+      graphql = apiInfoJson.graphql
+      region = apiInfoJson.region
+    } catch (error: SyntaxError) {
+      console.warn('/apiで情報が取得できませんでした')
+      console.warn('ローカル開発中ですね？')
+    }
+
+    appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
 
     if (!state.connectionId) {
       const initResult = await appSyncClient.mutate<InitMutationResult>({ mutation: Mutations.initMutation })
@@ -180,16 +191,20 @@ export default function useGraphQl(
 
   async function signIn(userId: string, userPassword: string) {
     if (!appSyncClient) return
-    const signInResult = await appSyncClient!.mutate<SignInMutationResult>({
-      mutation: Mutations.signInMutation,
-      variables: { userId, userPassword }
-    })
-    console.log(JSON.stringify(signInResult.data, null, 2))
-    state.userId = signInResult.data?.signIn.id || ''
-    state.userToken = signInResult.data?.signIn.token || ''
-    history.replaceState(null, '', `/${getAuthToken()}`)
+    try {
+      const signInResult = await appSyncClient!.mutate<SignInMutationResult>({
+        mutation: Mutations.signInMutation,
+        variables: { userId, userPassword }
+      })
+      console.log(JSON.stringify(signInResult.data, null, 2))
+      state.userId = signInResult.data?.signIn.id || ''
+      state.userToken = signInResult.data?.signIn.token || ''
+      history.replaceState(null, '', `/${getAuthToken()}`)
+    } catch (error: ApolloError) {
+      // TODO AuthorizedError
+    }
   }
-  async function patchUser( updateUser: Partial<{
+  async function patchUser( _updateUser: Partial<{
     name: string
     type: string
   }>) {
@@ -211,4 +226,4 @@ export default function useGraphQl(
 }
 
 export type GraphQlStore = ReturnType<typeof useGraphQl>
-export const GraphQlKey: InjectionKey<GraphQlStore> = Symbol('GraphQlStore')
+export const GraphQlKey: InjectionKey<GraphQlStore> = Symbol('GraphQlStore') as any

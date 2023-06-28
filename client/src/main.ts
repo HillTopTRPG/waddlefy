@@ -7,7 +7,6 @@
 // Components
 import App from './App.vue'
 
-// Composables
 import { createApp } from 'vue'
 
 // Plugins
@@ -18,18 +17,6 @@ import {createI18n} from "vue-i18n";
 const i18n = createI18n({
   locale         : 'ja-JP', // set locale
   fallbackLocale : 'en-US', // set fallback locale
-  messages       : {
-    en: {
-      message: {
-        hello: 'hello world',
-      },
-    },
-    ja: {
-      message: {
-        hello: 'こんにちは、世界',
-      },
-    },
-  }, // set locale messages
   datetimeFormats: {
     'en-US': {
       short: {
@@ -78,7 +65,13 @@ const i18n = createI18n({
 
 const app = createApp(App)
 
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+app.component('DynamicScroller', DynamicScroller)
+app.component('DynamicScrollerItem', DynamicScrollerItem)
+
 register(app)
 registerPlugins(app)
 
-app.use(i18n).mount('#app')
+app.use(i18n as any).mount('#app')

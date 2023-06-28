@@ -12,7 +12,7 @@ export const componentInfo = {
 <script setup lang='ts'>
 import { Layout } from '@/components/panes'
 import { componentMap } from '../index'
-import layouts from '@/pages/PaneLayoutTemplate'
+import layouts from '@/PaneLayoutTemplate'
 
 const props = defineProps<{
   layout: Layout
@@ -79,7 +79,7 @@ const emits = defineEmits<{
         <v-list-item
           @click='emits("change-layout", l.layout)'
           v-if='!isEqualLayout(l.layout)'
-          @keydown.enter.stop='($event: any) => $event.target.click()'
+          @keydown.enter.stop='$event.target.click()'
         >{{ l.title }}
         </v-list-item>
       </template>

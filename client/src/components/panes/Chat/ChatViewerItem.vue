@@ -6,11 +6,11 @@ export default defineComponent({})
 
 <script setup lang='ts'>
 import UserAvatar from '@/components/UserAvatar.vue'
-import { onMounted, ref, watch } from 'vue'
-import {Chat} from "@/views/graphql/schema";
+import {onMounted, ref, watch} from 'vue'
+import {Chat, User} from "@/components/graphql/schema";
 
 import {inject} from 'vue'
-import { GraphQlKey, GraphQlStore } from '@/views/graphql/graphql'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 
@@ -40,7 +40,7 @@ onMounted(() => {
   setTimeout(() => observer.observe(elm.value!))
 });
 
-const getUser = (chat: Chat) => graphQlStore?.state.users.find(u => u.id === chat.owner)
+const getUser = (chat: Chat): User | undefined => !graphQlStore ? undefined : graphQlStore.state.users.find(u => u.id === chat.owner)
 
 const isToday      = (dateNum: number) => {
   const today = new Date()
@@ -52,18 +52,18 @@ const isToday      = (dateNum: number) => {
          date.getFullYear() ==
          today.getFullYear()
 }
-const reactionChat = (chat_uuid: string) => {
+const reactionChat = (_chat_uuid: string) => {
 
 }
-const editChat     = (chat_uuid: string) => {
+const editChat     = (_chat_uuid: string) => {
 
 }
-const deleteChat   = (chat_uuid: string) => {
+const deleteChat   = (_chat_uuid: string) => {
 }
 </script>
 
 <template>
-  <DynamicScrollerItem
+  <dynamic-scroller-item
     :item='item'
     :active='active'
     :size-dependencies='[ item.raw, ]'
@@ -103,7 +103,7 @@ const deleteChat   = (chat_uuid: string) => {
         </template>
 
         <div v-bind='hoverProps'>
-          <v-defaults-provider :defaults='{ VBtn: { size: "small", variant: "text", rounded: 0 }, VTooltip: { location: "top", origin: "center", transition: "none" } }'>
+          <v-defaults-provider :defaults='{ VBtn: { size: "small", variant: "text", rounded: 0 }, VTooltip: { location: "top", origin: "center", transition: "none" } } as any'>
             <v-tooltip>
               <template #activator='{ props }'>
                 <v-btn v-bind='props' @click='reactionChat(item.id)' icon='mdi-heart-plus' />
@@ -126,7 +126,7 @@ const deleteChat   = (chat_uuid: string) => {
         </div>
       </v-menu>
     </v-hover>
-  </DynamicScrollerItem>
+  </dynamic-scroller-item>
 </template>
 
 <!--suppress HtmlUnknownAttribute -->

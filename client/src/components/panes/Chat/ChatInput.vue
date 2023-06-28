@@ -12,9 +12,6 @@ export const componentInfo = {
 <script setup lang='ts'>
 import { ref } from 'vue'
 import { Layout } from '@/components/panes'
-import {inject} from 'vue'
-import { GraphQlKey, GraphQlStore } from '@/views/graphql/graphql'
-const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
   layout: Layout

@@ -15,7 +15,7 @@ import { Layout } from '@/components/panes'
 import ChatViewerItem from '@/components/panes/Chat/ChatViewerItem.vue'
 
 import {inject} from 'vue'
-import { GraphQlKey, GraphQlStore } from '@/views/graphql/graphql'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -73,7 +73,7 @@ const viewedChatItem = (uuid: string) => {
 
 <template>
   <v-list class='chat-viewer scroll h-100' :class='{ isScrolling }' ref='list' @scroll='onScroll'>
-    <DynamicScroller :items='chats' key-field='uuid' :min-item-size='57' :page-mode='true'>
+    <dynamic-scroller :items='chats' key-field='uuid' :min-item-size='57' :page-mode='true'>
       <template v-slot='{ item, index, active }'>
         <ChatViewerItem
           :item='item'
@@ -83,7 +83,7 @@ const viewedChatItem = (uuid: string) => {
           :is-new-read='unreadChatListLate.some(uc => uc === item.uuid)'
         />
       </template>
-    </DynamicScroller>
+    </dynamic-scroller>
   </v-list>
 </template>
 
@@ -94,6 +94,7 @@ const viewedChatItem = (uuid: string) => {
   align-self: flex-start;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .chat-viewer .v-list-item.hover {
   background: rgb(var(--v-theme-on-surface-variant));
 }
@@ -109,6 +110,7 @@ const viewedChatItem = (uuid: string) => {
   transform: translateY(50%);
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .chat-viewer-menu .v-overlay__content .v-btn {
   background: rgb(var(--v-theme-on-surface-variant)) !important;
 }
@@ -118,6 +120,7 @@ const viewedChatItem = (uuid: string) => {
   height: calc(var(--v-btn-height) + 4px) !important;;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .v-tab {
   min-width: 65px !important;
   color: rgb(var(--v-theme-on-surface));

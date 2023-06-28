@@ -40,7 +40,7 @@ mutation EntryRoom($roomPassword: String!, $roomId: String!) {
       type
       createdAt
       lastLoggedIn
-      connection {
+      connections {
         id
       }
     }
@@ -103,6 +103,9 @@ query GetRooms {
       type
       createdAt
       lastLoggedIn
+      connections {
+        id
+      }
     }
   }
 }
@@ -119,6 +122,9 @@ query GetRoom($roomToken: String!) {
       type
       createdAt
       lastLoggedIn
+      connections {
+        id
+      }
     }
   }
 }

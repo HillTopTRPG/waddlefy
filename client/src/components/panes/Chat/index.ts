@@ -1,3 +1,5 @@
+// noinspection TypeScriptCheckImport
+
 import ChatInput, { componentInfo as ChatInputInfo } from './ChatInput.vue'
 import ChatViewer, { componentInfo as ChatViewerInfo } from './ChatViewer.vue'
 

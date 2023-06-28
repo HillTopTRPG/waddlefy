@@ -1,9 +1,9 @@
 <script setup lang='ts'>
 import { useRouter } from 'vue-router'
 import { computed, inject, ref, watch } from 'vue'
-import DeleteDialogButton from '~/pages/Room/Dialog/DeleteDialogButton.vue'
-import {User, UserTypeSelection, userTypeSelection} from "@/views/graphql/schema";
-import {GraphQlKey, GraphQlStore} from "@/views/graphql/graphql";
+import DeleteDialogButton from '~/pages/room/Dialog/DeleteDialogButton.vue'
+import {User, UserTypeSelection, userTypeSelection} from "@/components/graphql/schema";
+import {GraphQlKey, GraphQlStore} from "@/components/graphql/graphql";
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -43,15 +43,6 @@ const targetUserType = ref<UserTypeSelection | undefined>(userTypeSelection.find
 watch(() => user.value?.type, (value) => {
   userType.value = userTypeSelection.find(s => s.value === value) || userTypeSelection[1]
 })
-
-//const userColor = ref('#ff0000')
-//const swatches  = [
-//  ['#ff0000', '#aa0000', '#550000'],
-//  ['#ffff00', '#aaaa00', '#555500'],
-//  ['#00ff00', '#00aa00', '#005500'],
-//  ['#00ffff', '#00aaaa', '#005555'],
-//  ['#0000ff', '#0000aa', '#000055'],
-//]
 
 const updateUser = () => {
   const name      = userName.value

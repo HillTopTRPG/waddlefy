@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import UserAvatar from '@/components/UserAvatar.vue'
-import {User} from "@/views/graphql/schema";
+import {User} from "@/components/graphql/schema";
 
 defineProps<{
   user?: User

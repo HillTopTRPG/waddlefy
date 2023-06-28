@@ -12,6 +12,7 @@
       />
     </v-card-item>
     <v-card-actions color="primary">
+      <!--suppress CssUnresolvedCustomProperty, CssUnresolvedCustomProperty -->
       <v-btn
         :block="true"
         variant="text"

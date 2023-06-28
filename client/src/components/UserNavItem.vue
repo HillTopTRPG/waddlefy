@@ -30,7 +30,7 @@ const iconClass = computed(() => props.bigIcon ? 'ma-2' : 'mr-2')
         :value='value'
         v-bind='props'
         @click='emits("select")'
-        @keydown.enter.stop='($event: any) => $event.target.click()'
+        @keydown.enter.stop='$event.target.click()'
         :style='listItemStyle'
       >
         <template #append>
