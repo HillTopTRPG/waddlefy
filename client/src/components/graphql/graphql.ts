@@ -118,6 +118,7 @@ export default function useGraphQl(
         fetchPolicy: 'network-only'
       })
       console.log(JSON.stringify(getRoomResult.data, null, 2))
+      state.rooms = getRoomResult.data?.getRooms || []
       state.roomId = getRoomResult.data.getRoom.id || ''
       state.users = getRoomResult.data.getRoom.users || []
     } else {

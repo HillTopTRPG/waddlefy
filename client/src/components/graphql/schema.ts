@@ -112,10 +112,23 @@ query GetRooms {
 `)
 const getRoomQuery = gql(`
 query GetRoom($roomToken: String!) {
-  getRoom(roomToken: $roomToken) {
+  getRooms {
     id
     name
     createdAt
+    users {
+      id
+      name
+      type
+      createdAt
+      lastLoggedIn
+      connections {
+        id
+      }
+    }
+  }
+  getRoom(roomToken: $roomToken) {
+    id
     users {
       id
       name
@@ -149,6 +162,7 @@ export type GetRoomsQueryResult = {
 }
 export type GetRoomQueryResult = {
   getRoom: Room
+  getRooms: Room[]
 }
 export type GetUserQueryResult = {
   getUser: User
