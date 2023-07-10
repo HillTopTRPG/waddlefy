@@ -1,4 +1,8 @@
 #if($ctx.result && $ctx.result.error)
   $util.error($ctx.result.error)
 #end
-$util.toJson($ctx.result.items[0])
+#if($ctx.result.items.size() > 0)
+  $util.toJson($ctx.result.items[0])
+#else
+  null
+#end

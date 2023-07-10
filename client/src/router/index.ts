@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AppSync from '@/pages/Main.vue'
+import Main from '@/pages/Main.vue'
 import Home from '@/pages/Home.vue'
+import SignUp from '@/pages/SignUp.vue'
+import PlayerSignUp from '@/pages/PlayerSignUp.vue'
 
 const routes = [
   {
@@ -9,35 +11,76 @@ const routes = [
     component: Home,
   },
   {
-    path: '/use',
-    name: 'Use',
-    component: AppSync
+    path: '/sign-up',
+    name: 'SignUp',
+    component: SignUp
   },
   {
-    path: '/:connectionId',
-    name: 'Connected',
-    component: AppSync,
-    props: (r: { params: { connectionId: string } }) => ({
-      connectionId: r.params.connectionId
+    path: '/u/:userToken/:firstNav',
+    name: 'UserMain1',
+    component: Main,
+    props: (r: { params: { userToken: string, firstNav: string }, query: { rail?: string } }) => ({
+      userToken: r.params.userToken,
+      firstNav: r.params.firstNav,
+      rail: r.query.rail || ''
     }),
   },
   {
-    path: '/:connectionId/:roomToken',
-    name: 'Entered',
-    component: AppSync,
-    props: (r: { params: { connectionId: string, roomToken: string } }) => ({
-      connectionId: r.params.connectionId,
-      roomToken: r.params.roomToken,
+    path: '/u/:userToken/:firstNav/:secondNav',
+    name: 'UserMain2',
+    component: Main,
+    props: (r: { params: { userToken: string, firstNav: string, secondNav: string }, query: { rail?: string } }) => ({
+      userToken: r.params.userToken,
+      firstNav: r.params.firstNav,
+      secondNav: r.params.secondNav,
+      rail: r.query.rail || ''
     }),
   },
   {
-    path: '/:connectionId/:roomToken/:userToken',
-    name: 'LoggedIn',
-    component: AppSync,
-    props: (r: { params: { connectionId: string, roomToken: string, userToken: string } }) => ({
-      connectionId: r.params.connectionId,
-      roomToken: r.params.roomToken,
-      userToken: r.params.userToken
+    path: '/d/:signUpToken',
+    name: 'PlayerSignUp',
+    component: PlayerSignUp,
+    props: (r: { params: { signUpToken: string } }) => ({
+      signUpToken: r.params.signUpToken
+    }),
+  },
+  {
+    path: '/d/:dashboardToken/:playerId',
+    name: 'PlayerSignIn',
+    component: PlayerSignUp,
+    props: (r: { params: { dashboardToken: string; playerId: string } }) => ({
+      dashboardToken: r.params.dashboardToken,
+      playerId: r.params.playerId,
+    }),
+  },
+  {
+    path: '/p/:playerToken',
+    name: 'PlayerMain0',
+    component: Main,
+    props: (r: { params: { playerToken: string }, query: { rail?: string } }) => ({
+      playerToken: r.params.playerToken,
+      rail: r.query.rail || ''
+    }),
+  },
+  {
+    path: '/p/:playerToken/:firstNav',
+    name: 'PlayerMain1',
+    component: Main,
+    props: (r: { params: { playerToken: string, firstNav: string }, query: { rail?: string } }) => ({
+      playerToken: r.params.playerToken,
+      firstNav: r.params.firstNav,
+      rail: r.query.rail || ''
+    }),
+  },
+  {
+    path: '/p/:playerToken/:firstNav/:secondNav',
+    name: 'PlayerMain2',
+    component: Main,
+    props: (r: { params: { playerToken: string, firstNav: string, secondNav: string }, query: { rail?: string } }) => ({
+      playerToken: r.params.playerToken,
+      firstNav: r.params.firstNav,
+      secondNav: r.params.secondNav,
+      rail: r.query.rail || ''
     }),
   },
 ]

@@ -1,45 +1,23 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  waddlefy
-  Sample SAM Template for waddlefy
+Description: Waddlefy Schema
 
 Parameters:
   ServiceRoleArn:
     Type: String
   ApiId:
     Type: String
-  ConnectionTableName:
-    Type: String
-  RoomTableName:
-    Type: String
   UserTableName:
     Type: String
-  ChatTableName:
+  DashboardTableName:
+    Type: String
+  PlayerTableName:
+    Type: String
+  PaneTableName:
     Type: String
 
 Resources:
   # DataSource
-  ConnectionTableDataSource:
-    Type: AWS::AppSync::DataSource
-    Properties:
-      Name: ConnectionTableDataSource
-      ApiId: !Ref ApiId
-      Type: AMAZON_DYNAMODB
-      ServiceRoleArn: !Ref ServiceRoleArn
-      DynamoDBConfig:
-        TableName: !Ref ConnectionTableName
-        AwsRegion: !Ref AWS::Region
-  RoomTableDataSource:
-    Type: AWS::AppSync::DataSource
-    Properties:
-      Name: RoomTableDataSource
-      ApiId: !Ref ApiId
-      Type: AMAZON_DYNAMODB
-      ServiceRoleArn: !Ref ServiceRoleArn
-      DynamoDBConfig:
-        TableName: !Ref RoomTableName
-        AwsRegion: !Ref AWS::Region
   UserTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -50,15 +28,35 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref UserTableName
         AwsRegion: !Ref AWS::Region
-  ChatTableDataSource:
+  DashboardTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
-      Name: ChatTableDataSource
+      Name: DashboardTableDataSource
       ApiId: !Ref ApiId
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !Ref ServiceRoleArn
       DynamoDBConfig:
-        TableName: !Ref ChatTableName
+        TableName: !Ref DashboardTableName
+        AwsRegion: !Ref AWS::Region
+  PlayerTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: PlayerTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref PlayerTableName
+        AwsRegion: !Ref AWS::Region
+  PaneTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: PaneTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref PaneTableName
         AwsRegion: !Ref AWS::Region
 
   # Relations
@@ -68,9 +66,10 @@ Resources:
       Location: relations.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        ConnectionTableDataSourceName: !GetAtt ConnectionTableDataSource.Name
-        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+        PaneTableDataSourceName: !GetAtt PaneTableDataSource.Name
 
   # Functions
   FunctionsResolverStack:
@@ -79,90 +78,136 @@ Resources:
       Location: functions.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        ConnectionTableDataSourceName: !GetAtt ConnectionTableDataSource.Name
-        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
-  # mutation init
-  MutationInitStack:
+  # query checkDuplicateUserId
+  MutationCheckDuplicateUserIdStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: mutation/init.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        ConnectionTableDataSourceName: !GetAtt ConnectionTableDataSource.Name
-
-  # mutation addRoom
-  MutationAddRoomStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: mutation/add-room.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
-        UpdateConnectionRoomFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionRoomFunctionId
-
-  # mutation entryRoom
-  MutationEntryRoomStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: mutation/entry-room.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
-        UpdateConnectionRoomFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionRoomFunctionId
-
-  # mutation signUp
-  MutationSignUpStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: mutation/sign-up.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
-        UpdateConnectionUserFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionUserFunctionId
-
-  # mutation signIn
-  MutationSignInStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: mutation/sign-in.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
-        UpdateConnectionUserFunctionId: !GetAtt FunctionsResolverStack.Outputs.UpdateConnectionUserFunctionId
-
-  # query getRooms
-  QueryGetRoomsStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: query/get-rooms.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
-
-  # query getRoom
-  QueryGetRoomStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: query/get-room.template.yaml
-      Parameters:
-        ApiId: !Ref ApiId
-        RoomTableDataSourceName: !GetAtt RoomTableDataSource.Name
-
-  # query getUsers
-  QueryGetUsersStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: query/get-users.template.yaml
+      Location: query/check-duplicate-user-id.yaml
       Parameters:
         ApiId: !Ref ApiId
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
 
-  # query getUser
-  QueryGetUserStack:
+  # mutation userSignUp
+  MutationUserSignUpStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: query/get-user.template.yaml
+      Location: mutation/user-sign-up.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
+  # mutation userSignIn
+  MutationUserSignInStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/user-sign-in.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+
+  # mutation addDashboard
+  MutationAddDashboardStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/add-dashboard.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
+  # mutation addPlayer
+  MutationAddPlayerStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/add-player.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+        CheckNoPlayerNameExistsFunctionId: !GetAtt FunctionsResolverStack.Outputs.CheckNoPlayerNameExistsFunctionId
+
+  # mutation playerSignUp
+  MutationPlayerSignUpStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/player-sign-up.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+        CheckNoPlayerNameExistsFunctionId: !GetAtt FunctionsResolverStack.Outputs.CheckNoPlayerNameExistsFunctionId
+
+  # mutation playerFirstSignIn
+  MutationPlayerFirstSignInStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/player-first-sign-in.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # mutation playerSignIn
+  MutationPlayerSignInStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/player-sign-in.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # mutation generatePlayerResetCode
+  MutationGeneratePlayerResetCodeStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/generate-player-reset-code.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableName: !Ref PlayerTableName
+
+  # mutation resetPlayerPassword
+  MutationResetPlayerPasswordStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/reset-player-password.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # query directPlayerAccess
+  QueryDirectPlayerAccess:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/direct-player-access.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # query directDashboardAccess
+  QueryDirectDashboardAccess:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/direct-dashboard-access.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
+  # query getDashboardPlayer
+  QueryGetDashboardPlayer:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/get-dashboard-player.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # query getDashboardPlayers
+  QueryGetDashboardPlayers:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/get-dashboard-players.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name

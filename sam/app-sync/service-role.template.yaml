@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: waddlefy ServiceRole
+Description: Waddlefy ServiceRole
 
 Parameters:
-  ConnectionTableArn:
-    Type: String
   UserTableArn:
     Type: String
-  RoomTableArn:
+  DashboardTableArn:
     Type: String
-  ChatTableArn:
+  PlayerTableArn:
+    Type: String
+  PaneTableArn:
     Type: String
 
 Resources:
@@ -43,17 +43,6 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                 Resource:
-                  - !Sub ${ConnectionTableArn}
-                  - !Sub ${ConnectionTableArn}/*
-              - Effect: Allow
-                Action:
-                  - dynamodb:GetItem
-                  - dynamodb:BatchGetItem
-                  - dynamodb:Query
-                  - dynamodb:Scan
-                  - dynamodb:PutItem
-                  - dynamodb:UpdateItem
-                Resource:
                   - !Sub ${UserTableArn}
                   - !Sub ${UserTableArn}/*
               - Effect: Allow
@@ -65,8 +54,8 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                 Resource:
-                  - !Sub ${RoomTableArn}
-                  - !Sub ${RoomTableArn}/*
+                  - !Sub ${DashboardTableArn}
+                  - !Sub ${DashboardTableArn}/*
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
@@ -76,8 +65,19 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                 Resource:
-                  - !Sub ${ChatTableArn}
-                  - !Sub ${ChatTableArn}/*
+                  - !Sub ${PlayerTableArn}
+                  - !Sub ${PlayerTableArn}/*
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:BatchGetItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                Resource:
+                  - !Sub ${PaneTableArn}
+                  - !Sub ${PaneTableArn}/*
 
 Outputs:
   ServiceRoleArn:

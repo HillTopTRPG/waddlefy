@@ -1,101 +1,52 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import {DynamoDBDocumentClient, QueryCommand, QueryCommandOutput} from '@aws-sdk/lib-dynamodb'
 export const ddbDocClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
-
-import { GetCommand, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
-
-type ConnectionData = {
-  id: string,
-  roomId?: string,
-  userId?: string
-}
-
-type RoomData = {
-  id: string,
-  token: string
-}
 
 type UserData = {
   id: string,
-  token: string
+  token: string,
+  secret: string
 }
+type PlayerData = UserData // 同じ構造
 
-async function getData<T>(tableName: string, id: string): Promise<T | undefined> {
-  let result: T | undefined = undefined
+async function getTokenData<T>(tableName: string, token: string, tokenName: string): Promise<T | undefined> {
   try {
-    const data: GetCommandOutput = await ddbDocClient.send<T>(new GetCommand({
+    const data: QueryCommandOutput = await ddbDocClient.send<T>(new QueryCommand({
       TableName : tableName,
-      Key: { id }
+      IndexName: `${tokenName}-index`,
+      KeyConditionExpression: '#token = :token',
+      ExpressionAttributeNames: {
+        '#token' : tokenName
+      },
+      ExpressionAttributeValues: {
+        ':token': token
+      }
     }))
-    result = data?.Item as T || undefined
+    if (!data || data.Items.length !== 1 || !data.Items[0]) {
+      return undefined
+    }
+    return data.Items[0] as T
   } catch (err) {
     // do nothing
   }
-  return result
+  return undefined
 }
 
-async function checkToken<T extends { token: string }>(tableName: string, id: string, token: string | null): Promise<boolean> {
-  if (!token) {
-    return false
+async function getTokenSecretData<T extends { secret: string }>(tableName: string, token: string, secret: string): Promise<T | undefined> {
+  try {
+    const data = await getTokenData<T>(tableName, token, 'token')
+    if (data.secret !== secret) {
+      return undefined
+    }
+    return data
+  } catch (err) {
+    // do nothing
   }
-  let result = await getData<T>(tableName, id)
-  return result?.token === token
-}
-
-async function fetchConnectionInfo(authorizationToken: string) {
-  const authSplit = authorizationToken.split('/')
-
-  let connectionId = authSplit[0]
-  let roomToken: string | null = null
-  let userToken: string | null = null
-  if (authSplit.length > 1) {
-    roomToken = authSplit[1]
-  }
-  if (authSplit.length > 2) {
-    userToken = authSplit[2]
-  }
-
-  const connectionData = await getData<ConnectionData>(process.env.CONNECTION_TABLE_NAME, connectionId)
-
-  if (!connectionData) {
-    connectionId = null
-  }
-  let roomId = connectionData?.roomId || null
-  let userId = connectionData?.userId || null
-
-  if (roomId === 'Empty') {
-    roomId = null
-  }
-  if (userId === 'Empty') {
-    userId = null
-  }
-
-  const result = {
-    connectionId,
-    roomId,
-    userId,
-    isAuthorized: true
-  }
-
-  if (!connectionId || !roomId) {
-    return result
-  }
-  result.isAuthorized = await checkToken<RoomData>(process.env.ROOM_TABLE_NAME, roomId, roomToken)
-  if (!result.isAuthorized || !userId) {
-    return result
-  }
-  result.isAuthorized = await checkToken<UserData>(process.env.USER_TABLE_NAME, userId, userToken)
-  return result
+  return undefined
 }
 
 export const handler = async (event) => {
   console.log(`event >`, JSON.stringify(event, null, 2))
-
-  const {
-    connectionId,
-    roomId,
-    userId
-  } = await fetchConnectionInfo(event.authorizationToken)
 
   // const typesBase = `arn:aws:appsync:${process.env.AWS_REGION}:${event.accountId}:apis/${event.apiId}/types`
   const definedTypeFieldsBase = [
@@ -104,51 +55,82 @@ export const handler = async (event) => {
   const admitFields: string[] = []
 
   const ALL_OPERATIONS = [
-    'Mutation.init',
-    'Query.getRooms',
-    'Query.getRoom',
-    'Query.getUsers',
-    'Query.getUser',
-    'Query.getChats',
-    'Mutation.addRoom',
-    'Mutation.entryRoom',
-    'Mutation.signUp',
-    'Mutation.signIn',
-    'Mutation.addChat',
+    'Query.directPlayerAccess',
+    'Query.directDashboardAccess',
+    'Query.getDashboardPlayer',
+    'Query.getDashboardPlayers',
+    'Mutation.userSignUp',
+    'Mutation.userSignIn',
+    'Mutation.addDashboard',
+    'Mutation.addPlayer',
+    'Mutation.playerSignUp',
+    'Mutation.playerSignIn',
+    'Mutation.generatePlayerResetCode',
+    'Mutation.resetPlayerPassword',
   ]
 
-  if (!connectionId) {
+  let isAuthorized = false
+  let id: string | null = null
+
+  if (event.authorizationToken === 'waddlefy') {
     // 初回接続
-    admitFields.push('Mutation.init')
-  } else if (!roomId) {
-    // 未入室状態
-    admitFields.push('Query.getRooms')
-    admitFields.push('Mutation.addRoom')
-    admitFields.push('Mutation.entryRoom')
-  } else if (!userId) {
-    // 未ログイン状態
-    admitFields.push('Query.getRoom')
-    admitFields.push('Query.getUsers')
-    admitFields.push('Mutation.signUp')
-    admitFields.push('Mutation.signIn')
-    // 部屋検索はしてもいいよ
-    admitFields.push('Query.getRooms')
+    isAuthorized = true
+    admitFields.push('Mutation.userSignUp')
+    admitFields.push('Mutation.userSignIn')
   } else {
-    // ログイン済
-    admitFields.push('Query.getRoom')
-    admitFields.push('Query.getUser')
-    admitFields.push('Query.getChats')
-    admitFields.push('Mutation.addChat')
-    // 部屋検索はしてもいいよ
-    admitFields.push('Query.getRooms')
+    const split = event.authorizationToken.split('/')
+    if (split.length === 3) {
+      const token = split[1]
+      const secret = split[2]
+      if (split[0] === 'u') {
+        // User
+        const userData = await getTokenSecretData<UserData>(process.env.USER_TABLE_NAME, token, secret)
+        if (userData) {
+          isAuthorized = true
+          id = userData.id
+          admitFields.push('Query.directDashboardAccess')
+          admitFields.push('Mutation.addDashboard')
+          admitFields.push('Mutation.addPlayer')
+          admitFields.push('Mutation.generatePlayerResetCode')
+        }
+      } else if (split[0] === 'p') {
+        // Player
+        const playerData = await getTokenSecretData<PlayerData>(process.env.PLAYER_TABLE_NAME, token, secret)
+        if (playerData) {
+          isAuthorized = true
+          id = playerData.id
+          admitFields.push('Query.directPlayerAccess')
+        }
+      }
+    } else if (split.length === 2) {
+      if (split[0] === 'd') {
+        // Player
+        const dashboardData = await getTokenData(process.env.DASHBOARD_TABLE_NAME, split[1], 'token')
+        if (dashboardData) {
+          isAuthorized = true
+          id = dashboardData.id
+          admitFields.push('Query.getDashboardPlayer')
+          admitFields.push('Mutation.playerSignUp')
+          admitFields.push('Mutation.playerSignIn')
+          admitFields.push('Mutation.resetPlayerPassword')
+        }
+      }
+      if (split[0] === 'di') {
+        // Player
+        const dashboardData = await getTokenData(process.env.DASHBOARD_TABLE_NAME, split[1], 'signUpToken')
+        if (dashboardData) {
+          isAuthorized = true
+          id = dashboardData.id
+          admitFields.push('Query.getDashboardPlayers')
+        }
+      }
+    }
   }
 
   const response = {
-    isAuthorized: true,
+    isAuthorized,
     resolverContext: {
-      connectionId,
-      roomId,
-      userId
+      id,
     },
     deniedFields: [
       ...definedTypeFieldsBase,

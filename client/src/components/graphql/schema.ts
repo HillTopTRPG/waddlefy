@@ -1,248 +1,414 @@
 import gql from 'graphql-tag'
 
-const initMutation = gql(`
-mutation Init {
-  init {
-    connectionId
-  }
-}
-`)
-export type InitMutationResult = {
-  init: {
-    connectionId: string
-  }
-}
-const addRoomMutation = gql(`
-mutation AddRoom($roomName: String!, $roomPassword: String!) {
-  addRoom(input: {name: $roomName, password: $roomPassword}) {
+const userSignUp = gql(`
+mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!, $dashboardName: String!, $layout: String!, $metaData: String!) {
+  userSignUp(input: {userId: $userId, name: $userName, password: $userPassword, dashboardName: $dashboardName, layout: $layout, metaData: $metaData}) {
     id
-    token
     name
-  }
-}
-`)
-export type AddRoomMutationResult = {
-  addRoom: {
-    id: string,
-    token: string,
-    name: string
-  }
-}
-const entryRoomMutation = gql(`
-mutation EntryRoom($roomPassword: String!, $roomId: String!) {
-  entryRoom(input: {roomId: $roomId, password: $roomPassword}) {
-    id
     token
-    name
-    users {
+    secret
+    firstDashboard {
+      id
+      token
+      signUpToken
+      name
+      layout
+      metaData
+      createdAt
+    }
+    dashboards {
       id
       name
-      type
-      createdAt
-      lastLoggedIn
-      connections {
-        id
-      }
     }
   }
 }
 `)
-export type EntryRoomMutationResult = {
-  entryRoom: {
-    id: string,
-    token: string,
-    name: string,
-    users: User[]
-  }
-}
-const signUpMutation = gql(`
-mutation SignUp($userName: String!, $userPassword: String!) {
-  signUp(input: {name: $userName, password: $userPassword}) {
-    id
-    token
-    name
-    lastLoggedIn
-    lastLoggedOut
-  }
-}
-`)
-const signInMutation = gql(`
-mutation SignIn($userId: String!, $userPassword: String!) {
-  signIn(input: {userId: $userId, password: $userPassword}) {
-    id
-    token
-    name
-    lastLoggedIn
-    lastLoggedOut
-  }
-}
-`)
-export type SignUpMutationResult = {
-  signUp: {
-    id: string,
-    token: string,
-    name: string
-  }
-}
-export type SignInMutationResult = {
-  signIn: {
-    id: string,
-    token: string,
-    name: string
-  }
-}
-const getRoomsQuery = gql(`
-query GetRooms {
-  getRooms {
-    id
-    name
-    createdAt
-    users {
-      id
-      name
-      type
-      createdAt
-      lastLoggedIn
-      connections {
-        id
-      }
-    }
-  }
-}
-`)
-const getRoomQuery = gql(`
-query GetRoom($roomToken: String!) {
-  getRooms {
-    id
-    name
-    createdAt
-    users {
-      id
-      name
-      type
-      createdAt
-      lastLoggedIn
-      connections {
-        id
-      }
-    }
-  }
-  getRoom(roomToken: $roomToken) {
-    id
-    users {
-      id
-      name
-      type
-      createdAt
-      lastLoggedIn
-      connections {
-        id
-      }
-    }
-  }
-}
-`)
-export type Room = {
-  id: string,
-  name: string,
-  createdAt: number,
-  users: {
-    id: string,
-    name: string,
-    type: string,
-    createdAt: number,
-    lastLoggedIn: number,
-    connections: {
-      id: string
-    }[]
-  }[]
-}
-export type GetRoomsQueryResult = {
-  getRooms: Room[]
-}
-export type GetRoomQueryResult = {
-  getRoom: Room
-  getRooms: Room[]
-}
-export type GetUserQueryResult = {
-  getUser: User
+export type UserSignUpResult = {
+  userSignUp: UserForUser
 }
 
-// const getUsersQuery = gql(`
-// query GetUsers($roomId: ID!) {
-//   getUsers(roomId: $roomId) {
-//     id
-//     name
-//     createdAt
-//     lastLoggedIn
-//   }
-// }
-// `)
-const getUserQuery = gql(`
-query GetUser($userToken: String!) {
-  getUser(userToken: $userToken) {
+const userSignIn = gql(`
+mutation UserSignIn($userId: String!, $userPassword: String!) {
+  userSignIn(input: {userId: $userId, password: $userPassword}) {
     id
     name
-    type
-    createdAt
-    lastLoggedIn
-    connections {
+    token
+    secret
+    firstDashboard {
       id
+      token
+      signUpToken
+      name
+      layout
+      metaData
+      createdAt
+    }
+    dashboards {
+      id
+      name
     }
   }
 }
 `)
+export type UserSignInResult = {
+  userSignIn: UserForUser
+}
+
+const addDashboard = gql(`
+mutation AddDashboard($name: String!, $layout: String!, $metaData: String!) {
+  addDashboard(input: {name: $name, layout: $layout, metaData: $metaData}) {
+    id
+    token
+    signUpToken
+    name
+    layout
+    metaData
+    createdAt
+    players {
+      id
+      name
+    }
+  }
+}
+`)
+export type AddDashboardResult = {
+  addDashboard: DashboardForUser
+}
+
+const addPlayer = gql(`
+mutation AddDashboard($dashboardId: String!, $playerName: String!) {
+  addPlayer(input: {dashboardId: $dashboardId, name: $playerName}) {
+    id
+    name
+  }
+}
+`)
+export type AddPlayerResult = {
+  addPlayer: IdName
+}
+
+const playerSignUp = gql(`
+mutation PlayerSignUp($playerName: String!, $playerPassword: String!) {
+  playerSignUp(input: {name: $playerName, password: $playerPassword}) {
+    id
+    name
+    token
+    secret
+    dashboard {
+      id
+      name
+      token
+      layout
+      metaData
+      createdAt
+      user {
+        id
+        name
+      }
+      players {
+        id
+        name
+      }
+    }
+  }
+}
+`)
+export type PlayerSignUpResult = {
+  playerSignUp: PlayerForPlayer
+}
+
+const playerFirstSignIn = gql(`
+mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
+  playerFirstSignIn(input: {playerId: $playerId, password: $playerPassword}) {
+    id
+    name
+    token
+    secret
+    dashboard {
+      id
+      name
+      token
+      layout
+      metaData
+      createdAt
+      user {
+        id
+        name
+      }
+      players {
+        id
+        name
+      }
+    }
+  }
+}
+`)
+export type PlayerFirstSignInResult = {
+  playerFirstSignIn: PlayerForPlayer
+}
+
+const playerSignIn = gql(`
+mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
+  playerSignIn(input: {playerId: $playerId, password: $playerPassword}) {
+    id
+    name
+    token
+    secret
+    dashboard {
+      id
+      name
+      token
+      layout
+      metaData
+      createdAt
+      user {
+        id
+        name
+      }
+      players {
+        id
+        name
+      }
+    }
+  }
+}
+`)
+export type PlayerSignInResult = {
+  playerSignIn: PlayerForPlayer
+}
+
+const generatePlayerResetCode = gql(`
+mutation GeneratePlayerResetCode($playerId: String!) {
+  generatePlayerResetCode(input: {id: $playerId}) {
+    resetCode
+  }
+}
+`)
+export type GeneratePlayerResetCodeResult = {
+  generatePlayerResetCode: {
+    resetCode: string
+  }
+}
+
+const resetPlayerPassword = gql(`
+mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPassword: String!) {
+  resetPlayerPassword(input: {id: $playerId, resetCode: $resetCode, password: $playerPassword}) {
+    id
+    name
+    token
+    secret
+    dashboard {
+      id
+      name
+      token
+      layout
+      metaData
+      createdAt
+      user {
+        id
+        name
+      }
+      players {
+        id
+        name
+      }
+    }
+  }
+}
+`)
+export type ResetPlayerPasswordResult = {
+  resetPlayerPassword: PlayerForPlayer
+}
+
+const checkDuplicateUserId = gql(`
+query CheckDuplicateUserId($userId: String!) {
+  checkDuplicateUserId(id: $userId) {
+    ok
+  }
+}
+`)
+export type CheckDuplicateUserIdResult = {
+  checkDuplicateUserId: {
+    ok: boolean
+  }
+}
+
+const directDashboardAccess = gql(`
+query DirectDashboardAccess($dashboardId: String!) {
+  directDashboardAccess(id: $dashboardId) {
+    id
+    token
+    signUpToken
+    name
+    layout
+    metaData
+    createdAt
+    user {
+      id
+      name
+      token
+      secret
+      dashboards {
+        id
+        name
+      }
+    }
+    players {
+      id
+      name
+    }
+  }
+}
+`)
+export type DirectDashboardAccessQueryResult = {
+  directDashboardAccess: DashboardForUser
+}
+
+const getDashboardPlayer = gql(`
+query GetDashboardPlayer($playerId: String!) {
+  getDashboardPlayer(id: $playerId) {
+    id
+    name
+    status
+  }
+}
+`)
+export type IdNameStatus = {
+  id: string
+  name: string
+  status: string
+}
+export type GetDashboardPlayerResult = {
+  getDashboardPlayer: IdNameStatus
+}
+
+const getDashboardPlayers = gql(`
+query GetDashboardPlayers {
+  getDashboardPlayers {
+    id
+    name
+    status
+  }
+}
+`)
+export type GetDashboardPlayersResult = {
+  getDashboardPlayers: IdNameStatus[]
+}
+
+const directPlayerAccess = gql(`
+query DirectPlayerAccess {
+  directPlayerAccess {
+    id
+    name
+    token
+    secret
+    dashboard {
+      id
+      name
+      token
+      layout
+      metaData
+      createdAt
+      user {
+        id
+        name
+      }
+      players {
+        id
+        name
+      }
+    }
+  }
+}
+`)
+export type DirectPlayerAccessQueryResult = {
+  directPlayerAccess: PlayerForPlayer
+}
+
+export type UserForUser = {
+  id: string
+  name: string
+  token: string
+  secret: string
+  firstDashboard: DashboardForUser
+  dashboards: IdName[]
+}
+
 export type User = {
-  id: string,
-  name: string,
-  type: string,
-  createdAt: number,
-  lastLoggedIn: number,
-  connections: {
-    id: string
-  }[]
+  id: string
+  name: string
+  token?: string
 }
 
-export type Chat = {
-  id: string,
-  raw: string,
-  owner: string,
+export type PlayerForPlayer = {
+  id: string
+  name: string
+  token: string
+  secret: string
+  dashboard: DashboardForPlayer
+}
+
+export type Player = {
+  id: string
+  name: string
+  token?: string
+  resetCode?: string
+}
+
+export type DashboardForUser = {
+  id: string
+  token: string
+  signUpToken: string
+  name: string
+  layout: string
+  metaData: string
+  createdAt: number
+  user: UserForUser
+  players: IdName[]
+}
+
+export type DashboardForPlayer = {
+  id: string
+  token: string
+  name: string
+  layout: string
+  metaData: string
+  createdAt: number
+  user: IdName
+  players: IdName[]
+}
+
+export type Dashboard = {
+  id: string
+  token: string
+  signUpToken?: string
+  name: string
+  layout: string
+  metaData: string
   createdAt: number
 }
 
+export type IdName = {
+  id: string
+  name: string
+}
+
 export const Mutations = {
-  initMutation,
-  addRoomMutation,
-  entryRoomMutation,
-  signUpMutation,
-  signInMutation
+  userSignUp,
+  userSignIn,
+  addDashboard,
+  addPlayer,
+  playerSignUp,
+  playerFirstSignIn,
+  playerSignIn,
+  resetPlayerPassword,
+  generatePlayerResetCode
 }
 
 export const Queries = {
-  getRoomsQuery,
-  getRoomQuery,
-  getUserQuery,
+  checkDuplicateUserId,
+  directPlayerAccess,
+  directDashboardAccess,
+  getDashboardPlayer,
+  getDashboardPlayers
 }
-
-
-export interface UserTypeSelection {
-  title: string
-  value: string
-  hint: string
-}
-
-export const userTypeSelection: UserTypeSelection[] = [
-  {
-    title: 'マスター',
-    value: 'master',
-    hint : '特別な操作が許可されます。',
-  }, {
-    title: 'プレイヤー',
-    value: 'player',
-    hint : '',
-  }, {
-    title: '見学者',
-    value: 'visitor',
-    hint : '閲覧のみ許可されます。',
-  },
-]

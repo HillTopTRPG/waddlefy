@@ -1,15 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: waddlefy Lambda 'authorizer'
+Description: Waddlefy Lambda Authorizer
 
 Parameters:
-  NodeBaseLayerArn:
-    Type: String
-  ConnectionTableName:
-    Type: String
-  RoomTableName:
-    Type: String
   UserTableName:
+    Type: String
+  DashboardTableName:
+    Type: String
+  PlayerTableName:
     Type: String
 
 Resources:
@@ -24,22 +22,20 @@ Resources:
         - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: Lambda Authorizer for AppSync
       FunctionName: appsync-authorizer
+      Description: Waddlefy AppSync Authorizer
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref ConnectionTableName
-        - DynamoDBCrudPolicy:
-            TableName: !Ref RoomTableName
-        - DynamoDBCrudPolicy:
             TableName: !Ref UserTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DashboardTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlayerTableName
       Environment:
         Variables:
-          CONNECTION_TABLE_NAME: !Ref ConnectionTableName
-          ROOM_TABLE_NAME: !Ref RoomTableName
           USER_TABLE_NAME: !Ref UserTableName
-      Layers:
-        - !Ref NodeBaseLayerArn
+          DASHBOARD_TABLE_NAME: !Ref DashboardTableName
+          PLAYER_TABLE_NAME: !Ref PlayerTableName
     Metadata:
       BuildMethod: esbuild
       BuildProperties:

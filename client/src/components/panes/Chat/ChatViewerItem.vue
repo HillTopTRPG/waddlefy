@@ -5,7 +5,7 @@ export default defineComponent({})
 </script>
 
 <script setup lang='ts'>
-import UserAvatar from '@/components/UserAvatar.vue'
+import UserAvatar from '@/components/parts/UserAvatar.vue'
 import {onMounted, ref, watch} from 'vue'
 import {Chat, User} from "@/components/graphql/schema";
 

@@ -1,52 +1,49 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  waddlefy
-  Sample SAM Template for waddlefy
+Description: Waddlefy functions
 
 Parameters:
   ApiId:
     Type: String
-  ConnectionTableDataSourceName:
+  DashboardTableDataSourceName:
     Type: String
-  RoomTableDataSourceName:
+  PlayerTableDataSourceName:
     Type: String
 
 Resources:
-  # call by mutation addRoom
-  # call by mutation entryRoom
-  UpdateConnectionRoomFunction:
+  CheckNoPlayerNameExistsFunction:
     Type: AWS::AppSync::FunctionConfiguration
     Properties:
       ApiId: !Ref ApiId
-      Name: update_connection_room_function
-      DataSourceName: !Ref ConnectionTableDataSourceName
-      FunctionVersion: "2018-05-29"
-      RequestMappingTemplateS3Location: vtl/update-item-set-room-id-stash-id-where-id-identity-connection-id.vm
+      Name: check_no_player_name_exists_function
+      DataSourceName: !Ref PlayerTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "dashboard-name-index",
+          "query": {
+            "expression" : "#name = :name and #dashboardId = :dashboardId",
+            "expressionNames" : {
+              "#name" : "name",
+              "#dashboardId" : "dashboardId"
+            },
+            "expressionValues": {
+              ":name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+              ":dashboardId": $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
+            }
+          }
+        }
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
           $util.error($ctx.result.error)
         #end
+        #set($flg = $ctx.result.items.size() == 0)
+        $util.validate($flg, "Player name exists.")
         {}
 
-  # call by mutation signUp
-  # call by mutation signIn
-  UpdateConnectionUserFunction:
-    Type: AWS::AppSync::FunctionConfiguration
-    Properties:
-      ApiId: !Ref ApiId
-      Name: update_connection_user_function
-      DataSourceName: !Ref ConnectionTableDataSourceName
-      FunctionVersion: "2018-05-29"
-      RequestMappingTemplateS3Location: vtl/update-item-set-user-id-stash-id-where-id-identity-connection-id.vm
-      ResponseMappingTemplate: |
-        #if($ctx.result && $ctx.result.error)
-          $util.error($ctx.result.error)
-        #end
-        {}
 
 Outputs:
-  UpdateConnectionRoomFunctionId:
-    Value: !GetAtt UpdateConnectionRoomFunction.FunctionId
-  UpdateConnectionUserFunctionId:
-    Value: !GetAtt UpdateConnectionUserFunction.FunctionId
+  CheckNoPlayerNameExistsFunctionId:
+    Value: !GetAtt CheckNoPlayerNameExistsFunction.FunctionId

@@ -1,74 +1,18 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: waddlefy DynamoDB tables
+Description: Waddlefy DynamoDB tables
 
 Parameters:
-  ConnectionTableName:
-    Type: String
-  RoomTableName:
-    Type: String
   UserTableName:
     Type: String
-  ChatTableName:
+  DashboardTableName:
+    Type: String
+  PlayerTableName:
+    Type: String
+  PaneTableName:
     Type: String
 
 Resources:
-  # Connection Table
-  ConnectionTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: roomId
-          AttributeType: S
-        - AttributeName: userId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_IMAGE
-      TableName: !Ref ConnectionTableName
-      GlobalSecondaryIndexes:
-        - IndexName: roomId-index
-          KeySchema:
-            - AttributeName: roomId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: userId-index
-          KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-
-  # Room Table
-  RoomTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: token
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_IMAGE
-      TableName: !Ref RoomTableName
-      GlobalSecondaryIndexes:
-        - IndexName: token-index
-          KeySchema:
-            - AttributeName: token
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-
   # User Table
   UserTable:
     Type: AWS::DynamoDB::Table
@@ -77,51 +21,134 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        - AttributeName: roomId
-          AttributeType: S
         - AttributeName: token
           AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_IMAGE
       TableName: !Ref UserTableName
       GlobalSecondaryIndexes:
-        - IndexName: roomId-index
-          KeySchema:
-            - AttributeName: roomId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
         - IndexName: token-index
           KeySchema:
             - AttributeName: token
               KeyType: HASH
           Projection:
-            ProjectionType: ALL
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - secret
 
-  # Chat Table
-  ChatTable:
+  # Dashboard Table
+  DashboardTable:
     Type: AWS::DynamoDB::Table
     Properties:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: token
+          AttributeType: S
+        - AttributeName: signUpToken
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      StreamSpecification:
-        StreamViewType: NEW_IMAGE
-      TableName: !Ref ChatTableName
+      TableName: !Ref DashboardTableName
+      GlobalSecondaryIndexes:
+        - IndexName: token-index
+          KeySchema:
+            - AttributeName: token
+              KeyType: HASH
+          Projection:
+            ProjectionType: KEYS_ONLY
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - name
+        - IndexName: signUpToken-index
+          KeySchema:
+            - AttributeName: signUpToken
+              KeyType: HASH
+          Projection:
+            ProjectionType: KEYS_ONLY
+
+  # Player Table
+  PlayerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: token
+          AttributeType: S
+        - AttributeName: dashboardId
+          AttributeType: S
+        - AttributeName: name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      TableName: !Ref PlayerTableName
+      GlobalSecondaryIndexes:
+        - IndexName: token-index
+          KeySchema:
+            - AttributeName: token
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - secret
+        - IndexName: dashboard-name-index
+          KeySchema:
+            - AttributeName: name
+              KeyType: HASH
+            - AttributeName: dashboardId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+        - IndexName: dashboardId-index
+          KeySchema:
+            - AttributeName: dashboardId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - name
+
+  # Pane Table
+  PaneTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: dashboardId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      TableName: !Ref PaneTableName
+      GlobalSecondaryIndexes:
+        - IndexName: dashboardId-index
+          KeySchema:
+            - AttributeName: dashboardId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
 Outputs:
-  ConnectionTableArn:
-    Value: !GetAtt ConnectionTable.Arn
-  RoomTableArn:
-    Value: !GetAtt RoomTable.Arn
   UserTableArn:
     Value: !GetAtt UserTable.Arn
-  ChatTableArn:
-    Value: !GetAtt ChatTable.Arn
+  DashboardTableArn:
+    Value: !GetAtt DashboardTable.Arn
+  PlayerTableArn:
+    Value: !GetAtt PlayerTable.Arn
+  PaneTableArn:
+    Value: !GetAtt PaneTable.Arn

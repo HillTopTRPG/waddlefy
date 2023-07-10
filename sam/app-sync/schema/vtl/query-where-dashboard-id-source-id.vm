@@ -1,0 +1,14 @@
+{
+  "version": "2018-05-29",
+  "operation": "Query",
+  "index": "dashboardId-index",
+  "query": {
+    "expression" : "#dashboardId = :dashboardId",
+    "expressionNames" : {
+      "#dashboardId" : "dashboardId"
+    },
+    "expressionValues": {
+      ":dashboardId": $util.dynamodb.toDynamoDBJson($ctx.source.id)
+    }
+  }
+}

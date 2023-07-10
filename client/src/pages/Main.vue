@@ -1,22 +1,22 @@
 <template>
   <graph-ql-provider
-    :connectionId="connectionId"
-    :roomToken="roomToken"
     :userToken="userToken"
+    :playerToken="playerToken"
+    :firstNav="firstNav"
   >
-    <login-main />
-    <play-main rail="1" />
+    <play-main :firstNav="firstNav" :secondNav="secondNav" :rail="rail" />
   </graph-ql-provider>
 </template>
 
 <script lang="ts" setup>
-import GraphQlProvider from '@/components/graphql/provider/index.vue'
-import LoginMain from '@/components/graphql/provider/LoginMain.vue'
-import PlayMain from "@/components/graphql/provider/PlayMain.vue";
+import GraphQlProvider from '@/components/graphql/GraphQLProvider.vue'
+import PlayMain from "@/components/PlayMain.vue";
 
 defineProps<{
-  connectionId?: string,
-  roomToken?: string,
   userToken?: string,
+  playerToken?: string,
+  firstNav?: string,
+  secondNav?: string,
+  rail?: string,
 }>()
 </script>

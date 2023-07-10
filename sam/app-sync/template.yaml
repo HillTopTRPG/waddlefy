@@ -1,20 +1,20 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: waddlefy AppSync templates
+Description: Waddlefy AppSync
 
 Parameters:
-  ConnectionTableName:
-    Type: String
-    Default: waddlefy-connection-table
-  RoomTableName:
-    Type: String
-    Default: waddlefy-room-table
   UserTableName:
     Type: String
     Default: waddlefy-user-table
-  ChatTableName:
+  DashboardTableName:
     Type: String
-    Default: waddlefy-chat-table
+    Default: waddlefy-dashboard-table
+  PlayerTableName:
+    Type: String
+    Default: waddlefy-player-table
+  PaneTableName:
+    Type: String
+    Default: waddlefy-pane-table
 
 Resources:
   AppSync:
@@ -39,10 +39,9 @@ Resources:
     Properties:
       Location: authorizer.template.yaml
       Parameters:
-        NodeBaseLayerArn: !GetAtt NodeLayerStack.Outputs.Arn
-        ConnectionTableName: !Ref ConnectionTableName
-        RoomTableName: !Ref RoomTableName
         UserTableName: !Ref UserTableName
+        DashboardTableName: !Ref DashboardTableName
+        PlayerTableName: !Ref PlayerTableName
 
   AppsyncPermission:
     Type: AWS::Lambda::Permission
@@ -53,24 +52,16 @@ Resources:
       SourceAccount: !Ref AWS::AccountId
       SourceArn: !Ref AppSync
 
-  # lambdaで使っているライブラリをアップロードする
-  NodeLayerStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: node-layer.template.yaml
-      Parameters:
-        LayerName: waddlefy-lambda-layer
-
   # ServiceRole
   ServiceRoleStack:
     Type: AWS::Serverless::Application
     Properties:
       Location: service-role.template.yaml
       Parameters:
-        ConnectionTableArn: !GetAtt TablesStack.Outputs.ConnectionTableArn
         UserTableArn: !GetAtt TablesStack.Outputs.UserTableArn
-        RoomTableArn: !GetAtt TablesStack.Outputs.RoomTableArn
-        ChatTableArn: !GetAtt TablesStack.Outputs.ChatTableArn
+        DashboardTableArn: !GetAtt TablesStack.Outputs.DashboardTableArn
+        PlayerTableArn: !GetAtt TablesStack.Outputs.PlayerTableArn
+        PaneTableArn: !GetAtt TablesStack.Outputs.PaneTableArn
 
   # DynamoDB
   TablesStack:
@@ -78,10 +69,10 @@ Resources:
     Properties:
       Location: tables.template.yaml
       Parameters:
-        ConnectionTableName: !Ref ConnectionTableName
-        RoomTableName: !Ref RoomTableName
         UserTableName: !Ref UserTableName
-        ChatTableName: !Ref ChatTableName
+        DashboardTableName: !Ref DashboardTableName
+        PlayerTableName: !Ref PlayerTableName
+        PaneTableName: !Ref PaneTableName
 
   SchemaStack:
     Type: AWS::Serverless::Application
@@ -90,10 +81,10 @@ Resources:
       Parameters:
         ApiId: !GetAtt AppSync.ApiId
         ServiceRoleArn: !GetAtt ServiceRoleStack.Outputs.ServiceRoleArn
-        ConnectionTableName: !Ref ConnectionTableName
-        RoomTableName: !Ref RoomTableName
         UserTableName: !Ref UserTableName
-        ChatTableName: !Ref ChatTableName
+        DashboardTableName: !Ref DashboardTableName
+        PlayerTableName: !Ref PlayerTableName
+        PaneTableName: !Ref PaneTableName
     DependsOn:
       - AppSyncSchema
 

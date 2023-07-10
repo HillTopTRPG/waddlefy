@@ -1,0 +1,208 @@
+<template>
+  <v-main class="bg-transparent">
+    <v-container class="px-0 px-sm-16">
+      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0;">
+        <logo-component color="#aaa" height="90vh" class="ml-md-16" />
+      </div>
+      <v-row class="pt-0 pt-md-16 align-md-end">
+        <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-end position-relative">
+          <v-list>
+            <template v-for="p in players" :key="p.id">
+              <v-list-item>
+                <v-list-item-title>{{ p.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ p.id }}</v-list-item-subtitle>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-col>
+        <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-start position-relative">
+          <v-card
+            elevation="5"
+            class="d-inline-block text-left pa-4"
+            :class="signUpFailure ? 'failure' : undefined"
+            style="background-color: rgba(255, 255, 255, 0.5);"
+          >
+            <v-card-title v-if="player">ようこそ <span class="text-h4">{{ player?.name }}</span> さん</v-card-title>
+            <v-card-text class="ma-0 pa-0">
+              <v-text-field
+                v-if="!player"
+                label="なまえ*"
+                :rules="[(x) => !!x || '必須項目']"
+                variant="solo-filled"
+                v-model="playerName"
+                @keydown.enter="playerName && passwordElm.focus()"
+                ref="userNameElm"
+              />
+              <v-text-field
+                label="パスワード"
+                type="password"
+                hide-details
+                class="mb-1"
+                variant="solo-filled"
+                v-model="password"
+                @keydown.enter="callSignUp()"
+                ref="passwordElm"
+              />
+            </v-card-text>
+            <v-card-actions class="justify-center">
+              <v-btn
+                variant="elevated"
+                size="large"
+                rounded
+                color="primary"
+                class="px-5"
+                text="合流"
+                :disabled="!ready || (player ? false : !playerName)"
+                :loading="!ready"
+                @click="callSignUp()"
+              />
+            </v-card-actions>
+            <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
+              合流に失敗しました
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue'
+import LogoComponent from '@/components/parts/LogoComponent.vue'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import {
+  fetchGraphQlConnectionInfo,
+  makeGraphQlClient, playerFirstSignIn,
+  playerSignIn,
+  playerSignUp,
+  resetPlayerPassword
+} from '@/components/graphql/graphql'
+import {
+  GetDashboardPlayerResult,
+  GetDashboardPlayersResult,
+  IdNameStatus,
+  Queries,
+} from '@/components/graphql/schema'
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const props = defineProps<{
+  dashboardToken?: string
+  signUpToken?: string
+  playerId?: string
+}>()
+
+console.log(JSON.stringify({
+  dashboardToken: props.dashboardToken,
+  signUpToken: props.signUpToken,
+  playerId: props.playerId,
+}, null, 2))
+
+const playerName = ref('')
+const password = ref('')
+const resetCode = ref('')
+
+let appSyncClient: ApolloClient<NormalizedCacheObject> | null = null
+const ready = ref(false)
+const signUpFailure = ref(false)
+const playerNameElm = ref()
+const passwordElm = ref()
+
+const players = ref<IdNameStatus[]>([])
+const player = ref<IdNameStatus | null>(null)
+
+const errorMessage = ref('')
+
+function getAuthToken() {
+  if (props.dashboardToken) {
+    return `d/${props.dashboardToken}`
+  }
+  if (props.signUpToken) {
+    return `di/${props.signUpToken}`
+  }
+  return ''
+}
+
+async function init() {
+  const { graphql, region } = await fetchGraphQlConnectionInfo()
+  appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
+
+  if (props.playerId) {
+    const result = await appSyncClient.mutate<GetDashboardPlayerResult>({
+      mutation: Queries.getDashboardPlayer,
+      variables: { playerId: props.playerId }
+    })
+    const getDashboardPlayer = result.data?.getDashboardPlayer
+    if (getDashboardPlayer) {
+      players.value = []
+      player.value = getDashboardPlayer
+    }
+  } else {
+    const result = await appSyncClient.mutate<GetDashboardPlayersResult>({
+      mutation: Queries.getDashboardPlayers
+    })
+    const getDashboardPlayers = result.data?.getDashboardPlayers
+    if (getDashboardPlayers) {
+      players.value = getDashboardPlayers
+      player.value = null
+    }
+  }
+  ready.value = true
+}
+init().then()
+
+async function callSignUp() {
+  signUpFailure.value = false
+  errorMessage.value = ''
+
+  if (!appSyncClient) {
+    return
+  }
+
+  try {
+    const pl = player.value
+    if (pl) {
+      if (pl.status === 'reset') {
+        // resetPlayer
+        if (resetCode.value) {
+          return resetPlayerPassword(appSyncClient, pl.id, resetCode.value, password.value, router)
+        }
+        console.warn('resetCode is empty.')
+      } else if (pl.status === 'init') {
+        return playerFirstSignIn(appSyncClient, pl.id, password.value, router)
+      } else {
+        // playerSignIn
+        return playerSignIn(appSyncClient, pl.id, password.value, router)
+      }
+    } else {
+      const existsPlayer = players.value.find(p => p.name === playerName.value)
+      if (!existsPlayer) {
+        // sign up
+        return playerSignUp(appSyncClient, playerName.value, password.value, router)
+      } else {
+        errorMessage.value = '名前が重複しています。'
+        signUpFailure.value = true
+        return
+      }
+    }
+  } catch (err) {
+    // Nothing
+    console.error(err)
+  }
+  errorMessage.value = '失敗しちゃった。'
+  signUpFailure.value = true
+}
+</script>
+
+<!--suppress CssUnusedSymbol, CssUnresolvedCustomProperty -->
+<style>
+.failure {
+  background-color: rgba(var(--v-theme-warning), 0.5) !important;
+}
+
+li {
+  white-space: nowrap;
+}
+</style>

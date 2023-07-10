@@ -1,120 +1,160 @@
 # noinspection GraphQLUnresolvedReference,GraphQLMissingType
-type Connection {
-  id: ID!
-  room: Room
-  user: User
+
+type Mutation {
+  # ユーザーサインアップ
+  userSignUp(input: UserSignUpInput): UserForUser
+  # ユーザーサインイン
+  userSignIn(input: UserSignInInput): UserForUser
+  # ダッシュボード作成
+  addDashboard(input: AddDashboardInput): DashboardForUser
+  # プレイヤー作成
+  addPlayer(input: AddPlayerInput): IdName
+  # プレイヤーサインアップ
+  playerSignUp(input: PlayerSignUpInput): PlayerForPlayer
+  # プレイヤーサインイン（初回）
+  playerFirstSignIn(input: PlayerSignInInput): PlayerForPlayer
+  # プレイヤーサインイン
+  playerSignIn(input: PlayerSignInInput): PlayerForPlayer
+  # プレイヤーリセットコード生成
+  generatePlayerResetCode(input: RequestPlayerPasswordResetInput): RequestPlayerPasswordResetResult
+  # プレイヤーパスワードリセット
+  resetPlayerPassword(input: ResetPlayerPasswordInput): PlayerForPlayer
 }
 
-type ConnectionId {
-  connectionId: String
+type Query {
+  # for Unauthorized User
+  checkDuplicateUserId(id: String!): CheckResult
+  # for Authorized User
+  directDashboardAccess(id: String!): DashboardForUser
+  # for Unauthorized Player
+  getDashboardPlayer(id: String!): IdNameStatus
+  getDashboardPlayers: [IdNameStatus]
+  # for Authorized Player
+  directPlayerAccess: PlayerForPlayer
 }
 
-type Room {
+type IdNameStatus {
   id: ID!
   name: String!
-  createdAt: AWSTimestamp!
-  connections: [Connection]
-  users: [User]
+  status: String!
 }
 
-type EntryRoomResult {
-  id: ID!
-  token: String!
-  name: String!
-  createdAt: AWSTimestamp!
-  connections: [Connection]
-  users: [User]
+type CheckResult {
+  ok: Boolean!
 }
 
-type User {
-  id: ID!
-  name: String!
-  type: String!
-  room: Room!
-  createdAt: AWSTimestamp!
-  lastLoggedIn: AWSTimestamp
-  lastLoggedOut: AWSTimestamp
-  connections: [Connection]
-}
-
-type LoginResult {
-  id: ID!
-  token: String!
-  name: String!
-  room: Room!
-  createdAt: AWSTimestamp!
-  lastLoggedIn: AWSTimestamp
-  lastLoggedOut: AWSTimestamp
-  connections: [Connection]
-}
-
-input AddRoomInput {
+# UserLogin
+input UserSignUpInput {
+  userId: String!
   name: String!
   password: String!
+  dashboardName: String!
+  layout: String!
+  metaData: String!
 }
 
-input EntryRoomInput {
-  roomId: String!
-  password: String!
-}
-
-input SignUpInput {
-  name: String!
-  password: String!
-}
-
-input SignInInput {
+input UserSignInInput {
   userId: String!
   password: String!
 }
 
-type Chat {
+type UserForUser {
   id: ID!
-  room: Room!
-  owner: User
-  text: String!
+  name: String!
+  token: String!
+  secret: String!
+  firstDashboard: DashboardForUser
+  dashboards: [IdName]!
 }
 
-input AddChatInput {
-  text: String!
+type IdName {
+  id: ID!
+  name: String!
 }
 
-type Query {
-  getRooms(limit: Int, nextToken: String): [Room]
-  getRoom(roomToken: String!): Room
-  getUsers(roomId: ID!, limit: Int, nextToken: String): [User]
-  getUser(userToken: String!): User
-  getChats(roomId: ID!, nextToken: String): [Chat]
+# Player
+input AddPlayerInput {
+  dashboardId: String!
+  name: String!
 }
 
-type Mutation {
-  # 接続ID払い出し
-  init: ConnectionId
-  # 部屋作成
-  addRoom(input: AddRoomInput): EntryRoomResult
-  # 入室
-  entryRoom(input: EntryRoomInput): EntryRoomResult
-  # サインアップ
-  signUp(input: SignUpInput): LoginResult
-  # サインイン
-  signIn(input: SignInInput): LoginResult
-  # チャット発言
-  addChat(input: AddChatInput): Chat
+input PlayerSignUpInput {
+  name: String!
+  password: String!
 }
 
-type Subscription {
-  onAddRoom: EntryRoomResult
-    @aws_subscribe(mutations: ["addRoom"])
-  onEntryRoom(token: String!): EntryRoomResult
-    @aws_subscribe(mutations: ["entryRoom"])
-  onLogin(token: String!): LoginResult
-    @aws_subscribe(mutations: ["signUp", "signIn"])
-  onAddChat: Chat
-    @aws_subscribe(mutations: ["addChat"])
+input PlayerSignInInput {
+  playerId: String!
+  password: String!
 }
+
+type PlayerForPlayer {
+  id: ID!
+  name: String!
+  token: String!
+  secret: String!
+  dashboard: DashboardForPlayer
+}
+
+type DashboardForUser {
+  id: ID!
+  token: String!
+  signUpToken: String!
+  name: String!
+  layout: String!
+  metaData: String!
+  createdAt: AWSTimestamp!
+  user: UserForUser!
+  players: [IdName]!
+  panes: [Pane]!
+}
+
+type DashboardForPlayer {
+  id: ID!
+  name: String!
+  token: String!
+  layout: String!
+  metaData: String!
+  createdAt: AWSTimestamp!
+  user: IdName!
+  players: [IdName]!
+  panes: [Pane]!
+}
+
+# ダッシュボード
+input AddDashboardInput {
+  name: String!
+  layout: String!
+  metaData: String!
+}
+
+# Playerパスワードリセット要求
+input RequestPlayerPasswordResetInput {
+  id: String!
+}
+
+type RequestPlayerPasswordResetResult {
+  resetCode: String!
+}
+
+# Playerパスワードリセット実施
+input ResetPlayerPasswordInput {
+  id: String!
+  resetCode: String!
+  password: String!
+}
+
+type Pane {
+  id: ID!
+  type: String!
+  data: String! # json
+}
+
+#type Subscription {
+#}
 
 schema {
   query: Query
   mutation: Mutation
-  subscription: Subscription
+#  subscription: Subscription
 }

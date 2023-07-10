@@ -7,6 +7,7 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import VitePluginFonts from "vite-plugin-fonts";
 
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
@@ -21,6 +22,13 @@ export default defineConfig(() => ({
         configFile: 'src/styles/settings.scss',
       },
     }),
+    VitePluginFonts({
+      google: {
+        families: [
+          'M PLUS Rounded 1c'
+        ],
+      }
+    })
   ],
   optimizeDeps: {
     esbuildOptions: {

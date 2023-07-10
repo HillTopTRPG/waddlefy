@@ -1,0 +1,162 @@
+<template>
+  <v-main class="bg-transparent">
+    <v-container class="px-0 px-sm-16">
+      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0;">
+        <logo-component color="#aaa" height="90vh" class="ml-md-16" />
+      </div>
+      <v-row class="pt-0 pt-md-16 align-md-end">
+        <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-end position-relative">
+          <v-sheet class="rounded-xl pa-5 font-style-top text-left mx-0 mx-md-16" style="background-color: rgba(255, 255, 255, 0.5);">
+            <p class="text-h5">
+              <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>の利用方法
+            </p>
+            <ol class="ml-4 mt-5" style="line-height: 2em;">
+              <li>ログイン</li>
+              <li>画面を作る
+                <ul class="ml-5" style="line-height: 2em;">
+                  <li>用途に合わせた画面セットを選ぶ</li>
+                  <li>パーツを選んで画面をカスタム</li>
+                  <li>画面にデータを入力</li>
+                </ul>
+              </li>
+              <li>共有URLを参加者達に伝える</li>
+              <li>参加者達は共有URLで合流</li>
+              <li>皆で同じ画面を操作する</li>
+            </ol>
+          </v-sheet>
+        </v-col>
+        <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-start position-relative">
+          <v-card
+            elevation="5"
+            class="d-inline-block text-left pa-4"
+            :class="signUpFailure ? 'failure' : undefined"
+            style="background-color: rgba(255, 255, 255, 0.5);"
+          >
+            <v-card-item class="ma-0 pa-0">
+              <v-text-field
+                label="ユーザID*"
+                :rules="[(x) => !!x || '必須項目']"
+                variant="solo-filled"
+                :autofocus="true"
+                v-model="userId"
+                :error-messages="userIdCheck ? '' : '重複しています'"
+                @keydown.enter="userId && userNameElm.focus()"
+                ref="userIdElm"
+              />
+              <v-text-field
+                label="ユーザ名*"
+                :rules="[(x) => !!x || '必須項目']"
+                variant="solo-filled"
+                v-model="userName"
+                @keydown.enter="userName && passwordElm.focus()"
+                ref="userNameElm"
+              />
+              <v-text-field
+                label="パスワード"
+                type="password"
+                hide-details
+                class="mb-1"
+                variant="solo-filled"
+                v-model="password"
+                @keydown.enter="callSignUp()"
+                ref="passwordElm"
+              />
+            </v-card-item>
+            <v-card-actions class="justify-center">
+              <v-btn
+                variant="elevated"
+                size="large"
+                rounded
+                color="primary"
+                class="px-5"
+                text="新規登録"
+                :disabled="!userId || !userName || !userIdCheck || !ready"
+                :loading="!ready"
+                @click="callSignUp()"
+              />
+              <v-btn variant="flat" rounded href="/">または<v-chip variant="text" color="primary">ログイン</v-chip></v-btn>
+            </v-card-actions>
+            <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
+              新規登録に失敗しました
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
+</template>
+
+<script lang="ts" setup>
+import { ref, watch } from 'vue'
+import LogoComponent from '@/components/parts/LogoComponent.vue'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import { fetchGraphQlConnectionInfo, makeGraphQlClient, userSignUp } from '@/components/graphql/graphql'
+import { CheckDuplicateUserIdResult, Queries } from '@/components/graphql/schema'
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const userId = ref('')
+const userName = ref('')
+const password = ref('')
+
+let appSyncClient: ApolloClient<NormalizedCacheObject> | null = null
+const ready = ref(false)
+const signUpFailure = ref(false)
+const userIdElm = ref()
+const userNameElm = ref()
+const passwordElm = ref()
+const userIdCheck = ref(true)
+
+async function init() {
+  const { graphql, region } = await fetchGraphQlConnectionInfo()
+  appSyncClient = makeGraphQlClient(graphql, region, () => 'waddlefy')
+  ready.value = true
+}
+init().then()
+
+let timerId: number | undefined = undefined
+watch(userId, () => {
+  if (timerId !== undefined) {
+    window.clearTimeout(timerId)
+  }
+  timerId = window.setTimeout(async () => {
+    if (!appSyncClient) {
+      return
+    }
+    const result = await appSyncClient.mutate<CheckDuplicateUserIdResult>({
+      mutation: Queries.checkDuplicateUserId,
+      variables: { userId: userId.value }
+    })
+    console.log(result.data)
+    const checkDuplicateUserId = result.data?.checkDuplicateUserId
+    if (checkDuplicateUserId) {
+      const { ok } = checkDuplicateUserId
+      userIdCheck.value = ok
+    }
+  }, 500)
+})
+
+async function callSignUp() {
+  signUpFailure.value = false
+  try {
+    await userSignUp(appSyncClient!, userId.value, userName.value, password.value, router)
+  } catch (err) {
+    console.error('新規登録に失敗しました。')
+    console.error(err)
+    signUpFailure.value = true
+    userIdElm.value.focus()
+  }
+}
+</script>
+
+<!--suppress CssUnusedSymbol, CssUnresolvedCustomProperty -->
+<style>
+.failure {
+  background-color: rgba(var(--v-theme-warning), 0.5) !important;
+}
+
+li {
+  white-space: nowrap;
+}
+</style>

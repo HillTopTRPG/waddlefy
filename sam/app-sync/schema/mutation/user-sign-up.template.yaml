@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Waddlefy AppSync Mutation userSignUp
+
+Parameters:
+  ApiId:
+    Type: String
+  UserTableDataSourceName:
+    Type: String
+  DashboardTableDataSourceName:
+    Type: String
+
+Resources:
+  UserSignUpMutationResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Mutation
+      FieldName: userSignUp
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt CheckNoDuplicateIdFunction.FunctionId
+          - !GetAtt PutItemUserFunction.FunctionId
+          - !GetAtt PutItemDashboardFunction.FunctionId
+      RequestMappingTemplate: '{}'
+      ResponseMappingTemplateS3Location: ../vtl/return-stash-user.vm
+
+  CheckNoDuplicateIdFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: check_no_duplicate_id_function
+      DataSourceName: !Ref UserTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: ../vtl/get-item-where-id-input-user-id.vm
+      ResponseMappingTemplate: |
+        $util.validate($util.isNull($ctx.result), "Duplicate userId")
+        {}
+
+  PutItemUserFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: put_item_user_function
+      DataSourceName: !Ref UserTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: ../vtl/put-item-user.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        $util.qr($ctx.stash.put("user", $ctx.result))
+        {}
+
+  PutItemDashboardFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: put_item_dashboard_function
+      DataSourceName: !Ref DashboardTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key" : {
+            "id": $util.dynamodb.toDynamoDBJson($util.autoId()),
+            "token": $util.dynamodb.toDynamoDBJson($util.autoId()),
+            "signUpToken": $util.dynamodb.toDynamoDBJson($util.autoId()),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.dashboardName),
+            "layout": $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
+            "metaData": $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
+            "createdAt": $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds()),
+            "userId": $util.dynamodb.toDynamoDBJson($ctx.stash.user.id)
+          }
+        }
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        {}

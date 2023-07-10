@@ -1,23 +1,36 @@
-import {AuthOptions, createAuthLink} from 'aws-appsync-auth-link'
-import {ApolloClient, ApolloError, ApolloLink, InMemoryCache, NormalizedCacheObject} from '@apollo/client/core'
-import {createSubscriptionHandshakeLink} from 'aws-appsync-subscription-link'
-import {InjectionKey, reactive} from 'vue'
+import { AuthOptions, createAuthLink } from 'aws-appsync-auth-link'
+import { ApolloClient, ApolloLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client/core'
+import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link'
+import { InjectionKey, reactive } from 'vue'
+import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import {
-  Room,
   User,
-  InitMutationResult,
-  GetRoomQueryResult,
-  GetUserQueryResult,
-  GetRoomsQueryResult,
-  AddRoomMutationResult,
-  EntryRoomMutationResult,
-  SignUpMutationResult,
-  SignInMutationResult,
   Mutations,
-  Queries, Chat,
-} from "@/components/graphql/schema";
+  Queries,
+  Dashboard,
+  Player,
+  DirectPlayerAccessQueryResult,
+  UserSignInResult,
+  AddDashboardResult,
+  DirectDashboardAccessQueryResult,
+  UserSignUpResult,
+  PlayerSignUpResult,
+  PlayerSignInResult,
+  ResetPlayerPasswordResult,
+  GeneratePlayerResetCodeResult,
+  AddPlayerResult, PlayerFirstSignInResult,
+} from '@/components/graphql/schema'
+import { Router } from 'vue-router'
 
-function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: () => string) {
+// ローカル開発時のみ有効な値であり、流出しても問題ない情報
+const DEFAULT_URL = 'https://hdyvdfc7cfa4rfhwzuzlyvgupi.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+const DEFAULT_REGION = 'ap-northeast-1'
+
+const DEFAULT_DASHBOARD_NAME = 'No title'
+const DEFAULT_DASHBOARD_LAYOUT = JSON.stringify(defaultLayout)
+const DEFAULT_DASHBOARD_META_DATA = 'meta data sample'
+
+export function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: () => string) {
   const auth: AuthOptions = {
     type: 'AWS_LAMBDA',
     token: getAuthToken
@@ -32,55 +45,221 @@ function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: ()
   })
 }
 
-// ローカル開発時のみ有効な値であり、流出しても問題ない情報
-const DEFAULT_URL = 'https://ossf36uukbbldn5ieraulzvima.appsync-api.ap-northeast-1.amazonaws.com/graphql'
-const DEFAULT_REGION = 'ap-northeast-1'
+export async function userSignIn(
+  appSyncClient: ApolloClient<NormalizedCacheObject>,
+  userId: string,
+  userPassword: string,
+  router: Router
+) {
+  const result = await appSyncClient.mutate<UserSignInResult>({
+    mutation: Mutations.userSignIn,
+    variables: { userId, userPassword }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const userSignIn = result.data?.userSignIn
+  if (userSignIn) {
+    const { token, secret, firstDashboard } = userSignIn
+    localStorage.setItem(token, JSON.stringify({ secret }))
+    localStorage.setItem('userId', userId)
+    router.push({ name: 'UserMain1', params: { userToken: token, firstNav: firstDashboard.id } }).then()
+  }
+}
+
+export async function userSignUp(
+  appSyncClient: ApolloClient<NormalizedCacheObject>,
+  userId: string,
+  userName: string,
+  userPassword: string,
+  router: Router
+) {
+  const result = await appSyncClient.mutate<UserSignUpResult>({
+    mutation: Mutations.userSignUp,
+    variables: {
+      userId,
+      userName,
+      userPassword,
+      dashboardName: DEFAULT_DASHBOARD_NAME,
+      layout: DEFAULT_DASHBOARD_LAYOUT,
+      metaData: DEFAULT_DASHBOARD_META_DATA
+    }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const userSignUp = result.data?.userSignUp
+  if (userSignUp) {
+    const { token, secret, firstDashboard } = userSignUp
+    localStorage.setItem(token, JSON.stringify({ secret }))
+    localStorage.setItem('userId', userId)
+    router.push({ name: 'UserMain1', params: { userToken: token, firstNav: firstDashboard.id } }).then()
+  }
+}
+
+export async function playerSignUp(
+  appSyncClient: ApolloClient<NormalizedCacheObject>,
+  playerName: string,
+  playerPassword: string,
+  router?: Router
+) {
+  const result = await appSyncClient.mutate<PlayerSignUpResult>({
+    mutation: Mutations.playerSignUp,
+    variables: { playerName, playerPassword }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const playerSignUp = result.data?.playerSignUp
+  if (playerSignUp && router) {
+    const { token, secret } = playerSignUp
+    localStorage.setItem(token, JSON.stringify({ secret }))
+    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
+  }
+  return playerSignUp
+}
+
+export async function playerFirstSignIn(
+  appSyncClient: ApolloClient<NormalizedCacheObject>,
+  playerId: string,
+  playerPassword: string,
+  router: Router
+) {
+  console.log(JSON.stringify({playerId, playerPassword}, null, 2))
+  const result = await appSyncClient.mutate<PlayerFirstSignInResult>({
+    mutation: Mutations.playerFirstSignIn,
+    variables: { playerId, playerPassword }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const playerFirstSignIn = result.data?.playerFirstSignIn
+  if (playerFirstSignIn) {
+    const { token, secret } = playerFirstSignIn
+    localStorage.setItem(token, JSON.stringify({ secret }))
+    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
+  }
+}
+
+export async function playerSignIn(
+  appSyncClient: ApolloClient<NormalizedCacheObject>,
+  playerId: string,
+  playerPassword: string,
+  router: Router
+) {
+  const result = await appSyncClient.mutate<PlayerSignInResult>({
+    mutation: Mutations.playerSignIn,
+    variables: { playerId, playerPassword }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const playerSignIn = result.data?.playerSignIn
+  if (playerSignIn) {
+    const { token, secret } = playerSignIn
+    localStorage.setItem(token, JSON.stringify({ secret }))
+    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
+  }
+}
+
+export async function resetPlayerPassword(
+  appSyncClient: ApolloClient<NormalizedCacheObject>,
+  playerId: string,
+  resetCode: string,
+  playerPassword: string,
+  router: Router
+) {
+  const result = await appSyncClient.mutate<ResetPlayerPasswordResult>({
+    mutation: Mutations.resetPlayerPassword,
+    variables: { playerId, resetCode, playerPassword }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const resetPlayerPassword = result.data?.resetPlayerPassword
+  if (resetPlayerPassword) {
+    const { token, secret } = resetPlayerPassword
+    localStorage.setItem(token, JSON.stringify({ secret }))
+    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
+  }
+}
+
+async function addDashboard(appSyncClient: ApolloClient<NormalizedCacheObject>, name: string, layout: string, metaData: string): Promise<Dashboard | null> {
+  if (!appSyncClient) return
+  const result = await appSyncClient.mutate<AddDashboardResult>({
+    mutation: Mutations.addDashboard,
+    variables: { name, layout, metaData }
+  })
+  console.log(JSON.stringify(result.data, null, 2))
+  const addDashboard = result.data?.addDashboard
+  if (addDashboard) {
+    return {
+      id: addDashboard.id,
+      token: addDashboard.token,
+      name: addDashboard.name,
+      layout: addDashboard.layout,
+      metaData: addDashboard.metaData,
+      createdAt: addDashboard.createdAt,
+    }
+  }
+  return null
+}
+
+export async function fetchGraphQlConnectionInfo() {
+  const apiInfoResult = await fetch('/api')
+  try {
+    const apiInfoJson: { graphql: string, region: string } = await apiInfoResult.json()
+    return apiInfoJson
+  } catch (error: SyntaxError) {
+    console.warn('/apiで情報が取得できませんでした')
+    console.warn('ローカル開発中ですね？')
+  }
+  return {
+    graphql: DEFAULT_URL,
+    region: DEFAULT_REGION
+  }
+}
 
 export default function useGraphQl(
-  connectionId: string,
-  roomToken: string,
-  userToken: string
+  userToken: string,
+  playerToken: string,
+  dashboardId: string
 ) {
   // 状態
   const state = reactive<{
     ready: boolean;
-    connectionId: string;
-    roomId: string;
-    roomToken: string;
-    userId: string;
-    userToken: string;
-    rooms: Room[]
-    users: User[]
-    chats: Chat[]
+    user: User | null;
+    player: Player | null;
+    dashboard: Dashboard | null;
+    dashboards: {id: string, name: string}[];
+    players: Player[];
   }>({
     ready: false,
-    connectionId,
-    roomId: '',
-    roomToken,
-    userId: '',
-    userToken,
-    rooms: [],
-    users: [],
-    chats: []
+    user: null,
+    player: null,
+    dashboards: [],
+    dashboard: null,
+    players: []
   })
 
   // ロジック
   let appSyncClient: ApolloClient<NormalizedCacheObject> | null = null
 
+  let operation: string = ''
+
   function getAuthToken(): string {
-    if (!state.connectionId) {
-      return '1'
+    let authorize = 'waddlefy'
+    switch(operation) {
+      case 'query directDashboardAccess':
+      case 'mutation generatePlayerResetCode':
+        const userSecret = JSON.parse(localStorage.getItem(userToken))?.secret
+        authorize = `u/${userToken}/${userSecret || ''}`
+        break
+      case 'query directPlayerAccess':
+        const playerSecret = JSON.parse(localStorage.getItem(playerToken))?.secret
+        authorize = `p/${playerToken}/${playerSecret || ''}`
+        break
+      case 'mutation playerSignUp':
+      default:
     }
-    const authorize = [state.connectionId, state.roomToken, state.userToken].filter(s => s).join('/')
-    console.log(JSON.stringify({ authorize }))
+    console.log(JSON.stringify({ operation, authorize }))
     return authorize
   }
 
   async function initialize() {
-    state.roomId = ''
-    state.userId = ''
-    state.rooms = []
-    state.users = []
+    state.user = null
+    state.dashboard = null
+    state.player = null
+    state.players = []
+
     state.ready = false
 
     if (appSyncClient) {
@@ -88,141 +267,133 @@ export default function useGraphQl(
       appSyncClient.stop()
     }
 
-    let graphql: string = DEFAULT_URL
-    let region: string = DEFAULT_REGION
-    const apiInfoResult = await fetch('/api')
-    try {
-      const apiInfoJson: { graphql: string, region: string } = await apiInfoResult.json()
-      graphql = apiInfoJson.graphql
-      region = apiInfoJson.region
-    } catch (error: SyntaxError) {
-      console.warn('/apiで情報が取得できませんでした')
-      console.warn('ローカル開発中ですね？')
-    }
-
+    const { graphql, region } = await fetchGraphQlConnectionInfo()
     appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
 
-    if (!state.connectionId) {
-      const initResult = await appSyncClient.mutate<InitMutationResult>({ mutation: Mutations.initMutation })
-      state.connectionId = initResult.data?.init.connectionId || ''
-      console.log(initResult)
-      history.replaceState(null, '', `/${getAuthToken()}`)
+    if (userToken) {
+      await directDashboardAccess(dashboardId)
     }
 
-    if (state.roomToken) {
-      const getRoomResult = await appSyncClient.query<GetRoomQueryResult>({
-        query: Queries.getRoomQuery,
-        variables: {
-          roomToken: state.roomToken
-        },
-        fetchPolicy: 'network-only'
+    if (playerToken) {
+      operation = 'query directPlayerAccess'
+      const result = await appSyncClient.mutate<DirectPlayerAccessQueryResult>({
+        mutation: Queries.directPlayerAccess
       })
-      console.log(JSON.stringify(getRoomResult.data, null, 2))
-      state.rooms = getRoomResult.data?.getRooms || []
-      state.roomId = getRoomResult.data.getRoom.id || ''
-      state.users = getRoomResult.data.getRoom.users || []
-    } else {
-      const getRoomsResult = await appSyncClient.query<GetRoomsQueryResult>({
-        query: Queries.getRoomsQuery,
-        fetchPolicy: 'network-only'
-      })
-      console.log(JSON.stringify(getRoomsResult.data, null, 2))
-      state.rooms = getRoomsResult?.data?.getRooms || []
-    }
-
-    if (state.userToken) {
-      const getUserResult = await appSyncClient.query<GetUserQueryResult>({
-        query: Queries.getUserQuery,
-        variables: {
-          userToken: state.userToken
-        },
-        fetchPolicy: 'network-only'
-      })
-      console.log(JSON.stringify(getUserResult.data, null, 2))
-      state.userId = getUserResult.data.getUser.id || ''
+      console.log(JSON.stringify(result.data, null, 2))
+      const directPlayerAccess = result.data?.directPlayerAccess
+      if (directPlayerAccess) {
+        const { id, token, name, dashboard } = directPlayerAccess
+        state.user = { id: dashboard.user.id, name: dashboard.user.name } as User
+        state.dashboards = []
+        state.dashboard = {
+          id: dashboard.id,
+          token: dashboard.token,
+          name: dashboard.name,
+          layout: dashboard.layout,
+          metaData: dashboard.metaData,
+          createdAt: dashboard.createdAt,
+        }
+        state.players = dashboard.players
+        state.player = {
+          id, token, name
+        }
+      }
     }
 
     state.ready = true
   }
   initialize().then()
 
-  async function addRoom(roomName: string, roomPassword: string) {
+  async function addDefaultDashboard() {
     if (!appSyncClient) return
-    const addRoomResult = await appSyncClient.mutate<AddRoomMutationResult>({
-      mutation: Mutations.addRoomMutation,
-      variables: { roomName, roomPassword }
-    })
-    console.log(JSON.stringify(addRoomResult.data, null, 2))
-    state.roomId = addRoomResult?.data?.addRoom.id || ''
-    state.roomToken = addRoomResult?.data?.addRoom.token || ''
-    history.replaceState(null, '', `/${getAuthToken()}`)
+    const dashboard = await addDashboard(
+      appSyncClient,
+      DEFAULT_DASHBOARD_NAME,
+      DEFAULT_DASHBOARD_LAYOUT,
+      DEFAULT_DASHBOARD_META_DATA
+    )
+    if (dashboard) {
+      state.dashboard = dashboard
+      state.dashboards.push({ id: dashboard.id, name: dashboard.name })
+    }
   }
 
-  async function entryRoom(id: string, password: string) {
+  async function directDashboardAccess(dashboardId: string) {
+    if (!appSyncClient) return
+    state.dashboard = null
+    state.players = []
+    console.log(dashboardId)
+    operation = 'query directDashboardAccess'
+    const result = await appSyncClient.mutate<DirectDashboardAccessQueryResult>({
+      mutation: Queries.directDashboardAccess,
+      variables: { dashboardId }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    const directDashboardAccess = result.data?.directDashboardAccess
+    if (directDashboardAccess) {
+      state.user = {
+        id: directDashboardAccess.user.id,
+        token: directDashboardAccess.user.token,
+        name: directDashboardAccess.user.name
+      }
+      state.dashboards = directDashboardAccess.user.dashboards
+      state.dashboard = {
+        id: directDashboardAccess.id,
+        token: directDashboardAccess.token,
+        name: directDashboardAccess.name,
+        layout: directDashboardAccess.layout,
+        metaData: directDashboardAccess.metaData,
+        createdAt: directDashboardAccess.createdAt,
+      }
+      state.players = directDashboardAccess.players
+    }
+  }
+
+  async function generatePlayerResetCode(playerId: string): Promise<string | null> {
+    if (!appSyncClient) {
+      return null
+    }
+    try {
+      operation = 'mutation generatePlayerResetCode'
+      const result = await appSyncClient.mutate<GeneratePlayerResetCodeResult>({
+        mutation: Mutations.generatePlayerResetCode,
+        variables: { playerId }
+      })
+      console.log(JSON.stringify(result.data, null, 2))
+      const generatePlayerResetCode = result.data?.generatePlayerResetCode
+      return generatePlayerResetCode?.resetCode || null
+    } catch (e) {
+      // Nothing
+    }
+    return null
+  }
+
+  async function addPlayer(playerName: string) {
     if (!appSyncClient) {
       return
     }
-    const entryRoomResult = await appSyncClient!.mutate<EntryRoomMutationResult>({
-      mutation: Mutations.entryRoomMutation,
-      variables: {
-        roomId: id,
-        roomPassword: password
-      },
-      fetchPolicy: 'no-cache'
-    })
-    console.log(JSON.stringify(entryRoomResult.data, null, 2))
-    state.roomId = entryRoomResult.data?.entryRoom.id || ''
-    state.roomToken = entryRoomResult.data?.entryRoom.token || ''
-    state.users = entryRoomResult.data?.entryRoom.users || []
-    history.replaceState(null, '', `/${getAuthToken()}`)
-    console.log(JSON.stringify(state.users, null, 2))
-  }
 
-  async function signUp(userName: string, userPassword: string) {
-    if (!appSyncClient) return
-    const signUpResult = await appSyncClient!.mutate<SignUpMutationResult>({
-      mutation: Mutations.signUpMutation,
-      variables: { userName, userPassword }
-    })
-    console.log(JSON.stringify(signUpResult.data, null, 2))
-    state.userId = signUpResult.data?.signUp.id || ''
-    state.userToken = signUpResult.data?.signUp.token || ''
-    history.replaceState(null, '', `/${getAuthToken()}`)
-  }
+    const dashboardId = state.dashboard?.id || ''
 
-  async function signIn(userId: string, userPassword: string) {
-    if (!appSyncClient) return
-    try {
-      const signInResult = await appSyncClient!.mutate<SignInMutationResult>({
-        mutation: Mutations.signInMutation,
-        variables: { userId, userPassword }
-      })
-      console.log(JSON.stringify(signInResult.data, null, 2))
-      state.userId = signInResult.data?.signIn.id || ''
-      state.userToken = signInResult.data?.signIn.token || ''
-      history.replaceState(null, '', `/${getAuthToken()}`)
-    } catch (error: ApolloError) {
-      // TODO AuthorizedError
+    const result = await appSyncClient.mutate<AddPlayerResult>({
+      mutation: Mutations.addPlayer,
+      variables: { playerName, dashboardId }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    const addPlayer = result.data?.addPlayer
+    if (addPlayer) {
+      state.players.push(addPlayer)
     }
-  }
-  async function patchUser( _updateUser: Partial<{
-    name: string
-    type: string
-  }>) {
-    // TODO 未実装
-  }
-  async function deleteUser() {
-    // TODO 未実装
+
+    return addPlayer
   }
 
   return {
     state,
-    addRoom,
-    entryRoom,
-    signUp,
-    signIn,
-    patchUser,
-    deleteUser
+    addDefaultDashboard,
+    directDashboardAccess,
+    addPlayer,
+    generatePlayerResetCode
   }
 }
 

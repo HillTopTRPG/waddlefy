@@ -1,0 +1,14 @@
+{
+  "version": "2018-05-29",
+  "operation": "PutItem",
+  "key" : {
+    "id": $util.dynamodb.toDynamoDBJson($util.autoId()),
+    "token": $util.dynamodb.toDynamoDBJson($util.autoId()),
+    "signUpToken": $util.dynamodb.toDynamoDBJson($util.autoId()),
+    "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+    "layout": $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
+    "metaData": $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
+    "createdAt": $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds()),
+    "userId": $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
+  }
+}

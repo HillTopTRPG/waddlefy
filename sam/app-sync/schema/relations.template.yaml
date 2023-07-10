@@ -1,149 +1,151 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  waddlefy
-  Sample SAM Template for waddlefy
+Description: Waddlefy schema relations
 
 Parameters:
   ApiId:
     Type: String
-  ConnectionTableDataSourceName:
-    Type: String
-  RoomTableDataSourceName:
-    Type: String
   UserTableDataSourceName:
+    Type: String
+  DashboardTableDataSourceName:
+    Type: String
+  PlayerTableDataSourceName:
+    Type: String
+  PaneTableDataSourceName:
     Type: String
 
 Resources:
-  # Connection.room
-  RelationConnectionRoom:
+  # UserForUser.firstDashboard
+  RelationUserForUserFirstDashboard:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: Connection
-      FieldName: room
-      DataSourceName: !Ref RoomTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result)
+      TypeName: UserForUser
+      FieldName: firstDashboard
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt QueryFirstDashboardIdFunction.FunctionId
+          - !GetAtt GetDashboardFunction.FunctionId
+      RequestMappingTemplate: '{}'
+      ResponseMappingTemplateS3Location: vtl/return-stash-dashboard.vm
 
-  # Connection.user
-  RelationConnectionUser:
+  QueryFirstDashboardIdFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: query_first_dashboard_id_function
+      DataSourceName: !Ref DashboardTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #set($flg = $ctx.result.items.size() > 0)
+        $util.validate($flg, "No such Dashboard")
+        $util.qr($ctx.stash.put("dashboardId", $ctx.result.items[0].id))
+        {}
+
+  GetDashboardFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: get_dashboard_function
+      DataSourceName: !Ref DashboardTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-stash-dashboard-id.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        $util.qr($ctx.stash.put("dashboard", $ctx.result))
+        {}
+
+  # UserForUser.dashboards
+  RelationUserForUserDashboards:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: Connection
+      TypeName: UserForUser
+      FieldName: dashboards
+      DataSourceName: !Ref DashboardTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
+
+  # DashboardForUser.user
+  RelationDashboardForUserUser:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: DashboardForUser
       FieldName: user
-      DataSourceName: !Ref RoomTableDataSourceName
+      DataSourceName: !Ref UserTableDataSourceName
       RequestMappingTemplateS3Location: vtl/get-item-where-id-source-user-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result)
+      ResponseMappingTemplateS3Location: vtl/return-result.vm
 
-  # Room.connections
-  RelationRoomConnections:
+  # DashboardForUser.players
+  RelationDashboardForUserPlayers:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: Room
-      FieldName: connections
-      DataSourceName: !Ref ConnectionTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+      TypeName: DashboardForUser
+      FieldName: players
+      DataSourceName: !Ref PlayerTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # Room.users
-  RelationRoomUsers:
+  # DashboardForUser.panes
+  RelationDashboardForUserPanes:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: Room
-      FieldName: users
+      TypeName: DashboardForUser
+      FieldName: panes
+      DataSourceName: !Ref PaneTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
+
+  # DashboardForPlayer.user
+  RelationDashboardForPlayerUser:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: DashboardForPlayer
+      FieldName: user
       DataSourceName: !Ref UserTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-user-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result.vm
 
-  # EntryRoomResult.connections
-  RelationEntryRoomResultConnections:
+  # DashboardForPlayer.players
+  RelationDashboardForPlayerPlayers:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: EntryRoomResult
-      FieldName: connections
-      DataSourceName: !Ref ConnectionTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+      TypeName: DashboardForPlayer
+      FieldName: players
+      DataSourceName: !Ref PlayerTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # EntryRoomResult.users
-  RelationEntryRoomResultUsers:
+  # DashboardForPlayer.panes
+  RelationDashboardForPlayerPanes:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: EntryRoomResult
-      FieldName: users
-      DataSourceName: !Ref UserTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-room-id-source-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result.items)
+      TypeName: DashboardForPlayer
+      FieldName: panes
+      DataSourceName: !Ref PaneTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # User.room
-  RelationUserRoom:
+  # PlayerForPlayer.dashboard
+  RelationPlayerForPlayerDashboard:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: User
-      FieldName: room
-      DataSourceName: !Ref RoomTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result)
-
-  # User.connections
-  RelationUserConnections:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !Ref ApiId
-      TypeName: User
-      FieldName: connections
-      DataSourceName: !Ref ConnectionTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result.items)
-
-  # LoginResult.room
-  RelationLoginResultRoom:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !Ref ApiId
-      TypeName: LoginResult
-      FieldName: room
-      DataSourceName: !Ref RoomTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result)
-
-  # LoginResult.connections
-  RelationLoginResultConnections:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !Ref ApiId
-      TypeName: LoginResult
-      FieldName: connections
-      DataSourceName: !Ref ConnectionTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result.items)
-
-  # Chat.room
-  RelationChatRoom:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !Ref ApiId
-      TypeName: Chat
-      FieldName: room
-      DataSourceName: !Ref RoomTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-room-id.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result)
-
-  # Chat.owner
-  RelationChatOwner:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !Ref ApiId
-      TypeName: Chat
-      FieldName: owner
-      DataSourceName: !Ref RoomTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-owner.vm
-      ResponseMappingTemplate: $util.toJson($ctx.result)
-
+      TypeName: PlayerForPlayer
+      FieldName: dashboard
+      DataSourceName: !Ref DashboardTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-dashboard-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result.vm

@@ -1,0 +1,16 @@
+{
+  "version": "2018-05-29",
+  "operation": "UpdateItem",
+  "key": {
+    "id" : $util.dynamodb.toDynamoDBJson($ctx.stash.id)
+  },
+  "update" : {
+    "expression" : "SET #lastLoggedIn = :lastLoggedIn",
+    "expressionNames" : {
+      "#lastLoggedIn" : "lastLoggedIn"
+    },
+    "expressionValues" : {
+      ":lastLoggedIn" : $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds())
+    }
+  }
+}
