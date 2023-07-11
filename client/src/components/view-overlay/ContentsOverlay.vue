@@ -8,7 +8,7 @@
     :scrim="false"
     :close-on-back="true"
     :no-click-animation="true"
-    class="ml-2 my-2"
+    class="ma-0"
     style="max-width: 400px"
     content-class="w-100 h-100"
   >

@@ -4,37 +4,44 @@
     class="my-1 py-0 pl-1 pr-2"
     :class="{ copied }"
     ripple
-    :title="title"
-    :subtitle="subtitle"
     @click="writeUrlClipboard()"
   >
     <template v-slot:prepend>
       <v-icon icon="mdi-content-copy" class="mx-3" v-if="!copied" />
       <v-icon icon="mdi-check" color="primary" class="mx-3 check-icon" v-else />
+      <user-avatar :token="userAvatarToken" class="mr-3" v-if="userAvatarToken" />
     </template>
+    <v-list-item-title>
+      <slot>{{ title }}</slot>
+    </v-list-item-title>
+    <v-list-item-subtitle>{{ subtitleWrap }}</v-list-item-subtitle>
   </v-list-item>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import {computed, ref, watch} from 'vue'
+import UserAvatar from "@/components/parts/UserAvatar.vue";
 
 const props = defineProps<{
   title: string
   subtitle: string
   pathName: string
+  userAvatarToken?: string
 }>()
 
 const copied = ref(false)
 
-// フラグがONでいられるのは1秒間だけ
+// フラグがONでいられるのは2秒間だけ
 let copyTimeoutId: number | null = null
 watch(copied, value => {
   if (!value) return
   if (copyTimeoutId !== null)  {
     window.clearTimeout(copyTimeoutId)
   }
-  copyTimeoutId = window.setTimeout(() => copied.value = false, 1000)
+  copyTimeoutId = window.setTimeout(() => copied.value = false, 2000)
 })
+
+const subtitleWrap = computed(() => copied.value ? 'クリップボードにコピーしました' : props.subtitle)
 
 async function writeUrlClipboard() {
   copied.value = false

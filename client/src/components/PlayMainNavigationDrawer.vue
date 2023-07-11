@@ -1,5 +1,6 @@
 <template>
   <v-navigation-drawer
+    id="play-main-navigation-drawer"
     :rail='rail'
     rail-width='54'
     :permanent='true'
@@ -21,19 +22,6 @@
           <div class="text-h6 d-inline-block" v-if="!rail">
             <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
           </div>
-          <template v-slot:append>
-            <v-btn
-              prepend-icon="mdi-cog"
-              variant="text"
-              :stacked="true"
-              size="x-small"
-              class="px-0"
-              :color="nav == 'setting' ? 'primary' : ''"
-              text="設定"
-              @click="emits('update:nav', 'setting')"
-              v-if="!rail"
-            />
-          </template>
         </v-list-item>
         <v-divider />
       </v-list>
@@ -47,7 +35,7 @@
       open-strategy="single"
       :selected="[nav]"
       :mandatory="true"
-      class="py-0"
+      class="py-0 px-0"
     >
       <template v-for="dashboard in (graphQlStore?.state.dashboards || [])" :key="dashboard.id">
         <user-nav-item
@@ -72,19 +60,19 @@
 
     <template v-slot:append>
       <!-- メインナビゲーションドロワー フッター -->
-      <v-list :nav="true" class="pt-1">
+      <v-list :nav="true" class="pt-1 pb-0">
         <v-divider />
         <v-list-item class="pa-0 mb-0" v-if="graphQlStore?.state.user">
           <template v-slot:prepend>
             <user-avatar
-              :user="graphQlStore?.state.user!"
+              :token="graphQlStore?.state.user?.id || ''"
+              id="user-icon"
               class="mr-3 my-3"
-              @click="emits('update:nav', 'profile')"
+              @click="dialog = dialog === 'profile' ? '' : 'profile'"
             />
           </template>
           <template v-if="!rail">
             <v-list-item-title class='pl-1' v-text="graphQlStore?.state.user?.name || ''" />
-            <v-list-item-title class='pl-1' v-text="`id: ${graphQlStore?.state.user?.id || ''}`" />
           </template>
           <template v-slot:append>
             <v-btn
@@ -102,12 +90,30 @@
       </v-list>
     </template>
   </v-navigation-drawer>
+
+  <play-main-nav-dialog
+    title="プロフィール"
+    transition="slide-y-reverse-transition"
+    :modal-value="dialog === 'profile'"
+    @update:modal-value="v => dialog = v ? 'profile' : ''"
+  >
+    <v-list lines="two" subheader>
+      <v-list-subheader>User Controls</v-list-subheader>
+      <v-list-item title="Content filtering" subtitle="Set the content filtering level to restrict apps that can be downloaded"></v-list-item>
+      <v-list-item title="Password" subtitle="Require password for purchase or use password to restrict purchase"></v-list-item>
+    </v-list>
+    <v-divider />
+    <v-list>
+      <v-list-subheader>General</v-list-subheader>
+    </v-list>
+  </play-main-nav-dialog>
 </template>
 
 <script lang="ts" setup>
-import { watch, inject } from 'vue'
+import {watch, inject, ref} from 'vue'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import UserAvatar from '@/components/parts/UserAvatar.vue'
+import PlayMainNavDialog from '@/components/PlayMainNavDialog.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -125,9 +131,16 @@ const emits = defineEmits<{
   (e: 'update:nav', value: string): void
 }>()
 
-if (!props.nav) {
-  emits('update:nav', graphQlStore?.state.dashboard?.id || '')
-}
+const dialog = ref('')
+const saveRail = ref(false)
+watch(dialog, () => {
+  if (!dialog.value) {
+    emits('update:rail', saveRail.value)
+  } else {
+    saveRail.value = props.rail
+    emits('update:rail', false)
+  }
+})
 
 watch(() => graphQlStore?.state.dashboards?.length, () => {
   emits('update:nav', graphQlStore?.state.dashboard?.id || '')

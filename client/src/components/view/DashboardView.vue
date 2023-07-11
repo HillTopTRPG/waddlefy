@@ -4,7 +4,7 @@
   <owner-overlay :modal-value="nav === 'owner'" @close="emits('update:nav', '')" />
   <player-overlay :modal-value="Boolean(nav) && ['share', 'owner'].every(s => s !== nav)" @close="emits('update:nav', '')" />
 
-  <v-app-bar density="compact" elevation="1">
+  <v-app-bar density="compact" elevation="1" id="dashboard-main-app-bar">
     <template v-slot:prepend>
       <v-btn
         density="comfortable"
@@ -41,7 +41,7 @@
           <template v-slot:prepend>
             <v-icon icon="mdi-share-variant" class="mr-6"></v-icon>
           </template>
-          <v-list-item-title>共有する</v-list-item-title>
+          <v-list-item-title>参加してもらう</v-list-item-title>
           <v-list-item-subtitle>オーナー専用</v-list-item-subtitle>
         </v-list-item>
         <v-divider/>
@@ -56,13 +56,13 @@
         @click="emits('update:nav', nav === 'owner' ? '' : 'owner')"
       >
         <template v-slot:prepend>
-          <user-avatar :user="graphQlStore?.state.user!" class='mr-3' />
+          <user-avatar :token="graphQlStore?.state.user!.id" class='mr-3' />
         </template>
         <v-list-item-title>{{graphQlStore?.state.user?.name || ''}}</v-list-item-title>
       </v-list-item>
       <v-divider/>
 
-      <v-list-subheader class="pa-0 ma-0">{{ !rail ? `プレイヤー: ${graphQlStore?.state.players.length || 0}人` : 'PL' }}</v-list-subheader>
+      <v-list-subheader class="pa-0 ma-0">{{ !rail ? `参加者: ${graphQlStore?.state.players.length || 0}人` : '参' }}</v-list-subheader>
       <template v-for="player in graphQlStore?.state.players" :key="player.id">
         <v-list-item
           class="px-0 py-1 mb-0"
@@ -72,7 +72,7 @@
           @click="emits('update:nav', nav === player.id ? '' : player.id)"
         >
           <template v-slot:prepend>
-            <user-avatar :user="player" class='mr-3' />
+            <user-avatar :token="player.id" class='mr-3' />
           </template>
           <template v-if="!rail">
             <v-list-item-title v-text="player.name || ''" />

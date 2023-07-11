@@ -7,17 +7,17 @@ type Mutation {
   userSignIn(input: UserSignInInput): UserForUser
   # ダッシュボード作成
   addDashboard(input: AddDashboardInput): DashboardForUser
-  # プレイヤー作成
-  addPlayer(input: AddPlayerInput): IdName
-  # プレイヤーサインアップ
+  # 参加者作成
+  addPlayer(input: AddPlayerInput): IdNameStatus
+  # 参加者サインアップ
   playerSignUp(input: PlayerSignUpInput): PlayerForPlayer
-  # プレイヤーサインイン（初回）
+  # 参加者サインイン（初回）
   playerFirstSignIn(input: PlayerSignInInput): PlayerForPlayer
-  # プレイヤーサインイン
+  # 参加者サインイン
   playerSignIn(input: PlayerSignInInput): PlayerForPlayer
-  # プレイヤーリセットコード生成
+  # 参加者リセットコード生成
   generatePlayerResetCode(input: RequestPlayerPasswordResetInput): RequestPlayerPasswordResetResult
-  # プレイヤーパスワードリセット
+  # 参加者パスワードリセット
   resetPlayerPassword(input: ResetPlayerPasswordInput): PlayerForPlayer
 }
 
@@ -105,7 +105,7 @@ type DashboardForUser {
   metaData: String!
   createdAt: AWSTimestamp!
   user: UserForUser!
-  players: [IdName]!
+  players: [IdNameStatus]!
   panes: [Pane]!
 }
 
@@ -117,7 +117,7 @@ type DashboardForPlayer {
   metaData: String!
   createdAt: AWSTimestamp!
   user: IdName!
-  players: [IdName]!
+  players: [IdNameStatus]!
   panes: [Pane]!
 }
 
@@ -150,11 +150,13 @@ type Pane {
   data: String! # json
 }
 
-#type Subscription {
-#}
+type Subscription {
+  onAddPlayer: IdNameStatus
+    @aws_subscribe(mutations: ["addPlayer"])
+}
 
 schema {
   query: Query
   mutation: Mutation
-#  subscription: Subscription
+  subscription: Subscription
 }

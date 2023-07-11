@@ -80,11 +80,12 @@ mutation AddDashboard($dashboardId: String!, $playerName: String!) {
   addPlayer(input: {dashboardId: $dashboardId, name: $playerName}) {
     id
     name
+    status
   }
 }
 `)
 export type AddPlayerResult = {
-  addPlayer: IdName
+  addPlayer: IdNameStatus
 }
 
 const playerSignUp = gql(`
@@ -256,6 +257,7 @@ query DirectDashboardAccess($dashboardId: String!) {
     players {
       id
       name
+      status
     }
   }
 }
@@ -352,6 +354,7 @@ export type Player = {
   id: string
   name: string
   token?: string
+  status?: string
   resetCode?: string
 }
 
@@ -364,7 +367,7 @@ export type DashboardForUser = {
   metaData: string
   createdAt: number
   user: UserForUser
-  players: IdName[]
+  players: IdNameStatus[]
 }
 
 export type DashboardForPlayer = {

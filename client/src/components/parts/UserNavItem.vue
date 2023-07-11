@@ -28,9 +28,11 @@ const iconClass = computed(() => props.bigIcon ? 'ma-2' : 'mr-6')
         color='primary'
         :value='value || undefined'
         v-bind='props'
+        class="ml-2 pl-3"
+        style="border-radius: 10px 0 0 10px;"
+        :style='listItemStyle'
         @click='emits("select", value)'
         @keydown.enter.stop='$event.target.click()'
-        :style='listItemStyle'
       >
         <template #append>
           <v-icon :size='iconSize' :class='iconClass' v-if='appendIcon'>mdi-{{ appendIcon }}</v-icon>

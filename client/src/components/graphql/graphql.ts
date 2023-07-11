@@ -23,7 +23,7 @@ import {
 import { Router } from 'vue-router'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
-const DEFAULT_URL = 'https://hdyvdfc7cfa4rfhwzuzlyvgupi.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+const DEFAULT_URL = 'https://qjidw4vphvamznzkimuuotmocm.appsync-api.ap-northeast-1.amazonaws.com/graphql'
 const DEFAULT_REGION = 'ap-northeast-1'
 
 const DEFAULT_DASHBOARD_NAME = 'No title'
@@ -43,6 +43,11 @@ export function makeGraphQlClient(endPointUrl: string, region: string, getAuthTo
     link,
     cache: new InMemoryCache()
   })
+}
+
+function sortId(d1, d2): number {
+  if (d1.id < d2.id) return -1
+  return d1.id > d2.id ? 1 : 0
 }
 
 export async function userSignIn(
@@ -293,7 +298,7 @@ export default function useGraphQl(
           metaData: dashboard.metaData,
           createdAt: dashboard.createdAt,
         }
-        state.players = dashboard.players
+        state.players = dashboard.players.sort(sortId)
         state.player = {
           id, token, name
         }
@@ -336,7 +341,7 @@ export default function useGraphQl(
         token: directDashboardAccess.user.token,
         name: directDashboardAccess.user.name
       }
-      state.dashboards = directDashboardAccess.user.dashboards
+      state.dashboards = directDashboardAccess.user.dashboards.sort(sortId)
       state.dashboard = {
         id: directDashboardAccess.id,
         token: directDashboardAccess.token,
@@ -345,7 +350,7 @@ export default function useGraphQl(
         metaData: directDashboardAccess.metaData,
         createdAt: directDashboardAccess.createdAt,
       }
-      state.players = directDashboardAccess.players
+      state.players = directDashboardAccess.players.sort(sortId)
     }
   }
 

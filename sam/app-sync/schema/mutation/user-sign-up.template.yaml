@@ -65,7 +65,7 @@ Resources:
           "version": "2018-05-29",
           "operation": "PutItem",
           "key" : {
-            "id": $util.dynamodb.toDynamoDBJson($util.autoId()),
+            "id": $util.dynamodb.toDynamoDBJson($util.autoUlid()),
             "token": $util.dynamodb.toDynamoDBJson($util.autoId()),
             "signUpToken": $util.dynamodb.toDynamoDBJson($util.autoId()),
             "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.dashboardName),

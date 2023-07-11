@@ -51,14 +51,14 @@
                 rounded
                 color="primary"
                 class="px-5"
-                text="合流"
+                text="参加"
                 :disabled="!ready || (player ? false : !playerName)"
                 :loading="!ready"
                 @click="callSignUp()"
               />
             </v-card-actions>
             <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
-              合流に失敗しました
+              参加に失敗しました
             </v-card-actions>
           </v-card>
         </v-col>

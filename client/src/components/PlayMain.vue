@@ -1,23 +1,21 @@
 <template>
   <template v-if="graphQlStore?.state.ready">
-    <play-main-navigation-drawer v-if="graphQlStore?.state.user?.token" v-model:rail="firstRail" v-model:nav="selectedFirstNav" />
+    <play-main-navigation-drawer
+      v-if="graphQlStore?.state.user?.token"
+      v-model:rail="firstRail"
+      v-model:nav="selectedFirstNav"
+    />
+
     <v-main :scrollable="true">
-      <v-layout full-height v-if="selectedFirstNav === 'profile'">
-        <profile-view />
-      </v-layout>
-      <v-layout full-height v-else-if="selectedFirstNav === 'setting'">
-        <setting-view />
-      </v-layout>
-      <dashboard-view v-else v-model:rail="secondRail" v-model:nav="selectedSecondNav" />
+      <dashboard-view v-model:rail="secondRail" v-model:nav="selectedSecondNav" />
     </v-main>
   </template>
 </template>
 
 <script lang="ts" setup>
-import {reactive, inject, ref, computed, watch} from 'vue'
+import { reactive, inject, ref, computed, watch } from 'vue'
 import PlayMainNavigationDrawer from '@/components/PlayMainNavigationDrawer.vue'
 import DashboardView from '@/components/view/DashboardView.vue'
-import ProfileView from '@/components/view/ProfileView.vue'
 
 import { Layout } from '@/components/panes'
 import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
@@ -25,7 +23,6 @@ const layout = reactive<Layout>({ ...JSON.parse(JSON.stringify(defaultLayout)) }
 console.log(JSON.stringify(layout, null, 2))
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import SettingView from "@/components/view/SettingView.vue";
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // noinspection TypeScriptValidateTypes
