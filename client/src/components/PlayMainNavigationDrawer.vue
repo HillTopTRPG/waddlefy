@@ -65,7 +65,7 @@
         <v-list-item class="pa-0 mb-0" v-if="graphQlStore?.state.user">
           <template v-slot:prepend>
             <user-avatar
-              :token="graphQlStore?.state.user?.id || ''"
+              :token="graphQlStore?.state.user?.iconToken || ''"
               id="user-icon"
               class="mr-3 my-3"
               @click="dialog = dialog === 'profile' ? '' : 'profile'"

@@ -120,6 +120,7 @@ Resources:
             ProjectionType: INCLUDE
             NonKeyAttributes:
               - name
+              - iconToken
               - status
 
   # Pane Table

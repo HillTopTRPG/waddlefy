@@ -24,10 +24,10 @@ import {
   OnAddPlayerResult
 } from '@/components/graphql/schema'
 import { Router } from 'vue-router'
-import _, {Observable} from '@apollo/client'
+import { Observable } from '@apollo/client'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
-const DEFAULT_URL = 'https://qjidw4vphvamznzkimuuotmocm.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+const DEFAULT_URL = 'https://frhcambmmrhl7hkeuym7pzwbu4.appsync-api.ap-northeast-1.amazonaws.com/graphql'
 const DEFAULT_REGION = 'ap-northeast-1'
 
 const DEFAULT_DASHBOARD_NAME = 'No title'
@@ -293,8 +293,8 @@ export default function useGraphQl(
       console.log(JSON.stringify(result.data, null, 2))
       const directPlayerAccess = result.data?.directPlayerAccess
       if (directPlayerAccess) {
-        const { id, token, name, dashboard } = directPlayerAccess
-        state.user = { id: dashboard.user.id, name: dashboard.user.name } as User
+        const { id, token, iconToken, name, dashboard } = directPlayerAccess
+        state.user = { id: dashboard.user.id, name: dashboard.user.name, iconToken: dashboard.user.iconToken } as User
         state.dashboards = []
         state.dashboard = {
           id: dashboard.id,
@@ -306,7 +306,7 @@ export default function useGraphQl(
         }
         state.players = dashboard.players.sort(sortId)
         state.player = {
-          id, token, name
+          id, token, iconToken, name
         }
       }
     }
@@ -348,7 +348,8 @@ export default function useGraphQl(
       state.user = {
         id: directDashboardAccess.user.id,
         token: directDashboardAccess.user.token,
-        name: directDashboardAccess.user.name
+        name: directDashboardAccess.user.name,
+        iconToken: directDashboardAccess.user.iconToken,
       }
       state.dashboards = directDashboardAccess.user.dashboards.sort(sortId)
       state.dashboard = {

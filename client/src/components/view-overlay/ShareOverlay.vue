@@ -35,7 +35,7 @@
           <list-item-clipboard
             title=""
             :subtitle="playerStatusMessage(player)"
-            :user-avatar-token="player.id"
+            :user-avatar-token="player.iconToken"
             :path-name="`d/${graphQlStore?.state.dashboard?.token || ''}/${player.id}`"
           >
             {{ player.name }}のログインURL

@@ -8,8 +8,8 @@ type Mutation {
   # ダッシュボード作成
   addDashboard(input: AddDashboardInput): DashboardForUser
   # 参加者作成
-  addPlayerByUser(input: AddPlayerByUserInput): IdNameStatus
-  addPlayerByPlayer(input: AddPlayerByPlayerInput): IdNameStatus
+  addPlayerByUser(input: AddPlayerByUserInput): IdNameIconStatus
+  addPlayerByPlayer(input: AddPlayerByPlayerInput): IdNameIconStatus
   # 参加者サインイン（初回）
   playerFirstSignIn(input: PlayerSignInInput): PlayerForPlayer
   # 参加者サインイン
@@ -26,21 +26,22 @@ type Query {
   # for Authorized User
   directDashboardAccess(id: String!): DashboardForUser
   # for Unauthorized Player
-  getDashboardPlayer(id: String!): IdNameStatus
-  getDashboardPlayers: [IdNameStatus]
+  getDashboardPlayer(id: String!): IdNameIconStatus
+  getDashboardPlayers: [IdNameIconStatus]
   # for Authorized Player
   directPlayerAccess: PlayerForPlayer
 }
 
 type Subscription {
-  onAddPlayer: IdNameStatus
+  onAddPlayer: IdNameIconStatus
     @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
 }
 
-type IdNameStatus {
+type IdNameIconStatus {
   id: ID!
   name: String!
   status: String!
+  iconToken: String!
 }
 
 type CheckResult {
@@ -65,6 +66,7 @@ input UserSignInInput {
 type UserForUser {
   id: ID!
   name: String!
+  iconToken: String!
   token: String!
   secret: String!
   firstDashboard: DashboardForUser
@@ -74,6 +76,12 @@ type UserForUser {
 type IdName {
   id: ID!
   name: String!
+}
+
+type IdNameIcon {
+  id: ID!
+  name: String!
+  iconToken: String!
 }
 
 # Player
@@ -100,6 +108,7 @@ input PlayerSignInInput {
 type PlayerForPlayer {
   id: ID!
   name: String!
+  iconToken: String!
   token: String!
   secret: String!
   dashboard: DashboardForPlayer
@@ -114,7 +123,7 @@ type DashboardForUser {
   metaData: String!
   createdAt: AWSTimestamp!
   user: UserForUser!
-  players: [IdNameStatus]!
+  players: [IdNameIconStatus]!
   panes: [Pane]!
 }
 
@@ -125,8 +134,8 @@ type DashboardForPlayer {
   layout: String!
   metaData: String!
   createdAt: AWSTimestamp!
-  user: IdName!
-  players: [IdNameStatus]!
+  user: IdNameIcon!
+  players: [IdNameIconStatus]!
   panes: [Pane]!
 }
 

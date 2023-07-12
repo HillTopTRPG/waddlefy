@@ -5,6 +5,7 @@ mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!
   userSignUp(input: {userId: $userId, name: $userName, password: $userPassword, dashboardName: $dashboardName, layout: $layout, metaData: $metaData}) {
     id
     name
+    iconToken
     token
     secret
     firstDashboard {
@@ -32,6 +33,7 @@ mutation UserSignIn($userId: String!, $userPassword: String!) {
   userSignIn(input: {userId: $userId, password: $userPassword}) {
     id
     name
+    iconToken
     token
     secret
     firstDashboard {
@@ -67,6 +69,7 @@ mutation AddDashboard($name: String!, $layout: String!, $metaData: String!) {
     players {
       id
       name
+      iconToken
     }
   }
 }
@@ -80,12 +83,13 @@ mutation AddPlayerByUser($dashboardId: String!, $playerName: String!) {
   addPlayerByUser(input: {dashboardId: $dashboardId, name: $playerName}) {
     id
     name
+    iconToken
     status
   }
 }
 `)
 export type AddPlayerByUserResult = {
-  addPlayerByUser: IdNameStatus
+  addPlayerByUser: IdNameIconStatus
 }
 
 const addPlayerByPlayer = gql(`
@@ -93,12 +97,13 @@ mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
   addPlayerByPlayer(input: {name: $playerName, password: $playerPassword}) {
     id
     name
+    iconToken
     status
   }
 }
 `)
 export type AddPlayerByPlayerResult = {
-  addPlayerByPlayer: IdNameStatus
+  addPlayerByPlayer: IdNameIconStatus
 }
 
 const playerFirstSignIn = gql(`
@@ -106,6 +111,7 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
   playerFirstSignIn(input: {playerId: $playerId, password: $playerPassword}) {
     id
     name
+    iconToken
     token
     secret
     dashboard {
@@ -118,10 +124,12 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       user {
         id
         name
+        iconToken
       }
       players {
         id
         name
+        iconToken
       }
     }
   }
@@ -136,6 +144,7 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
   playerSignIn(input: {playerId: $playerId, password: $playerPassword}) {
     id
     name
+    iconToken
     token
     secret
     dashboard {
@@ -148,10 +157,12 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       user {
         id
         name
+        iconToken
       }
       players {
         id
         name
+        iconToken
       }
     }
   }
@@ -179,6 +190,7 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
   resetPlayerPassword(input: {id: $playerId, resetCode: $resetCode, password: $playerPassword}) {
     id
     name
+    iconToken
     token
     secret
     dashboard {
@@ -191,10 +203,12 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
       user {
         id
         name
+        iconToken
       }
       players {
         id
         name
+        iconToken
       }
     }
   }
@@ -230,6 +244,7 @@ query DirectDashboardAccess($dashboardId: String!) {
     user {
       id
       name
+      iconToken
       token
       secret
       dashboards {
@@ -240,6 +255,7 @@ query DirectDashboardAccess($dashboardId: String!) {
     players {
       id
       name
+      iconToken
       status
     }
   }
@@ -254,17 +270,19 @@ query GetDashboardPlayer($playerId: String!) {
   getDashboardPlayer(id: $playerId) {
     id
     name
+    iconToken
     status
   }
 }
 `)
-export type IdNameStatus = {
+export type IdNameIconStatus = {
   id: string
   name: string
+  iconToken: string
   status: string
 }
 export type GetDashboardPlayerResult = {
-  getDashboardPlayer: IdNameStatus
+  getDashboardPlayer: IdNameIconStatus
 }
 
 const getDashboardPlayers = gql(`
@@ -272,12 +290,13 @@ query GetDashboardPlayers {
   getDashboardPlayers {
     id
     name
+    iconToken
     status
   }
 }
 `)
 export type GetDashboardPlayersResult = {
-  getDashboardPlayers: IdNameStatus[]
+  getDashboardPlayers: IdNameIconStatus[]
 }
 
 const directPlayerAccess = gql(`
@@ -285,6 +304,7 @@ query DirectPlayerAccess {
   directPlayerAccess {
     id
     name
+    iconToken
     token
     secret
     dashboard {
@@ -297,10 +317,12 @@ query DirectPlayerAccess {
       user {
         id
         name
+        iconToken
       }
       players {
         id
         name
+        iconToken
       }
     }
   }
@@ -313,6 +335,7 @@ export type DirectPlayerAccessQueryResult = {
 export type UserForUser = {
   id: string
   name: string
+  iconToken: string
   token: string
   secret: string
   firstDashboard: DashboardForUser
@@ -322,12 +345,14 @@ export type UserForUser = {
 export type User = {
   id: string
   name: string
+  iconToken: string
   token?: string
 }
 
 export type PlayerForPlayer = {
   id: string
   name: string
+  iconToken: string
   token: string
   secret: string
   dashboard: DashboardForPlayer
@@ -336,6 +361,7 @@ export type PlayerForPlayer = {
 export type Player = {
   id: string
   name: string
+  iconToken: string
   token?: string
   status?: string
   resetCode?: string
@@ -350,7 +376,7 @@ export type DashboardForUser = {
   metaData: string
   createdAt: number
   user: UserForUser
-  players: IdNameStatus[]
+  players: IdNameIconStatus[]
 }
 
 export type DashboardForPlayer = {
@@ -360,8 +386,8 @@ export type DashboardForPlayer = {
   layout: string
   metaData: string
   createdAt: number
-  user: IdName
-  players: IdName[]
+  user: IdNameIcon
+  players: IdNameIconStatus[]
 }
 
 export type Dashboard = {
@@ -379,17 +405,24 @@ export type IdName = {
   name: string
 }
 
+export type IdNameIcon = {
+  id: string
+  name: string
+  iconToken: string
+}
+
 const onAddPlayer = gql(`
 subscription OnAddPlayer {
   onAddPlayer {
     id
     name
+    iconToken
     status
   }
 }
 `)
 export type OnAddPlayerResult = {
-  onAddPlayer: IdNameStatus
+  onAddPlayer: IdNameIconStatus
 }
 
 export const Mutations = {

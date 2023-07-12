@@ -5,6 +5,7 @@
   "key" : {
     "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.userId),
     "token": $util.dynamodb.toDynamoDBJson($util.autoId()),
+    "iconToken": $util.dynamodb.toDynamoDBJson($util.autoId()),
     "secret": $util.dynamodb.toDynamoDBJson($util.autoId()),
     "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
     "createdAt": $util.dynamodb.toDynamoDBJson($now),
