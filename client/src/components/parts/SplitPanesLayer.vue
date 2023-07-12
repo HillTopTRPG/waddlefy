@@ -77,10 +77,10 @@ const addBrotherPane = (idx: number, direction: string | undefined = '', toParen
   }
   if (toParent) {
     cLayout.value.panes.splice(idx + addIdx, 0, addObj)
-    cLayout.value.panes.forEach(p => p.size = 100 / cLayout.value.panes.length)
+    cLayout.value.panes.forEach(p => { p.size = 100 / cLayout.value.panes.length })
   } else {
     cLayout.value.panes[idx].panes.splice(addIdx ? cLayout.value.panes[idx].panes.length : 0, 0, addObj)
-    cLayout.value.panes[idx].panes.forEach(p => p.size = 100 / cLayout.value.panes[idx].panes.length)
+    cLayout.value.panes[idx].panes.forEach(p => { p.size = 100 / cLayout.value.panes[idx].panes.length })
   }
 }
 
@@ -171,8 +171,8 @@ const removePane = (event: { target: HTMLElement }) => {
   }
 }
 
-const onResizedPanes = (event: { size: number }[]) => event.forEach(({ size }, idx) => cLayout.value.panes[idx].size
-  = size)
+const onResizedPanes = (event: { size: number }[]) =>
+  event.forEach(({ size }, idx) => { cLayout.value.panes[idx].size = size })
 
 const childLayer = ref<any>()
 const component  = ref<any>()
@@ -290,7 +290,6 @@ defineExpose({
                     <v-col class='pa-0'>
                       <v-btn
                         icon=''
-                        v-ripple='false'
                         variant='plain'
                       ></v-btn>
                     </v-col>

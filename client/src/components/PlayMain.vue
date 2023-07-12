@@ -51,19 +51,19 @@ const selectedSecondNav = ref<string>(props.secondNav || '')
 function createPathName() {
   const firstNav = selectedFirstNav.value ? `/${selectedFirstNav.value}` : ''
   const secondNav = firstNav ? selectedSecondNav.value ? `/${selectedSecondNav.value}` : '' : ''
-  const rail1 = firstRail.value ? '1' : '0'
-  let rail2 = ''
+  const firstRailString = firstRail.value ? '1' : '0'
+  let secondRailString = ''
   if (['setting', 'profile'].every(s => s !== selectedFirstNav.value)) {
-    rail2 = `,${secondRail.value ? '1' : '0'}`
+    secondRailString = `,${secondRail.value ? '1' : '0'}`
   }
   if (graphQlStore) {
     const player = graphQlStore.state.player
     if (player) {
-      return `/p/${player.token}${firstNav}${secondNav}?rail=${rail1}${rail2}`
+      return `/p/${player.token}${firstNav}${secondNav}?rail=${firstRailString}${secondRailString}`
     }
     const user = graphQlStore.state.user
     if (user) {
-      return `/u/${user.token}${firstNav}${secondNav}?rail=${rail1}${rail2}`
+      return `/u/${user.token}${firstNav}${secondNav}?rail=${firstRailString}${secondRailString}`
     }
   }
   return ''

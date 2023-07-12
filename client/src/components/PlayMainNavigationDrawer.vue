@@ -95,7 +95,7 @@
     title="プロフィール"
     transition="slide-y-reverse-transition"
     :modal-value="dialog === 'profile'"
-    @update:modal-value="v => dialog = v ? 'profile' : ''"
+    @update:modal-value="v => { dialog = v ? 'profile' : '' }"
   >
     <v-list lines="two" subheader>
       <v-list-subheader>User Controls</v-list-subheader>
@@ -134,11 +134,11 @@ const emits = defineEmits<{
 const dialog = ref('')
 const saveRail = ref(false)
 watch(dialog, () => {
-  if (!dialog.value) {
-    emits('update:rail', saveRail.value)
-  } else {
+  if (dialog.value) {
     saveRail.value = props.rail
     emits('update:rail', false)
+  } else {
+    emits('update:rail', saveRail.value)
   }
 })
 

@@ -75,47 +75,30 @@ export type AddDashboardResult = {
   addDashboard: DashboardForUser
 }
 
-const addPlayer = gql(`
-mutation AddDashboard($dashboardId: String!, $playerName: String!) {
-  addPlayer(input: {dashboardId: $dashboardId, name: $playerName}) {
+const addPlayerByUser = gql(`
+mutation AddPlayerByUser($dashboardId: String!, $playerName: String!) {
+  addPlayerByUser(input: {dashboardId: $dashboardId, name: $playerName}) {
     id
     name
     status
   }
 }
 `)
-export type AddPlayerResult = {
-  addPlayer: IdNameStatus
+export type AddPlayerByUserResult = {
+  addPlayerByUser: IdNameStatus
 }
 
-const playerSignUp = gql(`
-mutation PlayerSignUp($playerName: String!, $playerPassword: String!) {
-  playerSignUp(input: {name: $playerName, password: $playerPassword}) {
+const addPlayerByPlayer = gql(`
+mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
+  addPlayerByPlayer(input: {name: $playerName, password: $playerPassword}) {
     id
     name
-    token
-    secret
-    dashboard {
-      id
-      name
-      token
-      layout
-      metaData
-      createdAt
-      user {
-        id
-        name
-      }
-      players {
-        id
-        name
-      }
-    }
+    status
   }
 }
 `)
-export type PlayerSignUpResult = {
-  playerSignUp: PlayerForPlayer
+export type AddPlayerByPlayerResult = {
+  addPlayerByPlayer: IdNameStatus
 }
 
 const playerFirstSignIn = gql(`
@@ -396,12 +379,25 @@ export type IdName = {
   name: string
 }
 
+const onAddPlayer = gql(`
+subscription OnAddPlayer {
+  onAddPlayer {
+    id
+    name
+    status
+  }
+}
+`)
+export type OnAddPlayerResult = {
+  onAddPlayer: IdNameStatus
+}
+
 export const Mutations = {
   userSignUp,
   userSignIn,
   addDashboard,
-  addPlayer,
-  playerSignUp,
+  addPlayerByUser,
+  addPlayerByPlayer,
   playerFirstSignIn,
   playerSignIn,
   resetPlayerPassword,
@@ -414,4 +410,8 @@ export const Queries = {
   directDashboardAccess,
   getDashboardPlayer,
   getDashboardPlayers
+}
+
+export const Subscriptions = {
+  onAddPlayer
 }

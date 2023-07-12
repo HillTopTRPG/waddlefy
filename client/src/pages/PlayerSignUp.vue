@@ -73,7 +73,8 @@ import LogoComponent from '@/components/parts/LogoComponent.vue'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import {
   fetchGraphQlConnectionInfo,
-  makeGraphQlClient, playerFirstSignIn,
+  makeGraphQlClient,
+  playerFirstSignIn,
   playerSignIn,
   playerSignUp,
   resetPlayerPassword
@@ -181,11 +182,10 @@ async function callSignUp() {
       if (!existsPlayer) {
         // sign up
         return playerSignUp(appSyncClient, playerName.value, password.value, router)
-      } else {
-        errorMessage.value = '名前が重複しています。'
-        signUpFailure.value = true
-        return
       }
+      errorMessage.value = '名前が重複しています。'
+      signUpFailure.value = true
+      return
     }
   } catch (err) {
     // Nothing

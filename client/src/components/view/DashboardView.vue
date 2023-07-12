@@ -56,7 +56,7 @@
         @click="emits('update:nav', nav === 'owner' ? '' : 'owner')"
       >
         <template v-slot:prepend>
-          <user-avatar :token="graphQlStore?.state.user!.id" class='mr-3' />
+          <user-avatar :token="graphQlStore?.state.user!.id || ''" class='mr-3' />
         </template>
         <v-list-item-title>{{graphQlStore?.state.user?.name || ''}}</v-list-item-title>
       </v-list-item>

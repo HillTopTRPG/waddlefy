@@ -11,7 +11,7 @@ type PlayerData = UserData // 同じ構造
 
 async function getTokenData<T>(tableName: string, token: string, tokenName: string): Promise<T | undefined> {
   try {
-    const data: QueryCommandOutput = await ddbDocClient.send<T>(new QueryCommand({
+    const data: QueryCommandOutput = await ddbDocClient.send(new QueryCommand({
       TableName : tableName,
       IndexName: `${tokenName}-index`,
       KeyConditionExpression: '#token = :token',
@@ -45,7 +45,22 @@ async function getTokenSecretData<T extends { secret: string }>(tableName: strin
   return undefined
 }
 
-export const handler = async (event) => {
+const ALL_OPERATIONS = [
+  'Query.directPlayerAccess',
+  'Query.directDashboardAccess',
+  'Query.getDashboardPlayer',
+  'Query.getDashboardPlayers',
+  'Mutation.userSignUp',
+  'Mutation.userSignIn',
+  'Mutation.addDashboard',
+  'Mutation.addPlayerByUser',
+  'Mutation.addPlayerByPlayer',
+  'Mutation.playerSignIn',
+  'Mutation.generatePlayerResetCode',
+  'Mutation.resetPlayerPassword',
+]
+
+export const handler = async event => {
   console.log(`event >`, JSON.stringify(event, null, 2))
 
   // const typesBase = `arn:aws:appsync:${process.env.AWS_REGION}:${event.accountId}:apis/${event.apiId}/types`
@@ -53,21 +68,6 @@ export const handler = async (event) => {
     // `${typesBase}/Room/fields/password`,
   ]
   const admitFields: string[] = []
-
-  const ALL_OPERATIONS = [
-    'Query.directPlayerAccess',
-    'Query.directDashboardAccess',
-    'Query.getDashboardPlayer',
-    'Query.getDashboardPlayers',
-    'Mutation.userSignUp',
-    'Mutation.userSignIn',
-    'Mutation.addDashboard',
-    'Mutation.addPlayer',
-    'Mutation.playerSignUp',
-    'Mutation.playerSignIn',
-    'Mutation.generatePlayerResetCode',
-    'Mutation.resetPlayerPassword',
-  ]
 
   let isAuthorized = false
   let id: string | null = null
@@ -90,7 +90,7 @@ export const handler = async (event) => {
           id = userData.id
           admitFields.push('Query.directDashboardAccess')
           admitFields.push('Mutation.addDashboard')
-          admitFields.push('Mutation.addPlayer')
+          admitFields.push('Mutation.addPlayerByUser')
           admitFields.push('Mutation.generatePlayerResetCode')
         }
       } else if (split[0] === 'p') {
@@ -105,19 +105,19 @@ export const handler = async (event) => {
     } else if (split.length === 2) {
       if (split[0] === 'd') {
         // Player
-        const dashboardData = await getTokenData(process.env.DASHBOARD_TABLE_NAME, split[1], 'token')
+        const dashboardData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'token')
         if (dashboardData) {
           isAuthorized = true
           id = dashboardData.id
           admitFields.push('Query.getDashboardPlayer')
-          admitFields.push('Mutation.playerSignUp')
+          admitFields.push('Mutation.addPlayerByPlayer')
           admitFields.push('Mutation.playerSignIn')
           admitFields.push('Mutation.resetPlayerPassword')
         }
       }
       if (split[0] === 'di') {
         // Player
-        const dashboardData = await getTokenData(process.env.DASHBOARD_TABLE_NAME, split[1], 'signUpToken')
+        const dashboardData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'signUpToken')
         if (dashboardData) {
           isAuthorized = true
           id = dashboardData.id

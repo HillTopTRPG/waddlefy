@@ -8,9 +8,8 @@ type Mutation {
   # ダッシュボード作成
   addDashboard(input: AddDashboardInput): DashboardForUser
   # 参加者作成
-  addPlayer(input: AddPlayerInput): IdNameStatus
-  # 参加者サインアップ
-  playerSignUp(input: PlayerSignUpInput): PlayerForPlayer
+  addPlayerByUser(input: AddPlayerByUserInput): IdNameStatus
+  addPlayerByPlayer(input: AddPlayerByPlayerInput): IdNameStatus
   # 参加者サインイン（初回）
   playerFirstSignIn(input: PlayerSignInInput): PlayerForPlayer
   # 参加者サインイン
@@ -31,6 +30,11 @@ type Query {
   getDashboardPlayers: [IdNameStatus]
   # for Authorized Player
   directPlayerAccess: PlayerForPlayer
+}
+
+type Subscription {
+  onAddPlayer: IdNameStatus
+    @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
 }
 
 type IdNameStatus {
@@ -73,9 +77,14 @@ type IdName {
 }
 
 # Player
-input AddPlayerInput {
+input AddPlayerByUserInput {
   dashboardId: String!
   name: String!
+}
+
+input AddPlayerByPlayerInput {
+  name: String!
+  password: String!
 }
 
 input PlayerSignUpInput {
@@ -148,11 +157,6 @@ type Pane {
   id: ID!
   type: String!
   data: String! # json
-}
-
-type Subscription {
-  onAddPlayer: IdNameStatus
-    @aws_subscribe(mutations: ["addPlayer"])
 }
 
 schema {

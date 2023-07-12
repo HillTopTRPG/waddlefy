@@ -82,18 +82,19 @@ const addPlayerErrorMessage = computed<string>(() => {
   if (graphQlStore.state.players.some(p => p.name === addPlayerName.value)) {
     return '他の参加者の名前と重複しています。'
   }
+  return ''
 })
 
 async function callAddPlayer() {
   if (!addPlayerName.value) {
     return
   }
-  await graphQlStore?.addPlayer(addPlayerName.value)
+  await graphQlStore?.addPlayerByUser(addPlayerName.value)
   addPlayerName.value = ''
 }
 
 function playerStatusMessage(player: Player) {
-  let result = ''
+  let result
   switch (player.status) {
     case 'init':
       result = 'パスワードを設定しつつログインする状態'

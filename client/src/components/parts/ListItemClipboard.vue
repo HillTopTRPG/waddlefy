@@ -38,7 +38,7 @@ watch(copied, value => {
   if (copyTimeoutId !== null)  {
     window.clearTimeout(copyTimeoutId)
   }
-  copyTimeoutId = window.setTimeout(() => copied.value = false, 2000)
+  copyTimeoutId = window.setTimeout(() => { copied.value = false }, 2000)
 })
 
 const subtitleWrap = computed(() => copied.value ? 'クリップボードにコピーしました' : props.subtitle)

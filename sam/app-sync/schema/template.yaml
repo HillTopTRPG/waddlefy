@@ -118,21 +118,21 @@ Resources:
         ApiId: !Ref ApiId
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
-  # mutation addPlayer
-  MutationAddPlayerStack:
+  # mutation addPlayerByUser
+  MutationAddPlayerByUserStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: mutation/add-player.template.yaml
+      Location: mutation/add-player-by-user.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
         CheckNoPlayerNameExistsFunctionId: !GetAtt FunctionsResolverStack.Outputs.CheckNoPlayerNameExistsFunctionId
 
-  # mutation playerSignUp
+  # mutation addPlayerByPlayer
   MutationPlayerSignUpStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: mutation/player-sign-up.template.yaml
+      Location: mutation/add-player-by-player.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
