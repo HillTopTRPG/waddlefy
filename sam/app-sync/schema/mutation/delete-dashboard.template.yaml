@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Waddlefy AppSync Mutation deletePlayer
+
+Parameters:
+  ApiId:
+    Type: String
+  DashboardTableDataSourceName:
+    Type: String
+
+Resources:
+  DeleteDashboardMutationResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Mutation
+      FieldName: deleteDashboard
+      DataSourceName: !Ref DashboardTableDataSourceName
+      RequestMappingTemplateS3Location: ../vtl/delete-item-where-id-input-id.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #set($ctx.result.dashboardId = $ctx.result.id)
+        $util.toJson($ctx.result)

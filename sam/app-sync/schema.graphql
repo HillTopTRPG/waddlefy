@@ -1,6 +1,14 @@
 # noinspection GraphQLUnresolvedReference,GraphQLMissingType
 
+schema {
+  mutation: Mutation
+  subscription: Subscription
+  query: Query
+}
+
 type Mutation {
+  # 追加・認証系
+
   # ユーザーサインアップ
   userSignUp(input: UserSignUpInput): UserForUser
   # ユーザーサインイン
@@ -8,8 +16,8 @@ type Mutation {
   # ダッシュボード作成
   addDashboard(input: AddDashboardInput): DashboardForUser
   # 参加者作成
-  addPlayerByUser(input: AddPlayerByUserInput): IdNameIconStatus
-  addPlayerByPlayer(input: AddPlayerByPlayerInput): IdNameIconStatus
+  addPlayerByUser(input: AddPlayerByUserInput): AbstractPlayer
+  addPlayerByPlayer(input: AddPlayerByPlayerInput): AbstractPlayer
   # 参加者サインイン（初回）
   playerFirstSignIn(input: PlayerSignInInput): PlayerForPlayer
   # 参加者サインイン
@@ -18,6 +26,42 @@ type Mutation {
   generatePlayerResetCode(input: RequestPlayerPasswordResetInput): RequestPlayerPasswordResetResult
   # 参加者パスワードリセット
   resetPlayerPassword(input: ResetPlayerPasswordInput): PlayerForPlayer
+
+  # 更新系
+
+  # ユーザー情報更新
+  updateUserName(input: NameInput): AbstractUser
+  updateUserIcon: AbstractUser
+  # ダッシュボード情報更新
+  updateDashboard(input: UpdateDashboardInput): UpdatedDashboard
+  # 参加者情報更新
+  updatePlayerName(input: NameInput): AbstractPlayer
+  updatePlayerIcon: AbstractPlayer
+
+  # 削除系
+
+  # ダッシュボード削除
+  deleteDashboard(input: DeleteDashboardInput): DeletedId
+  # 参加者削除
+  deletePlayer(input: DeletePlayerInput): DeletedId
+}
+
+type Subscription {
+  # 追加系
+  onAddPlayer(dashboardId: String!): AbstractPlayer
+  @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
+
+  # 更新系
+  onUpdateUser(id: String!): AbstractUser
+  @aws_subscribe(mutations: ["updateUserName", "updateUserIcon"])
+  onUpdateDashboard(id: String!): UpdatedDashboard
+  @aws_subscribe(mutations: ["updateDashboard"])
+  onUpdatePlayer(dashboardId: String!): AbstractPlayer
+  @aws_subscribe(mutations: ["updatePlayerName", "updatePlayerIcon"])
+
+  # 削除系
+  onDeletePlayer(dashboardId: String!): DeletedId
+  @aws_subscribe(mutations: ["deletePlayer"])
 }
 
 type Query {
@@ -26,29 +70,15 @@ type Query {
   # for Authorized User
   directDashboardAccess(id: String!): DashboardForUser
   # for Unauthorized Player
-  getDashboardPlayer(id: String!): IdNameIconStatus
-  getDashboardPlayers: [IdNameIconStatus]
+  getDashboardPlayer(id: String!): AbstractPlayer
+  getDashboardPlayers: [AbstractPlayer]
   # for Authorized Player
   directPlayerAccess: PlayerForPlayer
 }
 
-type Subscription {
-  onAddPlayer: IdNameIconStatus
-    @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
-}
+###############################
+# Input系
 
-type IdNameIconStatus {
-  id: ID!
-  name: String!
-  status: String!
-  iconToken: String!
-}
-
-type CheckResult {
-  ok: Boolean!
-}
-
-# UserLogin
 input UserSignUpInput {
   userId: String!
   name: String!
@@ -63,28 +93,11 @@ input UserSignInInput {
   password: String!
 }
 
-type UserForUser {
-  id: ID!
+input AddDashboardInput {
   name: String!
-  iconToken: String!
-  token: String!
-  secret: String!
-  firstDashboard: DashboardForUser
-  dashboards: [IdName]!
+  layout: String!
+  metaData: String!
 }
-
-type IdName {
-  id: ID!
-  name: String!
-}
-
-type IdNameIcon {
-  id: ID!
-  name: String!
-  iconToken: String!
-}
-
-# Player
 input AddPlayerByUserInput {
   dashboardId: String!
   name: String!
@@ -95,23 +108,51 @@ input AddPlayerByPlayerInput {
   password: String!
 }
 
-input PlayerSignUpInput {
-  name: String!
-  password: String!
-}
-
 input PlayerSignInInput {
   playerId: String!
   password: String!
 }
 
-type PlayerForPlayer {
+input RequestPlayerPasswordResetInput {
+  id: String!
+}
+
+input ResetPlayerPasswordInput {
+  id: String!
+  resetCode: String!
+  password: String!
+}
+
+input NameInput {
+  name: String!
+}
+
+input UpdateDashboardInput {
+  dashboardId: String!
+  name: String!
+  layout: String!
+  metaData: String!
+}
+
+input DeleteDashboardInput {
+  id: String!
+}
+
+input DeletePlayerInput {
+  id: String!
+}
+
+###############################
+# 戻り値系
+
+type UserForUser {
   id: ID!
   name: String!
   iconToken: String!
   token: String!
   secret: String!
-  dashboard: DashboardForPlayer
+  firstDashboard: DashboardForUser
+  dashboards: [AbstractDashboard]!
 }
 
 type DashboardForUser {
@@ -123,8 +164,58 @@ type DashboardForUser {
   metaData: String!
   createdAt: AWSTimestamp!
   user: UserForUser!
-  players: [IdNameIconStatus]!
+  players: [AbstractPlayer]!
   panes: [Pane]!
+}
+
+type AbstractPlayer {
+  id: ID!
+  dashboardId: String!
+  name: String!
+  status: String!
+  iconToken: String!
+}
+
+type PlayerForPlayer {
+  id: ID!
+  dashboardId: String!
+  name: String!
+  iconToken: String!
+  token: String!
+  secret: String!
+  dashboard: DashboardForPlayer
+}
+
+type RequestPlayerPasswordResetResult {
+  resetCode: String!
+}
+
+type AbstractUser {
+  id: ID!
+  name: String!
+  iconToken: String!
+}
+
+type UpdatedDashboard {
+  id: ID!
+  name: String!
+  token: String!
+  layout: String!
+  metaData: String!
+}
+
+type DeletedId {
+  id: ID!
+  dashboardId: String!
+}
+
+type CheckResult {
+  ok: Boolean!
+}
+
+type AbstractDashboard {
+  id: ID!
+  name: String!
 }
 
 type DashboardForPlayer {
@@ -134,42 +225,13 @@ type DashboardForPlayer {
   layout: String!
   metaData: String!
   createdAt: AWSTimestamp!
-  user: IdNameIcon!
-  players: [IdNameIconStatus]!
+  user: AbstractUser!
+  players: [AbstractPlayer]!
   panes: [Pane]!
-}
-
-# ダッシュボード
-input AddDashboardInput {
-  name: String!
-  layout: String!
-  metaData: String!
-}
-
-# Playerパスワードリセット要求
-input RequestPlayerPasswordResetInput {
-  id: String!
-}
-
-type RequestPlayerPasswordResetResult {
-  resetCode: String!
-}
-
-# Playerパスワードリセット実施
-input ResetPlayerPasswordInput {
-  id: String!
-  resetCode: String!
-  password: String!
 }
 
 type Pane {
   id: ID!
   type: String!
   data: String! # json
-}
-
-schema {
-  query: Query
-  mutation: Mutation
-  subscription: Subscription
 }

@@ -50,7 +50,7 @@ Resources:
         #if($ctx.result && $ctx.result.error)
           $util.error($ctx.result.error)
         #end
-        $util.qr($ctx.stash.put("user", $ctx.result))
+        $util.qr($ctx.stash.put("userTemp", $ctx.result))
         {}
 
   PutItemDashboardFunction:
@@ -72,11 +72,12 @@ Resources:
             "layout": $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
             "metaData": $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
             "createdAt": $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds()),
-            "userId": $util.dynamodb.toDynamoDBJson($ctx.stash.user.id)
+            "userId": $util.dynamodb.toDynamoDBJson($ctx.stash.userTemp.id)
           }
         }
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
           $util.error($ctx.result.error)
         #end
+        $util.qr($ctx.stash.put("user", $ctx.stash.userTemp))
         {}

@@ -1,7 +1,7 @@
 import { AuthOptions, createAuthLink } from 'aws-appsync-auth-link'
 import {ApolloClient, ApolloLink, FetchResult, InMemoryCache, NormalizedCacheObject} from '@apollo/client/core'
 import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link'
-import { InjectionKey, reactive } from 'vue'
+import {InjectionKey, reactive, watch} from 'vue'
 import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import {
   User,
@@ -21,7 +21,18 @@ import {
   AddPlayerByUserResult,
   PlayerFirstSignInResult,
   AddPlayerByPlayerResult,
-  OnAddPlayerResult
+  OnAddPlayerResult,
+  OnDeletePlayerResult,
+  DeleteDashboardResult,
+  DeletePlayerResult,
+  UpdatePlayerNameResult,
+  UpdatePlayerIconResult,
+  UpdateUserNameResult,
+  UpdateUserIconResult,
+  OnUpdatePlayerResult,
+  OnUpdateUserResult,
+  UpdateDashboardResult,
+  OnUpdateDashboardResult
 } from '@/components/graphql/schema'
 import { Router } from 'vue-router'
 import { Observable } from '@apollo/client'
@@ -193,12 +204,12 @@ async function callAddDashboard(
   const addDashboard = result.data?.addDashboard
   if (addDashboard) {
     callback({
-      id: data.id,
-      token: data.token,
-      name: data.name,
-      layout: data.layout,
-      metaData: data.metaData,
-      createdAt: data.createdAt,
+      id: addDashboard.id,
+      token: addDashboard.token,
+      name: addDashboard.name,
+      layout: addDashboard.layout,
+      metaData: addDashboard.metaData,
+      createdAt: addDashboard.createdAt,
     })
   }
 }
@@ -251,17 +262,24 @@ export default function useGraphQl(
       case 'query directDashboardAccess':
       case 'mutation addPlayerByUser':
       case 'mutation addDashboard':
+      case 'mutation deleteDashboard':
+      case 'mutation updateUserName':
+      case 'mutation updateUserIcon':
+      case 'mutation updateDashboard':
+      case 'mutation deletePlayer':
       case 'mutation generatePlayerResetCode':
         const userSecret = JSON.parse(localStorage.getItem(userToken) || '{}')?.secret
         authorize = `u/${userToken}/${userSecret || ''}`
         break
       case 'query directPlayerAccess':
+      case 'mutation updatePlayerName':
+      case 'mutation updatePlayerIcon':
         const playerSecret = JSON.parse(localStorage.getItem(playerToken) || '{}')?.secret
         authorize = `p/${playerToken}/${playerSecret || ''}`
         break
       default:
     }
-    console.log(JSON.stringify({ operation, authorize }))
+    // console.log(JSON.stringify({ operation, authorize }))
     return authorize
   }
 
@@ -311,7 +329,18 @@ export default function useGraphQl(
       }
     }
 
-    onAddPlayerSubscription()
+    onUpdateUserSubscription()
+
+    const subscribedDashboardId = []
+    watch(() => state.dashboard?.id, (dashboardId) => {
+      if (!dashboardId) return
+      if (subscribedDashboardId.some(id => id === dashboardId)) return
+      subscribedDashboardId.push(dashboardId)
+      onAddPlayerSubscription(dashboardId)
+      onUpdateDashboardSubscription(dashboardId)
+      onUpdatePlayerSubscription(dashboardId)
+      onDeletePlayerSubscription(dashboardId)
+    }, { immediate: true })
 
     state.ready = true
   }
@@ -328,15 +357,98 @@ export default function useGraphQl(
       dashboard => {
         state.dashboard = dashboard
         state.dashboards.push({ id: dashboard.id, name: dashboard.name })
+        state.players = []
       }
     )
+  }
+
+  async function updateUserName(userName: string) {
+    if (!appSyncClient) return
+    if (!state.user?.token) return
+    operation = 'mutation updateUserName'
+    await appSyncClient.mutate<UpdateUserNameResult>({
+      mutation: Mutations.updateUserName,
+      variables: { userName }
+    })
+    // subscriptionにて更新される
+  }
+
+  async function updateUserIcon() {
+    if (!appSyncClient) return
+    if (!state.user?.token) return
+    operation = 'mutation updateUserIcon'
+    await appSyncClient.mutate<UpdateUserIconResult>({
+      mutation: Mutations.updateUserIcon
+    })
+    // subscriptionにて更新される
+  }
+
+  async function updateDashboard(name: string, layout: string, metaData: string) {
+    if (!appSyncClient) return
+    if (!state.user?.token) return
+    operation = 'mutation updateDashboard'
+    await appSyncClient.mutate<UpdateDashboardResult>({
+      mutation: Mutations.updateDashboard,
+      variables: {
+        dashboardId: state.dashboard?.id || '',
+        name,
+        layout,
+        metaData
+      }
+    })
+    // subscriptionにて更新される
+  }
+
+  async function updatePlayerName(playerName: string) {
+    if (!appSyncClient) return
+    if (!state.player?.token) return
+    operation = 'mutation updatePlayerName'
+    await appSyncClient.mutate<UpdatePlayerNameResult>({
+      mutation: Mutations.updatePlayerName,
+      variables: { playerName }
+    })
+    // subscriptionにて更新される
+  }
+
+  async function updatePlayerIcon() {
+    if (!appSyncClient) return
+    if (!state.player?.token) return
+    operation = 'mutation updatePlayerIcon'
+    await appSyncClient.mutate<UpdatePlayerIconResult>({
+      mutation: Mutations.updatePlayerIcon
+    })
+    // subscriptionにて更新される
+  }
+
+  async function deleteDashboard(dashboardId: string) {
+    if (!appSyncClient) return
+    operation = 'mutation deleteDashboard'
+    const result = await appSyncClient.mutate<DeleteDashboardResult>({
+      mutation: Mutations.deleteDashboard,
+      variables: { dashboardId }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    const data = result.data?.deleteDashboard
+    if (data) {
+      const idx = state.dashboards.findIndex(d => d.id === data.id)
+      state.dashboards.splice(idx, 1)
+    }
+  }
+
+  async function deletePlayer(playerId: string) {
+    if (!appSyncClient) return
+    operation = 'mutation deletePlayer'
+    await appSyncClient.mutate<DeletePlayerResult>({
+      mutation: Mutations.deletePlayer,
+      variables: { playerId }
+    })
+    // subscriptionにて削除される
   }
 
   async function directDashboardAccess(dashboardId: string) {
     if (!appSyncClient) return
     state.dashboard = null
     state.players = []
-    console.log(dashboardId)
     operation = 'query directDashboardAccess'
     const result = await appSyncClient.mutate<DirectDashboardAccessQueryResult>({
       mutation: Queries.directDashboardAccess,
@@ -394,16 +506,17 @@ export default function useGraphQl(
     // Subscriptionによってstateに登録される
   }
 
-  function onAddPlayerSubscription(): Observable<FetchResult<OnAddPlayerResult>> {
+  function onAddPlayerSubscription(dashboardId: string): Observable<FetchResult<OnAddPlayerResult>> {
     if (!appSyncClient) return
-    const result = appSyncClient.subscribe<OnAddPlayerResult>({
+    const subscriber = appSyncClient.subscribe<OnAddPlayerResult>({
       query: Subscriptions.onAddPlayer,
+      variables: { dashboardId },
       fetchPolicy: 'network-only'
     })
-    result.subscribe({
+    subscriber.subscribe({
       next(value: FetchResult<OnAddPlayerResult>) {
         const data = value.data?.onAddPlayer
-        if (data) {
+        if (data && state.dashboard?.id === dashboardId) {
           state.players.push(data)
         }
       },
@@ -411,7 +524,103 @@ export default function useGraphQl(
         console.error(errorValue)
       }
     })
-    return result
+    return subscriber
+  }
+
+  function onUpdateUserSubscription(): Observable<FetchResult<OnUpdateUserResult>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<OnUpdateUserResult>({
+      query: Subscriptions.onUpdateUser,
+      variables: { userId: state.user?.id || '' },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<OnUpdateUserResult>) {
+        const data = value.data?.onUpdateUser
+        if (data) {
+          state.user.name = data.name
+          state.user.iconToken = data.iconToken
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
+  function onUpdateDashboardSubscription(dashboardId: string): Observable<FetchResult<OnUpdateDashboardResult>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<OnUpdateDashboardResult>({
+      query: Subscriptions.onUpdateDashboard,
+      variables: { dashboardId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<OnUpdateDashboardResult>) {
+        const data = value.data?.onUpdateDashboard
+        if (data && state.dashboard && state.dashboard.id === dashboardId) {
+          state.dashboard.name = data.name
+          state.dashboard.layout = data.layout
+          state.dashboard.metaData = data.metaData
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
+  function onUpdatePlayerSubscription(dashboardId: string): Observable<FetchResult<OnUpdatePlayerResult>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<OnUpdatePlayerResult>({
+      query: Subscriptions.onUpdatePlayer,
+      variables: { dashboardId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<OnUpdatePlayerResult>) {
+        const data = value.data?.onUpdatePlayer
+        if (data && state.dashboard?.id === dashboardId) {
+          const idx = state.players.findIndex(p => p.id === data.id)
+          state.players[idx].name = data.name
+          state.players[idx].iconToken = data.iconToken
+          state.players[idx].status = data.status
+          if (state.player?.id === data.id) {
+            state.player.name = data.name
+            state.player.iconToken = data.iconToken
+            state.player.status = data.status
+          }
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
+  function onDeletePlayerSubscription(dashboardId: string): Observable<FetchResult<OnDeletePlayerResult>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<OnDeletePlayerResult>({
+      query: Subscriptions.onDeletePlayer,
+      variables: { dashboardId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<OnDeletePlayerResult>) {
+        const data = value.data?.onDeletePlayer
+        if (data && state.dashboard?.id === dashboardId) {
+          const idx = state.players.findIndex(p => p.id === data.id)
+          state.players.splice(idx, 1)
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
   }
 
   return {
@@ -419,7 +628,14 @@ export default function useGraphQl(
     addDefaultDashboard,
     directDashboardAccess,
     addPlayerByUser,
-    generatePlayerResetCode
+    generatePlayerResetCode,
+    updateUserName,
+    updateUserIcon,
+    updateDashboard,
+    updatePlayerName,
+    updatePlayerIcon,
+    deleteDashboard,
+    deletePlayer
   }
 }
 

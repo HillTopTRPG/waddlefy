@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Waddlefy AppSync Mutation updateDashboard
+
+Parameters:
+  ApiId:
+    Type: String
+  DashboardTableDataSourceName:
+    Type: String
+
+Resources:
+  UpdateDashboardMutationResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Mutation
+      FieldName: updateDashboard
+      DataSourceName: !Ref DashboardTableDataSourceName
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "UpdateItem",
+          "key": {
+            "id" : $util.dynamodb.toDynamoDBJson($ctx.args.input.dashboardId)
+          },
+          "update" : {
+            "expression" : "SET #name = :name, #layout = :layout, #metaData = :metaData",
+            "expressionNames" : {
+              "#name" : "name",
+              "#layout" : "layout",
+              "#metaData" : "metaData",
+            },
+            "expressionValues" : {
+              ":name" : $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+              ":layout" : $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
+              ":metaData" : $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
+            }
+          }
+        }
+      ResponseMappingTemplateS3Location: ../vtl/return-result.vm

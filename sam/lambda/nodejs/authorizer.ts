@@ -46,18 +46,27 @@ async function getTokenSecretData<T extends { secret: string }>(tableName: strin
 }
 
 const ALL_OPERATIONS = [
-  'Query.directPlayerAccess',
-  'Query.directDashboardAccess',
-  'Query.getDashboardPlayer',
-  'Query.getDashboardPlayers',
   'Mutation.userSignUp',
   'Mutation.userSignIn',
   'Mutation.addDashboard',
   'Mutation.addPlayerByUser',
   'Mutation.addPlayerByPlayer',
+  'Mutation.playerFirstSignIn',
   'Mutation.playerSignIn',
   'Mutation.generatePlayerResetCode',
   'Mutation.resetPlayerPassword',
+  'Mutation.updateUserName',
+  'Mutation.updateUserIcon',
+  'Mutation.updateDashboard',
+  'Mutation.updatePlayerName',
+  'Mutation.updatePlayerIcon',
+  'Mutation.deleteDashboard',
+  'Mutation.deletePlayer',
+  'Query.checkDuplicateUserId',
+  'Query.directDashboardAccess',
+  'Query.getDashboardPlayer',
+  'Query.getDashboardPlayers',
+  'Query.directPlayerAccess',
 ]
 
 export const handler = async event => {
@@ -77,6 +86,7 @@ export const handler = async event => {
     isAuthorized = true
     admitFields.push('Mutation.userSignUp')
     admitFields.push('Mutation.userSignIn')
+    admitFields.push('Mutation.checkDuplicateUserId')
   } else {
     const split = event.authorizationToken.split('/')
     if (split.length === 3) {
@@ -88,10 +98,15 @@ export const handler = async event => {
         if (userData) {
           isAuthorized = true
           id = userData.id
-          admitFields.push('Query.directDashboardAccess')
           admitFields.push('Mutation.addDashboard')
           admitFields.push('Mutation.addPlayerByUser')
           admitFields.push('Mutation.generatePlayerResetCode')
+          admitFields.push('Mutation.updateUserName')
+          admitFields.push('Mutation.updateUserIcon')
+          admitFields.push('Mutation.updateDashboard')
+          admitFields.push('Mutation.deleteDashboard')
+          admitFields.push('Mutation.deletePlayer')
+          admitFields.push('Query.directDashboardAccess')
         }
       } else if (split[0] === 'p') {
         // Player
@@ -100,6 +115,8 @@ export const handler = async event => {
           isAuthorized = true
           id = playerData.id
           admitFields.push('Query.directPlayerAccess')
+          admitFields.push('Query.updatePlayerName')
+          admitFields.push('Query.updatePlayerIcon')
         }
       }
     } else if (split.length === 2) {
@@ -109,10 +126,11 @@ export const handler = async event => {
         if (dashboardData) {
           isAuthorized = true
           id = dashboardData.id
-          admitFields.push('Query.getDashboardPlayer')
           admitFields.push('Mutation.addPlayerByPlayer')
+          admitFields.push('Mutation.playerFirstSignIn')
           admitFields.push('Mutation.playerSignIn')
           admitFields.push('Mutation.resetPlayerPassword')
+          admitFields.push('Query.getDashboardPlayer')
         }
       }
       if (split[0] === 'di') {

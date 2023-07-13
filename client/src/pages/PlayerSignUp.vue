@@ -80,9 +80,9 @@ import {
   resetPlayerPassword
 } from '@/components/graphql/graphql'
 import {
+  AbstractPlayer,
   GetDashboardPlayerResult,
   GetDashboardPlayersResult,
-  IdNameStatus,
   Queries,
 } from '@/components/graphql/schema'
 
@@ -108,11 +108,10 @@ const resetCode = ref('')
 let appSyncClient: ApolloClient<NormalizedCacheObject> | null = null
 const ready = ref(false)
 const signUpFailure = ref(false)
-const playerNameElm = ref()
 const passwordElm = ref()
 
-const players = ref<IdNameStatus[]>([])
-const player = ref<IdNameStatus | null>(null)
+const players = ref<AbstractPlayer[]>([])
+const player = ref<AbstractPlayer | null>(null)
 
 const errorMessage = ref('')
 

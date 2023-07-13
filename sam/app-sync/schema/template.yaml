@@ -109,11 +109,47 @@ Resources:
         ApiId: !Ref ApiId
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
 
+  # mutation updateUserName
+  MutationUpdateUserNameStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-user-name.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+
+  # mutation updateUserIcon
+  MutationUpdateUserIconStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-user-icon.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+
   # mutation addDashboard
   MutationAddDashboardStack:
     Type: AWS::Serverless::Application
     Properties:
       Location: mutation/add-dashboard.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
+  # mutation updateDashboard
+  MutationUpdateDashboardStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-dashboard.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
+  # mutation deleteDashboard
+  MutationDeleteDashboardStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/delete-dashboard.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
@@ -172,6 +208,33 @@ Resources:
     Type: AWS::Serverless::Application
     Properties:
       Location: mutation/reset-player-password.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # mutation updatePlayerName
+  MutationUpdatePlayerNameStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-player-name.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # mutation updatePlayerIcon
+  MutationUpdatePlayerIconStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-player-icon.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
+
+  # mutation deletePlayer
+  MutationDeletePlayerStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/delete-player.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name

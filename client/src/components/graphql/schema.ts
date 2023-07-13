@@ -16,6 +16,12 @@ mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!
       layout
       metaData
       createdAt
+      players {
+        id
+        dashboardId
+        name
+        iconToken
+      }
     }
     dashboards {
       id
@@ -44,6 +50,12 @@ mutation UserSignIn($userId: String!, $userPassword: String!) {
       layout
       metaData
       createdAt
+      players {
+        id
+        dashboardId
+        name
+        iconToken
+      }
     }
     dashboards {
       id
@@ -68,6 +80,7 @@ mutation AddDashboard($name: String!, $layout: String!, $metaData: String!) {
     createdAt
     players {
       id
+      dashboardId
       name
       iconToken
     }
@@ -82,6 +95,7 @@ const addPlayerByUser = gql(`
 mutation AddPlayerByUser($dashboardId: String!, $playerName: String!) {
   addPlayerByUser(input: {dashboardId: $dashboardId, name: $playerName}) {
     id
+    dashboardId
     name
     iconToken
     status
@@ -89,13 +103,14 @@ mutation AddPlayerByUser($dashboardId: String!, $playerName: String!) {
 }
 `)
 export type AddPlayerByUserResult = {
-  addPlayerByUser: IdNameIconStatus
+  addPlayerByUser: AbstractPlayer
 }
 
 const addPlayerByPlayer = gql(`
 mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
   addPlayerByPlayer(input: {name: $playerName, password: $playerPassword}) {
     id
+    dashboardId
     name
     iconToken
     status
@@ -103,13 +118,14 @@ mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
 }
 `)
 export type AddPlayerByPlayerResult = {
-  addPlayerByPlayer: IdNameIconStatus
+  addPlayerByPlayer: AbstractPlayer
 }
 
 const playerFirstSignIn = gql(`
 mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
   playerFirstSignIn(input: {playerId: $playerId, password: $playerPassword}) {
     id
+    dashboardId
     name
     iconToken
     token
@@ -128,6 +144,7 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       }
       players {
         id
+        dashboardId
         name
         iconToken
       }
@@ -143,6 +160,7 @@ const playerSignIn = gql(`
 mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
   playerSignIn(input: {playerId: $playerId, password: $playerPassword}) {
     id
+    dashboardId
     name
     iconToken
     token
@@ -161,6 +179,7 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       }
       players {
         id
+        dashboardId
         name
         iconToken
       }
@@ -207,6 +226,7 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
       }
       players {
         id
+        dashboardId
         name
         iconToken
       }
@@ -216,6 +236,108 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
 `)
 export type ResetPlayerPasswordResult = {
   resetPlayerPassword: PlayerForPlayer
+}
+
+const updateUserName = gql(`
+mutation UpdateUserName($userName: String!) {
+  updateUserName(input: {name: $userName}) {
+    id
+    name
+    iconToken
+  }
+}
+`)
+export type UpdateUserNameResult = {
+  updateUserName: AbstractUser
+}
+
+const updateUserIcon = gql(`
+mutation UpdateUserIcon {
+  updateUserIcon {
+    id
+    name
+    iconToken
+  }
+}
+`)
+export type UpdateUserIconResult = {
+  updateUserIcon: AbstractUser
+}
+
+const updateDashboard = gql(`
+mutation UpdateDashboard($dashboardId: String!, $name: String!, $layout: String!, $metaData: String!) {
+  updateDashboard(input: {dashboardId: $dashboardId, name: $name, layout: $layout, metaData: $metaData}) {
+    id
+    name
+    token
+    layout
+    metaData
+  }
+}
+`)
+export type UpdatedDashboard = {
+  id: string
+  name: string
+  token: string
+  layout: string
+  metaData: string
+}
+export type UpdateDashboardResult = {
+  updateDashboard: UpdatedDashboard
+}
+
+const updatePlayerName = gql(`
+mutation UpdatePlayerName($playerName: String!) {
+  updatePlayerName(input: {name: $playerName}) {
+    id
+    dashboardId
+    name
+    status
+    iconToken
+  }
+}
+`)
+export type UpdatePlayerNameResult = {
+  updatePlayerName: AbstractPlayer
+}
+
+const updatePlayerIcon = gql(`
+mutation UpdatePlayerIcon {
+  updatePlayerIcon {
+    id
+    dashboardId
+    name
+    status
+    iconToken
+  }
+}
+`)
+export type UpdatePlayerIconResult = {
+  updatePlayerIcon: AbstractPlayer
+}
+
+const deleteDashboard = gql(`
+mutation DeleteDashboard($dashboardId: String!) {
+  deleteDashboard(input: {id: $dashboardId}) {
+    id
+    dashboardId
+  }
+}
+`)
+export type DeleteDashboardResult = {
+  deleteDashboard: DeletedId
+}
+
+const deletePlayer = gql(`
+mutation DeletePlayer($playerId: String!) {
+  deletePlayer(input: {id: $playerId}) {
+    id
+    dashboardId
+  }
+}
+`)
+export type DeletePlayerResult = {
+  deletePlayer: DeletedId
 }
 
 const checkDuplicateUserId = gql(`
@@ -254,6 +376,7 @@ query DirectDashboardAccess($dashboardId: String!) {
     }
     players {
       id
+      dashboardId
       name
       iconToken
       status
@@ -269,26 +392,29 @@ const getDashboardPlayer = gql(`
 query GetDashboardPlayer($playerId: String!) {
   getDashboardPlayer(id: $playerId) {
     id
+    dashboardId
     name
     iconToken
     status
   }
 }
 `)
-export type IdNameIconStatus = {
+export type AbstractPlayer = {
   id: string
+  dashboardId: string
   name: string
   iconToken: string
   status: string
 }
 export type GetDashboardPlayerResult = {
-  getDashboardPlayer: IdNameIconStatus
+  getDashboardPlayer: AbstractPlayer
 }
 
 const getDashboardPlayers = gql(`
 query GetDashboardPlayers {
   getDashboardPlayers {
     id
+    dashboardId
     name
     iconToken
     status
@@ -296,7 +422,7 @@ query GetDashboardPlayers {
 }
 `)
 export type GetDashboardPlayersResult = {
-  getDashboardPlayers: IdNameIconStatus[]
+  getDashboardPlayers: AbstractPlayer[]
 }
 
 const directPlayerAccess = gql(`
@@ -323,6 +449,7 @@ query DirectPlayerAccess {
         id
         name
         iconToken
+        status
       }
     }
   }
@@ -339,7 +466,7 @@ export type UserForUser = {
   token: string
   secret: string
   firstDashboard: DashboardForUser
-  dashboards: IdName[]
+  dashboards: AbstractDashboard[]
 }
 
 export type User = {
@@ -376,7 +503,7 @@ export type DashboardForUser = {
   metaData: string
   createdAt: number
   user: UserForUser
-  players: IdNameIconStatus[]
+  players: AbstractPlayer[]
 }
 
 export type DashboardForPlayer = {
@@ -386,8 +513,8 @@ export type DashboardForPlayer = {
   layout: string
   metaData: string
   createdAt: number
-  user: IdNameIcon
-  players: IdNameIconStatus[]
+  user: AbstractUser
+  players: AbstractPlayer[]
 }
 
 export type Dashboard = {
@@ -400,20 +527,25 @@ export type Dashboard = {
   createdAt: number
 }
 
-export type IdName = {
+export type AbstractDashboard = {
   id: string
   name: string
 }
 
-export type IdNameIcon = {
+export type AbstractUser = {
   id: string
   name: string
   iconToken: string
 }
 
+export type DeletedId = {
+  id: string
+  dashboardId: string
+}
+
 const onAddPlayer = gql(`
-subscription OnAddPlayer {
-  onAddPlayer {
+subscription OnAddPlayer($dashboardId: String!) {
+  onAddPlayer(dashboardId: $dashboardId) {
     id
     name
     iconToken
@@ -422,7 +554,61 @@ subscription OnAddPlayer {
 }
 `)
 export type OnAddPlayerResult = {
-  onAddPlayer: IdNameIconStatus
+  onAddPlayer: AbstractPlayer
+}
+
+const onUpdateUser = gql(`
+subscription OnUpdateUser($userId: String!) {
+  onUpdateUser(id: $userId) {
+    id
+    name
+    iconToken
+  }
+}
+`)
+export type OnUpdateUserResult = {
+  onUpdateUser: AbstractUser
+}
+
+const onUpdateDashboard = gql(`
+subscription OnUpdateDashboard($dashboardId: String!) {
+  onUpdateDashboard(id: $dashboardId) {
+    id
+    name
+    token
+    layout
+    metaData
+  }
+}
+`)
+export type OnUpdateDashboardResult = {
+  onUpdateDashboard: UpdatedDashboard
+}
+
+const onUpdatePlayer = gql(`
+subscription OnUpdatePlayer($dashboardId: String!) {
+  onUpdatePlayer(dashboardId: $dashboardId) {
+    id
+    dashboardId
+    name
+    status
+    iconToken
+  }
+}
+`)
+export type OnUpdatePlayerResult = {
+  onUpdatePlayer: AbstractPlayer
+}
+
+const onDeletePlayer = gql(`
+subscription OnDeletePlayer($dashboardId: String!) {
+  onDeletePlayer(dashboardId: $dashboardId) {
+    id
+  }
+}
+`)
+export type OnDeletePlayerResult = {
+  onDeletePlayer: { id: string }
 }
 
 export const Mutations = {
@@ -434,7 +620,14 @@ export const Mutations = {
   playerFirstSignIn,
   playerSignIn,
   resetPlayerPassword,
-  generatePlayerResetCode
+  generatePlayerResetCode,
+  updateUserName,
+  updateUserIcon,
+  updateDashboard,
+  updatePlayerName,
+  updatePlayerIcon,
+  deleteDashboard,
+  deletePlayer
 }
 
 export const Queries = {
@@ -446,5 +639,9 @@ export const Queries = {
 }
 
 export const Subscriptions = {
-  onAddPlayer
+  onAddPlayer,
+  onDeletePlayer,
+  onUpdateUser,
+  onUpdateDashboard,
+  onUpdatePlayer
 }

@@ -13,14 +13,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, inject, ref, computed, watch } from 'vue'
+import { inject, ref, computed, watch } from 'vue'
 import PlayMainNavigationDrawer from '@/components/PlayMainNavigationDrawer.vue'
 import DashboardView from '@/components/view/DashboardView.vue'
-
-import { Layout } from '@/components/panes'
-import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
-const layout = reactive<Layout>({ ...JSON.parse(JSON.stringify(defaultLayout)) })
-console.log(JSON.stringify(layout, null, 2))
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -78,13 +73,15 @@ watch([firstRail, secondRail, selectedFirstNav, selectedSecondNav], async () => 
     case 'profile':
       break
     default:
-      const dashboardId = selectedFirstNav.value
-      if (dashboardId !== graphQlStore?.state.dashboard?.id) {
-        navMap.set(graphQlStore?.state.dashboard?.id || '', selectedSecondNav.value)
-        railMap.set(graphQlStore?.state.dashboard?.id || '', secondRail.value)
-        await graphQlStore?.directDashboardAccess(dashboardId)
-        selectedSecondNav.value = navMap.get(graphQlStore?.state.dashboard?.id || '') || ''
-        secondRail.value = railMap.get(graphQlStore?.state.dashboard?.id || '') || false
+      if (graphQlStore?.state.user?.token) {
+        const dashboardId = selectedFirstNav.value
+        if (dashboardId !== graphQlStore?.state.dashboard?.id) {
+          navMap.set(graphQlStore?.state.dashboard?.id || '', selectedSecondNav.value)
+          railMap.set(graphQlStore?.state.dashboard?.id || '', secondRail.value)
+          await graphQlStore?.directDashboardAccess(dashboardId)
+          selectedSecondNav.value = navMap.get(graphQlStore?.state.dashboard?.id || '') || ''
+          secondRail.value = railMap.get(graphQlStore?.state.dashboard?.id || '') || false
+        }
       }
   }
   const pathName = createPathName()

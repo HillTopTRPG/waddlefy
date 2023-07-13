@@ -14,11 +14,42 @@
         class="my-3 mr-2"
       />
     </template>
-    <v-app-bar-title>
-      {{ graphQlStore?.state.dashboard?.name || '' }}
-      <tooltip-btn-component v-if="isOwnerControl" tooltip-text="名前の編集" btn-icon="mdi-pencil" size="small" />
-    </v-app-bar-title>
-    <tooltip-btn-component v-if="isOwnerControl" tooltip-text="ペインの編集" btn-icon="mdi-pencil-ruler" @click="showBar = !showBar" />
+
+    <v-sheet class="d-flex flex-grow-1 align-center">
+      <span v-if="!editDashboardName">{{ graphQlStore?.state.dashboard?.name || '' }}</span>
+      <v-text-field
+        v-else
+        label="ダッシュボード名"
+        v-model="inputDashboardName"
+        placeholder="ダッシュボード名"
+        color="primary"
+        density="compact"
+        class="name-text-field flex-0-0"
+        style="width: 22em; max-width: 30vw;"
+        hide-details
+        single-line
+        @click:append-inner.stop
+      >
+        <template v-slot:append class="ma-0"></template>
+        <template v-slot:append-inner>
+          <v-divider :vertical="true" />
+          <v-btn
+            :disabled="false"
+            text="決定"
+            variant="text"
+            class="bg-transparent h-100"
+            @click.prevent.stop="updateDashboardName()"
+            @mousedown.prevent.stop
+            @mouseup.prevent.stop
+          />
+        </template>
+      </v-text-field>
+      <tooltip-btn-component v-if="isOwnerControl && !editDashboardName" tooltip-text="名前の編集" btn-icon="mdi-pencil" size="small" @click="editDashboardName = !editDashboardName" />
+    </v-sheet>
+
+    <template v-slot:append>
+      <tooltip-btn-component v-if="isOwnerControl" tooltip-text="ペインの編集" btn-icon="mdi-pencil-ruler" @click="showBar = !showBar" />
+    </template>
   </v-app-bar>
 
   <v-navigation-drawer
@@ -115,6 +146,7 @@ const emits = defineEmits<{
   (e: 'update:nav', value: string): void
 }>()
 
+const editDashboardName = ref(false)
 const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
 const layout = ref<Layout | null>(graphQlStore?.state.dashboard?.layout ? JSON.parse(graphQlStore.state.dashboard.layout) as Layout : null)
@@ -130,10 +162,21 @@ watch(() => graphQlStore?.state.dashboard?.layout, () => {
 })
 
 const showBar = ref(false)
+const inputDashboardName = ref(graphQlStore?.state.dashboard?.name || '')
+watch(() => graphQlStore?.state.dashboard?.name, () => {
+  inputDashboardName.value = graphQlStore?.state.dashboard?.name
+})
+
+async function updateDashboardName() {
+  const dashboard = graphQlStore?.state.dashboard
+  if (!dashboard) return
+  await graphQlStore?.updateDashboard(inputDashboardName.value, dashboard.layout, dashboard.metaData)
+  editDashboardName.value = false
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
-<style deep lang="scss">
+<style scoped lang="scss">
 .splitpanes--vertical > .splitpanes__splitter {
   min-width: 7px;
   background: linear-gradient(90deg, #cccccc, #111111);
@@ -142,5 +185,9 @@ const showBar = ref(false)
 .splitpanes--horizontal > .splitpanes__splitter {
   min-height: 7px;
   background: linear-gradient(#cccccc, #111111);
+}
+
+.name-text-field:deep(.v-field--appended) {
+  padding-inline-end: 0
 }
 </style>

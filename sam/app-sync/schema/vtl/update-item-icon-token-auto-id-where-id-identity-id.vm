@@ -1,0 +1,16 @@
+{
+  "version": "2018-05-29",
+  "operation": "UpdateItem",
+  "key": {
+    "id" : $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
+  },
+  "update" : {
+    "expression" : "SET #iconToken = :iconToken",
+    "expressionNames" : {
+      "#iconToken" : "iconToken"
+    },
+    "expressionValues" : {
+      ":iconToken" : $util.dynamodb.toDynamoDBJson($util.autoId())
+    }
+  }
+}
