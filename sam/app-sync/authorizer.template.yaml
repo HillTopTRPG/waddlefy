@@ -34,7 +34,7 @@ Resources:
       Environment:
         Variables:
           USER_TABLE_NAME: !Ref UserTableName
-          DASHBOARD_TABLE_NAME: !Ref SessionTableName
+          SESSION_TABLE_NAME: !Ref SessionTableName
           PLAYER_TABLE_NAME: !Ref PlayerTableName
     Metadata:
       BuildMethod: esbuild

@@ -41,9 +41,9 @@ import { Observable } from '@apollo/client'
 const DEFAULT_URL = 'https://eadjwjk4nnhybopeqn2altvcba.appsync-api.ap-northeast-1.amazonaws.com/graphql'
 const DEFAULT_REGION = 'ap-northeast-1'
 
-const DEFAULT_DASHBOARD_NAME = 'No title'
-const DEFAULT_DASHBOARD_LAYOUT = JSON.stringify(defaultLayout)
-const DEFAULT_DASHBOARD_META_DATA = 'meta data sample'
+const DEFAULT_SESSION_NAME = 'No title'
+const DEFAULT_SESSION_LAYOUT = JSON.stringify(defaultLayout)
+const DEFAULT_SESSION_META_DATA = 'meta data sample'
 
 export function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: () => string) {
   const auth: AuthOptions = {
@@ -98,9 +98,9 @@ export async function userSignUp(
       userId,
       userName,
       userPassword,
-      sessionName: DEFAULT_DASHBOARD_NAME,
-      layout: DEFAULT_DASHBOARD_LAYOUT,
-      metaData: DEFAULT_DASHBOARD_META_DATA
+      sessionName: DEFAULT_SESSION_NAME,
+      layout: DEFAULT_SESSION_LAYOUT,
+      metaData: DEFAULT_SESSION_META_DATA
     }
   })
   console.log(JSON.stringify(result.data, null, 2))
@@ -351,9 +351,9 @@ export default function useGraphQl(
     operation = 'mutation addSession'
     await callAddSession(
       appSyncClient,
-      DEFAULT_DASHBOARD_NAME,
-      DEFAULT_DASHBOARD_LAYOUT,
-      DEFAULT_DASHBOARD_META_DATA,
+      DEFAULT_SESSION_NAME,
+      DEFAULT_SESSION_LAYOUT,
+      DEFAULT_SESSION_META_DATA,
       session => {
         state.session = session
         state.sessions.push({ id: session.id, name: session.name })

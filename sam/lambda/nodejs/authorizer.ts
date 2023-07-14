@@ -122,7 +122,7 @@ export const handler = async event => {
     } else if (split.length === 2) {
       if (split[0] === 'd') {
         // Player
-        const sessionData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'token')
+        const sessionData = await getTokenData<{ id: string }>(process.env.SESSION_TABLE_NAME, split[1], 'token')
         if (sessionData) {
           isAuthorized = true
           id = sessionData.id
@@ -135,7 +135,7 @@ export const handler = async event => {
       }
       if (split[0] === 'di') {
         // Player
-        const sessionData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'signUpToken')
+        const sessionData = await getTokenData<{ id: string }>(process.env.SESSION_TABLE_NAME, split[1], 'signUpToken')
         if (sessionData) {
           isAuthorized = true
           id = sessionData.id
