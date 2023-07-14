@@ -7,7 +7,7 @@ Parameters:
     Type: String
   UserTableDataSourceName:
     Type: String
-  DashboardTableDataSourceName:
+  SessionTableDataSourceName:
     Type: String
   PlayerTableDataSourceName:
     Type: String
@@ -15,27 +15,27 @@ Parameters:
     Type: String
 
 Resources:
-  # UserForUser.firstDashboard
-  RelationUserForUserFirstDashboard:
+  # UserForUser.firstSession
+  RelationUserForUserFirstSession:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: UserForUser
-      FieldName: firstDashboard
+      FieldName: firstSession
       Kind: PIPELINE
       PipelineConfig:
         Functions:
-          - !GetAtt QueryFirstDashboardIdFunction.FunctionId
-          - !GetAtt GetDashboardFunction.FunctionId
+          - !GetAtt QueryFirstSessionIdFunction.FunctionId
+          - !GetAtt GetSessionFunction.FunctionId
       RequestMappingTemplate: '{}'
-      ResponseMappingTemplateS3Location: vtl/return-stash-dashboard.vm
+      ResponseMappingTemplateS3Location: vtl/return-stash-session.vm
 
-  QueryFirstDashboardIdFunction:
+  QueryFirstSessionIdFunction:
     Type: AWS::AppSync::FunctionConfiguration
     Properties:
       ApiId: !Ref ApiId
-      Name: query_first_dashboard_id_function
-      DataSourceName: !Ref DashboardTableDataSourceName
+      Name: query_first_session_id_function
+      DataSourceName: !Ref SessionTableDataSourceName
       FunctionVersion: 2018-05-29
       RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
       ResponseMappingTemplate: |
@@ -43,109 +43,109 @@ Resources:
           $util.error($ctx.result.error)
         #end
         #set($flg = $ctx.result.items.size() > 0)
-        $util.validate($flg, "No such Dashboard")
-        $util.qr($ctx.stash.put("dashboardId", $ctx.result.items[0].id))
+        $util.validate($flg, "No such Session")
+        $util.qr($ctx.stash.put("sessionId", $ctx.result.items[0].id))
         {}
 
-  GetDashboardFunction:
+  GetSessionFunction:
     Type: AWS::AppSync::FunctionConfiguration
     Properties:
       ApiId: !Ref ApiId
-      Name: get_dashboard_function
-      DataSourceName: !Ref DashboardTableDataSourceName
+      Name: get_session_function
+      DataSourceName: !Ref SessionTableDataSourceName
       FunctionVersion: 2018-05-29
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-stash-dashboard-id.vm
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-stash-session-id.vm
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
           $util.error($ctx.result.error)
         #end
-        $util.qr($ctx.stash.put("dashboard", $ctx.result))
+        $util.qr($ctx.stash.put("session", $ctx.result))
         {}
 
-  # UserForUser.dashboards
-  RelationUserForUserDashboards:
+  # UserForUser.sessions
+  RelationUserForUserSessions:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: UserForUser
-      FieldName: dashboards
-      DataSourceName: !Ref DashboardTableDataSourceName
+      FieldName: sessions
+      DataSourceName: !Ref SessionTableDataSourceName
       RequestMappingTemplateS3Location: vtl/query-where-user-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # DashboardForUser.user
-  RelationDashboardForUserUser:
+  # SessionForUser.user
+  RelationSessionForUserUser:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: DashboardForUser
+      TypeName: SessionForUser
       FieldName: user
       DataSourceName: !Ref UserTableDataSourceName
       RequestMappingTemplateS3Location: vtl/get-item-where-id-source-user-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result.vm
 
-  # DashboardForUser.players
-  RelationDashboardForUserPlayers:
+  # SessionForUser.players
+  RelationSessionForUserPlayers:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: DashboardForUser
+      TypeName: SessionForUser
       FieldName: players
       DataSourceName: !Ref PlayerTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # DashboardForUser.panes
-  RelationDashboardForUserPanes:
+  # SessionForUser.panes
+  RelationSessionForUserPanes:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: DashboardForUser
+      TypeName: SessionForUser
       FieldName: panes
       DataSourceName: !Ref PaneTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # DashboardForPlayer.user
-  RelationDashboardForPlayerUser:
+  # SessionForPlayer.user
+  RelationSessionForPlayerUser:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: DashboardForPlayer
+      TypeName: SessionForPlayer
       FieldName: user
       DataSourceName: !Ref UserTableDataSourceName
       RequestMappingTemplateS3Location: vtl/get-item-where-id-source-user-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result.vm
 
-  # DashboardForPlayer.players
-  RelationDashboardForPlayerPlayers:
+  # SessionForPlayer.players
+  RelationSessionForPlayerPlayers:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: DashboardForPlayer
+      TypeName: SessionForPlayer
       FieldName: players
       DataSourceName: !Ref PlayerTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # DashboardForPlayer.panes
-  RelationDashboardForPlayerPanes:
+  # SessionForPlayer.panes
+  RelationSessionForPlayerPanes:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
-      TypeName: DashboardForPlayer
+      TypeName: SessionForPlayer
       FieldName: panes
       DataSourceName: !Ref PaneTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/query-where-dashboard-id-source-id.vm
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # PlayerForPlayer.dashboard
-  RelationPlayerForPlayerDashboard:
+  # PlayerForPlayer.session
+  RelationPlayerForPlayerSession:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: PlayerForPlayer
-      FieldName: dashboard
-      DataSourceName: !Ref DashboardTableDataSourceName
-      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-dashboard-id.vm
+      FieldName: session
+      DataSourceName: !Ref SessionTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-session-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result.vm

@@ -5,7 +5,7 @@ Description: Waddlefy AppSync Mutation playerSignIn
 Parameters:
   ApiId:
     Type: String
-  DashboardTableDataSourceName:
+  SessionTableDataSourceName:
     Type: String
   PlayerTableDataSourceName:
     Type: String

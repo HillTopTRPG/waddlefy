@@ -5,7 +5,7 @@ Description: Waddlefy DynamoDB tables
 Parameters:
   UserTableName:
     Type: String
-  DashboardTableName:
+  SessionTableName:
     Type: String
   PlayerTableName:
     Type: String
@@ -37,8 +37,8 @@ Resources:
             NonKeyAttributes:
               - secret
 
-  # Dashboard Table
-  DashboardTable:
+  # Session Table
+  SessionTable:
     Type: AWS::DynamoDB::Table
     Properties:
       BillingMode: PAY_PER_REQUEST
@@ -54,7 +54,7 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      TableName: !Ref DashboardTableName
+      TableName: !Ref SessionTableName
       GlobalSecondaryIndexes:
         - IndexName: token-index
           KeySchema:
@@ -87,7 +87,7 @@ Resources:
           AttributeType: S
         - AttributeName: token
           AttributeType: S
-        - AttributeName: dashboardId
+        - AttributeName: sessionId
           AttributeType: S
         - AttributeName: name
           AttributeType: S
@@ -104,17 +104,17 @@ Resources:
             ProjectionType: INCLUDE
             NonKeyAttributes:
               - secret
-        - IndexName: dashboard-name-index
+        - IndexName: session-name-index
           KeySchema:
             - AttributeName: name
               KeyType: HASH
-            - AttributeName: dashboardId
+            - AttributeName: sessionId
               KeyType: RANGE
           Projection:
             ProjectionType: KEYS_ONLY
-        - IndexName: dashboardId-index
+        - IndexName: sessionId-index
           KeySchema:
-            - AttributeName: dashboardId
+            - AttributeName: sessionId
               KeyType: HASH
           Projection:
             ProjectionType: INCLUDE
@@ -131,16 +131,16 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        - AttributeName: dashboardId
+        - AttributeName: sessionId
           AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
       TableName: !Ref PaneTableName
       GlobalSecondaryIndexes:
-        - IndexName: dashboardId-index
+        - IndexName: sessionId-index
           KeySchema:
-            - AttributeName: dashboardId
+            - AttributeName: sessionId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
@@ -148,8 +148,8 @@ Resources:
 Outputs:
   UserTableArn:
     Value: !GetAtt UserTable.Arn
-  DashboardTableArn:
-    Value: !GetAtt DashboardTable.Arn
+  SessionTableArn:
+    Value: !GetAtt SessionTable.Arn
   PlayerTableArn:
     Value: !GetAtt PlayerTable.Arn
   PaneTableArn:

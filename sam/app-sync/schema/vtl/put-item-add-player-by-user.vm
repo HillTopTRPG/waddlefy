@@ -10,7 +10,7 @@
     "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
     "createdAt": $util.dynamodb.toDynamoDBJson($now),
     "lastLoggedIn": $util.dynamodb.toDynamoDBJson($now),
-    "dashboardId": $util.dynamodb.toDynamoDBJson($ctx.args.input.dashboardId),
+    "sessionId": $util.dynamodb.toDynamoDBJson($ctx.args.input.sessionId),
     "password": $util.dynamodb.toDynamoDBJson($ctx.args.input.password),
     "status": $util.dynamodb.toDynamoDBJson("init")
   }

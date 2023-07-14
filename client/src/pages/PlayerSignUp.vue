@@ -81,8 +81,8 @@ import {
 } from '@/components/graphql/graphql'
 import {
   AbstractPlayer,
-  GetDashboardPlayerResult,
-  GetDashboardPlayersResult,
+  GetSessionPlayerResult,
+  GetSessionPlayersResult,
   Queries,
 } from '@/components/graphql/schema'
 
@@ -90,13 +90,13 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps<{
-  dashboardToken?: string
+  sessionToken?: string
   signUpToken?: string
   playerId?: string
 }>()
 
 console.log(JSON.stringify({
-  dashboardToken: props.dashboardToken,
+  sessionToken: props.sessionToken,
   signUpToken: props.signUpToken,
   playerId: props.playerId,
 }, null, 2))
@@ -116,8 +116,8 @@ const player = ref<AbstractPlayer | null>(null)
 const errorMessage = ref('')
 
 function getAuthToken() {
-  if (props.dashboardToken) {
-    return `d/${props.dashboardToken}`
+  if (props.sessionToken) {
+    return `d/${props.sessionToken}`
   }
   if (props.signUpToken) {
     return `di/${props.signUpToken}`
@@ -130,22 +130,22 @@ async function init() {
   appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
 
   if (props.playerId) {
-    const result = await appSyncClient.mutate<GetDashboardPlayerResult>({
-      mutation: Queries.getDashboardPlayer,
+    const result = await appSyncClient.mutate<GetSessionPlayerResult>({
+      mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
     })
-    const getDashboardPlayer = result.data?.getDashboardPlayer
-    if (getDashboardPlayer) {
+    const getSessionPlayer = result.data?.getSessionPlayer
+    if (getSessionPlayer) {
       players.value = []
-      player.value = getDashboardPlayer
+      player.value = getSessionPlayer
     }
   } else {
-    const result = await appSyncClient.mutate<GetDashboardPlayersResult>({
-      mutation: Queries.getDashboardPlayers
+    const result = await appSyncClient.mutate<GetSessionPlayersResult>({
+      mutation: Queries.getSessionPlayers
     })
-    const getDashboardPlayers = result.data?.getDashboardPlayers
-    if (getDashboardPlayers) {
-      players.value = getDashboardPlayers
+    const getSessionPlayers = result.data?.getSessionPlayers
+    if (getSessionPlayers) {
+      players.value = getSessionPlayers
       player.value = null
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     :model-value="modalValue"
-    attach="#dashboard-nav"
+    attach="#session-nav"
     :fullscreen="true"
     :scrim="false"
     :no-click-animation="true"

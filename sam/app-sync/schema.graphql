@@ -14,7 +14,7 @@ type Mutation {
   # ユーザーサインイン
   userSignIn(input: UserSignInInput): UserForUser
   # ダッシュボード作成
-  addDashboard(input: AddDashboardInput): DashboardForUser
+  addSession(input: AddSessionInput): SessionForUser
   # 参加者作成
   addPlayerByUser(input: AddPlayerByUserInput): AbstractPlayer
   addPlayerByPlayer(input: AddPlayerByPlayerInput): AbstractPlayer
@@ -33,7 +33,7 @@ type Mutation {
   updateUserName(input: NameInput): AbstractUser
   updateUserIcon: AbstractUser
   # ダッシュボード情報更新
-  updateDashboard(input: UpdateDashboardInput): UpdatedDashboard
+  updateSession(input: UpdateSessionInput): UpdatedSession
   # 参加者情報更新
   updatePlayerName(input: NameInput): AbstractPlayer
   updatePlayerIcon: AbstractPlayer
@@ -41,26 +41,26 @@ type Mutation {
   # 削除系
 
   # ダッシュボード削除
-  deleteDashboard(input: DeleteDashboardInput): DeletedId
+  deleteSession(input: DeleteSessionInput): DeletedId
   # 参加者削除
   deletePlayer(input: DeletePlayerInput): DeletedId
 }
 
 type Subscription {
   # 追加系
-  onAddPlayer(dashboardId: String!): AbstractPlayer
+  onAddPlayer(sessionId: String!): AbstractPlayer
   @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
 
   # 更新系
   onUpdateUser(id: String!): AbstractUser
   @aws_subscribe(mutations: ["updateUserName", "updateUserIcon"])
-  onUpdateDashboard(id: String!): UpdatedDashboard
-  @aws_subscribe(mutations: ["updateDashboard"])
-  onUpdatePlayer(dashboardId: String!): AbstractPlayer
+  onUpdateSession(id: String!): UpdatedSession
+  @aws_subscribe(mutations: ["updateSession"])
+  onUpdatePlayer(sessionId: String!): AbstractPlayer
   @aws_subscribe(mutations: ["updatePlayerName", "updatePlayerIcon"])
 
   # 削除系
-  onDeletePlayer(dashboardId: String!): DeletedId
+  onDeletePlayer(sessionId: String!): DeletedId
   @aws_subscribe(mutations: ["deletePlayer"])
 }
 
@@ -68,10 +68,10 @@ type Query {
   # for Unauthorized User
   checkDuplicateUserId(id: String!): CheckResult
   # for Authorized User
-  directDashboardAccess(id: String!): DashboardForUser
+  directSessionAccess(id: String!): SessionForUser
   # for Unauthorized Player
-  getDashboardPlayer(id: String!): AbstractPlayer
-  getDashboardPlayers: [AbstractPlayer]
+  getSessionPlayer(id: String!): AbstractPlayer
+  getSessionPlayers: [AbstractPlayer]
   # for Authorized Player
   directPlayerAccess: PlayerForPlayer
 }
@@ -83,7 +83,7 @@ input UserSignUpInput {
   userId: String!
   name: String!
   password: String!
-  dashboardName: String!
+  sessionName: String!
   layout: String!
   metaData: String!
 }
@@ -93,13 +93,13 @@ input UserSignInInput {
   password: String!
 }
 
-input AddDashboardInput {
+input AddSessionInput {
   name: String!
   layout: String!
   metaData: String!
 }
 input AddPlayerByUserInput {
-  dashboardId: String!
+  sessionId: String!
   name: String!
 }
 
@@ -127,14 +127,14 @@ input NameInput {
   name: String!
 }
 
-input UpdateDashboardInput {
-  dashboardId: String!
+input UpdateSessionInput {
+  sessionId: String!
   name: String!
   layout: String!
   metaData: String!
 }
 
-input DeleteDashboardInput {
+input DeleteSessionInput {
   id: String!
 }
 
@@ -151,11 +151,11 @@ type UserForUser {
   iconToken: String!
   token: String!
   secret: String!
-  firstDashboard: DashboardForUser
-  dashboards: [AbstractDashboard]!
+  firstSession: SessionForUser
+  sessions: [AbstractSession]!
 }
 
-type DashboardForUser {
+type SessionForUser {
   id: ID!
   token: String!
   signUpToken: String!
@@ -170,7 +170,7 @@ type DashboardForUser {
 
 type AbstractPlayer {
   id: ID!
-  dashboardId: String!
+  sessionId: String!
   name: String!
   status: String!
   iconToken: String!
@@ -178,12 +178,12 @@ type AbstractPlayer {
 
 type PlayerForPlayer {
   id: ID!
-  dashboardId: String!
+  sessionId: String!
   name: String!
   iconToken: String!
   token: String!
   secret: String!
-  dashboard: DashboardForPlayer
+  session: SessionForPlayer
 }
 
 type RequestPlayerPasswordResetResult {
@@ -196,7 +196,7 @@ type AbstractUser {
   iconToken: String!
 }
 
-type UpdatedDashboard {
+type UpdatedSession {
   id: ID!
   name: String!
   token: String!
@@ -206,19 +206,19 @@ type UpdatedDashboard {
 
 type DeletedId {
   id: ID!
-  dashboardId: String!
+  sessionId: String!
 }
 
 type CheckResult {
   ok: Boolean!
 }
 
-type AbstractDashboard {
+type AbstractSession {
   id: ID!
   name: String!
 }
 
-type DashboardForPlayer {
+type SessionForPlayer {
   id: ID!
   name: String!
   token: String!

@@ -1,5 +1,5 @@
 <template>
-  <progress-circular-overlay :modal-value="!graphQlStore?.state.dashboard" color="primary" />
+  <progress-circular-overlay :modal-value="!graphQlStore?.state.session" color="primary" />
   <share-overlay :modal-value="nav === 'share'" @close="emits('update:nav', '')" />
   <owner-overlay :modal-value="nav === 'owner'" @close="emits('update:nav', '')" />
   <setting-overlay :modal-value="nav === 'setting'" @close="emits('update:nav', '')" />
@@ -10,8 +10,8 @@
     location="left"
     :rail="rail"
     :elevation="0"
-    id="dashboard-nav"
-    ref="dashboardNav"
+    id="session-nav"
+    ref="sessionNav"
   >
     <template v-slot:prepend>
       <v-list :nav='true' density='compact' class="pa-0 mb-1">
@@ -126,13 +126,13 @@
           <template v-slot:prepend>
             <v-icon icon="mdi-cog" class="mr-6" />
           </template>
-          <span style="white-space: nowrap;">{{ graphQlStore?.state.dashboard?.name || '' }}</span>
+          <span style="white-space: nowrap;">{{ graphQlStore?.state.session?.name || '' }}</span>
         </v-list-item>
       </v-list>
     </template>
   </v-navigation-drawer>
 
-  <dashboard-nav-dialog
+  <session-nav-dialog
     v-if="isReady"
     title="セッションの設定"
     :modal-value="dialog === 'setting'"
@@ -148,9 +148,9 @@
         :active="nav === 'share'"
       >
         <v-text-field
-          :readonly="!editDashboardName"
+          :readonly="!editSessionName"
           label=""
-          v-model="inputDashboardName"
+          v-model="inputSessionName"
           placeholder="セッション名"
           color="primary"
           variant="plain"
@@ -159,19 +159,19 @@
           style="letter-spacing: 1em; min-height: 1em"
           hide-details
           ref="sessionNameInputElm"
-          @keydown.enter="$event.keyCode === 13 && updateDashboardName()"
+          @keydown.enter="$event.keyCode === 13 && updateSessionName()"
           @click:append-inner.stop
         >
           <template v-slot:append-inner v-if="isOwnerControl">
             <v-divider :vertical="true" />
             <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
               <v-btn
-                v-if="editDashboardName"
-                :disabled="!inputDashboardName"
+                v-if="editSessionName"
+                :disabled="!inputSessionName"
                 prepend-icon="mdi-check-bold"
                 text="決定"
                 class="bg-transparent h-100 px-1"
-                @click.prevent.stop="updateDashboardName()"
+                @click.prevent.stop="updateSessionName()"
                 @mousedown.prevent.stop
                 @mouseup.prevent.stop
               />
@@ -180,7 +180,7 @@
                 prepend-icon="mdi-pencil"
                 text="編集"
                 class="bg-transparent h-100 px-1"
-                @click.prevent.stop="startEditDashboardName()"
+                @click.prevent.stop="startEditSessionName()"
                 @mousedown.prevent.stop
                 @mouseup.prevent.stop
               />
@@ -193,9 +193,9 @@
     <v-list>
       <v-list-subheader>General</v-list-subheader>
     </v-list>
-  </dashboard-nav-dialog>
+  </session-nav-dialog>
 
-  <v-app-bar density="compact" height="50" elevation="0" id="dashboard-main-app-bar">
+  <v-app-bar density="compact" height="50" elevation="0" id="session-main-app-bar">
     <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
       <v-btn prepend-icon="mdi-cog" text="設定" @click="emits('update:nav', nav === 'setting' ? '' : 'setting')" />
     </v-defaults-provider>
@@ -226,7 +226,7 @@ import PlayerOverlay from '@/components/view-overlay/PlayerOverlay.vue'
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import DashboardNavDialog from '@/components/DashboardNavDialog.vue'
+import SessionNavDialog from '@/components/SessionNavDialog.vue'
 import SettingOverlay from '@/components/view-overlay/SettingOverlay.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -240,11 +240,11 @@ const emits = defineEmits<{
   (e: 'update:nav', value: string): void
 }>()
 
-const dashboardNav = ref()
+const sessionNav = ref()
 const isScrolling = ref(false)
-watch(dashboardNav, () => {
-  if (!dashboardNav.value) return
-  const scrollParentElm = dashboardNav.value.$el.parentElement
+watch(sessionNav, () => {
+  if (!sessionNav.value) return
+  const scrollParentElm = sessionNav.value.$el.parentElement
     .querySelectorAll('.v-navigation-drawer__content')[0]
   scrollParentElm.addEventListener('scroll', event => {
     const scrollTop = event.target.scrollTop
@@ -252,15 +252,15 @@ watch(dashboardNav, () => {
   })
 })
 
-const editDashboardName = ref(false)
+const editSessionName = ref(false)
 const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
-const layout = ref<Layout | null>(graphQlStore?.state.dashboard?.layout ? JSON.parse(graphQlStore.state.dashboard.layout) as Layout : null)
+const layout = ref<Layout | null>(graphQlStore?.state.session?.layout ? JSON.parse(graphQlStore.state.session.layout) as Layout : null)
 const layoutChanging = ref(false)
-watch(() => graphQlStore?.state.dashboard?.layout, () => {
+watch(() => graphQlStore?.state.session?.layout, () => {
   console.log(JSON.stringify(layout.value, null, 2))
-  if (graphQlStore?.state.dashboard?.layout) {
-    layout.value = JSON.parse(graphQlStore.state.dashboard.layout) as Layout
+  if (graphQlStore?.state.session?.layout) {
+    layout.value = JSON.parse(graphQlStore.state.session.layout) as Layout
     layoutChanging.value = false
   } else {
     layoutChanging.value = true
@@ -268,16 +268,16 @@ watch(() => graphQlStore?.state.dashboard?.layout, () => {
 })
 
 const showBar = ref(false)
-const inputDashboardName = ref(graphQlStore?.state.dashboard?.name || '')
-watch(() => graphQlStore?.state.dashboard?.name, () => {
-  inputDashboardName.value = graphQlStore?.state.dashboard?.name
+const inputSessionName = ref(graphQlStore?.state.session?.name || '')
+watch(() => graphQlStore?.state.session?.name, () => {
+  inputSessionName.value = graphQlStore?.state.session?.name
 })
 
-async function updateDashboardName() {
-  const dashboard = graphQlStore?.state.dashboard
-  if (!dashboard) return
-  await graphQlStore?.updateDashboard(inputDashboardName.value, dashboard.layout, dashboard.metaData)
-  editDashboardName.value = false
+async function updateSessionName() {
+  const session = graphQlStore?.state.session
+  if (!session) return
+  await graphQlStore?.updateSession(inputSessionName.value, session.layout, session.metaData)
+  editSessionName.value = false
 }
 
 function onScroll(event: any) {
@@ -310,8 +310,8 @@ setTimeout(() => {
 }, 500)
 
 const sessionNameInputElm = ref()
-function startEditDashboardName() {
-  editDashboardName.value = true
+function startEditSessionName() {
+  editSessionName.value = true
   setTimeout(() => {
     sessionNameInputElm.value.focus()
   }, 100)

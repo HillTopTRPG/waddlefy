@@ -1,0 +1,14 @@
+{
+  "version": "2018-05-29",
+  "operation": "Query",
+  "index": "sessionId-index",
+  "query": {
+    "expression" : "#sessionId = :sessionId",
+    "expressionNames" : {
+      "#sessionId" : "sessionId"
+    },
+    "expressionValues": {
+      ":sessionId": $util.dynamodb.toDynamoDBJson($ctx.source.id)
+    }
+  }
+}

@@ -6,9 +6,9 @@ Parameters:
   UserTableName:
     Type: String
     Default: waddlefy-user-table
-  DashboardTableName:
+  SessionTableName:
     Type: String
-    Default: waddlefy-dashboard-table
+    Default: waddlefy-session-table
   PlayerTableName:
     Type: String
     Default: waddlefy-player-table
@@ -40,7 +40,7 @@ Resources:
       Location: authorizer.template.yaml
       Parameters:
         UserTableName: !Ref UserTableName
-        DashboardTableName: !Ref DashboardTableName
+        SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
 
   AppsyncPermission:
@@ -59,7 +59,7 @@ Resources:
       Location: service-role.template.yaml
       Parameters:
         UserTableArn: !GetAtt TablesStack.Outputs.UserTableArn
-        DashboardTableArn: !GetAtt TablesStack.Outputs.DashboardTableArn
+        SessionTableArn: !GetAtt TablesStack.Outputs.SessionTableArn
         PlayerTableArn: !GetAtt TablesStack.Outputs.PlayerTableArn
         PaneTableArn: !GetAtt TablesStack.Outputs.PaneTableArn
 
@@ -70,7 +70,7 @@ Resources:
       Location: tables.template.yaml
       Parameters:
         UserTableName: !Ref UserTableName
-        DashboardTableName: !Ref DashboardTableName
+        SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
         PaneTableName: !Ref PaneTableName
 
@@ -82,7 +82,7 @@ Resources:
         ApiId: !GetAtt AppSync.ApiId
         ServiceRoleArn: !GetAtt ServiceRoleStack.Outputs.ServiceRoleArn
         UserTableName: !Ref UserTableName
-        DashboardTableName: !Ref DashboardTableName
+        SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
         PaneTableName: !Ref PaneTableName
     DependsOn:

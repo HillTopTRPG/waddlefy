@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: Waddlefy AppSync Query getDashboardPlayers
+Description: Waddlefy AppSync Query getSessionPlayers
 
 Parameters:
   ApiId:
@@ -9,14 +9,14 @@ Parameters:
     Type: String
 
 Resources:
-  GetDashboardPlayersQueryResolver:
+  GetSessionPlayersQueryResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: Query
-      FieldName: getDashboardPlayers
+      FieldName: getSessionPlayers
       DataSourceName: !Ref PlayerTableDataSourceName
-      RequestMappingTemplateS3Location: ../vtl/query-where-dashboard-id-identity-id.vm
+      RequestMappingTemplateS3Location: ../vtl/query-where-session-id-identity-id.vm
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
           $util.error($ctx.result.error)

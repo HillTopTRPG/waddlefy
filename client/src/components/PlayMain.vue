@@ -7,7 +7,7 @@
     />
 
     <v-main :scrollable="true">
-      <dashboard-view v-model:rail="secondRail" v-model:nav="selectedSecondNav" />
+      <session-view v-model:rail="secondRail" v-model:nav="selectedSecondNav" />
     </v-main>
   </template>
 </template>
@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import { inject, ref, computed, watch } from 'vue'
 import PlayMainNavigationDrawer from '@/components/PlayMainNavigationDrawer.vue'
-import DashboardView from '@/components/view/DashboardView.vue'
+import SessionView from '@/components/view/SessionView.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -74,13 +74,13 @@ watch([firstRail, secondRail, selectedFirstNav, selectedSecondNav], async () => 
       break
     default:
       if (graphQlStore?.state.user?.token) {
-        const dashboardId = selectedFirstNav.value
-        if (dashboardId !== graphQlStore?.state.dashboard?.id) {
-          navMap.set(graphQlStore?.state.dashboard?.id || '', selectedSecondNav.value)
-          railMap.set(graphQlStore?.state.dashboard?.id || '', secondRail.value)
-          await graphQlStore?.directDashboardAccess(dashboardId)
-          selectedSecondNav.value = navMap.get(graphQlStore?.state.dashboard?.id || '') || ''
-          secondRail.value = railMap.get(graphQlStore?.state.dashboard?.id || '') || false
+        const sessionId = selectedFirstNav.value
+        if (sessionId !== graphQlStore?.state.session?.id) {
+          navMap.set(graphQlStore?.state.session?.id || '', selectedSecondNav.value)
+          railMap.set(graphQlStore?.state.session?.id || '', secondRail.value)
+          await graphQlStore?.directSessionAccess(sessionId)
+          selectedSecondNav.value = navMap.get(graphQlStore?.state.session?.id || '') || ''
+          secondRail.value = railMap.get(graphQlStore?.state.session?.id || '') || false
         }
       }
   }

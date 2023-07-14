@@ -5,7 +5,7 @@ Description: Waddlefy functions
 Parameters:
   ApiId:
     Type: String
-  DashboardTableDataSourceName:
+  SessionTableDataSourceName:
     Type: String
   PlayerTableDataSourceName:
     Type: String
@@ -22,16 +22,16 @@ Resources:
         {
           "version": "2018-05-29",
           "operation": "Query",
-          "index": "dashboard-name-index",
+          "index": "session-name-index",
           "query": {
-            "expression" : "#name = :name and #dashboardId = :dashboardId",
+            "expression" : "#name = :name and #sessionId = :sessionId",
             "expressionNames" : {
               "#name" : "name",
-              "#dashboardId" : "dashboardId"
+              "#sessionId" : "sessionId"
             },
             "expressionValues": {
               ":name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
-              ":dashboardId": $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
+              ":sessionId": $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
             }
           }
         }

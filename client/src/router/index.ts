@@ -45,11 +45,11 @@ const routes = [
     }),
   },
   {
-    path: '/d/:dashboardToken/:playerId',
+    path: '/d/:sessionToken/:playerId',
     name: 'PlayerSignIn',
     component: PlayerSignUp,
-    props: (r: { params: { dashboardToken: string; playerId: string } }) => ({
-      dashboardToken: r.params.dashboardToken,
+    props: (r: { params: { sessionToken: string; playerId: string } }) => ({
+      sessionToken: r.params.sessionToken,
       playerId: r.params.playerId,
     }),
   },

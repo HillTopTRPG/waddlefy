@@ -48,7 +48,7 @@ async function getTokenSecretData<T extends { secret: string }>(tableName: strin
 const ALL_OPERATIONS = [
   'Mutation.userSignUp',
   'Mutation.userSignIn',
-  'Mutation.addDashboard',
+  'Mutation.addSession',
   'Mutation.addPlayerByUser',
   'Mutation.addPlayerByPlayer',
   'Mutation.playerFirstSignIn',
@@ -57,15 +57,15 @@ const ALL_OPERATIONS = [
   'Mutation.resetPlayerPassword',
   'Mutation.updateUserName',
   'Mutation.updateUserIcon',
-  'Mutation.updateDashboard',
+  'Mutation.updateSession',
   'Mutation.updatePlayerName',
   'Mutation.updatePlayerIcon',
-  'Mutation.deleteDashboard',
+  'Mutation.deleteSession',
   'Mutation.deletePlayer',
   'Query.checkDuplicateUserId',
-  'Query.directDashboardAccess',
-  'Query.getDashboardPlayer',
-  'Query.getDashboardPlayers',
+  'Query.directSessionAccess',
+  'Query.getSessionPlayer',
+  'Query.getSessionPlayers',
   'Query.directPlayerAccess',
 ]
 
@@ -98,15 +98,15 @@ export const handler = async event => {
         if (userData) {
           isAuthorized = true
           id = userData.id
-          admitFields.push('Mutation.addDashboard')
+          admitFields.push('Mutation.addSession')
           admitFields.push('Mutation.addPlayerByUser')
           admitFields.push('Mutation.generatePlayerResetCode')
           admitFields.push('Mutation.updateUserName')
           admitFields.push('Mutation.updateUserIcon')
-          admitFields.push('Mutation.updateDashboard')
-          admitFields.push('Mutation.deleteDashboard')
+          admitFields.push('Mutation.updateSession')
+          admitFields.push('Mutation.deleteSession')
           admitFields.push('Mutation.deletePlayer')
-          admitFields.push('Query.directDashboardAccess')
+          admitFields.push('Query.directSessionAccess')
         }
       } else if (split[0] === 'p') {
         // Player
@@ -122,24 +122,24 @@ export const handler = async event => {
     } else if (split.length === 2) {
       if (split[0] === 'd') {
         // Player
-        const dashboardData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'token')
-        if (dashboardData) {
+        const sessionData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'token')
+        if (sessionData) {
           isAuthorized = true
-          id = dashboardData.id
+          id = sessionData.id
           admitFields.push('Mutation.addPlayerByPlayer')
           admitFields.push('Mutation.playerFirstSignIn')
           admitFields.push('Mutation.playerSignIn')
           admitFields.push('Mutation.resetPlayerPassword')
-          admitFields.push('Query.getDashboardPlayer')
+          admitFields.push('Query.getSessionPlayer')
         }
       }
       if (split[0] === 'di') {
         // Player
-        const dashboardData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'signUpToken')
-        if (dashboardData) {
+        const sessionData = await getTokenData<{ id: string }>(process.env.DASHBOARD_TABLE_NAME, split[1], 'signUpToken')
+        if (sessionData) {
           isAuthorized = true
-          id = dashboardData.id
-          admitFields.push('Query.getDashboardPlayers')
+          id = sessionData.id
+          admitFields.push('Query.getSessionPlayers')
         }
       }
     }

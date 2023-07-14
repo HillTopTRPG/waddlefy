@@ -7,7 +7,7 @@ Parameters:
     Type: String
   UserTableDataSourceName:
     Type: String
-  DashboardTableDataSourceName:
+  SessionTableDataSourceName:
     Type: String
 
 Resources:
@@ -22,7 +22,7 @@ Resources:
         Functions:
           - !GetAtt CheckNoDuplicateIdFunction.FunctionId
           - !GetAtt PutItemUserFunction.FunctionId
-          - !GetAtt PutItemDashboardFunction.FunctionId
+          - !GetAtt PutItemSessionFunction.FunctionId
       RequestMappingTemplate: '{}'
       ResponseMappingTemplateS3Location: ../vtl/return-stash-user.vm
 
@@ -53,12 +53,12 @@ Resources:
         $util.qr($ctx.stash.put("userTemp", $ctx.result))
         {}
 
-  PutItemDashboardFunction:
+  PutItemSessionFunction:
     Type: AWS::AppSync::FunctionConfiguration
     Properties:
       ApiId: !Ref ApiId
-      Name: put_item_dashboard_function
-      DataSourceName: !Ref DashboardTableDataSourceName
+      Name: put_item_session_function
+      DataSourceName: !Ref SessionTableDataSourceName
       FunctionVersion: 2018-05-29
       RequestMappingTemplate: |
         {
@@ -68,7 +68,7 @@ Resources:
             "id": $util.dynamodb.toDynamoDBJson($util.autoUlid()),
             "token": $util.dynamodb.toDynamoDBJson($util.autoId()),
             "signUpToken": $util.dynamodb.toDynamoDBJson($util.autoId()),
-            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.dashboardName),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.sessionName),
             "layout": $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
             "metaData": $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
             "createdAt": $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds()),

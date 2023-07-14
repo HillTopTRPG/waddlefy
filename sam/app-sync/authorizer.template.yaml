@@ -5,7 +5,7 @@ Description: Waddlefy Lambda Authorizer
 Parameters:
   UserTableName:
     Type: String
-  DashboardTableName:
+  SessionTableName:
     Type: String
   PlayerTableName:
     Type: String
@@ -28,13 +28,13 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref UserTableName
         - DynamoDBCrudPolicy:
-            TableName: !Ref DashboardTableName
+            TableName: !Ref SessionTableName
         - DynamoDBCrudPolicy:
             TableName: !Ref PlayerTableName
       Environment:
         Variables:
           USER_TABLE_NAME: !Ref UserTableName
-          DASHBOARD_TABLE_NAME: !Ref DashboardTableName
+          DASHBOARD_TABLE_NAME: !Ref SessionTableName
           PLAYER_TABLE_NAME: !Ref PlayerTableName
     Metadata:
       BuildMethod: esbuild

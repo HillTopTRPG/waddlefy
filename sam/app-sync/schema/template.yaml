@@ -9,7 +9,7 @@ Parameters:
     Type: String
   UserTableName:
     Type: String
-  DashboardTableName:
+  SessionTableName:
     Type: String
   PlayerTableName:
     Type: String
@@ -28,15 +28,15 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref UserTableName
         AwsRegion: !Ref AWS::Region
-  DashboardTableDataSource:
+  SessionTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
-      Name: DashboardTableDataSource
+      Name: SessionTableDataSource
       ApiId: !Ref ApiId
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !Ref ServiceRoleArn
       DynamoDBConfig:
-        TableName: !Ref DashboardTableName
+        TableName: !Ref SessionTableName
         AwsRegion: !Ref AWS::Region
   PlayerTableDataSource:
     Type: AWS::AppSync::DataSource
@@ -67,7 +67,7 @@ Resources:
       Parameters:
         ApiId: !Ref ApiId
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
         PaneTableDataSourceName: !GetAtt PaneTableDataSource.Name
 
@@ -78,7 +78,7 @@ Resources:
       Location: functions.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
   # query checkDuplicateUserId
@@ -98,7 +98,7 @@ Resources:
       Parameters:
         ApiId: !Ref ApiId
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
   # mutation userSignIn
   MutationUserSignInStack:
@@ -127,32 +127,32 @@ Resources:
         ApiId: !Ref ApiId
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
 
-  # mutation addDashboard
-  MutationAddDashboardStack:
+  # mutation addSession
+  MutationAddSessionStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: mutation/add-dashboard.template.yaml
+      Location: mutation/add-session.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
-  # mutation updateDashboard
-  MutationUpdateDashboardStack:
+  # mutation updateSession
+  MutationUpdateSessionStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: mutation/update-dashboard.template.yaml
+      Location: mutation/update-session.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
-  # mutation deleteDashboard
-  MutationDeleteDashboardStack:
+  # mutation deleteSession
+  MutationDeleteSessionStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: mutation/delete-dashboard.template.yaml
+      Location: mutation/delete-session.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
   # mutation addPlayerByUser
   MutationAddPlayerByUserStack:
@@ -181,7 +181,7 @@ Resources:
       Location: mutation/player-first-sign-in.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
   # mutation playerSignIn
@@ -191,7 +191,7 @@ Resources:
       Location: mutation/player-sign-in.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
   # mutation generatePlayerResetCode
@@ -248,29 +248,29 @@ Resources:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
-  # query directDashboardAccess
-  QueryDirectDashboardAccess:
+  # query directSessionAccess
+  QueryDirectSessionAccess:
     Type: AWS::Serverless::Application
     Properties:
-      Location: query/direct-dashboard-access.template.yaml
+      Location: query/direct-session-access.template.yaml
       Parameters:
         ApiId: !Ref ApiId
-        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
-  # query getDashboardPlayer
-  QueryGetDashboardPlayer:
+  # query getSessionPlayer
+  QueryGetSessionPlayer:
     Type: AWS::Serverless::Application
     Properties:
-      Location: query/get-dashboard-player.template.yaml
+      Location: query/get-session-player.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
-  # query getDashboardPlayers
-  QueryGetDashboardPlayers:
+  # query getSessionPlayers
+  QueryGetSessionPlayers:
     Type: AWS::Serverless::Application
     Properties:
-      Location: query/get-dashboard-players.template.yaml
+      Location: query/get-session-players.template.yaml
       Parameters:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name

@@ -41,7 +41,7 @@
             title=""
             :subtitle="playerStatusMessage(player)"
             :user-avatar-token="player.iconToken"
-            :path-name="`d/${graphQlStore?.state.dashboard?.token || ''}/${player.id}`"
+            :path-name="`d/${graphQlStore?.state.session?.token || ''}/${player.id}`"
           >
             {{ player.name }}のログインURL
           </list-item-clipboard>
@@ -54,7 +54,7 @@
         <list-item-clipboard
           title="招待URL"
           subtitle="誰でも参加可能になるURL"
-          :path-name="`d/${graphQlStore?.state.dashboard?.signUpToken || ''}`"
+          :path-name="`d/${graphQlStore?.state.session?.signUpToken || ''}`"
         />
       </v-list>
     </v-card-text>

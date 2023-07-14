@@ -37,14 +37,14 @@
       :mandatory="true"
       class="py-0 px-0"
     >
-      <template v-for="dashboard in (graphQlStore?.state.dashboards || [])" :key="dashboard.id">
+      <template v-for="session in (graphQlStore?.state.sessions || [])" :key="session.id">
         <user-nav-item
-          :label='dashboard.name'
+          :label='session.name'
           :show-label='!rail'
-          :value='dashboard.id'
+          :value='session.id'
           prepend-icon='home'
-          :tooltip-text='dashboard.name'
-          @select="emits('update:nav', dashboard.id)"
+          :tooltip-text='session.name'
+          @select="emits('update:nav', session.id)"
         />
       </template>
       <user-nav-item
@@ -54,7 +54,7 @@
         value=''
         prepend-icon='home-plus-outline'
         tooltip-text='セッション追加'
-        @select="addDashboard()"
+        @select="addSession()"
       />
     </v-list>
 
@@ -210,12 +210,12 @@ function onClickExpand() {
   }
 }
 
-watch(() => graphQlStore?.state.dashboards?.length, () => {
-  emits('update:nav', graphQlStore?.state.dashboard?.id || '')
+watch(() => graphQlStore?.state.sessions?.length, () => {
+  emits('update:nav', graphQlStore?.state.session?.id || '')
 })
 
-function addDashboard() {
-  graphQlStore?.addDefaultDashboard()
+function addSession() {
+  graphQlStore?.addDefaultSession()
 }
 
 function logout() {

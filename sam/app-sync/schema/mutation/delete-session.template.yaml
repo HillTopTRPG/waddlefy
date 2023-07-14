@@ -5,21 +5,21 @@ Description: Waddlefy AppSync Mutation deletePlayer
 Parameters:
   ApiId:
     Type: String
-  DashboardTableDataSourceName:
+  SessionTableDataSourceName:
     Type: String
 
 Resources:
-  DeleteDashboardMutationResolver:
+  DeleteSessionMutationResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: Mutation
-      FieldName: deleteDashboard
-      DataSourceName: !Ref DashboardTableDataSourceName
+      FieldName: deleteSession
+      DataSourceName: !Ref SessionTableDataSourceName
       RequestMappingTemplateS3Location: ../vtl/delete-item-where-id-input-id.vm
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
           $util.error($ctx.result.error)
         #end
-        #set($ctx.result.dashboardId = $ctx.result.id)
+        #set($ctx.result.sessionId = $ctx.result.id)
         $util.toJson($ctx.result)
