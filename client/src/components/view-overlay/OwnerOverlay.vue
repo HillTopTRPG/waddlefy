@@ -1,6 +1,22 @@
 <template>
-  <contents-overlay title="Ownerrrrr" color="bg-cyan-lighten-1" :modal-value="modalValue" @close="emits('close')">
-    <v-btn @click="onChangeIcon()" text="アイコンを変更する" />
+  <contents-overlay
+    title="主催者の設定"
+    color="bg-cyan-lighten-1"
+    :modal-value="modalValue"
+    @close="emits('close')"
+  >
+    <v-card-text class="pa-2 overflow-auto h-100">
+      <v-list class="ma-0 pa-0 bg-transparent">
+        <v-list-item>
+          <v-btn
+            @click="onChangeIcon()"
+            v-if="graphQlStore?.state.user?.token"
+            variant="text"
+            text="アイコンを変更する"
+          />
+        </v-list-item>
+      </v-list>
+    </v-card-text>
   </contents-overlay>
 </template>
 

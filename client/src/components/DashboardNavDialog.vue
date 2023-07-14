@@ -1,11 +1,12 @@
 <template>
   <v-dialog
     :model-value="modalValue"
-    attach="#play-main-navigation-drawer"
+    attach="#dashboard-nav"
     :fullscreen="true"
     :scrim="false"
+    :no-click-animation="true"
     :persistent="true"
-    class="my-16"
+    class="mb-12 mt-12"
     transition="slide-y-reverse-transition"
   >
     <v-card>

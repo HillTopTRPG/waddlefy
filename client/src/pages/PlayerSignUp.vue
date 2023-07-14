@@ -30,7 +30,7 @@
                 :rules="[(x) => !!x || '必須項目']"
                 variant="solo-filled"
                 v-model="playerName"
-                @keydown.enter="playerName && passwordElm.focus()"
+                @keydown.enter="$event.keyCode === 13 && playerName && passwordElm.focus()"
                 ref="userNameElm"
               />
               <v-text-field
@@ -40,7 +40,7 @@
                 class="mb-1"
                 variant="solo-filled"
                 v-model="password"
-                @keydown.enter="callSignUp()"
+                @keydown.enter="$event.keyCode === 13 && callSignUp()"
                 ref="passwordElm"
               />
             </v-card-text>

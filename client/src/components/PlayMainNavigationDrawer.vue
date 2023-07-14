@@ -15,7 +15,7 @@
               density="comfortable"
               variant="text"
               :icon="rail ? 'mdi-menu' : 'mdi-backburger'"
-              @click="emits('update:rail', !rail)"
+              @click="onClickExpand()"
               class="my-3 mr-2"
             />
           </template>
@@ -42,18 +42,18 @@
           :label='dashboard.name'
           :show-label='!rail'
           :value='dashboard.id'
-          prepend-icon='view-dashboard'
+          prepend-icon='home'
           :tooltip-text='dashboard.name'
           @select="emits('update:nav', dashboard.id)"
         />
       </template>
       <user-nav-item
         v-if="graphQlStore?.state.user?.token"
-        label='ダッシュボード追加'
+        label='セッション追加'
         :show-label='!rail'
         value=''
-        prepend-icon='plus'
-        tooltip-text='ダッシュボード追加'
+        prepend-icon='home-plus-outline'
+        tooltip-text='セッション追加'
         @select="addDashboard()"
       />
     </v-list>
@@ -92,25 +92,69 @@
   </v-navigation-drawer>
 
   <play-main-nav-dialog
-    title="プロフィール"
-    transition="slide-y-reverse-transition"
+    v-if="isReady"
+    title="あなたの設定"
     :modal-value="dialog === 'profile'"
     @update:modal-value="v => { dialog = v ? 'profile' : '' }"
   >
-    <v-list lines="two" subheader>
-      <v-list-subheader>User Controls</v-list-subheader>
-      <v-list-item title="Content filtering" subtitle="Set the content filtering level to restrict apps that can be downloaded"></v-list-item>
-      <v-list-item title="Password" subtitle="Require password for purchase or use password to restrict purchase"></v-list-item>
-    </v-list>
-    <v-divider />
     <v-list>
-      <v-list-subheader>General</v-list-subheader>
+      <v-list-subheader style="min-height: auto">名前</v-list-subheader>
+      <v-list-item>
+        <v-text-field
+          :readonly="!editUserName"
+          label=""
+          v-model="inputUserName"
+          placeholder="セッション名"
+          color="primary"
+          variant="plain"
+          density="compact"
+          class="name-text-field"
+          style="letter-spacing: 1em; min-height: 1em"
+          hide-details
+          ref="inputUserNameElm"
+          @keydown.enter="$event.keyCode === 13 && updateUserName()"
+          @click:append-inner.stop
+        >
+          <template v-slot:append-inner v-if="isOwnerControl">
+            <v-divider :vertical="true" />
+            <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
+              <v-btn
+                v-if="editUserName"
+                :disabled="!inputUserName"
+                prepend-icon="mdi-check-bold"
+                text="決定"
+                class="bg-transparent h-100 px-1"
+                @click.prevent.stop="updateUserName()"
+                @mousedown.prevent.stop
+                @mouseup.prevent.stop
+              />
+              <v-btn
+                v-else
+                prepend-icon="mdi-pencil"
+                text="編集"
+                class="bg-transparent h-100 px-1"
+                @click.prevent.stop="startEditUserName()"
+                @mousedown.prevent.stop
+                @mouseup.prevent.stop
+              />
+            </v-defaults-provider>
+          </template>
+        </v-text-field>
+      </v-list-item>
+      <v-list-item>
+        <v-btn
+          @click="onChangeIcon()"
+          v-if="graphQlStore?.state.user?.token"
+          variant="text"
+          text="アイコンを変更する"
+        />
+      </v-list-item>
     </v-list>
   </play-main-nav-dialog>
 </template>
 
 <script lang="ts" setup>
-import {watch, inject, ref} from 'vue'
+import {watch, inject, ref, computed} from 'vue'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import UserAvatar from '@/components/parts/UserAvatar.vue'
 import PlayMainNavDialog from '@/components/PlayMainNavDialog.vue'
@@ -131,6 +175,21 @@ const emits = defineEmits<{
   (e: 'update:nav', value: string): void
 }>()
 
+const editUserName = ref(false)
+const inputUserNameElm = ref()
+const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+const inputUserName = ref(graphQlStore?.state.user?.name || '')
+async function updateUserName() {
+  await graphQlStore?.updateUserName(inputUserName.value)
+  editUserName.value = false
+}
+function startEditUserName() {
+  editUserName.value = true
+  setTimeout(() => {
+    inputUserNameElm.value.focus()
+  }, 100)
+}
+
 const dialog = ref('')
 const saveRail = ref(false)
 watch(dialog, () => {
@@ -141,6 +200,15 @@ watch(dialog, () => {
     emits('update:rail', saveRail.value)
   }
 })
+
+function onClickExpand() {
+  if (dialog.value) {
+    saveRail.value = !props.rail
+    dialog.value = ''
+  } else {
+    emits('update:rail', !props.rail)
+  }
+}
 
 watch(() => graphQlStore?.state.dashboards?.length, () => {
   emits('update:nav', graphQlStore?.state.dashboard?.id || '')
@@ -153,4 +221,36 @@ function addDashboard() {
 function logout() {
   router.push({ name: 'Home' })
 }
+
+const isReady = ref(false)
+setTimeout(() => {
+  isReady.value = true
+}, 500)
+
+function onChangeIcon() {
+  graphQlStore?.updateUserIcon()
+}
 </script>
+
+<style lang="scss" scoped>
+.name-text-field {
+  align-self: stretch;
+  grid-template-columns: repeat(auto-fill, 1fr);
+  grid-template-rows: 1fr auto;
+}
+
+.name-text-field:deep(.v-field--appended) {
+  padding-inline-end: 0
+}
+
+.name-text-field:deep(.v-field__input),
+.name-text-field:deep(.v-field__append-inner) {
+  padding-top: 0
+}
+
+.name-text-field:deep(.v-field__input) {
+  min-height: auto;
+  height: 100%;
+  letter-spacing: 0;
+}
+</style>

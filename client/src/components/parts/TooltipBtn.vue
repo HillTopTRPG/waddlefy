@@ -11,7 +11,7 @@
         :prepend-icon="stack ? btnIcon as any : undefined"
         :text="btnText || ''"
         @click='emits("click")'
-      ></v-btn>
+      />
     </template>
     {{ tooltipText }}
   </v-tooltip>

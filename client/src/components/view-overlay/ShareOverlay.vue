@@ -1,5 +1,10 @@
 <template>
-  <contents-overlay title="参加してもらう" color="bg-orange-lighten-1" :modal-value="modalValue" @close="emits('close')">
+  <contents-overlay
+    title="参加してもらう"
+    color="bg-orange-lighten-1"
+    :modal-value="modalValue"
+    @close="emits('close')"
+  >
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
         <v-list-subheader>事前に参加者アカウントを用意する（おすすめ）</v-list-subheader>
@@ -12,7 +17,7 @@
             hint="ログイン後に編集できます。名前の重複はできません。"
             :error-messages="addPlayerErrorMessage"
             v-model="addPlayerName"
-            @keydown.enter="callAddPlayer()"
+            @keydown.enter="$event.keyCode === 13 && callAddPlayer()"
             @click:append-inner.stop
           >
             <template v-slot:append class="ma-0"></template>

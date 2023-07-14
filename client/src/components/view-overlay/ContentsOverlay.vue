@@ -2,7 +2,7 @@
   <v-overlay
     :model-value="modalValue"
     @update:model-value="emits('close')"
-    :persistent="false"
+    :persistent="true"
     :contained="true"
     transition="slide-x-transition"
     :scrim="false"
@@ -10,10 +10,11 @@
     :no-click-animation="true"
     class="ma-0"
     style="max-width: 400px"
+    :style="`border-left: ${color} 2px solid;`"
     content-class="w-100 h-100"
   >
     <v-layout class="w-100 h-100">
-      <v-card class="w-100 ma-0 d-flex flex-column">
+      <v-card class="w-100 ma-0 d-flex flex-column" style="border-radius: 0">
         <v-card-title class="d-flex justify-space-between align-center py-1" :class="color">
           <span>{{ title }}</span>
           <v-btn icon="mdi-close" variant="text" size="small" style="font-size: 0.8em" @click="emits('close')"></v-btn>

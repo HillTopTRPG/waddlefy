@@ -40,7 +40,7 @@
                 :autofocus="true"
                 v-model="userId"
                 :error-messages="userIdCheck ? '' : '重複しています'"
-                @keydown.enter="userId && userNameElm.focus()"
+                @keydown.enter="$event.keyCode === 13 && userId && userNameElm.focus()"
                 ref="userIdElm"
               />
               <v-text-field
@@ -48,7 +48,7 @@
                 :rules="[(x) => !!x || '必須項目']"
                 variant="solo-filled"
                 v-model="userName"
-                @keydown.enter="userName && passwordElm.focus()"
+                @keydown.enter="$event.keyCode === 13 && userName && passwordElm.focus()"
                 ref="userNameElm"
               />
               <v-text-field
@@ -58,7 +58,7 @@
                 class="mb-1"
                 variant="solo-filled"
                 v-model="password"
-                @keydown.enter="callSignUp()"
+                @keydown.enter="$event.keyCode === 13 && callSignUp()"
                 ref="passwordElm"
               />
             </v-card-item>

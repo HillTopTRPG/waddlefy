@@ -30,7 +30,7 @@
               :rules="[(x) => !!x || '必須項目']"
               variant="solo-filled"
               :autofocus="!Boolean(defaultUserId)"
-              @keydown.enter="userId && passwordElm.focus()"
+              @keydown.enter="$event.keyCode === 13 && userId && passwordElm.focus()"
               ref="userIdElm"
               v-model="userId"
             />
@@ -41,7 +41,7 @@
               class="mb-1"
               variant="solo-filled"
               :autofocus="Boolean(defaultUserId)"
-              @keydown.enter="callSignIn()"
+              @keydown.enter="$event.keyCode === 13 && callSignIn()"
               ref="passwordElm"
               v-model="password"
             />
