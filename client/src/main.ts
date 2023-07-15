@@ -11,8 +11,8 @@ import { createApp } from 'vue'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
-import {register} from "@/components/panes/plugin";
-import {createI18n} from "vue-i18n";
+import { register } from '@/components/panes/plugin'
+import { createI18n } from 'vue-i18n'
 
 const i18n = createI18n({
   locale         : 'ja-JP', // set locale

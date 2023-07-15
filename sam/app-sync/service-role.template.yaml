@@ -9,7 +9,7 @@ Parameters:
     Type: String
   PlayerTableArn:
     Type: String
-  PaneTableArn:
+  DashboardTableArn:
     Type: String
 
 Resources:
@@ -76,8 +76,8 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                 Resource:
-                  - !Sub ${PaneTableArn}
-                  - !Sub ${PaneTableArn}/*
+                  - !Sub ${DashboardTableArn}
+                  - !Sub ${DashboardTableArn}/*
 
 Outputs:
   ServiceRoleArn:

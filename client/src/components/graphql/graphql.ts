@@ -38,7 +38,7 @@ import { Router } from 'vue-router'
 import { Observable } from '@apollo/client'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
-const DEFAULT_URL = 'https://eadjwjk4nnhybopeqn2altvcba.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+const DEFAULT_URL = 'https://4ajbsr5h75etnpz4qmx2vq3dyi.appsync-api.ap-northeast-1.amazonaws.com/graphql'
 const DEFAULT_REGION = 'ap-northeast-1'
 
 const DEFAULT_SESSION_NAME = 'No title'

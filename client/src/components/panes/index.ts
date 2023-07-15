@@ -1,10 +1,9 @@
 import noGroupPanes from './NoGroup'
 import samplePanes from './sample'
 import samplePanes2 from './sample2'
-import chatPanes from './Chat'
 
 const panes = [
-  ...noGroupPanes, ...samplePanes, ...samplePanes2, ...chatPanes,
+  ...noGroupPanes, ...samplePanes, ...samplePanes2,
 ]
 
 export interface Layout {

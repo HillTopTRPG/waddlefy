@@ -11,7 +11,7 @@ Parameters:
     Type: String
   PlayerTableDataSourceName:
     Type: String
-  PaneTableDataSourceName:
+  DashboardTableDataSourceName:
     Type: String
 
 Resources:
@@ -95,14 +95,14 @@ Resources:
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # SessionForUser.panes
-  RelationSessionForUserPanes:
+  # SessionForUser.dashboards
+  RelationSessionForUserDashboards:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: SessionForUser
-      FieldName: panes
-      DataSourceName: !Ref PaneTableDataSourceName
+      FieldName: dashboards
+      DataSourceName: !Ref DashboardTableDataSourceName
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
@@ -128,14 +128,14 @@ Resources:
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
-  # SessionForPlayer.panes
-  RelationSessionForPlayerPanes:
+  # SessionForPlayer.dashboards
+  RelationSessionForPlayerDashboards:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !Ref ApiId
       TypeName: SessionForPlayer
-      FieldName: panes
-      DataSourceName: !Ref PaneTableDataSourceName
+      FieldName: dashboards
+      DataSourceName: !Ref DashboardTableDataSourceName
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 

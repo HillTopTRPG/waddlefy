@@ -13,7 +13,7 @@ Parameters:
     Type: String
   PlayerTableName:
     Type: String
-  PaneTableName:
+  DashboardTableName:
     Type: String
 
 Resources:
@@ -48,15 +48,15 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref PlayerTableName
         AwsRegion: !Ref AWS::Region
-  PaneTableDataSource:
+  DashboardTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
-      Name: PaneTableDataSource
+      Name: DashboardTableDataSource
       ApiId: !Ref ApiId
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !Ref ServiceRoleArn
       DynamoDBConfig:
-        TableName: !Ref PaneTableName
+        TableName: !Ref DashboardTableName
         AwsRegion: !Ref AWS::Region
 
   # Relations
@@ -69,7 +69,7 @@ Resources:
         UserTableDataSourceName: !GetAtt UserTableDataSource.Name
         SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
-        PaneTableDataSourceName: !GetAtt PaneTableDataSource.Name
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
   # Functions
   FunctionsResolverStack:

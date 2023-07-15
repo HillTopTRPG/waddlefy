@@ -165,7 +165,7 @@ type SessionForUser {
   createdAt: AWSTimestamp!
   user: UserForUser!
   players: [AbstractPlayer]!
-  panes: [Pane]!
+  dashboards: [Dashboard]!
 }
 
 type AbstractPlayer {
@@ -227,10 +227,10 @@ type SessionForPlayer {
   createdAt: AWSTimestamp!
   user: AbstractUser!
   players: [AbstractPlayer]!
-  panes: [Pane]!
+  dashboards: [Dashboard]!
 }
 
-type Pane {
+type Dashboard {
   id: ID!
   type: String!
   data: String! # json

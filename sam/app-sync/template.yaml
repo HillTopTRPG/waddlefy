@@ -12,9 +12,9 @@ Parameters:
   PlayerTableName:
     Type: String
     Default: waddlefy-player-table
-  PaneTableName:
+  DashboardTableName:
     Type: String
-    Default: waddlefy-pane-table
+    Default: waddlefy-dashboard-table
 
 Resources:
   AppSync:
@@ -61,7 +61,7 @@ Resources:
         UserTableArn: !GetAtt TablesStack.Outputs.UserTableArn
         SessionTableArn: !GetAtt TablesStack.Outputs.SessionTableArn
         PlayerTableArn: !GetAtt TablesStack.Outputs.PlayerTableArn
-        PaneTableArn: !GetAtt TablesStack.Outputs.PaneTableArn
+        DashboardTableArn: !GetAtt TablesStack.Outputs.DashboardTableArn
 
   # DynamoDB
   TablesStack:
@@ -72,7 +72,7 @@ Resources:
         UserTableName: !Ref UserTableName
         SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
-        PaneTableName: !Ref PaneTableName
+        DashboardTableName: !Ref DashboardTableName
 
   SchemaStack:
     Type: AWS::Serverless::Application
@@ -84,7 +84,7 @@ Resources:
         UserTableName: !Ref UserTableName
         SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
-        PaneTableName: !Ref PaneTableName
+        DashboardTableName: !Ref DashboardTableName
     DependsOn:
       - AppSyncSchema
 
