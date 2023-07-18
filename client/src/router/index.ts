@@ -16,23 +16,23 @@ const routes = [
     component: SignUp
   },
   {
-    path: '/u/:userToken/:firstNav',
+    path: '/u/:userToken/:sessionId',
     name: 'UserMain1',
     component: Main,
-    props: (r: { params: { userToken: string, firstNav: string }, query: { rail?: string } }) => ({
+    props: (r: { params: { userToken: string, sessionId: string }, query: { rail?: string } }) => ({
       userToken: r.params.userToken,
-      firstNav: r.params.firstNav,
+      sessionId: r.params.sessionId,
       rail: r.query.rail || ''
     }),
   },
   {
-    path: '/u/:userToken/:firstNav/:secondNav',
+    path: '/u/:userToken/:sessionId/:dashboardId',
     name: 'UserMain2',
     component: Main,
-    props: (r: { params: { userToken: string, firstNav: string, secondNav: string }, query: { rail?: string } }) => ({
+    props: (r: { params: { userToken: string, sessionId: string, dashboardId: string }, query: { rail?: string } }) => ({
       userToken: r.params.userToken,
-      firstNav: r.params.firstNav,
-      secondNav: r.params.secondNav,
+      sessionId: r.params.sessionId,
+      dashboardId: r.params.dashboardId,
       rail: r.query.rail || ''
     }),
   },

@@ -1,63 +1,48 @@
 <script setup lang='ts'>
-import { computed } from 'vue'
+import UserAvatar from '@/components/parts/UserAvatar.vue'
 
 const props = defineProps<{
-  label: string
-  tooltipText: string
-  appendIcon?: string
-  prependIcon?: string
-  value: string
-  showLabel: boolean
-  listItemStyle?: string
-  bigIcon?: boolean
+  title: string
+  class?: string
+  subtitle?: string
+  icon?: string
+  iconToken?: string
+  rail: boolean
+  toggle: boolean
 }>()
-
-const emits = defineEmits<{
-  (e: 'select', value: string): void
-}>()
-
-const iconSize  = computed(() => props.bigIcon ? 'default' : 'small')
-const iconClass = computed(() => props.bigIcon ? 'ma-2' : 'mr-6')
 </script>
 
 <template>
-  <v-tooltip transition='scale-transition'>
-    <template #activator='{ props }'>
+  <v-tooltip transition='scale-transition' :disabled="!rail">
+    <template #activator='{ props: tooltipProp }'>
       <v-list-item
-        variant='flat'
+        variant="flat"
         color='primary'
-        :value='value || undefined'
-        v-bind='props'
-        class="ml-2 pl-3"
-        style="border-radius: 10px 0 0 10px;"
-        :style='listItemStyle'
-        @click='emits("select", value)'
+        v-bind='{ ...$attrs, ...tooltipProp }'
+        class="nav-icon-item"
+        :class="(toggle ? 'ml-2 pl-2 ' : 'mx-2 pl-2 ') + (props.class || '')"
+        :style="toggle ? 'border-radius: 10px 0 0 10px;' : ''"
         @keydown.enter.stop='$event.target.click()'
       >
-        <template #append>
-          <v-icon :size='iconSize' :class='iconClass' v-if='appendIcon'>mdi-{{ appendIcon }}</v-icon>
-        </template>
         <template #prepend>
-          <v-icon :size='iconSize' :class='iconClass' v-if='prependIcon'>mdi-{{ prependIcon }}</v-icon>
+          <v-icon size='small' class='mr-6' v-if="icon">mdi-{{ icon }}</v-icon>
+          <user-avatar v-if="iconToken" :token="iconToken || ''" class='mr-3' />
         </template>
-        <transition name='fade' :class="{'d-none' : !showLabel}">
-          <v-list-item-title v-if='showLabel'>{{ label }}</v-list-item-title>
-        </transition>
+        <v-list-item-title>{{ title }}</v-list-item-title>
+        <v-list-item-subtitle>{{ subtitle }}</v-list-item-subtitle>
       </v-list-item>
     </template>
-    <span class='font-weight-bold'>{{ tooltipText }}</span>
+    <span class='font-weight-bold'>{{ title }}</span>
   </v-tooltip>
 </template>
 
 <!--suppress CssUnusedSymbol, HtmlUnknownAttribute -->
-<style deep lang='css'>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
+<style scoped lang='css'>
+.nav-icon-item {
+  margin-right: 1px;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.nav-icon-item.v-list-item--active {
+  margin-right: -1px;
 }
 </style>

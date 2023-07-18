@@ -1,8 +1,9 @@
 import gql from 'graphql-tag'
+import { Layout } from '@/components/panes'
 
 const userSignUp = gql(`
-mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!, $sessionName: String!, $layout: String!, $metaData: String!) {
-  userSignUp(input: {userId: $userId, name: $userName, password: $userPassword, sessionName: $sessionName, layout: $layout, metaData: $metaData}) {
+mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!, $sessionName: String!, $sessionType: String!) {
+  userSignUp(input: {userId: $userId, name: $userName, password: $userPassword, sessionName: $sessionName, sessionType: $sessionType}) {
     id
     name
     iconToken
@@ -13,14 +14,17 @@ mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!
       token
       signUpToken
       name
-      layout
-      metaData
+      sessionType
       createdAt
       players {
         id
         sessionId
         name
         iconToken
+      }
+      dashboards {
+        id
+        name
       }
     }
     sessions {
@@ -30,9 +34,6 @@ mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!
   }
 }
 `)
-export type UserSignUpResult = {
-  userSignUp: UserForUser
-}
 
 const userSignIn = gql(`
 mutation UserSignIn($userId: String!, $userPassword: String!) {
@@ -47,14 +48,23 @@ mutation UserSignIn($userId: String!, $userPassword: String!) {
       token
       signUpToken
       name
-      layout
-      metaData
+      sessionType
       createdAt
       players {
         id
         sessionId
         name
         iconToken
+      }
+      dashboards {
+        id
+        name
+      }
+      defaultDashboardId
+      defaultDashboard {
+        id
+        name
+        layout
       }
     }
     sessions {
@@ -64,19 +74,15 @@ mutation UserSignIn($userId: String!, $userPassword: String!) {
   }
 }
 `)
-export type UserSignInResult = {
-  userSignIn: UserForUser
-}
 
 const addSession = gql(`
-mutation AddSession($name: String!, $layout: String!, $metaData: String!) {
-  addSession(input: {name: $name, layout: $layout, metaData: $metaData}) {
+mutation AddSession($name: String!, $sessionType: String!) {
+  addSession(input: {name: $name, sessionType: $sessionType}) {
     id
     token
     signUpToken
     name
-    layout
-    metaData
+    sessionType
     createdAt
     players {
       id
@@ -84,12 +90,30 @@ mutation AddSession($name: String!, $layout: String!, $metaData: String!) {
       name
       iconToken
     }
+    dashboards {
+      id
+      name
+    }
+    defaultDashboardId
+    defaultDashboard {
+      id
+      name
+      layout
+    }
   }
 }
 `)
-export type AddSessionResult = {
-  addSession: SessionForUser
+
+const addDashboard = gql(`
+mutation AddDashboardResult($dashboardName: String!, $layout: String!, $sessionId: String!) {
+  addDashboard(input: {name: $dashboardName, layout: $layout, sessionId: $sessionId}) {
+    id
+    name
+    layout
+    sessionId
+  }
 }
+`)
 
 const addPlayerByUser = gql(`
 mutation AddPlayerByUser($sessionId: String!, $playerName: String!) {
@@ -102,9 +126,6 @@ mutation AddPlayerByUser($sessionId: String!, $playerName: String!) {
   }
 }
 `)
-export type AddPlayerByUserResult = {
-  addPlayerByUser: AbstractPlayer
-}
 
 const addPlayerByPlayer = gql(`
 mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
@@ -117,9 +138,6 @@ mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
   }
 }
 `)
-export type AddPlayerByPlayerResult = {
-  addPlayerByPlayer: AbstractPlayer
-}
 
 const playerFirstSignIn = gql(`
 mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
@@ -134,8 +152,7 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       id
       name
       token
-      layout
-      metaData
+      sessionType
       createdAt
       user {
         id
@@ -148,13 +165,20 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
         name
         iconToken
       }
+      dashboards {
+        id
+        name
+      }
+      defaultDashboardId
+      defaultDashboard {
+        id
+        name
+        layout
+      }
     }
   }
 }
 `)
-export type PlayerFirstSignInResult = {
-  playerFirstSignIn: PlayerForPlayer
-}
 
 const playerSignIn = gql(`
 mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
@@ -169,8 +193,7 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       id
       name
       token
-      layout
-      metaData
+      sessionType
       createdAt
       user {
         id
@@ -183,13 +206,20 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
         name
         iconToken
       }
+      dashboards {
+        id
+        name
+      }
+      defaultDashboardId
+      defaultDashboard {
+        id
+        name
+        layout
+      }
     }
   }
 }
 `)
-export type PlayerSignInResult = {
-  playerSignIn: PlayerForPlayer
-}
 
 const generatePlayerResetCode = gql(`
 mutation GeneratePlayerResetCode($playerId: String!) {
@@ -198,11 +228,6 @@ mutation GeneratePlayerResetCode($playerId: String!) {
   }
 }
 `)
-export type GeneratePlayerResetCodeResult = {
-  generatePlayerResetCode: {
-    resetCode: string
-  }
-}
 
 const resetPlayerPassword = gql(`
 mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPassword: String!) {
@@ -216,8 +241,7 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
       id
       name
       token
-      layout
-      metaData
+      sessionType
       createdAt
       user {
         id
@@ -230,13 +254,20 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
         name
         iconToken
       }
+      dashboards {
+        id
+        name
+      }
+      defaultDashboardId
+      defaultDashboard {
+        id
+        name
+        layout
+      }
     }
   }
 }
 `)
-export type ResetPlayerPasswordResult = {
-  resetPlayerPassword: PlayerForPlayer
-}
 
 const updateUserName = gql(`
 mutation UpdateUserName($userName: String!) {
@@ -247,9 +278,6 @@ mutation UpdateUserName($userName: String!) {
   }
 }
 `)
-export type UpdateUserNameResult = {
-  updateUserName: AbstractUser
-}
 
 const updateUserIcon = gql(`
 mutation UpdateUserIcon {
@@ -260,30 +288,39 @@ mutation UpdateUserIcon {
   }
 }
 `)
-export type UpdateUserIconResult = {
-  updateUserIcon: AbstractUser
-}
 
 const updateSession = gql(`
-mutation UpdateSession($sessionId: String!, $name: String!, $layout: String!, $metaData: String!) {
-  updateSession(input: {sessionId: $sessionId, name: $name, layout: $layout, metaData: $metaData}) {
+mutation UpdateSession($sessionId: String!, $name: String!, $sessionType: String!, $defaultDashboardId: String!) {
+  updateSession(input: {sessionId: $sessionId, name: $name, sessionType: $sessionType, defaultDashboardId: $defaultDashboardId}) {
     id
     name
     token
-    layout
-    metaData
+    sessionType
   }
 }
 `)
-export type UpdatedSession = {
+type UpdatedSession = {
   id: string
   name: string
   token: string
-  layout: string
-  metaData: string
+  sessionType: string
 }
-export type UpdateSessionResult = {
-  updateSession: UpdatedSession
+
+const updateDashboard = gql(`
+mutation UpdateDashboard($sessionId: String!, $dashboardId: String!, $name: String!, $layout: String!) {
+  updateDashboard(input: {sessionId: $sessionId, dashboardId: $dashboardId, name: $name, layout: $layout}) {
+    id
+    name
+    layout
+    sessionId
+  }
+}
+`)
+type UpdatedDashboard = {
+  id: string
+  name: string
+  layout: string
+  sessionId: string
 }
 
 const updatePlayerName = gql(`
@@ -297,9 +334,6 @@ mutation UpdatePlayerName($playerName: String!) {
   }
 }
 `)
-export type UpdatePlayerNameResult = {
-  updatePlayerName: AbstractPlayer
-}
 
 const updatePlayerIcon = gql(`
 mutation UpdatePlayerIcon {
@@ -312,9 +346,6 @@ mutation UpdatePlayerIcon {
   }
 }
 `)
-export type UpdatePlayerIconResult = {
-  updatePlayerIcon: AbstractPlayer
-}
 
 const deleteSession = gql(`
 mutation DeleteSession($sessionId: String!) {
@@ -324,9 +355,15 @@ mutation DeleteSession($sessionId: String!) {
   }
 }
 `)
-export type DeleteSessionResult = {
-  deleteSession: DeletedId
+
+const deleteDashboard = gql(`
+mutation DeleteDashboard($sessionId: String!, $dashboardId: String!) {
+  deleteDashboard(input: {sessionId: $sessionId, id: $dashboardId}) {
+    id
+    sessionId
+  }
 }
+`)
 
 const deletePlayer = gql(`
 mutation DeletePlayer($playerId: String!) {
@@ -336,8 +373,67 @@ mutation DeletePlayer($playerId: String!) {
   }
 }
 `)
-export type DeletePlayerResult = {
-  deletePlayer: DeletedId
+
+export namespace MutationResult {
+  export type UserSignUp = {
+    userSignUp: UserForUser
+  }
+  export type UserSignIn = {
+    userSignIn: UserForUser
+  }
+  export type AddSession = {
+    addSession: SessionForUser
+  }
+  export type AddDashboard = {
+    addDashboard: DashboardResult
+  }
+  export type AddPlayerByUser = {
+    addPlayerByUser: AbstractPlayer
+  }
+  export type AddPlayerByPlayer = {
+    addPlayerByPlayer: AbstractPlayer
+  }
+  export type PlayerFirstSignIn = {
+    playerFirstSignIn: PlayerForPlayer
+  }
+  export type PlayerSignIn = {
+    playerSignIn: PlayerForPlayer
+  }
+  export type GeneratePlayerResetCode = {
+    generatePlayerResetCode: {
+      resetCode: string
+    }
+  }
+  export type ResetPlayerPassword = {
+    resetPlayerPassword: PlayerForPlayer
+  }
+  export type UpdateUserName = {
+    updateUserName: AbstractUser
+  }
+  export type UpdateUserIcon = {
+    updateUserIcon: AbstractUser
+  }
+  export type UpdateSession = {
+    updateSession: UpdatedSession
+  }
+  export type UpdateDashboard = {
+    updateDashboard: UpdatedDashboard
+  }
+  export type UpdatePlayerName = {
+    updatePlayerName: AbstractPlayer
+  }
+  export type UpdatePlayerIcon = {
+    updatePlayerIcon: AbstractPlayer
+  }
+  export type DeleteSession = {
+    deleteSession: DeletedId
+  }
+  export type DeleteDashboard = {
+    deleteDashboard: DeletedId
+  }
+  export type DeletePlayer = {
+    deletePlayer: DeletedId
+  }
 }
 
 const checkDuplicateUserId = gql(`
@@ -347,11 +443,6 @@ query CheckDuplicateUserId($userId: String!) {
   }
 }
 `)
-export type CheckDuplicateUserIdResult = {
-  checkDuplicateUserId: {
-    ok: boolean
-  }
-}
 
 const directSessionAccess = gql(`
 query DirectSessionAccess($sessionId: String!) {
@@ -360,8 +451,7 @@ query DirectSessionAccess($sessionId: String!) {
     token
     signUpToken
     name
-    layout
-    metaData
+    sessionType
     createdAt
     user {
       id
@@ -381,12 +471,30 @@ query DirectSessionAccess($sessionId: String!) {
       iconToken
       status
     }
+    dashboards {
+      id
+      name
+    }
+    defaultDashboardId
+    defaultDashboard {
+      id
+      name
+      layout
+    }
   }
 }
 `)
-export type DirectSessionAccessQueryResult = {
-  directSessionAccess: SessionForUser
+
+const directDashboardAccess = gql(`
+query DirectSessionAccess($dashboardId: String!) {
+  directDashboardAccess(id: $dashboardId) {
+    id
+    sessionId
+    name
+    layout
+  }
 }
+`)
 
 const getSessionPlayer = gql(`
 query GetSessionPlayer($playerId: String!) {
@@ -399,15 +507,36 @@ query GetSessionPlayer($playerId: String!) {
   }
 }
 `)
+
+export namespace QueryResult {
+  export type CheckDuplicateUserId = {
+    checkDuplicateUserId: {
+      ok: boolean
+    }
+  }
+  export type DirectSessionAccess = {
+    directSessionAccess: SessionForUser
+  }
+  export type DirectDashboardAccess = {
+    directDashboardAccess: DashboardResult
+  }
+  export type DirectPlayerAccess = {
+    directPlayerAccess: PlayerForPlayer
+  }
+  export type GetSessionPlayer = {
+    getSessionPlayer: AbstractPlayer
+  }
+  export type GetSessionPlayers = {
+    getSessionPlayers: AbstractPlayer[]
+  }
+}
+
 export type AbstractPlayer = {
   id: string
   sessionId: string
   name: string
   iconToken: string
   status: string
-}
-export type GetSessionPlayerResult = {
-  getSessionPlayer: AbstractPlayer
 }
 
 const getSessionPlayers = gql(`
@@ -421,9 +550,6 @@ query GetSessionPlayers {
   }
 }
 `)
-export type GetSessionPlayersResult = {
-  getSessionPlayers: AbstractPlayer[]
-}
 
 const directPlayerAccess = gql(`
 query DirectPlayerAccess {
@@ -437,8 +563,7 @@ query DirectPlayerAccess {
       id
       name
       token
-      layout
-      metaData
+      sessionType
       createdAt
       user {
         id
@@ -451,15 +576,22 @@ query DirectPlayerAccess {
         iconToken
         status
       }
+      dashboards {
+        id
+        name
+      }
+      defaultDashboardId
+      defaultDashboard {
+        id
+        name
+        layout
+      }
     }
   }
 }
 `)
-export type DirectPlayerAccessQueryResult = {
-  directPlayerAccess: PlayerForPlayer
-}
 
-export type UserForUser = {
+type UserForUser = {
   id: string
   name: string
   iconToken: string
@@ -476,7 +608,7 @@ export type User = {
   token?: string
 }
 
-export type PlayerForPlayer = {
+type PlayerForPlayer = {
   id: string
   name: string
   iconToken: string
@@ -494,27 +626,31 @@ export type Player = {
   resetCode?: string
 }
 
-export type SessionForUser = {
+type SessionForUser = {
   id: string
   token: string
   signUpToken: string
   name: string
-  layout: string
-  metaData: string
+  sessionType: string
   createdAt: number
   user: UserForUser
   players: AbstractPlayer[]
+  dashboards: AbstractDashboard[]
+  defaultDashboardId: string
+  defaultDashboard: DashboardResult
 }
 
-export type SessionForPlayer = {
+type SessionForPlayer = {
   id: string
   token: string
   name: string
-  layout: string
-  metaData: string
+  sessionType: string
   createdAt: number
   user: AbstractUser
   players: AbstractPlayer[]
+  dashboards: AbstractDashboard[]
+  defaultDashboardId: string
+  defaultDashboard: DashboardResult
 }
 
 export type Session = {
@@ -522,12 +658,12 @@ export type Session = {
   token: string
   signUpToken?: string
   name: string
-  layout: string
-  metaData: string
+  sessionType: string
   createdAt: number
+  defaultDashboardId: string
 }
 
-export type AbstractSession = {
+type AbstractSession = {
   id: string
   name: string
 }
@@ -538,9 +674,26 @@ export type AbstractUser = {
   iconToken: string
 }
 
-export type DeletedId = {
+type DeletedId = {
   id: string
   sessionId: string
+}
+
+export type AbstractDashboard = {
+  id: string
+  name: string
+}
+
+type DashboardResult = {
+  id: string
+  name: string
+  layout: string
+}
+
+export type Dashboard = {
+  id: string
+  name: string
+  layout: Layout
 }
 
 const onAddPlayer = gql(`
@@ -553,9 +706,16 @@ subscription OnAddPlayer($sessionId: String!) {
   }
 }
 `)
-export type OnAddPlayerResult = {
-  onAddPlayer: AbstractPlayer
+
+const onAddDashboard = gql(`
+subscription OnAddDashboardResult($sessionId: String!) {
+  onAddDashboard(sessionId: $sessionId) {
+    id
+    name
+    layout
+  }
 }
+`)
 
 const onUpdateUser = gql(`
 subscription OnUpdateUser($userId: String!) {
@@ -566,9 +726,6 @@ subscription OnUpdateUser($userId: String!) {
   }
 }
 `)
-export type OnUpdateUserResult = {
-  onUpdateUser: AbstractUser
-}
 
 const onUpdateSession = gql(`
 subscription OnUpdateSession($sessionId: String!) {
@@ -576,14 +733,21 @@ subscription OnUpdateSession($sessionId: String!) {
     id
     name
     token
-    layout
-    metaData
+    sessionType
   }
 }
 `)
-export type OnUpdateSessionResult = {
-  onUpdateSession: UpdatedSession
+
+const onUpdateDashboard = gql(`
+subscription OnUpdateDashboard($sessionId: String!) {
+  onUpdateDashboard(sessionId: $sessionId) {
+    id
+    name
+    layout
+    sessionId
+  }
 }
+`)
 
 const onUpdatePlayer = gql(`
 subscription OnUpdatePlayer($sessionId: String!) {
@@ -596,9 +760,14 @@ subscription OnUpdatePlayer($sessionId: String!) {
   }
 }
 `)
-export type OnUpdatePlayerResult = {
-  onUpdatePlayer: AbstractPlayer
+
+const onDeleteDashboard = gql(`
+subscription OnDeleteDashboard($sessionId: String!) {
+  onDeleteDashboard(sessionId: $sessionId) {
+    id
+  }
 }
+`)
 
 const onDeletePlayer = gql(`
 subscription OnDeletePlayer($sessionId: String!) {
@@ -607,14 +776,39 @@ subscription OnDeletePlayer($sessionId: String!) {
   }
 }
 `)
-export type OnDeletePlayerResult = {
-  onDeletePlayer: { id: string }
+
+export namespace SubscriptionResult {
+  export type OnAddPlayer = {
+    onAddPlayer: AbstractPlayer
+  }
+  export type OnAddDashboard = {
+    onAddDashboard: DashboardResult
+  }
+  export type OnUpdateUser = {
+    onUpdateUser: AbstractUser
+  }
+  export type OnUpdateSession = {
+    onUpdateSession: UpdatedSession
+  }
+  export type OnUpdateDashboard = {
+    onUpdateDashboard: UpdatedDashboard
+  }
+  export type OnUpdatePlayer = {
+    onUpdatePlayer: AbstractPlayer
+  }
+  export type OnDeleteDashboard = {
+    onDeleteDashboard: { id: string }
+  }
+  export type OnDeletePlayer = {
+    onDeletePlayer: { id: string }
+  }
 }
 
 export const Mutations = {
   userSignUp,
   userSignIn,
   addSession,
+  addDashboard,
   addPlayerByUser,
   addPlayerByPlayer,
   playerFirstSignIn,
@@ -624,9 +818,11 @@ export const Mutations = {
   updateUserName,
   updateUserIcon,
   updateSession,
+  updateDashboard,
   updatePlayerName,
   updatePlayerIcon,
   deleteSession,
+  deleteDashboard,
   deletePlayer
 }
 
@@ -634,14 +830,18 @@ export const Queries = {
   checkDuplicateUserId,
   directPlayerAccess,
   directSessionAccess,
+  directDashboardAccess,
   getSessionPlayer,
   getSessionPlayers
 }
 
 export const Subscriptions = {
   onAddPlayer,
+  onAddDashboard,
   onDeletePlayer,
+  onDeleteDashboard,
   onUpdateUser,
   onUpdateSession,
+  onUpdateDashboard,
   onUpdatePlayer
 }

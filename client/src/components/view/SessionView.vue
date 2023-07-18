@@ -1,9 +1,9 @@
 <template>
   <progress-circular-overlay :modal-value="!graphQlStore?.state.session" color="primary" />
-  <share-overlay :modal-value="nav === 'share'" @close="emits('update:nav', '')" />
-  <owner-overlay :modal-value="nav === 'owner'" @close="emits('update:nav', '')" />
-  <setting-overlay :modal-value="nav === 'setting'" @close="emits('update:nav', '')" />
-  <player-overlay :modal-value="Boolean(nav) && ['share', 'owner', 'setting'].every(s => s !== nav)" @close="emits('update:nav', '')" />
+  <share-overlay :modal-value="dialog === 'share'" @close="dialog = ''" />
+  <owner-overlay :modal-value="dialog === 'owner'" @close="dialog = ''" />
+  <setting-overlay :modal-value="dialog === 'setting'" @close="dialog = ''" />
+  <player-overlay :modal-value="Boolean(dialog) && ['share', 'owner', 'setting'].every(s => s !== dialog)" @close="dialog = ''" />
 
   <v-navigation-drawer
     :permanent='true'
@@ -25,128 +25,144 @@
               class="mr-2"
             />
           </template>
+          <template v-slot:title>
+            <p class="text-h6">{{ graphQlStore?.state.session?.name || '' }}</p>
+          </template>
         </v-list-item>
         <v-divider />
       </v-list>
     </template>
 
     <!-- 画面 -->
-    <v-list :nav='true' density='compact' class="pa-0 pt-0 mb-1" @scroll="onScroll($event)">
-      <v-list-item
-        class="mt-0 mb-1 ml-2"
-        style="border-radius: 10px 0 0 10px;"
-        value="1"
-      >
-        <template v-slot:prepend>
-          <v-icon icon="mdi-view-dashboard" class="mr-6" />
+    <v-list :nav='true' density='compact' class="pa-0 pt-0 mb-1" @scroll="onScroll($event)" v-if="sessionType !== 'init'">
+      <template v-if="graphQlStore">
+        <template v-for="dashboard in graphQlStore.state.dashboards" :key="dashboard.id">
+          <user-nav-item
+            :title="dashboard.name"
+            :rail="rail"
+            icon="view-dashboard"
+            :toggle="true"
+            color="primary"
+            :active="dashboardId === dashboard.id"
+            @click="graphQlStore?.directDashboardAccess(dashboard.id)"
+          />
         </template>
-        <v-list-item-title v-if="!rail">aaaaa</v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        class="mt-0 mb-1 ml-2"
-        style="border-radius: 10px 0 0 10px;"
-        value="2"
-      >
-        <template v-slot:prepend>
-          <v-icon icon="mdi-plus" class="mr-6" />
+      </template>
+      <v-menu v-if="isReady" location="right" :scrim="true" v-model="addDashboardMenu" :close-on-content-click="false">
+        <template v-slot:activator="{ props }">
+          <user-nav-item
+            v-bind="props"
+            title="画面追加"
+            subtitle="主催者専用"
+            :rail="rail"
+            icon="plus"
+            :toggle="false"
+            class="mt-0 mb-1 mx-2"
+          />
         </template>
-        <v-list-item-title v-if="!rail">画面追加</v-list-item-title>
-        <v-list-item-subtitle v-if="!rail">主催者専用</v-list-item-subtitle>
-      </v-list-item>
+        <v-card min-width="20em">
+          <v-card-title class="bg-secondary">画面追加</v-card-title>
+          <v-card-item>
+            <v-text-field
+              label="画面名"
+              placeholder="No title dashboard"
+              :autofocus="true"
+              v-model="addDashboardName"
+              ref="addDashboardNameElm"
+              hide-details
+              @keydown.enter="$event.keyCode === 13 && addDashboard()"
+            />
+          </v-card-item>
+          <v-card-actions>
+            <v-btn class="d-block flex-grow-1" color="primary" variant="elevated" @click="addDashboard()">確定</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
       <v-divider/>
     </v-list>
 
     <!-- 主催者 -->
     <v-list :nav='true' if="account-list-nav" density='compact' class="pa-0 pt-0 mb-1">
       <v-list-subheader class="pa-0 ma-0">主催者</v-list-subheader>
-      <v-list-item
-        class="pl-2 pr-0 py-1 ml-2 mb-0"
-        style="border-radius: 10px 0 0 10px;"
-        variant="flat"
+
+      <user-nav-item
+        :title="graphQlStore?.state.user?.name || ''"
+        :rail="rail"
+        :icon-token="graphQlStore?.state.user!.iconToken"
+        :toggle="true"
         color="primary"
-        :active="nav === 'owner'"
-        @click="emits('update:nav', nav === 'owner' ? '' : 'owner')"
-      >
-        <template v-slot:prepend>
-          <user-avatar :token="graphQlStore?.state.user!.iconToken || ''" class='mr-3' />
-        </template>
-        <v-list-item-title>{{graphQlStore?.state.user?.name || ''}}</v-list-item-title>
-      </v-list-item>
+        :active="dialog === 'owner'"
+        @click="dialog = dialog === 'owner' ? '' : 'owner'"
+      />
       <v-divider class="mt-1" />
 
       <!-- 参加者 -->
       <v-list-subheader class="pa-0 ma-0">参加者{{ rail ? '' : `: ${graphQlStore?.state.players.length || 0}人` }}</v-list-subheader>
       <template v-for="player in graphQlStore?.state.players" :key="player.id">
-        <v-list-item
-          class="pl-2 pr-0 py-1 ml-2"
-          style="border-radius: 10px 0 0 10px;"
-          variant="flat"
+        <user-nav-item
+          :title="player.name || ''"
+          :rail="rail"
+          :icon-token="player.iconToken"
+          :toggle="true"
           color="primary"
-          :active="nav === player.id"
-          @click="emits('update:nav', nav === player.id ? '' : player.id)"
-        >
-          <template v-slot:prepend>
-            <user-avatar :token="player.iconToken" class='mr-3' />
-          </template>
-          <template v-if="!rail">
-            <v-list-item-title v-text="player.name || ''" />
-          </template>
-        </v-list-item>
+          :active="dialog === player.id"
+          @click="dialog = dialog === player.id ? '' : player.id"
+        />
       </template>
     </v-list>
 
     <template v-slot:append>
       <v-list :nav='true' density='compact' class="pa-0 my-1" v-if="!isScrolling">
         <v-divider />
-        <v-list-item
-          variant="flat"
-          class="mt-1 mb-0 ml-2"
-          style="border-radius: 10px 0 0 10px;"
-          @click="emits('update:nav', nav === 'share' ? '' : 'share')"
-          base-color="orange"
-          :ripple="true"
-          :active="nav === 'share'"
-          v-if="isOwnerControl"
-        >
-          <template v-slot:prepend>
-            <v-icon icon="mdi-share-variant" class="mr-6" />
-          </template>
-          <v-list-item-title>参加してもらう</v-list-item-title>
-          <v-list-item-subtitle>主催者専用</v-list-item-subtitle>
-        </v-list-item>
 
-        <v-list-item
-          variant="flat"
-          class="mt-1 mb-0 mx-2"
-          :ripple="true"
+        <user-nav-item
+          title="参加してもらう"
+          subtitle="主催者専用"
+          :rail="rail"
+          icon="share-variant"
+          :toggle="true"
+          class="mt-1 mb-0"
+          variant="elevated"
+          color="orange"
+          base-color="orange-lighten-3"
+          elevation="0"
+          :active="dialog === 'share'"
+          @click="dialog = dialog === 'share' ? '' : 'share'"
+          v-if="isOwnerControl && graphQlStore?.state.session?.sessionType !== 'init'"
+        />
+
+        <user-nav-item
+          title="セッションの設定"
+          :rail="rail"
+          icon="home"
+          :toggle="false"
+          class="mt-1 mb-0"
           color="secondary"
-          :active="dialog === 'setting'"
-          @click="dialog = dialog === '' ? 'setting' : ''"
-        >
-          <template v-slot:prepend>
-            <v-icon icon="mdi-cog" class="mr-6" />
-          </template>
-          <span style="white-space: nowrap;">{{ graphQlStore?.state.session?.name || '' }}</span>
-        </v-list-item>
+          :active="dialogInNav === 'setting'"
+          @click="dialogInNav = dialogInNav === '' ? 'setting' : ''"
+        />
       </v-list>
     </template>
   </v-navigation-drawer>
 
-  <session-nav-dialog
-    v-if="isReady"
+  <v-bottom-navigation :grow="true" :multiple="true" :elevation="2" density="compact" selected-class="bg-secondary">
+    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
+      <v-btn prepend-icon="mdi-cog" text="設定" @click="dialog = dialog === 'setting' ? '' : 'setting'" />
+      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" @click="showBar = !showBar" />
+    </v-defaults-provider>
+  </v-bottom-navigation>
+
+  <nav-dialog
     title="セッションの設定"
-    :modal-value="dialog === 'setting'"
-    @update:modal-value="v => { dialog = v ? 'setting' : '' }"
+    attach="#session-nav"
+    :modal-value="dialogInNav === 'setting'"
+    @close="dialogInNav = ''"
+    class="mb-11 mt-12"
+    v-if="isReady"
   >
     <v-list>
       <v-list-subheader style="min-height: auto">セッション名</v-list-subheader>
-      <v-list-item
-        variant="flat"
-        class="mb-0"
-        style="border-radius: 10px 0 0 10px;"
-        :ripple="true"
-        :active="nav === 'share'"
-      >
+      <v-list-item>
         <v-text-field
           :readonly="!editSessionName"
           label=""
@@ -188,56 +204,62 @@
           </template>
         </v-text-field>
       </v-list-item>
+      <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length > 1">
+        <delete-dialog-btn
+          :target-name="graphQlStore?.state.session?.name || ''"
+          type="セッション"
+          :sessionId="sessionId"
+          @execute="graphQlStore?.deleteSession(sessionId)"
+        />
+      </v-list-item>
     </v-list>
-    <v-divider />
-    <v-list>
-      <v-list-subheader>General</v-list-subheader>
-    </v-list>
-  </session-nav-dialog>
+  </nav-dialog>
 
-  <v-app-bar density="compact" height="50" elevation="0" id="session-main-app-bar">
-    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
-      <v-btn prepend-icon="mdi-cog" text="設定" @click="emits('update:nav', nav === 'setting' ? '' : 'setting')" />
-    </v-defaults-provider>
-    <template v-slot:append>
-      <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
-        <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" @click="showBar = !showBar" />
-      </v-defaults-provider>
-    </template>
+  <v-app-bar density="compact" height="50" :elevation="0" id="session-main-app-bar" v-if="sessionType !== 'init'">
+    <span class="ml-3">{{ graphQlStore?.state.dashboard?.name || '' }}</span>
   </v-app-bar>
 
-  <v-layout v-if="layout" full-height>
+  <v-layout full-height>
     <div class="position-relative w-100 h-100 overflow-hidden">
-      <split-panes-layer :blur="layoutChanging" :layout="layout" :root-layout="layout" :show-bar="showBar" />
+      <split-panes-layer
+        :id="dashboardId"
+        :layout="layout"
+        :root-layout="layout"
+        :show-bar="showBar"
+        v-if="sessionType !== 'init' && layout"
+      />
+      <init-session @submit="onSubmitSessionType" v-else />
     </div>
   </v-layout>
 </template>
 
 <script setup lang="ts">
+import { computed, inject, onMounted, ref, watch } from 'vue'
 import ProgressCircularOverlay from '@/components/view-overlay/ProgressCircularOverlay.vue'
 import SplitPanesLayer from '@/components/parts/SplitPanesLayer.vue'
 import 'splitpanes/dist/splitpanes.css'
-import { Layout } from '@/components/panes'
-import UserAvatar from '@/components/parts/UserAvatar.vue'
 import ShareOverlay from '@/components/view-overlay/ShareOverlay.vue'
 import OwnerOverlay from '@/components/view-overlay/OwnerOverlay.vue'
 import PlayerOverlay from '@/components/view-overlay/PlayerOverlay.vue'
-
-import { computed, inject, ref, watch } from 'vue'
-
-import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import SessionNavDialog from '@/components/SessionNavDialog.vue'
 import SettingOverlay from '@/components/view-overlay/SettingOverlay.vue'
+import InitSession from '@/components/view/InitSession.vue'
+import NavDialog from '@/components/NavDialog.vue'
+
+import { DEFAULT_DASHBOARD_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+
+import { Layout } from '@/components/panes'
+import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
+import UserNavItem from '@/components/parts/UserNavItem.vue'
+import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
+const defaultLayoutStr: Layout = JSON.stringify(defaultLayout) as Layout
 
 const props = defineProps<{
   rail: boolean
-  nav: string
 }>()
 
 const emits = defineEmits<{
   (e: 'update:rail', value: boolean): void
-  (e: 'update:nav', value: string): void
 }>()
 
 const sessionNav = ref()
@@ -255,16 +277,13 @@ watch(sessionNav, () => {
 const editSessionName = ref(false)
 const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
-const layout = ref<Layout | null>(graphQlStore?.state.session?.layout ? JSON.parse(graphQlStore.state.session.layout) as Layout : null)
-const layoutChanging = ref(false)
-watch(() => graphQlStore?.state.session?.layout, () => {
-  console.log(JSON.stringify(layout.value, null, 2))
-  if (graphQlStore?.state.session?.layout) {
-    layout.value = JSON.parse(graphQlStore.state.session.layout) as Layout
-    layoutChanging.value = false
-  } else {
-    layoutChanging.value = true
-  }
+const sessionId = computed(() => graphQlStore?.state.session?.id)
+const dashboardId = computed(() => graphQlStore?.state.dashboard?.id)
+const sessionType = computed(() => graphQlStore?.state.session?.sessionType)
+const layout = computed(() => graphQlStore?.state.dashboard?.layout)
+watch([sessionId, dashboardId], () => {
+  dialog.value = ''
+  dialogInNav.value = ''
 })
 
 const showBar = ref(false)
@@ -276,7 +295,7 @@ watch(() => graphQlStore?.state.session?.name, () => {
 async function updateSessionName() {
   const session = graphQlStore?.state.session
   if (!session) return
-  await graphQlStore?.updateSession(inputSessionName.value, session.layout, session.metaData)
+  await graphQlStore?.updateSession(inputSessionName.value, session.sessionType, session.defaultDashboardId)
   editSessionName.value = false
 }
 
@@ -285,9 +304,10 @@ function onScroll(event: any) {
 }
 
 const dialog = ref('')
+const dialogInNav = ref('')
 const saveRail = ref(false)
-watch(dialog, () => {
-  if (dialog.value) {
+watch(dialogInNav, () => {
+  if (dialogInNav.value) {
     saveRail.value = props.rail
     emits('update:rail', false)
   } else {
@@ -296,18 +316,18 @@ watch(dialog, () => {
 })
 
 function onClickExtend() {
-  if (dialog.value) {
+  if (dialogInNav.value) {
     saveRail.value = !props.rail
-    dialog.value = ''
+    dialogInNav.value = ''
   } else {
     emits('update:rail', !props.rail)
   }
 }
 
 const isReady = ref(false)
-setTimeout(() => {
+onMounted(() => {
   isReady.value = true
-}, 500)
+})
 
 const sessionNameInputElm = ref()
 function startEditSessionName() {
@@ -316,6 +336,34 @@ function startEditSessionName() {
     sessionNameInputElm.value.focus()
   }, 100)
 }
+
+async function onSubmitSessionType(sessionType: string): Promise<void> {
+  if (!graphQlStore) return
+  const sessionName = graphQlStore?.state.session?.name || ''
+  const defaultDashboardId = graphQlStore?.state.session?.defaultDashboardId
+  if (sessionType === 'Shinobigami') {
+    await graphQlStore.addDashboard('No title page', defaultLayoutStr)
+  }
+  await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId)
+}
+
+async function addDashboard() {
+  if (!graphQlStore) return
+  await graphQlStore.addDashboard(addDashboardName.value, defaultLayoutStr)
+  addDashboardName.value = DEFAULT_DASHBOARD_NAME
+  addDashboardMenu.value = false
+}
+
+const addDashboardNameElm = ref()
+const addDashboardName = ref(DEFAULT_DASHBOARD_NAME)
+const addDashboardMenu = ref(false)
+watch(addDashboardMenu, () => {
+  if (addDashboardMenu.value) {
+    setTimeout(() => {
+      addDashboardNameElm.value.focus()
+    }, 100)
+  }
+})
 </script>
 
 <!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
@@ -328,12 +376,6 @@ function startEditSessionName() {
 .splitpanes--horizontal > .splitpanes__splitter {
   min-height: 7px;
   background: linear-gradient(#cccccc, #111111);
-}
-
-.sub-nav:deep(.v-list-item__content) {
-  display: flex;
-  flex: 1;
-  align-self: stretch;
 }
 
 .name-text-field {
@@ -355,5 +397,12 @@ function startEditSessionName() {
   min-height: auto;
   height: 100%;
   letter-spacing: 0;
+}
+
+.v-navigation-drawer :deep(.v-navigation-drawer__content) {
+  max-width: initial;
+}
+.v-navigation-drawer > :deep(*) {
+  margin-right: -1px;
 }
 </style>

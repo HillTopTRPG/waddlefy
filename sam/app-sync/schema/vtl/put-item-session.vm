@@ -6,8 +6,8 @@
     "token": $util.dynamodb.toDynamoDBJson($util.autoId()),
     "signUpToken": $util.dynamodb.toDynamoDBJson($util.autoId()),
     "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
-    "layout": $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
-    "metaData": $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
+    "sessionType": $util.dynamodb.toDynamoDBJson($ctx.args.input.sessionType),
+    "defaultDashboardId": $util.dynamodb.toDynamoDBJson(""),
     "createdAt": $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds()),
     "userId": $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
   }

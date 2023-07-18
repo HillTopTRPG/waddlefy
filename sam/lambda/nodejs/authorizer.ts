@@ -49,6 +49,7 @@ const ALL_OPERATIONS = [
   'Mutation.userSignUp',
   'Mutation.userSignIn',
   'Mutation.addSession',
+  'Mutation.addDashboard',
   'Mutation.addPlayerByUser',
   'Mutation.addPlayerByPlayer',
   'Mutation.playerFirstSignIn',
@@ -67,6 +68,7 @@ const ALL_OPERATIONS = [
   'Query.getSessionPlayer',
   'Query.getSessionPlayers',
   'Query.directPlayerAccess',
+  'Query.directDashboardAccess',
 ]
 
 export const handler = async event => {
@@ -86,7 +88,7 @@ export const handler = async event => {
     isAuthorized = true
     admitFields.push('Mutation.userSignUp')
     admitFields.push('Mutation.userSignIn')
-    admitFields.push('Mutation.checkDuplicateUserId')
+    admitFields.push('Query.checkDuplicateUserId')
   } else {
     const split = event.authorizationToken.split('/')
     if (split.length === 3) {
@@ -99,6 +101,7 @@ export const handler = async event => {
           isAuthorized = true
           id = userData.id
           admitFields.push('Mutation.addSession')
+          admitFields.push('Mutation.addDashboard')
           admitFields.push('Mutation.addPlayerByUser')
           admitFields.push('Mutation.generatePlayerResetCode')
           admitFields.push('Mutation.updateUserName')
@@ -120,7 +123,7 @@ export const handler = async event => {
         }
       }
     } else if (split.length === 2) {
-      if (split[0] === 'd') {
+      if (split[0] === 's') {
         // Player
         const sessionData = await getTokenData<{ id: string }>(process.env.SESSION_TABLE_NAME, split[1], 'token')
         if (sessionData) {
@@ -131,9 +134,10 @@ export const handler = async event => {
           admitFields.push('Mutation.playerSignIn')
           admitFields.push('Mutation.resetPlayerPassword')
           admitFields.push('Query.getSessionPlayer')
+          admitFields.push('Query.directDashboardAccess')
         }
       }
-      if (split[0] === 'di') {
+      if (split[0] === 'si') {
         // Player
         const sessionData = await getTokenData<{ id: string }>(process.env.SESSION_TABLE_NAME, split[1], 'signUpToken')
         if (sessionData) {

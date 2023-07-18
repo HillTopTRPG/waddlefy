@@ -4,7 +4,7 @@
     :rail='rail'
     rail-width='54'
     :permanent='true'
-    :elevation="0"
+    :elevation="2"
   >
     <template v-slot:prepend>
       <!-- メインナビゲーションドロワー ヘッダー -->
@@ -19,9 +19,11 @@
               class="my-3 mr-2"
             />
           </template>
-          <div class="text-h6 d-inline-block" v-if="!rail">
-            <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
-          </div>
+          <v-fade-transition>
+            <div class="text-h6 d-inline-block" v-if="!rail">
+              <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
+            </div>
+          </v-fade-transition>
         </v-list-item>
         <v-divider />
       </v-list>
@@ -33,29 +35,51 @@
       density='compact'
       select-strategy="single-leaf"
       open-strategy="single"
-      :selected="[nav]"
+      :selected="[sessionId]"
       :mandatory="true"
       class="py-0 px-0"
     >
       <template v-for="session in (graphQlStore?.state.sessions || [])" :key="session.id">
         <user-nav-item
-          :label='session.name'
-          :show-label='!rail'
-          :value='session.id'
-          prepend-icon='home'
-          :tooltip-text='session.name'
-          @select="emits('update:nav', session.id)"
+          :title='session.name'
+          icon='home'
+          :rail="rail"
+          :active="sessionId === session.id"
+          :toggle="true"
+          @click="graphQlStore?.directSessionAccess(session.id)"
         />
       </template>
-      <user-nav-item
-        v-if="graphQlStore?.state.user?.token"
-        label='セッション追加'
-        :show-label='!rail'
-        value=''
-        prepend-icon='home-plus-outline'
-        tooltip-text='セッション追加'
-        @select="addSession()"
-      />
+
+      <v-menu v-if="isReady" location="right" :scrim="true" v-model="addSessionMenu" :close-on-content-click="false">
+        <template v-slot:activator="{ props }">
+          <user-nav-item
+            v-bind="props"
+            id="addSessionNavItem"
+            title='セッション追加'
+            icon='home-plus-outline'
+            :rail="rail"
+            :toggle="false"
+            v-if="graphQlStore?.state.user?.token"
+          />
+        </template>
+        <v-card min-width="20em">
+          <v-card-title class="bg-secondary">セッション追加</v-card-title>
+          <v-card-item>
+            <v-text-field
+              label="セッション名"
+              placeholder="No title session"
+              :autofocus="true"
+              v-model="addSessionName"
+              ref="addSessionNameElm"
+              hide-details
+              @keydown.enter="$event.keyCode === 13 && addSession()"
+            />
+          </v-card-item>
+          <v-card-actions>
+            <v-btn class="d-block flex-grow-1" color="primary" variant="elevated" @click="addSession()">確定</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
     </v-list>
 
     <template v-slot:append>
@@ -68,12 +92,13 @@
               :token="graphQlStore?.state.user?.iconToken || ''"
               id="user-icon"
               class="mr-3 my-3"
-              @click="dialog = dialog === 'profile' ? '' : 'profile'"
+              style="margin-left: 3px;"
+              @click="dialogInNav = dialogInNav === 'profile' ? '' : 'profile'"
             />
           </template>
-          <template v-if="!rail">
-            <v-list-item-title class='pl-1' v-text="graphQlStore?.state.user?.name || ''" />
-          </template>
+          <v-fade-transition>
+            <v-list-item-title class='pl-1' v-if="!rail" style="white-space: nowrap;" v-text="graphQlStore?.state.user?.name || ''" />
+          </v-fade-transition>
           <template v-slot:append>
             <v-btn
               prepend-icon="mdi-logout"
@@ -91,55 +116,22 @@
     </template>
   </v-navigation-drawer>
 
-  <play-main-nav-dialog
-    v-if="isReady"
+  <nav-dialog
     title="あなたの設定"
-    :modal-value="dialog === 'profile'"
-    @update:modal-value="v => { dialog = v ? 'profile' : '' }"
+    attach="#play-main-navigation-drawer"
+    :modal-value="dialogInNav === 'profile'"
+    @close="dialogInNav = ''"
+    class="my-16"
+    v-if="isReady"
   >
     <v-list>
       <v-list-subheader style="min-height: auto">名前</v-list-subheader>
       <v-list-item>
-        <v-text-field
-          :readonly="!editUserName"
-          label=""
-          v-model="inputUserName"
-          placeholder="セッション名"
-          color="primary"
-          variant="plain"
-          density="compact"
-          class="name-text-field"
-          style="letter-spacing: 1em; min-height: 1em"
-          hide-details
-          ref="inputUserNameElm"
-          @keydown.enter="$event.keyCode === 13 && updateUserName()"
-          @click:append-inner.stop
-        >
-          <template v-slot:append-inner v-if="isOwnerControl">
-            <v-divider :vertical="true" />
-            <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
-              <v-btn
-                v-if="editUserName"
-                :disabled="!inputUserName"
-                prepend-icon="mdi-check-bold"
-                text="決定"
-                class="bg-transparent h-100 px-1"
-                @click.prevent.stop="updateUserName()"
-                @mousedown.prevent.stop
-                @mouseup.prevent.stop
-              />
-              <v-btn
-                v-else
-                prepend-icon="mdi-pencil"
-                text="編集"
-                class="bg-transparent h-100 px-1"
-                @click.prevent.stop="startEditUserName()"
-                @mousedown.prevent.stop
-                @mouseup.prevent.stop
-              />
-            </v-defaults-provider>
-          </template>
-        </v-text-field>
+        <natural-text-field
+          label="あなたの名前"
+          :value="graphQlStore?.state.user?.name || ''"
+          @submit="v => updateUserName(v)"
+        />
       </v-list-item>
       <v-list-item>
         <v-btn
@@ -150,50 +142,40 @@
         />
       </v-list-item>
     </v-list>
-  </play-main-nav-dialog>
+  </nav-dialog>
 </template>
 
 <script lang="ts" setup>
-import {watch, inject, ref, computed} from 'vue'
+import { watch, inject, ref, computed, onMounted } from 'vue'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import UserAvatar from '@/components/parts/UserAvatar.vue'
-import PlayMainNavDialog from '@/components/PlayMainNavDialog.vue'
+import NavDialog from '@/components/NavDialog.vue'
 
-import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { DEFAULT_SESSION_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 import { useRouter } from 'vue-router'
+import NaturalTextField from '@/components/NaturalTextField.vue'
 const router = useRouter()
 
 const props = defineProps<{
   rail: boolean
-  nav: string
 }>()
+
+const sessionId = computed(() => graphQlStore?.state.session?.id)
 
 const emits = defineEmits<{
   (e: 'update:rail', value: boolean): void
-  (e: 'update:nav', value: string): void
 }>()
 
-const editUserName = ref(false)
-const inputUserNameElm = ref()
-const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
-const inputUserName = ref(graphQlStore?.state.user?.name || '')
-async function updateUserName() {
-  await graphQlStore?.updateUserName(inputUserName.value)
-  editUserName.value = false
-}
-function startEditUserName() {
-  editUserName.value = true
-  setTimeout(() => {
-    inputUserNameElm.value.focus()
-  }, 100)
+async function updateUserName(name: string) {
+  await graphQlStore?.updateUserName(name)
 }
 
-const dialog = ref('')
+const dialogInNav = ref('')
 const saveRail = ref(false)
-watch(dialog, () => {
-  if (dialog.value) {
+watch(dialogInNav, () => {
+  if (dialogInNav.value) {
     saveRail.value = props.rail
     emits('update:rail', false)
   } else {
@@ -202,20 +184,19 @@ watch(dialog, () => {
 })
 
 function onClickExpand() {
-  if (dialog.value) {
+  if (dialogInNav.value) {
     saveRail.value = !props.rail
-    dialog.value = ''
+    dialogInNav.value = ''
   } else {
     emits('update:rail', !props.rail)
   }
 }
 
-watch(() => graphQlStore?.state.sessions?.length, () => {
-  emits('update:nav', graphQlStore?.state.session?.id || '')
-})
-
-function addSession() {
-  graphQlStore?.addDefaultSession()
+async function addSession() {
+  if (!graphQlStore) return
+  await graphQlStore?.addDefaultSession(addSessionName.value)
+  addSessionMenu.value = false
+  addSessionName.value = DEFAULT_SESSION_NAME
 }
 
 function logout() {
@@ -223,13 +204,24 @@ function logout() {
 }
 
 const isReady = ref(false)
-setTimeout(() => {
+onMounted(() => {
   isReady.value = true
-}, 500)
+})
 
 function onChangeIcon() {
   graphQlStore?.updateUserIcon()
 }
+
+const addSessionNameElm = ref()
+const addSessionName = ref(DEFAULT_SESSION_NAME)
+const addSessionMenu = ref(false)
+watch(addSessionMenu, () => {
+  if (addSessionMenu.value) {
+    setTimeout(() => {
+      addSessionNameElm.value.focus()
+    }, 100)
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -252,5 +244,12 @@ function onChangeIcon() {
   min-height: auto;
   height: 100%;
   letter-spacing: 0;
+}
+
+.v-navigation-drawer :deep(.v-navigation-drawer__content) {
+  max-width: initial;
+}
+.v-navigation-drawer > :deep(*) {
+  margin-right: -1px;
 }
 </style>

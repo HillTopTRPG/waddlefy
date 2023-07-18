@@ -65,9 +65,9 @@
 import { computed, inject, ref } from 'vue'
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 import ListItemClipboard from '@/components/parts/ListItemClipboard.vue'
+import { Player } from '@/components/graphql/schema'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import { Player } from '@/components/graphql/schema'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{

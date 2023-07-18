@@ -26,7 +26,7 @@ Resources:
       PipelineConfig:
         Functions:
           - !GetAtt QueryFirstSessionIdFunction.FunctionId
-          - !GetAtt GetSessionFunction.FunctionId
+          - !GetAtt GetSessionStashFunction.FunctionId
       RequestMappingTemplate: '{}'
       ResponseMappingTemplateS3Location: vtl/return-stash-session.vm
 
@@ -47,11 +47,11 @@ Resources:
         $util.qr($ctx.stash.put("sessionId", $ctx.result.items[0].id))
         {}
 
-  GetSessionFunction:
+  GetSessionStashFunction:
     Type: AWS::AppSync::FunctionConfiguration
     Properties:
       ApiId: !Ref ApiId
-      Name: get_session_function
+      Name: get_session_stash_function
       DataSourceName: !Ref SessionTableDataSourceName
       FunctionVersion: 2018-05-29
       RequestMappingTemplateS3Location: vtl/get-item-where-id-stash-session-id.vm
@@ -106,6 +106,68 @@ Resources:
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
+  # SessionForUser.defaultDashboard
+  RelationSessionForUserDefaultDashboards:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: SessionForUser
+      FieldName: defaultDashboard
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt QueryFirstDashboardFunction.FunctionId
+          - !GetAtt GetDefaultDashboardFunction.FunctionId
+      RequestMappingTemplate: '{}'
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #if($util.isNull($ctx.stash.defaultDashboard))
+          $util.toJson($ctx.stash.firstDashboard)
+        #else
+          $util.toJson($ctx.stash.defaultDashboard)
+        #end
+
+  QueryFirstDashboardFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: query_first_dashboard_function
+      DataSourceName: !Ref DashboardTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #set($flg = $ctx.result.items.size() > 0)
+        #if($flg)
+          $util.qr($ctx.stash.put("firstDashboard", $ctx.result.items[0]))
+        #else
+          $util.qr($ctx.stash.put("firstDashboard", null))
+        #end
+        {}
+
+  GetDefaultDashboardFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: get_default_dashboard_function
+      DataSourceName: !Ref DashboardTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-source-default-dashboard-id.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #if($util.isNull($ctx.result))
+          $util.qr($ctx.stash.put("defaultDashboard", $ctx.result))
+        #else
+          $util.qr($ctx.stash.put("defaultDashboard", null))
+        #end
+        {}
+
   # SessionForPlayer.user
   RelationSessionForPlayerUser:
     Type: AWS::AppSync::Resolver
@@ -138,6 +200,29 @@ Resources:
       DataSourceName: !Ref DashboardTableDataSourceName
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
+
+  # SessionForPlayer.defaultDashboard
+  RelationSessionForPlayerDefaultDashboards:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: SessionForPlayer
+      FieldName: defaultDashboard
+      Kind: PIPELINE
+      PipelineConfig:
+        Functions:
+          - !GetAtt QueryFirstDashboardFunction.FunctionId
+          - !GetAtt GetDefaultDashboardFunction.FunctionId
+      RequestMappingTemplate: '{}'
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #if($util.isNull($ctx.stash.defaultDashboard))
+          $util.toJson($ctx.stash.firstDashboard)
+        #else
+          $util.toJson($ctx.stash.defaultDashboard)
+        #end
 
   # PlayerForPlayer.session
   RelationPlayerForPlayerSession:

@@ -42,6 +42,7 @@ Resources:
                   - dynamodb:Scan
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
                 Resource:
                   - !Sub ${UserTableArn}
                   - !Sub ${UserTableArn}/*
@@ -53,6 +54,7 @@ Resources:
                   - dynamodb:Scan
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
                 Resource:
                   - !Sub ${SessionTableArn}
                   - !Sub ${SessionTableArn}/*
@@ -64,6 +66,7 @@ Resources:
                   - dynamodb:Scan
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
                 Resource:
                   - !Sub ${PlayerTableArn}
                   - !Sub ${PlayerTableArn}/*
@@ -75,6 +78,7 @@ Resources:
                   - dynamodb:Scan
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
                 Resource:
                   - !Sub ${DashboardTableArn}
                   - !Sub ${DashboardTableArn}/*

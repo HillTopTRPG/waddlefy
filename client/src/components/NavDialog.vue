@@ -1,18 +1,18 @@
 <template>
   <v-dialog
     :model-value="modalValue"
-    attach="#session-nav"
+    :attach="attach"
     :fullscreen="true"
     :scrim="false"
     :no-click-animation="true"
     :persistent="true"
-    class="mb-12 mt-12"
+    class="my-16"
     transition="slide-y-reverse-transition"
   >
     <v-card>
       <v-toolbar color="secondary" class="px-2" density="compact" :title="title">
         <v-toolbar-items>
-          <v-btn variant="text" icon="mdi-close" @click="emits('update:modalValue', !modalValue)" />
+          <v-btn variant="text" icon="mdi-close" @click="emits('close')" />
         </v-toolbar-items>
       </v-toolbar>
       <slot />
@@ -24,9 +24,16 @@
 const props = defineProps<{
   modalValue: boolean
   title: string
+  attach: string
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:modalValue', value: boolean): void
+  (e: 'close'): void
 }>()
 </script>
+
+<style lang="scss" scoped>
+.v-dialog {
+  margin-right: -1px;
+}
+</style>

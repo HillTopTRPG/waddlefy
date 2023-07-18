@@ -136,6 +136,15 @@ Resources:
         ApiId: !Ref ApiId
         SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
+  # mutation addDashboard
+  MutationAddDashboardStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/add-dashboard.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
   # mutation updateSession
   MutationUpdateSessionStack:
     Type: AWS::Serverless::Application
@@ -145,6 +154,16 @@ Resources:
         ApiId: !Ref ApiId
         SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
 
+  # mutation updateDashboard
+  MutationUpdateDashboardStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-dashboard.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        GetSessionInputFunctionId: !GetAtt FunctionsResolverStack.Outputs.GetSessionInputFunctionId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
   # mutation deleteSession
   MutationDeleteSessionStack:
     Type: AWS::Serverless::Application
@@ -153,6 +172,16 @@ Resources:
       Parameters:
         ApiId: !Ref ApiId
         SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
+
+  # mutation deleteDashboard
+  MutationDeleteDashboardStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/delete-dashboard.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        GetSessionInputFunctionId: !GetAtt FunctionsResolverStack.Outputs.GetSessionInputFunctionId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
   # mutation addPlayerByUser
   MutationAddPlayerByUserStack:
@@ -256,6 +285,15 @@ Resources:
       Parameters:
         ApiId: !Ref ApiId
         SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
+
+  # query directDashboardAccess
+  QueryDirectDashboardAccess:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: query/direct-dashboard-access.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
   # query getSessionPlayer
   QueryGetSessionPlayer:

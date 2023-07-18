@@ -2,21 +2,22 @@
   <graph-ql-provider
     :userToken="userToken"
     :playerToken="playerToken"
-    :firstNav="firstNav"
+    :sessionId="sessionId"
+    :dashboardId="dashboardId"
   >
-    <play-main :firstNav="firstNav" :secondNav="secondNav" :rail="rail" />
+    <play-main :rail="rail" />
   </graph-ql-provider>
 </template>
 
 <script lang="ts" setup>
 import GraphQlProvider from '@/components/graphql/GraphQLProvider.vue'
-import PlayMain from "@/components/PlayMain.vue";
+import PlayMain from '@/components/PlayMain.vue'
 
 defineProps<{
   userToken?: string,
   playerToken?: string,
-  firstNav?: string,
-  secondNav?: string,
+  sessionId?: string,
+  dashboardId?: string,
   rail?: string,
 }>()
 </script>

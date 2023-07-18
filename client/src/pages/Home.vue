@@ -71,15 +71,15 @@
 
 <script lang="ts" setup>
 import LogoComponent from '@/components/parts/LogoComponent.vue'
-import { useRouter } from 'vue-router'
-import {ref} from "vue";
+import { ref } from 'vue'
 import {
   fetchGraphQlConnectionInfo,
   makeGraphQlClient,
   userSignIn
-} from "@/components/graphql/graphql";
-import {ApolloClient, NormalizedCacheObject} from "@apollo/client/core";
+} from '@/components/graphql/graphql'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 
+import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const defaultUserId = localStorage.getItem('userId') || ''

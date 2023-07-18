@@ -13,8 +13,10 @@ type Mutation {
   userSignUp(input: UserSignUpInput): UserForUser
   # ユーザーサインイン
   userSignIn(input: UserSignInInput): UserForUser
-  # ダッシュボード作成
+  # セッション作成
   addSession(input: AddSessionInput): SessionForUser
+  # ダッシュボード作成
+  addDashboard(input: AddDashboardInput): Dashboard
   # 参加者作成
   addPlayerByUser(input: AddPlayerByUserInput): AbstractPlayer
   addPlayerByPlayer(input: AddPlayerByPlayerInput): AbstractPlayer
@@ -32,16 +34,20 @@ type Mutation {
   # ユーザー情報更新
   updateUserName(input: NameInput): AbstractUser
   updateUserIcon: AbstractUser
-  # ダッシュボード情報更新
+  # セッション情報更新
   updateSession(input: UpdateSessionInput): UpdatedSession
+  # ダッシュボード情報更新
+  updateDashboard(input: UpdateDashboardInput): UpdatedDashboard
   # 参加者情報更新
   updatePlayerName(input: NameInput): AbstractPlayer
   updatePlayerIcon: AbstractPlayer
 
   # 削除系
 
-  # ダッシュボード削除
+  # セッション削除
   deleteSession(input: DeleteSessionInput): DeletedId
+  # ダッシュボード削除
+  deleteDashboard(input: DeleteDashboardInput): DeletedId
   # 参加者削除
   deletePlayer(input: DeletePlayerInput): DeletedId
 }
@@ -50,16 +56,22 @@ type Subscription {
   # 追加系
   onAddPlayer(sessionId: String!): AbstractPlayer
   @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
+  onAddDashboard(sessionId: String!): Dashboard
+  @aws_subscribe(mutations: ["addDashboard"])
 
   # 更新系
   onUpdateUser(id: String!): AbstractUser
   @aws_subscribe(mutations: ["updateUserName", "updateUserIcon"])
   onUpdateSession(id: String!): UpdatedSession
   @aws_subscribe(mutations: ["updateSession"])
+  onUpdateDashboard(sessionId: String!): UpdatedDashboard
+  @aws_subscribe(mutations: ["updateDashboard"])
   onUpdatePlayer(sessionId: String!): AbstractPlayer
   @aws_subscribe(mutations: ["updatePlayerName", "updatePlayerIcon"])
 
   # 削除系
+  onDeleteDashboard(sessionId: String!): DeletedId
+  @aws_subscribe(mutations: ["deleteDashboard"])
   onDeletePlayer(sessionId: String!): DeletedId
   @aws_subscribe(mutations: ["deletePlayer"])
 }
@@ -74,6 +86,8 @@ type Query {
   getSessionPlayers: [AbstractPlayer]
   # for Authorized Player
   directPlayerAccess: PlayerForPlayer
+  # for Authorized User/Player
+  directDashboardAccess(id: String!): Dashboard
 }
 
 ###############################
@@ -84,8 +98,7 @@ input UserSignUpInput {
   name: String!
   password: String!
   sessionName: String!
-  layout: String!
-  metaData: String!
+  sessionType: String!
 }
 
 input UserSignInInput {
@@ -95,9 +108,15 @@ input UserSignInInput {
 
 input AddSessionInput {
   name: String!
-  layout: String!
-  metaData: String!
+  sessionType: String!
 }
+
+input AddDashboardInput {
+  name: String!
+  layout: String! #json
+  sessionId: String!
+}
+
 input AddPlayerByUserInput {
   sessionId: String!
   name: String!
@@ -130,11 +149,23 @@ input NameInput {
 input UpdateSessionInput {
   sessionId: String!
   name: String!
+  defaultDashboardId: String!
+  sessionType: String!
+}
+
+input UpdateDashboardInput {
+  sessionId: String!
+  dashboardId: String!
+  name: String!
   layout: String!
-  metaData: String!
 }
 
 input DeleteSessionInput {
+  id: String!
+}
+
+input DeleteDashboardInput {
+  sessionId: String!
   id: String!
 }
 
@@ -160,12 +191,13 @@ type SessionForUser {
   token: String!
   signUpToken: String!
   name: String!
-  layout: String!
-  metaData: String!
+  sessionType: String!
   createdAt: AWSTimestamp!
   user: UserForUser!
   players: [AbstractPlayer]!
   dashboards: [Dashboard]!
+  defaultDashboardId: String!
+  defaultDashboard: Dashboard
 }
 
 type AbstractPlayer {
@@ -200,8 +232,14 @@ type UpdatedSession {
   id: ID!
   name: String!
   token: String!
+  sessionType: String!
+}
+
+type UpdatedDashboard {
+  id: ID!
+  name: String!
   layout: String!
-  metaData: String!
+  sessionId: String!
 }
 
 type DeletedId {
@@ -222,16 +260,23 @@ type SessionForPlayer {
   id: ID!
   name: String!
   token: String!
-  layout: String!
-  metaData: String!
+  sessionType: String!
   createdAt: AWSTimestamp!
   user: AbstractUser!
   players: [AbstractPlayer]!
-  dashboards: [Dashboard]!
+  dashboards: [AbstractDashboard]!
+  defaultDashboardId: String!
+  defaultDashboard: Dashboard
+}
+
+type AbstractDashboard {
+  id: ID!
+  name: String!
 }
 
 type Dashboard {
   id: ID!
-  type: String!
-  data: String! # json
+  sessionId: String!
+  name: String!
+  layout: String! #json
 }

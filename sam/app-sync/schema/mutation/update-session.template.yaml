@@ -24,16 +24,14 @@ Resources:
             "id" : $util.dynamodb.toDynamoDBJson($ctx.args.input.sessionId)
           },
           "update" : {
-            "expression" : "SET #name = :name, #layout = :layout, #metaData = :metaData",
+            "expression" : "SET #name = :name, #sessionType = :sessionType",
             "expressionNames" : {
               "#name" : "name",
-              "#layout" : "layout",
-              "#metaData" : "metaData",
+              "#sessionType" : "sessionType",
             },
             "expressionValues" : {
               ":name" : $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
-              ":layout" : $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
-              ":metaData" : $util.dynamodb.toDynamoDBJson($ctx.args.input.metaData),
+              ":sessionType" : $util.dynamodb.toDynamoDBJson($ctx.args.input.sessionType),
             }
           }
         }

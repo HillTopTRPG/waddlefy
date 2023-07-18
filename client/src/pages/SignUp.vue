@@ -91,7 +91,7 @@ import { ref, watch } from 'vue'
 import LogoComponent from '@/components/parts/LogoComponent.vue'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { fetchGraphQlConnectionInfo, makeGraphQlClient, userSignUp } from '@/components/graphql/graphql'
-import { CheckDuplicateUserIdResult, Queries } from '@/components/graphql/schema'
+import { Queries, QueryResult } from '@/components/graphql/schema'
 
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -124,7 +124,7 @@ watch(userId, () => {
     if (!appSyncClient) {
       return
     }
-    const result = await appSyncClient.mutate<CheckDuplicateUserIdResult>({
+    const result = await appSyncClient.mutate<QueryResult.CheckDuplicateUserId>({
       mutation: Queries.checkDuplicateUserId,
       variables: { userId: userId.value }
     })

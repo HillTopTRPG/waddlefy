@@ -80,10 +80,9 @@ import {
   resetPlayerPassword
 } from '@/components/graphql/graphql'
 import {
-  AbstractPlayer,
-  GetSessionPlayerResult,
-  GetSessionPlayersResult,
   Queries,
+  QueryResult,
+  AbstractPlayer
 } from '@/components/graphql/schema'
 
 import { useRouter } from 'vue-router'
@@ -116,12 +115,8 @@ const player = ref<AbstractPlayer | null>(null)
 const errorMessage = ref('')
 
 function getAuthToken() {
-  if (props.sessionToken) {
-    return `d/${props.sessionToken}`
-  }
-  if (props.signUpToken) {
-    return `di/${props.signUpToken}`
-  }
+  if (props.sessionToken) return `s/${props.sessionToken}`
+  if (props.signUpToken) return `si/${props.signUpToken}`
   return ''
 }
 
@@ -130,7 +125,7 @@ async function init() {
   appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
 
   if (props.playerId) {
-    const result = await appSyncClient.mutate<GetSessionPlayerResult>({
+    const result = await appSyncClient.mutate<QueryResult.GetSessionPlayer>({
       mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
     })
@@ -140,7 +135,7 @@ async function init() {
       player.value = getSessionPlayer
     }
   } else {
-    const result = await appSyncClient.mutate<GetSessionPlayersResult>({
+    const result = await appSyncClient.mutate<QueryResult.GetSessionPlayers>({
       mutation: Queries.getSessionPlayers
     })
     const getSessionPlayers = result.data?.getSessionPlayers

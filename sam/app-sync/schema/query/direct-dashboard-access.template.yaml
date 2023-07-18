@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Waddlefy AppSync Query directDashboardAccess
+
+Parameters:
+  ApiId:
+    Type: String
+  DashboardTableDataSourceName:
+    Type: String
+
+Resources:
+  DirectDashboardAccessQueryResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: Query
+      FieldName: directDashboardAccess
+      DataSourceName: !Ref DashboardTableDataSourceName
+      RequestMappingTemplateS3Location: ../vtl/get-item-where-id-args-id.vm
+      ResponseMappingTemplateS3Location: ../vtl/return-result.vm

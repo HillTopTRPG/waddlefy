@@ -19,8 +19,8 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, ref, watch} from 'vue'
-import UserAvatar from "@/components/parts/UserAvatar.vue";
+import { computed, ref, watch } from 'vue'
+import UserAvatar from '@/components/parts/UserAvatar.vue'
 
 const props = defineProps<{
   title: string

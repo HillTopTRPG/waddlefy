@@ -1,13 +1,9 @@
 <template>
   <template v-if="graphQlStore?.state.ready">
-    <play-main-navigation-drawer
-      v-if="graphQlStore?.state.user?.token"
-      v-model:rail="firstRail"
-      v-model:nav="selectedFirstNav"
-    />
+    <play-main-navigation-drawer v-model:rail="firstRail" v-if="graphQlStore?.state.user?.token" />
 
     <v-main :scrollable="true">
-      <session-view v-model:rail="secondRail" v-model:nav="selectedSecondNav" />
+      <session-view v-model:rail="secondRail" />
     </v-main>
   </template>
 </template>
@@ -23,8 +19,6 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 // noinspection TypeScriptValidateTypes
 const props = defineProps<{
   rail?: string
-  firstNav?: string
-  secondNav?: string
 }>()
 
 const railSplit = computed(() => {
@@ -40,17 +34,14 @@ const railSplit = computed(() => {
 
 const firstRail = ref(railSplit.value[0])
 const secondRail = ref(railSplit.value[1])
-const selectedFirstNav = ref<string>(props.firstNav || '')
-const selectedSecondNav = ref<string>(props.secondNav || '')
+const sessionId = computed(() => graphQlStore?.state.session?.id)
+const dashboardId = computed(() => graphQlStore?.state.dashboard?.id)
 
 function createPathName() {
-  const firstNav = selectedFirstNav.value ? `/${selectedFirstNav.value}` : ''
-  const secondNav = firstNav ? selectedSecondNav.value ? `/${selectedSecondNav.value}` : '' : ''
+  const firstNav = sessionId.value ? `/${sessionId.value}` : ''
+  const secondNav = firstNav ? dashboardId.value ? `/${dashboardId.value}` : '' : ''
   const firstRailString = firstRail.value ? '1' : '0'
-  let secondRailString = ''
-  if (['setting', 'profile'].every(s => s !== selectedFirstNav.value)) {
-    secondRailString = `,${secondRail.value ? '1' : '0'}`
-  }
+  const secondRailString = `,${secondRail.value ? '1' : '0'}`
   if (graphQlStore) {
     const player = graphQlStore.state.player
     if (player) {
@@ -64,27 +55,8 @@ function createPathName() {
   return ''
 }
 
-const navMap = new Map()
-const railMap = new Map()
-
-watch([firstRail, secondRail, selectedFirstNav, selectedSecondNav], async () => {
-  switch(selectedFirstNav.value) {
-    case 'setting':
-    case 'profile':
-      break
-    default:
-      if (graphQlStore?.state.user?.token) {
-        const sessionId = selectedFirstNav.value
-        if (sessionId !== graphQlStore?.state.session?.id) {
-          navMap.set(graphQlStore?.state.session?.id || '', selectedSecondNav.value)
-          railMap.set(graphQlStore?.state.session?.id || '', secondRail.value)
-          await graphQlStore?.directSessionAccess(sessionId)
-          selectedSecondNav.value = navMap.get(graphQlStore?.state.session?.id || '') || ''
-          secondRail.value = railMap.get(graphQlStore?.state.session?.id || '') || false
-        }
-      }
-  }
+watch([firstRail, secondRail, sessionId, dashboardId], async () => {
   const pathName = createPathName()
   history.replaceState(null, '', pathName)
-})
+}, { immediate: true })
 </script>

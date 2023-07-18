@@ -6,15 +6,21 @@
 import { provide } from 'vue'
 import useGraphQl, { GraphQlKey } from './graphql'
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 const props = defineProps<{
   userToken?: string
   playerToken?: string
-  firstNav?: string
+  sessionId?: string
+  dashboardId?: string
 }>()
 
 provide(GraphQlKey, useGraphQl(
   props.userToken || '',
   props.playerToken || '',
-  ['setting', 'profile'].every(s => s !== props.firstNav) ? props.firstNav || '' : ''
+  props.sessionId || '',
+  props.dashboardId || '',
+  router
 ))
 </script>

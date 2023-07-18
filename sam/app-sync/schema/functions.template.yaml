@@ -43,7 +43,26 @@ Resources:
         $util.validate($flg, "Player name exists.")
         {}
 
+  GetSessionInputFunction:
+    Type: AWS::AppSync::FunctionConfiguration
+    Properties:
+      ApiId: !Ref ApiId
+      Name: get_session_input_function
+      DataSourceName: !Ref SessionTableDataSourceName
+      FunctionVersion: 2018-05-29
+      RequestMappingTemplateS3Location: vtl/get-item-where-id-input-session-id.vm
+      ResponseMappingTemplate: |
+        #if($ctx.result && $ctx.result.error)
+          $util.error($ctx.result.error)
+        #end
+        #set($flg = !$util.isNull($ctx.result))
+        $util.validate($flg, 'No such session')
+        $util.qr($ctx.stash.put("session", $ctx.result))
+        {}
+
 
 Outputs:
   CheckNoPlayerNameExistsFunctionId:
     Value: !GetAtt CheckNoPlayerNameExistsFunction.FunctionId
+  GetSessionInputFunctionId:
+    Value: !GetAtt GetSessionInputFunction.FunctionId
