@@ -34,7 +34,7 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <div class='root bg-grey-darken-2 fill-height'>
+  <div class='root fill-height'>
     <h3 class='mx-5 mt-5'>空のペイン</h3>
     <p class='mx-5'>
       ペインはツールを１つ選んで表示できます。<br>

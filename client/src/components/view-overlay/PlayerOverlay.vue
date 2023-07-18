@@ -1,5 +1,11 @@
 <template>
-  <contents-overlay title="Playerrrrr" color="bg-light-green" :modal-value="modalValue" @close="emits('close')">
+  <contents-overlay
+    title="Playerrrrr"
+    color="bg-light-green"
+    :modal-value="modalValue"
+    image="white_00053.jpg"
+    @close="emits('close')"
+  >
 
   </contents-overlay>
 </template>

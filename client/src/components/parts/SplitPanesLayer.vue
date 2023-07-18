@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { uuid } from 'vue-uuid'
 import { componentMap, Layout } from '../panes'
 
@@ -15,8 +15,9 @@ interface Props {
 }
 
 const emits = defineEmits<{
-  'change-component': [componentGroup: string, component: string]
-  'change-layout': [newLayout: Layout]
+  (e: 'change-component', componentGroup: string, component: string): void
+  (e: 'change-layout', newLayout: Layout): void
+  (e: 'change-root-layout', newLayout: Layout): void
 }>()
 
 // noinspection TypeScriptValidateTypes
@@ -183,6 +184,10 @@ defineExpose({
     component.value?.globalKeyDown?.call(null, event)
   },
 })
+
+watch(cLayout, () => {
+  emits('change-root-layout', cLayout.value)
+}, { deep: true })
 </script>
 
 <template>

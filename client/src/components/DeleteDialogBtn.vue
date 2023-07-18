@@ -1,7 +1,7 @@
 <template>
   <v-dialog width="auto" v-model="deleteDialog">
     <template v-slot:activator="{ props }">
-      <v-btn color="error" variant="tonal" v-bind="props">この{{ type }}を削除</v-btn>
+      <v-btn color="error" variant="outlined" v-bind="props">この{{ type }}を削除</v-btn>
     </template>
     <v-card>
       <v-card-title class="bg-warning">{{ targetName }} の削除</v-card-title>

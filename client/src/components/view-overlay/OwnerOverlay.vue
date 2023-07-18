@@ -2,7 +2,9 @@
   <contents-overlay
     title="主催者の設定"
     color="bg-cyan-lighten-1"
+    class="contents-overlay"
     :modal-value="modalValue"
+    image="paint_00005.jpg"
     @close="emits('close')"
   >
     <v-card-text class="pa-2 overflow-auto h-100">
@@ -11,7 +13,7 @@
           <v-btn
             @click="onChangeIcon()"
             v-if="graphQlStore?.state.user?.token"
-            variant="text"
+            variant="outlined"
             text="アイコンを変更する"
           />
         </v-list-item>

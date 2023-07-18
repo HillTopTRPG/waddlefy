@@ -1,9 +1,11 @@
 <template>
   <v-list-item
     lines="two"
-    class="my-1 py-0 pl-1 pr-2"
+    class="my-1 py-0 pl-0 pr-1 bg-transparent"
     :class="{ copied }"
     ripple
+    variant="outlined"
+    :rounded="true"
     @click="writeUrlClipboard()"
   >
     <template v-slot:prepend>
@@ -55,6 +57,10 @@ async function writeUrlClipboard() {
 <style lang="scss" scoped>
 .copied .check-icon {
   animation: r1 0.3s forwards;
+}
+
+.v-list-item {
+  border-color: rgba(0, 0, 0, 0.2)
 }
 
 @keyframes r1 {

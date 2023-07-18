@@ -106,7 +106,7 @@
           :toggle="true"
           color="primary"
           :active="dialog === player.id"
-          @click="dialog = dialog === player.id ? '' : player.id"
+          @click="selectPlayer(player.id)"
         />
       </template>
     </v-list>
@@ -145,10 +145,17 @@
     </template>
   </v-navigation-drawer>
 
-  <v-bottom-navigation :grow="true" :multiple="true" :elevation="2" density="compact" selected-class="bg-secondary">
+  <v-bottom-navigation
+    :grow="true"
+    :multiple="true"
+    v-model="bNavVal"
+    :elevation="0"
+    density="compact"
+    selected-class="bg-secondary"
+  >
     <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
-      <v-btn prepend-icon="mdi-cog" text="設定" @click="dialog = dialog === 'setting' ? '' : 'setting'" />
-      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" @click="showBar = !showBar" />
+      <v-btn prepend-icon="mdi-view-dashboard" text="画面の設定" value="dialog-setting" @click="dialog = dialog === 'setting' ? '' : 'setting'" />
+      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
     </v-defaults-provider>
   </v-bottom-navigation>
 
@@ -160,8 +167,8 @@
     class="mb-11 mt-12"
     v-if="isReady"
   >
-    <v-list>
-      <v-list-subheader style="min-height: auto">セッション名</v-list-subheader>
+    <v-list class="nav-dialog h-100">
+      <v-list-subheader style="min-height: auto; background: none;">セッション名</v-list-subheader>
       <v-list-item>
         <v-text-field
           :readonly="!editSessionName"
@@ -226,9 +233,10 @@
         :layout="layout"
         :root-layout="layout"
         :show-bar="showBar"
+        @change-root-layout="onChangeLayout"
         v-if="sessionType !== 'init' && layout"
       />
-      <init-session @submit="onSubmitSessionType" v-else />
+      <init-session @submit="onSubmitSessionType" v-else-if="sessionType === 'init'" />
     </div>
   </v-layout>
 </template>
@@ -364,10 +372,52 @@ watch(addDashboardMenu, () => {
     }, 100)
   }
 })
+
+async function onChangeLayout(layout: Layout) {
+  if (!graphQlStore) return
+  await graphQlStore.updateDashboardLayout(layout)
+}
+
+function selectPlayer(playerId: string) {
+  if (dialog.value === playerId) {
+    dialog.value = ''
+    return
+  }
+  dialog.value = ''
+  setTimeout(() => {
+    dialog.value = playerId
+  }, 100)
+}
+
+const bNavVal = ref([])
+watch(bNavVal, v => {
+  const a = v.some(s => s === 'show-bar')
+  const b = showBar.value
+  if ((a && !b) || (!a && b)) showBar.value = !showBar.value
+
+  const c = v.some(s => s === 'dialog-setting')
+  const d = dialog.value === 'setting'
+  if (c && !d) dialog.value = 'setting'
+  else if (!c && d) dialog.value = ''
+})
+watch(dialog, v => {
+  const idx = bNavVal.value.findIndex(s => s === 'dialog-setting')
+  if (v === 'setting' && idx < 0) {
+    bNavVal.value.push('dialog-setting')
+  } else if (v !== 'setting' && idx >= 0) {
+    bNavVal.value.splice(idx, 1)
+  }
+})
 </script>
 
 <!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
 <style scoped lang="scss">
+.nav-dialog {
+  background-image: url('/paint_00003.jpg');
+  background-color: rgba(255, 255, 255, 0.5);
+  background-blend-mode: lighten;
+}
+
 .splitpanes--vertical > .splitpanes__splitter {
   min-width: 7px;
   background: linear-gradient(90deg, #cccccc, #111111);

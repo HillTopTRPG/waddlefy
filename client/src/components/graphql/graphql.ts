@@ -522,10 +522,14 @@ export default function useGraphQl(
       state.players = data.players.sort(sortId)
       state.dashboards = data.dashboards.sort(sortId)
       if (data.defaultDashboard) {
-        state.dashboard = {
-          id: data.defaultDashboard.id,
-          name: data.defaultDashboard.name,
-          layout: JSON.parse(data.defaultDashboard.layout) as Layout
+        if (data.defaultDashboard.id !== dashboardId) {
+          await directDashboardAccess(dashboardId)
+        } else {
+          state.dashboard = {
+            id: data.defaultDashboard.id,
+            name: data.defaultDashboard.name,
+            layout: JSON.parse(data.defaultDashboard.layout) as Layout
+          }
         }
       } else {
         state.dashboard = null
@@ -543,14 +547,14 @@ export default function useGraphQl(
     console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.directDashboardAccess
     if (data) {
-      state.dashboard = {
-        id: data.id,
-        name: data.name,
-        layout: JSON.parse(data.layout) as Layout
-      }
-      const sessionId = state.session.id
-      const dashboardId = state.dashboard.id
-      router.replace({ name: 'UserMain2', params: { userToken, sessionId, dashboardId } }).then()
+      state.dashboard = null
+      setTimeout(() => {
+        state.dashboard = {
+          id: data.id,
+          name: data.name,
+          layout: JSON.parse(data.layout) as Layout
+        }
+      }, 0)
     }
   }
 
@@ -737,8 +741,13 @@ export default function useGraphQl(
             dashboard.name = data.name
           }
           if (state.dashboard && state.dashboard.id === data.id) {
-            state.dashboard.name = data.name
-            state.dashboard.layout = JSON.parse(data.layout)
+            const dashboardTemp = state.dashboard
+            state.dashboard = null
+            dashboardTemp.name = data.name
+            dashboardTemp.layout = JSON.parse(data.layout)
+            setTimeout(() => {
+              state.dashboard = dashboardTemp
+            }, 0)
           }
         }
       },

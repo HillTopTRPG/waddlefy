@@ -3,17 +3,19 @@
     title="参加してもらう"
     color="bg-orange-lighten-1"
     :modal-value="modalValue"
+    image="paint_00022.jpg"
     @close="emits('close')"
   >
-    <v-card-text class="pa-2 overflow-auto h-100">
+    <v-card-text class="px-4 py-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
-        <v-list-subheader>事前に参加者アカウントを用意する（おすすめ）</v-list-subheader>
-        <v-list-item class="mt-1 mb-2 py-0 px-3">
+        <v-list-subheader class="pa-0" style="padding-inline-start: 0 !important; min-height: auto;">事前に参加者アカウントを用意する（おすすめ）</v-list-subheader>
+        <v-list-item class="mt-4 mb-8 py-0 px-0 overflow-visible">
           <v-text-field
             label="参加者名"
             color="primary"
-            class="name-text-field"
+            class="name-text-field overflow-visible"
             persistent-hint
+            variant="outlined"
             hint="ログイン後に編集できます。名前の重複はできません。"
             :error-messages="addPlayerErrorMessage"
             v-model="addPlayerName"
@@ -47,7 +49,7 @@
           </list-item-clipboard>
         </template>
 
-        <v-divider :thickness="2" class="mt-3 mt-2" />
+        <v-divider :thickness="2" class="mt-9" />
 
         <v-list-subheader>または、招待URLで参加してもらう</v-list-subheader>
 
@@ -90,12 +92,17 @@ const addPlayerErrorMessage = computed<string>(() => {
   return ''
 })
 
+let lastAddName = ''
+
 async function callAddPlayer() {
   if (!addPlayerName.value) {
     return
   }
+  if (lastAddName === addPlayerName.value) return
+  lastAddName = addPlayerName.value
   await graphQlStore?.addPlayerByUser(addPlayerName.value)
   addPlayerName.value = ''
+  lastAddName = ''
 }
 
 function playerStatusMessage(player: Player) {
@@ -115,14 +122,12 @@ function playerStatusMessage(player: Player) {
 </script>
 
 <style lang="scss" scoped>
-.v-card-text {
-  background-image: url('/karafuruosyare-haikei5.png');
-  background-position: -80px 50px;
-  background-color: rgba(255, 255, 255, 0.8);
-  background-blend-mode: lighten;
-}
 :deep(.v-list-item) {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.4);
+
+  .v-list-item__content {
+    overflow: visible;
+  }
 }
 
 .name-text-field:deep(.v-field--appended) {

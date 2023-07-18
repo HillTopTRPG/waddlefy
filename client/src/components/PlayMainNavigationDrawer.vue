@@ -4,7 +4,7 @@
     :rail='rail'
     rail-width='54'
     :permanent='true'
-    :elevation="2"
+    :elevation="0"
   >
     <template v-slot:prepend>
       <!-- メインナビゲーションドロワー ヘッダー -->
@@ -124,8 +124,8 @@
     class="my-16"
     v-if="isReady"
   >
-    <v-list>
-      <v-list-subheader style="min-height: auto">名前</v-list-subheader>
+    <v-list class="h-100">
+      <v-list-subheader style="min-height: auto; background: none;">名前</v-list-subheader>
       <v-list-item>
         <natural-text-field
           label="あなたの名前"
@@ -137,7 +137,7 @@
         <v-btn
           @click="onChangeIcon()"
           v-if="graphQlStore?.state.user?.token"
-          variant="text"
+          variant="outlined"
           text="アイコンを変更する"
         />
       </v-list-item>
@@ -225,6 +225,22 @@ watch(addSessionMenu, () => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.nav-dialog) {
+  .v-card {
+    background-image: url('/white_00053.jpg');
+    background-color: rgba(255, 255, 255, 0.6);
+    background-blend-mode: lighten;
+  }
+
+  .v-list {
+    background: none;
+  }
+
+  .v-btn {
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+}
+
 .name-text-field {
   align-self: stretch;
   grid-template-columns: repeat(auto-fill, 1fr);
