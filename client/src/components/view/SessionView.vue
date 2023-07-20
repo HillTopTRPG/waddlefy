@@ -44,7 +44,7 @@
             :toggle="true"
             color="primary"
             :active="dashboardId === dashboard.id"
-            @click="graphQlStore?.directDashboardAccess(dashboard.id)"
+            @click="dashboardId !== dashboard.id && graphQlStore?.directDashboardAccess(dashboard.id)"
           />
         </template>
       </template>
@@ -145,20 +145,6 @@
     </template>
   </v-navigation-drawer>
 
-  <v-bottom-navigation
-    :grow="true"
-    :multiple="true"
-    v-model="bNavVal"
-    :elevation="0"
-    density="compact"
-    selected-class="bg-secondary"
-  >
-    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
-      <v-btn prepend-icon="mdi-view-dashboard" text="画面の設定" value="dialog-setting" @click="dialog = dialog === 'setting' ? '' : 'setting'" />
-      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
-    </v-defaults-provider>
-  </v-bottom-navigation>
-
   <nav-dialog
     title="セッションの設定"
     attach="#session-nav"
@@ -223,7 +209,11 @@
   </nav-dialog>
 
   <v-app-bar density="compact" height="50" :elevation="0" id="session-main-app-bar" v-if="sessionType !== 'init'">
-    <span class="ml-3">{{ graphQlStore?.state.dashboard?.name || '' }}</span>
+    <span class="mx-3">{{ graphQlStore?.state.dashboard?.name || '' }}</span>
+    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
+      <v-btn prepend-icon="mdi-view-dashboard" text="画面の設定" value="dialog-setting" @click="dialog = dialog === 'setting' ? '' : 'setting'" />
+      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
+    </v-defaults-provider>
   </v-app-bar>
 
   <v-layout full-height>
@@ -260,7 +250,7 @@ import { Layout } from '@/components/panes'
 import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
-const defaultLayoutStr: Layout = JSON.stringify(defaultLayout) as Layout
+import { addDashboards } from '@/PaneLayoutTemplate'
 
 const props = defineProps<{
   rail: boolean
@@ -268,6 +258,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: 'update:rail', value: boolean): void
+  (e: 'update:session-selectable', value: boolean): void
 }>()
 
 const sessionNav = ref()
@@ -318,8 +309,10 @@ watch(dialogInNav, () => {
   if (dialogInNav.value) {
     saveRail.value = props.rail
     emits('update:rail', false)
+    emits('update:session-selectable', true)
   } else {
     emits('update:rail', saveRail.value)
+    emits('update:session-selectable', false)
   }
 })
 
@@ -349,15 +342,13 @@ async function onSubmitSessionType(sessionType: string): Promise<void> {
   if (!graphQlStore) return
   const sessionName = graphQlStore?.state.session?.name || ''
   const defaultDashboardId = graphQlStore?.state.session?.defaultDashboardId
-  if (sessionType === 'Shinobigami') {
-    await graphQlStore.addDashboard('No title page', defaultLayoutStr)
-  }
+  await addDashboards(graphQlStore, sessionType)
   await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId)
 }
 
 async function addDashboard() {
   if (!graphQlStore) return
-  await graphQlStore.addDashboard(addDashboardName.value, defaultLayoutStr)
+  await graphQlStore.addDashboard(addDashboardName.value, defaultLayout)
   addDashboardName.value = DEFAULT_DASHBOARD_NAME
   addDashboardMenu.value = false
 }

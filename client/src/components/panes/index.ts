@@ -1,9 +1,10 @@
 import noGroupPanes from './NoGroup'
 import samplePanes from './sample'
 import samplePanes2 from './sample2'
+import shinobigamiPanes from './Shinobigami'
 
 const panes = [
-  ...noGroupPanes, ...samplePanes, ...samplePanes2,
+  ...noGroupPanes, ...samplePanes, ...samplePanes2, ...shinobigamiPanes
 ]
 
 export interface Layout {

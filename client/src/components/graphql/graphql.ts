@@ -342,12 +342,16 @@ export default function useGraphQl(
     )
   }
 
-  async function addDashboard(dashboardName: string, layout: string): Promise<void> {
+  async function addDashboard(dashboardName: string, layout: Layout): Promise<void> {
     if (!appSyncClient) return
     operation = 'mutation addDashboard'
     const result = await appSyncClient.mutate<MutationResult.AddDashboard>({
       mutation: Mutations.addDashboard,
-      variables: { dashboardName: dashboardName || DEFAULT_DASHBOARD_NAME, layout, sessionId: state.session?.id || '' }
+      variables: {
+        dashboardName: dashboardName || DEFAULT_DASHBOARD_NAME,
+        layout: JSON.stringify(layout),
+        sessionId: state.session?.id || ''
+      }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される

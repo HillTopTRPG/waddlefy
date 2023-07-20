@@ -1,9 +1,11 @@
 <template>
   <template v-if="graphQlStore?.state.ready">
-    <play-main-navigation-drawer v-model:rail="firstRail" v-if="graphQlStore?.state.user?.token" />
+    <v-fade-transition>
+      <play-main-navigation-drawer v-model:rail="firstRail" v-if="graphQlStore?.state.user?.token && sessionSelectable" />
+    </v-fade-transition>
 
     <v-main :scrollable="true">
-      <session-view v-model:rail="secondRail" />
+      <session-view v-model:rail="secondRail" @update:session-selectable="v => { sessionSelectable = v }" />
     </v-main>
   </template>
 </template>
@@ -36,6 +38,8 @@ const firstRail = ref(railSplit.value[0])
 const secondRail = ref(railSplit.value[1])
 const sessionId = computed(() => graphQlStore?.state.session?.id)
 const dashboardId = computed(() => graphQlStore?.state.dashboard?.id)
+
+const sessionSelectable = ref(false)
 
 function createPathName() {
   const firstNav = sessionId.value ? `/${sessionId.value}` : ''
