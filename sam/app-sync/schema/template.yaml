@@ -15,6 +15,8 @@ Parameters:
     Type: String
   DashboardTableName:
     Type: String
+  SessionDataTableName:
+    Type: String
 
 Resources:
   # DataSource
@@ -58,6 +60,16 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref DashboardTableName
         AwsRegion: !Ref AWS::Region
+  SessionDataTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: SessionDataTableDataSource
+      ApiId: !Ref ApiId
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref ServiceRoleArn
+      DynamoDBConfig:
+        TableName: !Ref SessionDataTableName
+        AwsRegion: !Ref AWS::Region
 
   # Relations
   RelationsResolverStack:
@@ -70,6 +82,7 @@ Resources:
         SessionTableDataSourceName: !GetAtt SessionTableDataSource.Name
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+        SessionDataTableDataSourceName: !GetAtt SessionDataTableDataSource.Name
 
   # Functions
   FunctionsResolverStack:
@@ -145,6 +158,15 @@ Resources:
         ApiId: !Ref ApiId
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
+  # mutation addSessionData
+  MutationAddSessionDataStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/add-session-data.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        SessionDataTableDataSourceName: !GetAtt SessionDataTableDataSource.Name
+
   # mutation updateSession
   MutationUpdateSessionStack:
     Type: AWS::Serverless::Application
@@ -164,6 +186,15 @@ Resources:
         GetSessionInputFunctionId: !GetAtt FunctionsResolverStack.Outputs.GetSessionInputFunctionId
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
+  # mutation updateSessionData
+  MutationUpdateSessionDataStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/update-session-data.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        SessionDataTableDataSourceName: !GetAtt SessionDataTableDataSource.Name
+
   # mutation deleteSession
   MutationDeleteSessionStack:
     Type: AWS::Serverless::Application
@@ -182,6 +213,15 @@ Resources:
         ApiId: !Ref ApiId
         GetSessionInputFunctionId: !GetAtt FunctionsResolverStack.Outputs.GetSessionInputFunctionId
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
+
+  # mutation deleteSessionData
+  MutationDeleteSessionStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/delete-session-data.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        SessionDataTableDataSourceName: !GetAtt SessionDataTableDataSource.Name
 
   # mutation addPlayerByUser
   MutationAddPlayerByUserStack:

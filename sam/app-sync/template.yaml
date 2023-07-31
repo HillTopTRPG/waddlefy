@@ -15,6 +15,9 @@ Parameters:
   DashboardTableName:
     Type: String
     Default: waddlefy-dashboard-table
+  SessionDataTableName:
+    Type: String
+    Default: waddlefy-session-data-table
 
 Resources:
   AppSync:
@@ -62,6 +65,7 @@ Resources:
         SessionTableArn: !GetAtt TablesStack.Outputs.SessionTableArn
         PlayerTableArn: !GetAtt TablesStack.Outputs.PlayerTableArn
         DashboardTableArn: !GetAtt TablesStack.Outputs.DashboardTableArn
+        SessionDataTableArn: !GetAtt TablesStack.Outputs.SessionDataTableArn
 
   # DynamoDB
   TablesStack:
@@ -73,6 +77,7 @@ Resources:
         SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
         DashboardTableName: !Ref DashboardTableName
+        SessionDataTableName: !Ref SessionDataTableName
 
   SchemaStack:
     Type: AWS::Serverless::Application
@@ -85,6 +90,7 @@ Resources:
         SessionTableName: !Ref SessionTableName
         PlayerTableName: !Ref PlayerTableName
         DashboardTableName: !Ref DashboardTableName
+        SessionDataTableName: !Ref SessionDataTableName
     DependsOn:
       - AppSyncSchema
 

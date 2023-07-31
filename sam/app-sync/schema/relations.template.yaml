@@ -13,6 +13,8 @@ Parameters:
     Type: String
   DashboardTableDataSourceName:
     Type: String
+  SessionDataTableDataSourceName:
+    Type: String
 
 Resources:
   # UserForUser.firstSession
@@ -103,6 +105,17 @@ Resources:
       TypeName: SessionForUser
       FieldName: dashboards
       DataSourceName: !Ref DashboardTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
+
+  # SessionForUser.sessionDataList
+  RelationSessionForUserSessionDataList:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: SessionForUser
+      FieldName: sessionDataList
+      DataSourceName: !Ref SessionDataTableDataSourceName
       RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
       ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
@@ -223,6 +236,17 @@ Resources:
         #else
           $util.toJson($ctx.stash.defaultDashboard)
         #end
+
+  # SessionForPlayer.sessionDataList
+  RelationSessionForPlayerSessionDataList:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !Ref ApiId
+      TypeName: SessionForPlayer
+      FieldName: sessionDataList
+      DataSourceName: !Ref SessionDataTableDataSourceName
+      RequestMappingTemplateS3Location: vtl/query-where-session-id-source-id.vm
+      ResponseMappingTemplateS3Location: vtl/return-result-items.vm
 
   # PlayerForPlayer.session
   RelationPlayerForPlayerSession:

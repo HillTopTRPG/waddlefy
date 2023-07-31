@@ -9,8 +9,15 @@ import {
   Mutations, MutationResult,
   Queries, QueryResult,
   Subscriptions, SubscriptionResult,
-  User, Session, Dashboard, AbstractDashboard, Player
+  User,
+  Session,
+  Dashboard,
+  AbstractDashboard,
+  Player,
+  SessionData
 } from '@/components/graphql/schema'
+import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
+import { uuid } from 'vue-uuid'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
 const DEFAULT_URL = 'https://z46ue3pn4fc6pesko32rxh6w6a.appsync-api.ap-northeast-1.amazonaws.com/graphql'
@@ -19,6 +26,12 @@ const DEFAULT_REGION = 'ap-northeast-1'
 export const DEFAULT_SESSION_NAME = 'No title session'
 export const DEFAULT_DASHBOARD_NAME = 'No title page'
 const DEFAULT_SESSION_TYPE = 'init'
+
+export type CharacterWrap = {
+  id: string
+  player: string,
+  character: ShinobiGami
+}
 
 export function makeGraphQlClient(endPointUrl: string, region: string, getAuthToken: () => string) {
   const auth: AuthOptions = {
@@ -215,12 +228,18 @@ export async function fetchGraphQlConnectionInfo() {
   }
 }
 
+export type Notification = {
+  id: string
+  view: boolean
+  type: 'success' | 'warn' | 'error'
+  text: string
+}
+
 export default function useGraphQl(
   userToken: string,
   playerToken: string,
   sessionId: string,
-  dashboardId: string,
-  router: Router
+  dashboardId: string
 ) {
   // 状態
   const state = reactive<{
@@ -232,6 +251,8 @@ export default function useGraphQl(
     players: Player[]
     dashboards: AbstractDashboard[]
     dashboard: Dashboard | null
+    sessionDataList: SessionData[]
+    notifications: Notification[]
   }>({
     ready: false,
     user: null,
@@ -240,7 +261,9 @@ export default function useGraphQl(
     session: null,
     players: [],
     dashboards: [],
-    dashboard: null
+    dashboard: null,
+    sessionDataList: [],
+    notifications: []
   })
 
   // ロジック
@@ -254,11 +277,13 @@ export default function useGraphQl(
       case 'query directSessionAccess':
       case 'mutation addPlayerByUser':
       case 'mutation addSession':
+      case 'mutation addSessionData':
       case 'mutation addDashboard':
       case 'mutation deleteSession':
       case 'mutation updateUserName':
       case 'mutation updateUserIcon':
       case 'mutation updateSession':
+      case 'mutation updateSessionData':
       case 'mutation deletePlayer':
       case 'mutation generatePlayerResetCode':
         const userSecret = JSON.parse(localStorage.getItem(userToken) || '{}')?.secret
@@ -314,8 +339,10 @@ export default function useGraphQl(
       subscribedSessionId.push(sessionId)
       onAddPlayerSubscription(sessionId)
       onAddDashboardSubscription(sessionId)
+      onAddSessionDataSubscription(sessionId)
       onUpdateSessionSubscription(sessionId)
       onUpdateDashboardSubscription(sessionId)
+      onUpdateSessionDataSubscription(sessionId)
       onUpdatePlayerSubscription(sessionId)
       onDeletePlayerSubscription(sessionId)
       onDeleteDashboardSubscription(sessionId)
@@ -391,6 +418,25 @@ export default function useGraphQl(
         name,
         sessionType,
         defaultDashboardId
+      }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    // subscriptionにて更新される
+  }
+
+  async function updateCharacter(characterId: string, playerId: string, data: ShinobiGami) {
+    if (!appSyncClient) return
+    if (!state.user?.token) return
+    operation = 'mutation updateSessionData'
+    const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
+      mutation: Mutations.updateSessionData,
+      variables: {
+        id: characterId,
+        sessionId: state.session?.id || '',
+        data: JSON.stringify({
+          player: playerId,
+          character: data
+        })
       }
     })
     console.log(JSON.stringify(result.data, null, 2))
@@ -526,18 +572,30 @@ export default function useGraphQl(
       state.players = data.players.sort(sortId)
       state.dashboards = data.dashboards.sort(sortId)
       if (data.defaultDashboard) {
-        if (data.defaultDashboard.id !== dashboardId) {
-          await directDashboardAccess(dashboardId)
-        } else {
+        if (data.defaultDashboard.id === dashboardId) {
           state.dashboard = {
             id: data.defaultDashboard.id,
             name: data.defaultDashboard.name,
             layout: JSON.parse(data.defaultDashboard.layout) as Layout
           }
+        } else {
+          await directDashboardAccess(dashboardId)
         }
       } else {
         state.dashboard = null
       }
+      state.sessionDataList = data.sessionDataList.map(d => {
+        const raw = JSON.parse(d.data)
+        return {
+          id: d.id,
+          type: d.type,
+          sessionId: d.sessionId,
+          data: {
+            id: d.id,
+            ...raw
+          }
+        }
+      })
     }
   }
 
@@ -592,6 +650,18 @@ export default function useGraphQl(
         name: session.defaultDashboard.name,
         layout: JSON.parse(session.defaultDashboard.layout) as Layout
       }
+      state.sessionDataList = session.sessionDataList.map(d => {
+        const raw = JSON.parse(d.data)
+        return {
+          id: d.id,
+          type: d.type,
+          sessionId: d.sessionId,
+          data: {
+            id: d.id,
+            ...raw
+          }
+        }
+      })
     }
   }
 
@@ -621,6 +691,25 @@ export default function useGraphQl(
     await appSyncClient.mutate<MutationResult.AddPlayerByUser>({
       mutation: Mutations.addPlayerByUser,
       variables: { playerName, sessionId }
+    })
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addCharacter(dataObj: ShinobiGami): Promise<void> {
+    if (!appSyncClient) return
+
+    const sessionId = state.session?.id || ''
+    const type = 'character'
+    const characterWrap: Omit<CharacterWrap, 'id'> = {
+      player: '',
+      character: dataObj
+    }
+    const data = JSON.stringify(characterWrap)
+
+    operation = 'mutation addSessionData'
+    await appSyncClient.mutate<MutationResult.AddSessionData>({
+      mutation: Mutations.addSessionData,
+      variables: { sessionId, type, data }
     })
     // Subscriptionによってstateに登録される
   }
@@ -667,6 +756,37 @@ export default function useGraphQl(
             name: data.name,
             layout: JSON.parse(data.layout) as Layout
           }
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
+  function onAddSessionDataSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnAddSessionData>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<SubscriptionResult.OnAddSessionData>({
+      query: Subscriptions.onAddSessionData,
+      variables: { sessionId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<SubscriptionResult.OnAddSessionData>) {
+        console.log(JSON.stringify(value.data, null, 2))
+        const data = value.data?.onAddSessionData
+        if (data && state.session?.id === sessionId) {
+          const raw = JSON.parse(data.data)
+          state.sessionDataList.push({
+            id: data.id,
+            type: data.type,
+            sessionId: data.sessionId,
+            data: {
+              id: data.id,
+              ...raw
+            }
+          })
         }
       },
       error(errorValue: any) {
@@ -762,6 +882,37 @@ export default function useGraphQl(
     return subscriber
   }
 
+  function onUpdateSessionDataSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnUpdateSessionData>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdateSessionData>({
+      query: Subscriptions.onUpdateSessionData,
+      variables: { sessionId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<SubscriptionResult.OnUpdateSessionData>) {
+        console.log(JSON.stringify(value.data, null, 2))
+        const data = value.data?.onUpdateSessionData
+        if (data) {
+          if (state.session && state.session.id === sessionId) {
+            const idx = state.sessionDataList.findIndex(sd => sd.id === data.id)
+            if (idx >= 0) {
+              const raw = JSON.parse(data.data)
+              state.sessionDataList[idx].data = {
+                id: data.id,
+                ...raw
+              }
+            }
+          }
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
   function onUpdatePlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnUpdatePlayer>> {
     if (!appSyncClient) return
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdatePlayer>({
@@ -838,6 +989,26 @@ export default function useGraphQl(
     return subscriber
   }
 
+  function addNotification(type: Notification['type'], text: string) {
+    state.notifications.push({
+      id: uuid.v4(),
+      view: true,
+      type,
+      text
+    })
+  }
+
+  function closeNotification(id: string) {
+    const idx = state.notifications.findIndex(n => n.id === id)
+    if (idx < 0) return
+    state.notifications[idx].view = false
+    setTimeout(() => {
+      const idx = state.notifications.findIndex(n => n.id === id)
+      if (idx < 0) return
+      state.notifications.splice(idx, 1)
+    }, 300)
+  }
+
   return {
     state,
     addDefaultSession,
@@ -845,17 +1016,21 @@ export default function useGraphQl(
     directSessionAccess,
     directDashboardAccess,
     addPlayerByUser,
+    addCharacter,
     generatePlayerResetCode,
     updateUserName,
     updateUserIcon,
     updateSession,
     updateDashboardName,
     updateDashboardLayout,
+    updateCharacter,
     updatePlayerName,
     updatePlayerIcon,
     deleteSession,
     deleteDashboard,
-    deletePlayer
+    deletePlayer,
+    addNotification,
+    closeNotification
   }
 }
 

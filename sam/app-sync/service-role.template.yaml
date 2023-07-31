@@ -11,6 +11,8 @@ Parameters:
     Type: String
   DashboardTableArn:
     Type: String
+  SessionDataTableArn:
+    Type: String
 
 Resources:
   AppSyncServiceRole:
@@ -82,6 +84,18 @@ Resources:
                 Resource:
                   - !Sub ${DashboardTableArn}
                   - !Sub ${DashboardTableArn}/*
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:BatchGetItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                Resource:
+                  - !Sub ${SessionDataTableArn}
+                  - !Sub ${SessionDataTableArn}/*
 
 Outputs:
   ServiceRoleArn:

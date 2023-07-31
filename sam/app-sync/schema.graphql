@@ -28,6 +28,8 @@ type Mutation {
   generatePlayerResetCode(input: RequestPlayerPasswordResetInput): RequestPlayerPasswordResetResult
   # 参加者パスワードリセット
   resetPlayerPassword(input: ResetPlayerPasswordInput): PlayerForPlayer
+  # セッションデータ登録
+  addSessionData(input: AddSessionDataInput): SessionData
 
   # 更新系
 
@@ -41,6 +43,8 @@ type Mutation {
   # 参加者情報更新
   updatePlayerName(input: NameInput): AbstractPlayer
   updatePlayerIcon: AbstractPlayer
+  # セッションデータ更新
+  updateSessionData(input: UpdateSessionDataInput): SessionData
 
   # 削除系
 
@@ -50,6 +54,8 @@ type Mutation {
   deleteDashboard(input: DeleteDashboardInput): DeletedId
   # 参加者削除
   deletePlayer(input: DeletePlayerInput): DeletedId
+  # セッションデータ削除
+  deleteSessionData(input: DeleteSessionDataInput): DeletedId
 }
 
 type Subscription {
@@ -58,6 +64,8 @@ type Subscription {
   @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
   onAddDashboard(sessionId: String!): Dashboard
   @aws_subscribe(mutations: ["addDashboard"])
+  onAddSessionData(sessionId: String!): SessionData
+  @aws_subscribe(mutations: ["addSessionData"])
 
   # 更新系
   onUpdateUser(id: String!): AbstractUser
@@ -68,12 +76,16 @@ type Subscription {
   @aws_subscribe(mutations: ["updateDashboard"])
   onUpdatePlayer(sessionId: String!): AbstractPlayer
   @aws_subscribe(mutations: ["updatePlayerName", "updatePlayerIcon"])
+  onUpdateSessionData(sessionId: String!): SessionData
+  @aws_subscribe(mutations: ["updateSessionData"])
 
   # 削除系
   onDeleteDashboard(sessionId: String!): DeletedId
   @aws_subscribe(mutations: ["deleteDashboard"])
   onDeletePlayer(sessionId: String!): DeletedId
   @aws_subscribe(mutations: ["deletePlayer"])
+  onDeleteSessionData(sessionId: String!): DeletedId
+  @aws_subscribe(mutations: ["deleteSessionData"])
 }
 
 type Query {
@@ -142,6 +154,12 @@ input ResetPlayerPasswordInput {
   password: String!
 }
 
+input AddSessionDataInput {
+  sessionId: String!
+  type: String!
+  data: String!
+}
+
 input NameInput {
   name: String!
 }
@@ -160,6 +178,12 @@ input UpdateDashboardInput {
   layout: String!
 }
 
+input UpdateSessionDataInput {
+  id: String!
+  sessionId: String!
+  data: String!
+}
+
 input DeleteSessionInput {
   id: String!
 }
@@ -170,6 +194,11 @@ input DeleteDashboardInput {
 }
 
 input DeletePlayerInput {
+  id: String!
+}
+
+input DeleteSessionDataInput {
+  sessionId: String!
   id: String!
 }
 
@@ -198,6 +227,7 @@ type SessionForUser {
   dashboards: [Dashboard]!
   defaultDashboardId: String!
   defaultDashboard: Dashboard
+  sessionDataList: [SessionData]!
 }
 
 type AbstractPlayer {
@@ -216,6 +246,13 @@ type PlayerForPlayer {
   token: String!
   secret: String!
   session: SessionForPlayer
+}
+
+type SessionData {
+  id: String!
+  type: String!
+  sessionId: String!
+  data: String!
 }
 
 type RequestPlayerPasswordResetResult {
@@ -267,6 +304,7 @@ type SessionForPlayer {
   dashboards: [AbstractDashboard]!
   defaultDashboardId: String!
   defaultDashboard: Dashboard
+  sessionDataList: [SessionData]!
 }
 
 type AbstractDashboard {

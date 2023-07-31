@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="キャラクターシート表示" v-if="characterSheet">
+  <pane-frame title="キャラクターシート表示">
     <template v-slot:title-action>
       <v-btn size="x-small" variant="text" class="bg-transparent" icon="mdi-menu" @click="navigationDrawer = !navigationDrawer"></v-btn>
     </template>
@@ -15,85 +15,48 @@
         v-model="navigationDrawer"
       >
         <v-list>
-          <v-list-subheader>aaaaa</v-list-subheader>
-          <v-list-item>bbbbb</v-list-item>
+          <template v-for="cw in characterWraps">
+            <v-list-item>{{ cw.character.characterName }}</v-list-item>
+          </template>
         </v-list>
       </v-navigation-drawer>
+
+      <v-sheet
+        v-if="graphQlStore"
+        class="position-fixed d-flex flex-column bg-transparent"
+        style="right: 0; top: 34px; z-index: 10000000000;"
+        :height="Math.max(graphQlStore.state.notifications.length * 60 - 10, 0)"
+        width="344"
+      >
+        <template v-for="(notification, idx) in graphQlStore.state.notifications" :key="notification.id">
+          <v-snackbar
+            class="notify-snackbar"
+            variant="flat"
+            transition="slide-x-transition"
+            :timeout="5000"
+            :color="notification.type === 'success' ? 'green' : notification.type === 'warn' ? 'yellow' : 'red'"
+            content-class="border rounded-s-xl"
+            :contained="true"
+            :width="250"
+            :model-value="notification.view"
+            :style="`margin-bottom: ${idx * 60}px;`"
+            @update:model-value="graphQlStore.closeNotification(notification.id)"
+          >
+            <v-icon :icon="`mdi-${notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'}`" />
+            {{ notification.text }}{{idx}}
+          </v-snackbar>
+        </template>
+      </v-sheet>
     </template>
     <template v-slot:default>
-      <v-sheet>
-        <v-container>
-          <v-defaults-provider :defaults="{ VCol: { class: 'pa-0' }, VRow: { class: 'pb-2' } }">
-            <v-row>
-              <v-col>
-                <v-menu :close-on-content-click="false">
-                  <template v-slot:activator="{props}">
-                    <v-btn variant="text" v-bind="props" class="text-h5 px-1">
-                      <v-icon icon="mdi-triangle-small-down" size="x-small" class="mr-0" />
-                      {{ characterSheet.characterName }}
-                    </v-btn>
-                  </template>
-                  <v-container class="base-info px-2 pt-2 pb-1">
-                    <v-defaults-provider :defaults="{
-                      VCol: { class: 'py-0' },
-                      VRow: { class: 'py-0 my-0' },
-                      VChip: { class: 'px-3 mr-1', size: 'small', variant: 'outlined', style: 'border-color: #666' }
-                    }">
-                      <v-row class="mb-1">
-                        <v-col>
-                          <v-chip :text="characterSheet.level" v-if="characterSheet.level" />
-                          <v-chip :text="characterSheet.age" v-if="characterSheet.age" />
-                          <v-chip :text="characterSheet.sex" v-if="characterSheet.sex" />
-                          <v-chip :text="characterSheet.cover" v-if="characterSheet.cover" />
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col>
-                          <v-chip size="large">
-                            {{ characterSheet.upperStyle }}{{ characterSheet.subStyle ? ` - ${characterSheet.subStyle}` : '' }}
-                          </v-chip>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col>
-                          <div class="tree">
-                            <ul>
-                              <li v-if="characterSheet.stylerule">{{ characterSheet.stylerule }}</li>
-                              <li v-if="characterSheet.foe">仇敵：{{ characterSheet.foe }}</li>
-                            </ul>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </v-defaults-provider>
-                  </v-container>
-                </v-menu>
-                <v-btn icon="mdi-open-in-new" size="small" variant="flat" target="_blank" rel="noopener noreferrer" :href="url" />
-                <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
-                  <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
-                </template>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <ninpou-table
-                  class="mx-2"
-                  :list="characterSheet.ninjaArtsList"
-                  @click-skill="v => { selectSkill = v === selectSkill ? '' : v }"
-                />
-              </v-col>
-            </v-row>
-          </v-defaults-provider>
-        </v-container>
-      </v-sheet>
-      <v-sheet class="overflow-auto">
-        <speciality-table
+      <template v-for="cw in characterWraps" :key="cw.id">
+        <character-sheet-view
+          :character-id="cw.id"
+          :player-id="cw.player"
+          :character-sheet="cw.character"
           v-model:select-skill="selectSkill"
-          v-model:editing="tokugiTableEditing"
-          :info="characterSheet.skill"
-          @update:info="v => updateInfo(v)"
-          :editable="true"
         />
-      </v-sheet>
+      </template>
     </template>
   </pane-frame>
 </template>
@@ -110,15 +73,13 @@ export const componentInfo = {
 </script>
 
 <script setup lang='ts'>
+import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
-import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
-import { ref, watch } from 'vue'
-import { uuid } from 'vue-uuid'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
-import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
-import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
-import {ShinobiGami, ShinobigamiHelper} from '@/components/panes/Shinobigami/shinobigami'
-import {SaikoroFictionTokugi} from '@/components/panes/Shinobigami/SaikoroFiction'
+
+import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import CharacterSheetView from '@/components/panes/Shinobigami/CharacterSheetView.vue'
+const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
   layout: Layout
@@ -136,9 +97,15 @@ watch(navigationDrawer, v => {
     selectSkill.value = ''
   }
 })
-const url = ref('https://character-sheets.appspot.com/shinobigami/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByFwsSDUNoYXJhY3RlckRhdGEY__6wkwEM')
 
-const characterSheet = ref<ShinobiGami | null>(null)
+const characterWraps = computed<CharacterWrap[]>(() => {
+  if (!graphQlStore) return []
+  return graphQlStore.state.sessionDataList.filter(sd => sd.type === 'character' && sd.data?.character).map(sd => sd.data as CharacterWrap)
+})
+
+watch(characterWraps, v => {
+  graphQlStore?.addNotification('success', 'aaaaaa')
+}, { immediate: true })
 
 const selectSkill = ref('')
 watch(selectSkill, v => {
@@ -152,73 +119,13 @@ const tokugiTableEditing = ref(false)
 watch(tokugiTableEditing, v => {
   console.log(v)
 })
-
-const helper = new ShinobigamiHelper(url.value, 'hilltop')
-if (helper.isThis()) {
-  helper.getData().then(({ jsons, data }) => {
-    console.log(JSON.stringify(data, null, 2))
-    // console.log(JSON.stringify(jsons, null, 2))
-    characterSheet.value = data
-  })
-}
-
-function updateInfo(info: SaikoroFictionTokugi) {
-  console.log(JSON.stringify(info, null, 2))
-}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang='scss' scoped>
-.abs-menu {
-  right: 0;
-}
-.ninja-style-ex-panel:deep(button) {
-  padding: 0;
-}
-
-.tree {/*親要素*/
-  position: relative;
-  font-size: .85rem;
-  line-height: 1.5;
-  margin-left: 1em;
-}
-
-.tree ul {
-  padding-left: 5px;
-  list-style: none;
-}
-.tree ul li {
-  position: relative;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 15px;
-  box-sizing: border-box;
-}
-.tree ul li:before {
-  position: absolute;
-  top: 15px;
-  left: 0;
-  width: 10px;
-  height: 1px;
-  margin: auto;
-  content: '';
-  background-color: #666;
-}
-.tree ul li:after {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  height: 100%;
-  content: '';
-  background-color: #666;
-}
-.tree ul li:last-child:after {
-  height: 15px;
-}
-
-.base-info {
-  background-image: url("/paint_00001.jpg");
+.notify-snackbar {
+  :deep(.v-snackbar__wrapper) {
+    border-radius: 0;
+  }
 }
 </style>

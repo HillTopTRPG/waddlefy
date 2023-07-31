@@ -52,6 +52,7 @@ const ALL_OPERATIONS = [
   'Mutation.addDashboard',
   'Mutation.addPlayerByUser',
   'Mutation.addPlayerByPlayer',
+  'Mutation.addSessionData',
   'Mutation.playerFirstSignIn',
   'Mutation.playerSignIn',
   'Mutation.generatePlayerResetCode',
@@ -61,8 +62,10 @@ const ALL_OPERATIONS = [
   'Mutation.updateSession',
   'Mutation.updatePlayerName',
   'Mutation.updatePlayerIcon',
+  'Mutation.updateSessionData',
   'Mutation.deleteSession',
   'Mutation.deletePlayer',
+  'Mutation.deleteSessionData',
   'Query.checkDuplicateUserId',
   'Query.directSessionAccess',
   'Query.getSessionPlayer',
@@ -103,12 +106,15 @@ export const handler = async event => {
           admitFields.push('Mutation.addSession')
           admitFields.push('Mutation.addDashboard')
           admitFields.push('Mutation.addPlayerByUser')
+          admitFields.push('Mutation.addSessionData')
           admitFields.push('Mutation.generatePlayerResetCode')
           admitFields.push('Mutation.updateUserName')
           admitFields.push('Mutation.updateUserIcon')
           admitFields.push('Mutation.updateSession')
+          admitFields.push('Mutation.updateSessionData')
           admitFields.push('Mutation.deleteSession')
           admitFields.push('Mutation.deletePlayer')
+          admitFields.push('Mutation.deleteSessionData')
           admitFields.push('Query.directSessionAccess')
         }
       } else if (split[0] === 'p') {
@@ -118,8 +124,9 @@ export const handler = async event => {
           isAuthorized = true
           id = playerData.id
           admitFields.push('Query.directPlayerAccess')
-          admitFields.push('Query.updatePlayerName')
-          admitFields.push('Query.updatePlayerIcon')
+          admitFields.push('Mutation.updatePlayerName')
+          admitFields.push('Mutation.updatePlayerIcon')
+          admitFields.push('Mutation.updateSessionData')
         }
       }
     } else if (split.length === 2) {

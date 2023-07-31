@@ -6,9 +6,6 @@
 import { provide } from 'vue'
 import useGraphQl, { GraphQlKey } from './graphql'
 
-import { useRouter } from 'vue-router'
-const router = useRouter()
-
 const props = defineProps<{
   userToken?: string
   playerToken?: string
@@ -20,7 +17,6 @@ provide(GraphQlKey, useGraphQl(
   props.userToken || '',
   props.playerToken || '',
   props.sessionId || '',
-  props.dashboardId || '',
-  router
+  props.dashboardId || ''
 ))
 </script>

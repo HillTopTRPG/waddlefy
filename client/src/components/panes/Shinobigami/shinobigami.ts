@@ -163,7 +163,7 @@ export class ShinobigamiHelper {
       belief: textFilter(jsons[0].base.belief),
       stylerule: textFilter(jsons[0].base.stylerule),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ninjaArtsList: (jsons[1].ninpou as any[]).map(n => ({
+      ninjaArtsList: (jsons[1].ninpou || jsons[0].ninpou)?.map((n: any) => ({
         secret: !!n.secret,
         name: textFilter(n.name),
         type: textFilter(n.type),
@@ -172,7 +172,7 @@ export class ShinobigamiHelper {
         cost: textFilter(n.cost),
         effect: textFilter(n.effect),
         page: textFilter(n.page)
-      })),
+      })) || [],
       personalityList: createEmotion(jsons[0]),
       scenario: {
         handout: textFilter(jsons[0].scenario.handout),
@@ -195,19 +195,19 @@ export class ShinobigamiHelper {
         false
       ),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      specialArtsList: jsons[1].specialEffect.map((s: any) => ({
+      specialArtsList: jsons[1].specialEffect?.map((s: any) => ({
         name: textFilter(s.name),
         skill: textFilter(s.skill),
         effect: textFilter(s.effect),
         direction: textFilter(s.explain),
         _openList: []
-      })),
+      })) || [],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ninjaToolList: jsons[1].item.map((t: any) => ({
+      ninjaToolList: jsons[1].item?.map((t: any) => ({
         name: textFilter(t.name),
         effect: textFilter(t.effect),
         count: convertNumberZero(t.count)
-      }))
+      })) || []
     }
   }
 }

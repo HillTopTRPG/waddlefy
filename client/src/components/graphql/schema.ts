@@ -26,6 +26,12 @@ mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!
         id
         name
       }
+      sessionDataList {
+        id
+        type
+        sessionId
+        data
+      }
     }
     sessions {
       id
@@ -66,6 +72,12 @@ mutation UserSignIn($userId: String!, $userPassword: String!) {
         name
         layout
       }
+      sessionDataList {
+        id
+        type
+        sessionId
+        data
+      }
     }
     sessions {
       id
@@ -100,17 +112,34 @@ mutation AddSession($name: String!, $sessionType: String!) {
       name
       layout
     }
+    sessionDataList {
+      id
+      type
+      sessionId
+      data
+    }
   }
 }
 `)
 
 const addDashboard = gql(`
-mutation AddDashboardResult($dashboardName: String!, $layout: String!, $sessionId: String!) {
+mutation AddDashboard($dashboardName: String!, $layout: String!, $sessionId: String!) {
   addDashboard(input: {name: $dashboardName, layout: $layout, sessionId: $sessionId}) {
     id
     name
     layout
     sessionId
+  }
+}
+`)
+
+const addSessionData = gql(`
+mutation AddSessionData($sessionId: String!, $type: String!, $data: String!) {
+  addSessionData(input: {sessionId: $sessionId, type: $type, data: $data}) {
+    id
+    type
+    sessionId
+    data
   }
 }
 `)
@@ -175,6 +204,12 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
         name
         layout
       }
+      sessionDataList {
+        id
+        type
+        sessionId
+        data
+      }
     }
   }
 }
@@ -215,6 +250,12 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
         id
         name
         layout
+      }
+      sessionDataList {
+        id
+        type
+        sessionId
+        data
       }
     }
   }
@@ -263,6 +304,12 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
         id
         name
         layout
+      }
+      sessionDataList {
+        id
+        type
+        sessionId
+        data
       }
     }
   }
@@ -322,6 +369,17 @@ type UpdatedDashboard = {
   layout: string
   sessionId: string
 }
+
+const updateSessionData = gql(`
+mutation UpdateSessionData($id: String!, $sessionId: String!, $data: String!) {
+  updateSessionData(input: {id: $id, sessionId: $sessionId, data: $data}) {
+    id
+    type
+    sessionId
+    data
+  }
+}
+`)
 
 const updatePlayerName = gql(`
 mutation UpdatePlayerName($playerName: String!) {
@@ -387,6 +445,9 @@ export namespace MutationResult {
   export type AddDashboard = {
     addDashboard: DashboardResult
   }
+  export type AddSessionData = {
+    addSessionData: SessionData
+  }
   export type AddPlayerByUser = {
     addPlayerByUser: AbstractPlayer
   }
@@ -415,6 +476,9 @@ export namespace MutationResult {
   }
   export type UpdateSession = {
     updateSession: UpdatedSession
+  }
+  export type UpdateSessionData = {
+    updateSessionData: SessionData
   }
   export type UpdateDashboard = {
     updateDashboard: UpdatedDashboard
@@ -480,6 +544,12 @@ query DirectSessionAccess($sessionId: String!) {
       id
       name
       layout
+    }
+    sessionDataList {
+      id
+      type
+      sessionId
+      data
     }
   }
 }
@@ -638,6 +708,7 @@ type SessionForUser = {
   dashboards: AbstractDashboard[]
   defaultDashboardId: string
   defaultDashboard: DashboardResult
+  sessionDataList: SessionDataResult[]
 }
 
 type SessionForPlayer = {
@@ -651,6 +722,21 @@ type SessionForPlayer = {
   dashboards: AbstractDashboard[]
   defaultDashboardId: string
   defaultDashboard: DashboardResult
+  sessionDataList: SessionDataResult[]
+}
+
+export type SessionDataResult = {
+  id: string
+  type: string
+  sessionId: string
+  data: string
+}
+
+export type SessionData = {
+  id: string
+  type: string
+  sessionId: string
+  data: any
 }
 
 export type Session = {
@@ -708,11 +794,21 @@ subscription OnAddPlayer($sessionId: String!) {
 `)
 
 const onAddDashboard = gql(`
-subscription OnAddDashboardResult($sessionId: String!) {
+subscription OnAddDashboard($sessionId: String!) {
   onAddDashboard(sessionId: $sessionId) {
     id
     name
     layout
+  }
+}
+`)
+
+const onAddSessionData = gql(`
+subscription OnAddSessionData($sessionId: String!) {
+  onAddSessionData(sessionId: $sessionId) {
+    id
+    type
+    data
   }
 }
 `)
@@ -745,6 +841,16 @@ subscription OnUpdateDashboard($sessionId: String!) {
     name
     layout
     sessionId
+  }
+}
+`)
+
+const onUpdateSessionData = gql(`
+subscription OnUpdateSessionData($sessionId: String!) {
+  onUpdateSessionData(sessionId: $sessionId) {
+    id
+    type
+    data
   }
 }
 `)
@@ -784,6 +890,9 @@ export namespace SubscriptionResult {
   export type OnAddDashboard = {
     onAddDashboard: DashboardResult
   }
+  export type OnAddSessionData = {
+    onAddSessionData: SessionDataResult
+  }
   export type OnUpdateUser = {
     onUpdateUser: AbstractUser
   }
@@ -792,6 +901,9 @@ export namespace SubscriptionResult {
   }
   export type OnUpdateDashboard = {
     onUpdateDashboard: UpdatedDashboard
+  }
+  export type OnUpdateSessionData = {
+    onUpdateSessionData: SessionData
   }
   export type OnUpdatePlayer = {
     onUpdatePlayer: AbstractPlayer
@@ -809,6 +921,7 @@ export const Mutations = {
   userSignIn,
   addSession,
   addDashboard,
+  addSessionData,
   addPlayerByUser,
   addPlayerByPlayer,
   playerFirstSignIn,
@@ -819,6 +932,7 @@ export const Mutations = {
   updateUserIcon,
   updateSession,
   updateDashboard,
+  updateSessionData,
   updatePlayerName,
   updatePlayerIcon,
   deleteSession,
@@ -838,10 +952,12 @@ export const Queries = {
 export const Subscriptions = {
   onAddPlayer,
   onAddDashboard,
+  onAddSessionData,
   onDeletePlayer,
   onDeleteDashboard,
   onUpdateUser,
   onUpdateSession,
   onUpdateDashboard,
+  onUpdateSessionData,
   onUpdatePlayer
 }
