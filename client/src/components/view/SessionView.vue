@@ -209,9 +209,17 @@
   </nav-dialog>
 
   <v-app-bar density="compact" height="50" :elevation="0" id="session-main-app-bar" v-if="sessionType !== 'init'">
-    <span class="mx-3">{{ graphQlStore?.state.dashboard?.name || '' }}</span>
+    <span
+      class="mx-3"
+      style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+    >{{ graphQlStore?.state.dashboard?.name || '' }}</span>
     <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
-      <v-btn prepend-icon="mdi-view-dashboard" text="画面の設定" value="dialog-setting" @click="dialog = dialog === 'setting' ? '' : 'setting'" />
+      <v-btn
+        prepend-icon="mdi-view-dashboard"
+        text="画面の設定"
+        value="dialog-setting"
+        @click="dialog = dialog === 'setting' ? '' : 'setting'"
+      />
       <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
     </v-defaults-provider>
   </v-app-bar>

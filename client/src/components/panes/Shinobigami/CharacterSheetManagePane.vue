@@ -71,7 +71,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const characterWraps = computed<CharacterWrap[]>(() => {
   if (!graphQlStore) return []
   return graphQlStore.state.sessionDataList
-    .filter(sd => sd.type === 'character')
+    .filter(sd => sd.type === 'character' && sd.data?.character)
     .map(sd => sd.data as CharacterWrap)
 })
 

@@ -115,13 +115,9 @@ watch(navigationDrawer, v => {
 })
 
 const tokugiTableEditing = ref(false)
-watch(tokugiTableEditing, v => {
-  console.log(v)
-})
 
 async function updateInfo(info: SaikoroFictionTokugi) {
   if (!graphQlStore) return
-  console.log(JSON.stringify(info, null, 2))
   const characterSheet = clone(props.characterSheet)!
   characterSheet.skill = info
   await graphQlStore.updateCharacter(props.characterId, props.playerId, characterSheet)

@@ -9,14 +9,13 @@
       </v-defaults-provider>
     </template>
     <template v-slot:default>
-      <v-defaults-provider :defaults="{
-        VSheet: { class: 'pa-1 overflow-auto align-start' },
-        VSelect: vSelectDefaults
-      }">
+      <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
         <template v-for="i in [...Array(nums)].map((_, j) => j)" :key="i">
-          <v-sheet>
+          <v-sheet class="pa-1 overflow-auto align-start">
             <v-select :prefix="`キャラクター${i + 1}: `" v-model="selectCharacters[i]" />
             <speciality-table
+              :id="`speciality-table-${i}-${selectCharacters[i] || ''}`"
+              :info="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.skill || undefined"
               v-model:select-skill="selectSkill"
               :editing="false"
               :editable="false"
@@ -40,11 +39,21 @@ export const componentInfo = {
 </script>
 
 <script setup lang='ts'>
+import { computed, inject, ref, watch } from 'vue'
+import { uuid } from 'vue-uuid'
 import { Layout } from '@/components/panes'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
-import { ref, watch } from 'vue'
-import { uuid } from 'vue-uuid'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
+
+import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+
+const characterWraps = computed<CharacterWrap[]>(() => {
+  if (!graphQlStore) return []
+  return graphQlStore.state.sessionDataList
+    .filter(sd => sd.type === 'character' && sd.data?.character)
+    .map(sd => sd.data as CharacterWrap)
+})
 
 const props = defineProps<{
   layout: Layout
@@ -58,23 +67,17 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
-const characters = [
-  { name: 'Name001', key: '1' },
-  { name: 'Name002', key: '2' },
-  { name: 'Name003', key: '3' },
-]
-
 const vSelectDefaults = {
   density: 'compact',
   variant: 'plain',
   hideDetails: true,
-  itemValue: 'key',
-  itemTitle: 'name',
+  itemValue: 'id',
+  itemTitle: 'character.characterName',
   singleLine: true,
   active: true,
   class: 'character-select',
   placeholder: '未選択',
-  items: characters
+  items: characterWraps.value
 }
 
 const selectCharacters = ref<(string | null)[]>([null, null])

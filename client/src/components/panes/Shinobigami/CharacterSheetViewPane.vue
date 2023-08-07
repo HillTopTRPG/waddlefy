@@ -1,7 +1,13 @@
 <template>
   <pane-frame title="キャラクターシート表示">
     <template v-slot:title-action>
-      <v-btn size="x-small" variant="text" class="bg-transparent" icon="mdi-menu" @click="navigationDrawer = !navigationDrawer"></v-btn>
+      <v-btn
+        size="x-small"
+        variant="text"
+        class="bg-transparent"
+        icon="mdi-menu"
+        @click="navigationDrawer = !navigationDrawer"
+      />
     </template>
     <template v-slot:layout>
       <v-navigation-drawer
@@ -15,12 +21,13 @@
         v-model="navigationDrawer"
       >
         <v-list>
-          <template v-for="cw in characterWraps">
+          <template v-for="cw in characterWraps" :key="cw.id">
             <v-list-item>{{ cw.character.characterName }}</v-list-item>
           </template>
         </v-list>
       </v-navigation-drawer>
 
+      <!-- 通知Snackbar START -->
       <v-sheet
         v-if="graphQlStore"
         class="position-fixed d-flex flex-column bg-transparent"
@@ -33,7 +40,7 @@
             class="notify-snackbar"
             variant="flat"
             transition="slide-x-transition"
-            :timeout="5000"
+            :timeout="3000"
             :color="notification.type === 'success' ? 'green' : notification.type === 'warn' ? 'yellow' : 'red'"
             content-class="border rounded-s-xl"
             :contained="true"
@@ -41,22 +48,25 @@
             :model-value="notification.view"
             :style="`margin-bottom: ${idx * 60}px;`"
             @update:model-value="graphQlStore.closeNotification(notification.id)"
+            @click="graphQlStore.closeNotification(notification.id)"
           >
             <v-icon :icon="`mdi-${notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'}`" />
             {{ notification.text }}{{idx}}
           </v-snackbar>
         </template>
       </v-sheet>
+      <!-- 通知Snackbar END -->
+
     </template>
     <template v-slot:default>
-      <template v-for="cw in characterWraps" :key="cw.id">
-        <character-sheet-view
-          :character-id="cw.id"
-          :player-id="cw.player"
-          :character-sheet="cw.character"
-          v-model:select-skill="selectSkill"
-        />
-      </template>
+      <character-sheet-view
+        v-for="cw in characterWraps"
+        :key="cw.id"
+        :character-id="cw.id"
+        :player-id="cw.player"
+        :character-sheet="cw.character"
+        v-model:select-skill="selectSkill"
+      />
     </template>
   </pane-frame>
 </template>
@@ -76,9 +86,9 @@ export const componentInfo = {
 import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
+import CharacterSheetView from '@/components/panes/Shinobigami/CharacterSheetView.vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import CharacterSheetView from '@/components/panes/Shinobigami/CharacterSheetView.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -93,32 +103,27 @@ const emits = defineEmits<{
 
 const navigationDrawer = ref(false)
 watch(navigationDrawer, v => {
-  if (v) {
-    selectSkill.value = ''
-  }
+  if (v) selectSkill.value = ''
 })
 
 const characterWraps = computed<CharacterWrap[]>(() => {
   if (!graphQlStore) return []
-  return graphQlStore.state.sessionDataList.filter(sd => sd.type === 'character' && sd.data?.character).map(sd => sd.data as CharacterWrap)
+  return graphQlStore.state.sessionDataList
+    .filter(sd => sd.type === 'character' && sd.data?.character)
+    .map(sd => sd.data as CharacterWrap)
 })
 
 watch(characterWraps, v => {
   graphQlStore?.addNotification('success', 'aaaaaa')
-}, { immediate: true })
+}, { immediate: false })
 
 const selectSkill = ref('')
 watch(selectSkill, v => {
-  console.log(v)
-  if (v) {
-    navigationDrawer.value = false
-  }
+  if (v) navigationDrawer.value = false
 })
 
 const tokugiTableEditing = ref(false)
-watch(tokugiTableEditing, v => {
-  console.log(v)
-})
+watch(tokugiTableEditing, v => console.log(v))
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
