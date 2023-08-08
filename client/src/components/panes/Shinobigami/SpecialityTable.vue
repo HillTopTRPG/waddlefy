@@ -12,7 +12,7 @@
     <v-radio :value="false" label="判定" density="compact" />
   </v-radio-group>
   <v-sheet class="overflow-auto">
-    <table class="speciality-table bg-white" :class="characterId ? '' : 'disabled'">
+    <table class="speciality-table bg-white" :class="info ? '' : 'disabled'">
       <thead>
       <tr class="bg-grey-darken-4">
         <template v-for="(kind, idx) in SkillKind" :key="idx">
@@ -45,6 +45,8 @@
           <td
             v-if="targetValues && targetValues.some(tv => tv.name === skills[i])"
             class="bg-amber"
+            :class="cellClass(skills[i])"
+            @click="onClickSkill(skills[i])"
           >>= {{ targetValues.find(tv => tv.name === skills[i])?.targetValue }}</td>
           <td
             v-else
@@ -87,7 +89,6 @@ import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFict
 const props = defineProps<{
   editable: boolean
   editing: boolean
-  characterId?: string
   selectSkill: string
   info?: SaikoroFictionTokugi
 }>()
@@ -225,7 +226,8 @@ function onChangeOutRow(outRow: boolean) {
     }
 
     &.selected {
-      outline: red 2px solid;
+      outline: red 3px solid;
+      outline-offset: -1px;
     }
 
     &.filled {

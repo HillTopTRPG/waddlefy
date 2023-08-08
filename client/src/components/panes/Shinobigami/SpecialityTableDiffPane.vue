@@ -14,11 +14,16 @@
           <v-sheet class="pa-1 overflow-auto align-start">
             <v-select :prefix="`キャラクター${i + 1}: `" v-model="selectCharacters[i]" />
             <speciality-table
-              :id="`speciality-table-${i}-${selectCharacters[i] || ''}`"
               :info="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.skill || undefined"
               v-model:select-skill="selectSkill"
+              @update:info="v => updateInfo(selectCharacters[i], v)"
               :editing="false"
               :editable="false"
+            />
+            <ninpou-table
+              v-if="viewNinpou === 'あり'"
+              :list="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.ninjaArtsList"
+              @click-skill="v => { selectSkill = v === selectSkill ? '' : v }"
             />
           </v-sheet>
         </template>
@@ -46,6 +51,9 @@ import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const characterWraps = computed<CharacterWrap[]>(() => {
@@ -86,13 +94,18 @@ watch(nums, v => {
   for (let i = v; i > selectCharacters.value.length;) selectCharacters.value.push(null)
   for (let i = v; i < selectCharacters.value.length;) selectCharacters.value.splice(i, 1)
 })
-watch(selectCharacters, () => {
-  console.log(JSON.stringify(selectCharacters.value))
-}, { deep: true })
 
 const viewNinpou = ref('なし')
 
 const selectSkill = ref('')
+
+async function updateInfo(id: string, info: SaikoroFictionTokugi) {
+  if (!graphQlStore) return
+  const characterSheet = clone(characterWraps.value.find(cw => cw.id === id))
+  if (!characterSheet) return
+  characterSheet.skill = info
+  await graphQlStore.updateCharacter(id, characterSheet.player, characterSheet.character)
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

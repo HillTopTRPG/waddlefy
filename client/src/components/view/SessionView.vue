@@ -302,6 +302,8 @@ watch(() => graphQlStore?.state.session?.name, () => {
 async function updateSessionName() {
   const session = graphQlStore?.state.session
   if (!session) return
+  console.log(session.sessionType)
+  console.log(session.defaultDashboardId)
   await graphQlStore?.updateSession(inputSessionName.value, session.sessionType, session.defaultDashboardId)
   editSessionName.value = false
 }
@@ -350,8 +352,8 @@ async function onSubmitSessionType(sessionType: string): Promise<void> {
   if (!graphQlStore) return
   const sessionName = graphQlStore?.state.session?.name || ''
   const defaultDashboardId = graphQlStore?.state.session?.defaultDashboardId
-  await addDashboards(graphQlStore, sessionType)
-  await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId)
+  const newDefaultDashboardId = await addDashboards(graphQlStore, sessionType)
+  await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId || newDefaultDashboardId)
 }
 
 async function addDashboard() {

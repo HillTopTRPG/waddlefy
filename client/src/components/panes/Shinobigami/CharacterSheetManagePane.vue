@@ -5,45 +5,52 @@
     <template v-slot:layout>
     </template>
     <template v-slot:default>
-      <v-text-field
-        label="キャラクターシート倉庫のURL"
-        color="primary"
-        class="name-text-field overflow-visible"
-        :hide-details="true"
-        variant="outlined"
-        :error-messages="addUrlErrorMessage"
-        v-model="addUrl"
-        @keydown.enter="$event.keyCode === 13 && addUrl && callAddCharacter()"
-        @click:append-inner.stop
-      >
-        <template v-slot:append-inner>
-          <v-divider :vertical="true" />
-          <v-btn
-            :disabled="Boolean(addUrlErrorMessage) || !addUrl"
-            text="作成"
-            variant="text"
-            class="bg-transparent h-100"
-            @click.prevent.stop="callAddCharacter()"
-            @mousedown.prevent.stop
-            @mouseup.prevent.stop
-          />
-        </template>
-      </v-text-field>
-      <v-list>
-        <v-list-item
-          v-for="cw in characterWraps"
-          :key="cw.id"
+      <v-sheet class="w-100 d-flex flex-wrap">
+        <v-text-field
+          label="キャラクターシート倉庫のURL"
+          color="primary"
+          class="name-text-field overflow-visible mx-3 my-2"
+          :hide-details="true"
+          variant="outlined"
+          :error-messages="addUrlErrorMessage"
+          v-model="addUrl"
+          @keydown.enter="$event.keyCode === 13 && addUrl && callAddCharacter()"
+          @click:append-inner.stop
         >
-          <v-list-item-title>{{ cw.character.characterName }}</v-list-item-title>
-          <v-select
-            :items="players"
-            item-title="name"
-            item-value="id"
-            :model-value="cw.player"
-            @update:model-value="v => updateCharacterPlayer(cw.id, v)"
-          />
-        </v-list-item>
-      </v-list>
+          <template v-slot:append-inner>
+            <v-divider :vertical="true" />
+            <v-btn
+              :disabled="Boolean(addUrlErrorMessage) || !addUrl"
+              text="読込"
+              variant="text"
+              class="bg-transparent h-100"
+              @click.prevent.stop="callAddCharacter()"
+              @mousedown.prevent.stop
+              @mouseup.prevent.stop
+            />
+          </template>
+        </v-text-field>
+      </v-sheet>
+      <v-sheet class="w-100 d-flex flex-wrap">
+        <v-list>
+          <v-list-item
+            v-for="cw in characterWraps"
+            :key="cw.id"
+          >
+            <v-list-item-title>{{ cw.character.characterName }}</v-list-item-title>
+            <v-select
+              label="プレイヤー"
+              style="min-width: 200px"
+              density="compact"
+              :items="players"
+              item-title="name"
+              item-value="id"
+              :model-value="cw.player"
+              @update:model-value="v => updateCharacterPlayer(cw.id, v)"
+            />
+          </v-list-item>
+        </v-list>
+      </v-sheet>
     </template>
   </pane-frame>
 </template>
@@ -75,7 +82,7 @@ const characterWraps = computed<CharacterWrap[]>(() => {
     .map(sd => sd.data as CharacterWrap)
 })
 
-const players = computed(() => [{ id: '', name: '解除' }, ...graphQlStore?.state.players] || [])
+const players = computed(() => [{ id: '', name: 'なし' }, ...graphQlStore?.state.players] || [])
 
 const props = defineProps<{
   layout: Layout

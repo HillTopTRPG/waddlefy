@@ -67,6 +67,10 @@
         :character-sheet="cw.character"
         v-model:select-skill="selectSkill"
       />
+      <span v-if="!characterWraps.length" class="ma-3">
+        0件<br>
+        キャラクターシートを登録してください。
+      </span>
     </template>
   </pane-frame>
 </template>

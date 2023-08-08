@@ -126,6 +126,7 @@ input AddSessionInput {
 input AddDashboardInput {
   name: String!
   layout: String! #json
+  option: String! #json
   sessionId: String!
 }
 
@@ -175,7 +176,8 @@ input UpdateDashboardInput {
   sessionId: String!
   dashboardId: String!
   name: String!
-  layout: String!
+  layout: String! #json
+  option: String! #json
 }
 
 input UpdateSessionDataInput {
@@ -270,12 +272,14 @@ type UpdatedSession {
   name: String!
   token: String!
   sessionType: String!
+  defaultDashboardId: String!
 }
 
 type UpdatedDashboard {
   id: ID!
   name: String!
-  layout: String!
+  layout: String! #json
+  option: String! #json
   sessionId: String!
 }
 
@@ -310,6 +314,7 @@ type SessionForPlayer {
 type AbstractDashboard {
   id: ID!
   name: String!
+  option: String!
 }
 
 type Dashboard {
@@ -317,4 +322,5 @@ type Dashboard {
   sessionId: String!
   name: String!
   layout: String! #json
+  option: String! #json
 }

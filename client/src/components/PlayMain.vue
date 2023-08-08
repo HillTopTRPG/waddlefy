@@ -1,8 +1,6 @@
 <template>
   <template v-if="graphQlStore?.state.ready">
-    <v-fade-transition>
-      <play-main-navigation-drawer v-model:rail="firstRail" v-if="graphQlStore?.state.user?.token && sessionSelectable" />
-    </v-fade-transition>
+    <play-main-navigation-drawer v-model:rail="firstRail" v-if="graphQlStore?.state.user?.token && sessionSelectable" />
 
     <v-main :scrollable="true">
       <session-view v-model:rail="secondRail" @update:session-selectable="v => { sessionSelectable = v }" />

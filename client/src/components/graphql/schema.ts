@@ -25,6 +25,7 @@ mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!
       dashboards {
         id
         name
+        option
       }
       sessionDataList {
         id
@@ -65,12 +66,14 @@ mutation UserSignIn($userId: String!, $userPassword: String!) {
       dashboards {
         id
         name
+        option
       }
       defaultDashboardId
       defaultDashboard {
         id
         name
         layout
+        option
       }
       sessionDataList {
         id
@@ -105,12 +108,14 @@ mutation AddSession($name: String!, $sessionType: String!) {
     dashboards {
       id
       name
+      option
     }
     defaultDashboardId
     defaultDashboard {
       id
       name
       layout
+      option
     }
     sessionDataList {
       id
@@ -123,11 +128,12 @@ mutation AddSession($name: String!, $sessionType: String!) {
 `)
 
 const addDashboard = gql(`
-mutation AddDashboard($dashboardName: String!, $layout: String!, $sessionId: String!) {
-  addDashboard(input: {name: $dashboardName, layout: $layout, sessionId: $sessionId}) {
+mutation AddDashboard($dashboardName: String!, $layout: String!, $option: String!, $sessionId: String!) {
+  addDashboard(input: {name: $dashboardName, layout: $layout, option: $option, sessionId: $sessionId}) {
     id
     name
     layout
+    option
     sessionId
   }
 }
@@ -197,12 +203,14 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       dashboards {
         id
         name
+        option
       }
       defaultDashboardId
       defaultDashboard {
         id
         name
         layout
+        option
       }
       sessionDataList {
         id
@@ -244,12 +252,14 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       dashboards {
         id
         name
+        option
       }
       defaultDashboardId
       defaultDashboard {
         id
         name
         layout
+        option
       }
       sessionDataList {
         id
@@ -298,12 +308,14 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
       dashboards {
         id
         name
+        option
       }
       defaultDashboardId
       defaultDashboard {
         id
         name
         layout
+        option
       }
       sessionDataList {
         id
@@ -343,6 +355,7 @@ mutation UpdateSession($sessionId: String!, $name: String!, $sessionType: String
     name
     token
     sessionType
+    defaultDashboardId
   }
 }
 `)
@@ -351,14 +364,16 @@ type UpdatedSession = {
   name: string
   token: string
   sessionType: string
+  defaultDashboardId: string
 }
 
 const updateDashboard = gql(`
-mutation UpdateDashboard($sessionId: String!, $dashboardId: String!, $name: String!, $layout: String!) {
-  updateDashboard(input: {sessionId: $sessionId, dashboardId: $dashboardId, name: $name, layout: $layout}) {
+mutation UpdateDashboard($sessionId: String!, $dashboardId: String!, $name: String!, $layout: String!, $option: String!) {
+  updateDashboard(input: {sessionId: $sessionId, dashboardId: $dashboardId, name: $name, layout: $layout, option: $option}) {
     id
     name
     layout
+    option
     sessionId
   }
 }
@@ -367,6 +382,7 @@ type UpdatedDashboard = {
   id: string
   name: string
   layout: string
+  option: string
   sessionId: string
 }
 
@@ -538,12 +554,14 @@ query DirectSessionAccess($sessionId: String!) {
     dashboards {
       id
       name
+      option
     }
     defaultDashboardId
     defaultDashboard {
       id
       name
       layout
+      option
     }
     sessionDataList {
       id
@@ -562,6 +580,7 @@ query DirectSessionAccess($dashboardId: String!) {
     sessionId
     name
     layout
+    option
   }
 }
 `)
@@ -649,12 +668,14 @@ query DirectPlayerAccess {
       dashboards {
         id
         name
+        option
       }
       defaultDashboardId
       defaultDashboard {
         id
         name
         layout
+        option
       }
     }
   }
@@ -768,18 +789,25 @@ type DeletedId = {
 export type AbstractDashboard = {
   id: string
   name: string
+  option: DashboardOption
 }
 
 type DashboardResult = {
   id: string
   name: string
   layout: string
+  option: string
+}
+
+export type DashboardOption = {
+  scope: 'all' | 'owner' | string[]
 }
 
 export type Dashboard = {
   id: string
   name: string
   layout: Layout
+  option: DashboardOption
 }
 
 const onAddPlayer = gql(`
@@ -799,6 +827,7 @@ subscription OnAddDashboard($sessionId: String!) {
     id
     name
     layout
+    option
   }
 }
 `)
@@ -830,6 +859,7 @@ subscription OnUpdateSession($sessionId: String!) {
     name
     token
     sessionType
+    defaultDashboardId
   }
 }
 `)
@@ -840,6 +870,7 @@ subscription OnUpdateDashboard($sessionId: String!) {
     id
     name
     layout
+    option
     sessionId
   }
 }

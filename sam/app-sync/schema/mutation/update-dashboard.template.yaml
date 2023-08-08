@@ -60,14 +60,16 @@ Resources:
             "id" : $util.dynamodb.toDynamoDBJson($ctx.args.input.dashboardId)
           },
           "update" : {
-            "expression" : "SET #name = :name, #layout = :layout",
+            "expression" : "SET #name = :name, #layout = :layout, #option = :option",
             "expressionNames" : {
               "#name" : "name",
               "#layout" : "layout",
+              "#option" : "option",
             },
             "expressionValues" : {
               ":name" : $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
               ":layout" : $util.dynamodb.toDynamoDBJson($ctx.args.input.layout),
+              ":option" : $util.dynamodb.toDynamoDBJson($ctx.args.input.option),
             }
           }
         }

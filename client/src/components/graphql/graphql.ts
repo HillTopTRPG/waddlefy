@@ -14,7 +14,7 @@ import {
   Dashboard,
   AbstractDashboard,
   Player,
-  SessionData
+  SessionData, DashboardOption
 } from '@/components/graphql/schema'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import { uuid } from 'vue-uuid'
@@ -369,7 +369,7 @@ export default function useGraphQl(
     )
   }
 
-  async function addDashboard(dashboardName: string, layout: Layout): Promise<void> {
+  async function addDashboard(dashboardName: string, layout: Layout, option: DashboardOption): Promise<void> {
     if (!appSyncClient) return
     operation = 'mutation addDashboard'
     const result = await appSyncClient.mutate<MutationResult.AddDashboard>({
@@ -377,6 +377,7 @@ export default function useGraphQl(
       variables: {
         dashboardName: dashboardName || DEFAULT_DASHBOARD_NAME,
         layout: JSON.stringify(layout),
+        option: JSON.stringify(option),
         sessionId: state.session?.id || ''
       }
     })
@@ -453,7 +454,8 @@ export default function useGraphQl(
         sessionId: state.session?.id || '',
         dashboardId: state.dashboard?.id || '',
         name,
-        layout: state.dashboard?.layout ? JSON.stringify(state.dashboard.layout) : '',
+        layout: JSON.stringify(state.dashboard?.layout || {}),
+        option: JSON.stringify(state.dashboard?.option || {})
       }
     })
     console.log(JSON.stringify(result.data, null, 2))
@@ -471,6 +473,25 @@ export default function useGraphQl(
         dashboardId: state.dashboard?.id || '',
         name: state.dashboard?.name || '',
         layout: JSON.stringify(layout),
+        option: JSON.stringify(state.dashboard?.option || {})
+      }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    // subscriptionにて更新される
+  }
+
+  async function updateDashboardOption(option: DashboardOption) {
+    if (!appSyncClient) return
+    if (!state.user?.token) return
+    operation = 'mutation updateDashboard'
+    const result = await appSyncClient.mutate<MutationResult.UpdateDashboard>({
+      mutation: Mutations.updateDashboard,
+      variables: {
+        sessionId: state.session?.id || '',
+        dashboardId: state.dashboard?.id || '',
+        name: state.dashboard?.name || '',
+        layout: JSON.stringify(state.dashboard?.layout || {}),
+        option: JSON.stringify(option),
       }
     })
     console.log(JSON.stringify(result.data, null, 2))
@@ -747,13 +768,14 @@ export default function useGraphQl(
         console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onAddDashboard
         if (data && state.session?.id === sessionId) {
-          state.dashboards.push({
-            id: data.id,
-            name: data.name
-          })
-          state.dashboard = {
+          const dashboard: AbstractDashboard = {
             id: data.id,
             name: data.name,
+            option: JSON.parse(data.option) as DashboardOption
+          }
+          state.dashboards.push(dashboard)
+          state.dashboard = {
+            ...dashboard,
             layout: JSON.parse(data.layout) as Layout
           }
         }
@@ -834,6 +856,7 @@ export default function useGraphQl(
           if (state.session && state.session.id === sessionId) {
             state.session.name = data.name
             state.session.sessionType = data.sessionType
+            state.session.defaultDashboardId = data.defaultDashboardId
           }
           const session = state.sessions.find(s => s.id === data.id)
           if (session) {
@@ -869,6 +892,7 @@ export default function useGraphQl(
             state.dashboard = null
             dashboardTemp.name = data.name
             dashboardTemp.layout = JSON.parse(data.layout)
+            dashboardTemp.option = JSON.parse(data.option)
             setTimeout(() => {
               state.dashboard = dashboardTemp
             }, 0)
@@ -1023,6 +1047,7 @@ export default function useGraphQl(
     updateSession,
     updateDashboardName,
     updateDashboardLayout,
+    updateDashboardOption,
     updateCharacter,
     updatePlayerName,
     updatePlayerIcon,
