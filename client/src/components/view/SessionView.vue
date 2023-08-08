@@ -11,7 +11,6 @@
     :rail="rail"
     :elevation="0"
     id="session-nav"
-    ref="sessionNav"
   >
     <template v-slot:prepend>
       <v-list :nav='true' density='compact' class="pa-0 mb-1">
@@ -112,7 +111,7 @@
     </v-list>
 
     <template v-slot:append>
-      <v-list :nav='true' density='compact' class="pa-0 my-1" v-if="!isScrolling">
+      <v-list :nav='true' density='compact' class="pa-0 my-1">
         <v-divider />
 
         <user-nav-item
@@ -268,18 +267,6 @@ const emits = defineEmits<{
   (e: 'update:rail', value: boolean): void
   (e: 'update:session-selectable', value: boolean): void
 }>()
-
-const sessionNav = ref()
-const isScrolling = ref(false)
-watch(sessionNav, () => {
-  if (!sessionNav.value) return
-  const scrollParentElm = sessionNav.value.$el.parentElement
-    .querySelectorAll('.v-navigation-drawer__content')[0]
-  scrollParentElm.addEventListener('scroll', event => {
-    const scrollTop = event.target.scrollTop
-    isScrolling.value = scrollTop > 0
-  })
-})
 
 const editSessionName = ref(false)
 const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
