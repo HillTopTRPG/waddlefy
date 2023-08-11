@@ -1,17 +1,3 @@
-<script setup lang='ts'>
-import UserAvatar from '@/components/parts/UserAvatar.vue'
-
-const props = defineProps<{
-  title: string
-  class?: string
-  subtitle?: string
-  icon?: string
-  iconToken?: string
-  rail: boolean
-  toggle: boolean
-}>()
-</script>
-
 <template>
   <v-tooltip transition='scale-transition' :disabled="!rail">
     <template #activator='{ props: tooltipProp }'>
@@ -25,7 +11,7 @@ const props = defineProps<{
         @keydown.enter.stop='$event.target.click()'
       >
         <template #prepend>
-          <v-icon size='small' class='mr-6' v-if="icon">mdi-{{ icon }}</v-icon>
+          <v-icon size='small' class='mr-6' style="margin-left: 2px;" v-if="icon">mdi-{{ icon }}</v-icon>
           <user-avatar v-if="iconToken" :token="iconToken || ''" class='mr-3' />
         </template>
         <v-list-item-title>{{ title }}</v-list-item-title>
@@ -35,6 +21,20 @@ const props = defineProps<{
     <span class='font-weight-bold'>{{ title }}</span>
   </v-tooltip>
 </template>
+
+<script setup lang='ts'>
+import UserAvatar from '@/components/parts/UserAvatar.vue'
+
+const props = defineProps<{
+  title: string
+  class?: string
+  subtitle?: string
+  icon?: string
+  iconToken?: string
+  rail: boolean
+  toggle: boolean
+}>()
+</script>
 
 <!--suppress CssUnusedSymbol, HtmlUnknownAttribute -->
 <style scoped lang='css'>

@@ -5,7 +5,11 @@
         VSelect: { variant: 'plain', density: 'compact', hideDetails: true, class: 'menu-select ml-5' }
       }">
         <v-select prefix="比較数: " :items="[2,3,4,5,6]" style="max-width: 6em" v-model="nums" />
-        <v-select prefix="忍法表示: " :items="['なし', 'あり']" style="max-width: 8em" v-model="viewNinpou" />
+        <v-select prefix="忍法表示: " :items="['なし', 'あり']" style="max-width: 8em" v-model="viewNinpou">
+          <template #selection="{ item }">
+            <span style="white-space: nowrap">{{ item.value }}</span>
+          </template>
+        </v-select>
       </v-defaults-provider>
     </template>
     <template v-slot:default>

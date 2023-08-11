@@ -9,7 +9,7 @@
       <th>ｺｽﾄ</th>
     </tr>
     </thead>
-    <tbody>
+    <tbody v-if="list">
     <tr v-for="(arts, idx) in list" :key="idx">
       <v-menu :close-on-content-click="false" :z-index="10000000">
         <template v-slot:activator="{props}">
@@ -48,7 +48,7 @@
 import { NinjaArts } from '@/components/panes/Shinobigami/shinobigami'
 
 const props = defineProps<{
-  list: NinjaArts[]
+  list?: NinjaArts[]
 }>()
 
 const emits = defineEmits<{

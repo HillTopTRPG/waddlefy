@@ -6,7 +6,7 @@
       viewBox="0 0 640 640"
       xml:space="preserve"
       class="align-center"
-      :style="`--img-color: ${color}; max-height: 90vh`"
+      :style="`--img-color: ${color}; max-height: min(90vh, 90vw)`"
     >
       <desc>Created with Fabric.js 5.3.0</desc>
       <defs></defs>

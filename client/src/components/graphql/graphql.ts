@@ -283,7 +283,6 @@ export default function useGraphQl(
       case 'mutation updateUserName':
       case 'mutation updateUserIcon':
       case 'mutation updateSession':
-      case 'mutation updateSessionData':
       case 'mutation deletePlayer':
       case 'mutation generatePlayerResetCode':
         const userSecret = JSON.parse(localStorage.getItem(userToken) || '{}')?.secret
@@ -295,6 +294,7 @@ export default function useGraphQl(
         const playerSecret = JSON.parse(localStorage.getItem(playerToken) || '{}')?.secret
         authorize = `p/${playerToken}/${playerSecret || ''}`
         break
+      case 'mutation updateSessionData':
       case 'query directDashboardAccess':
         authorize = `s/${state.session?.token || ''}`
         break
@@ -427,7 +427,6 @@ export default function useGraphQl(
 
   async function updateCharacter(characterId: string, playerId: string, data: ShinobiGami) {
     if (!appSyncClient) return
-    if (!state.user?.token) return
     operation = 'mutation updateSessionData'
     const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
       mutation: Mutations.updateSessionData,
@@ -591,13 +590,19 @@ export default function useGraphQl(
         defaultDashboardId: data.defaultDashboardId
       }
       state.players = data.players.sort(sortId)
-      state.dashboards = data.dashboards.sort(sortId)
+      state.dashboards = data.dashboards
+        .map(d => {
+          d.option = JSON.parse(d.option) as DashboardOption
+          return d
+        })
+        .sort(sortId)
       if (data.defaultDashboard) {
         if (data.defaultDashboard.id === dashboardId) {
           state.dashboard = {
             id: data.defaultDashboard.id,
             name: data.defaultDashboard.name,
-            layout: JSON.parse(data.defaultDashboard.layout) as Layout
+            layout: JSON.parse(data.defaultDashboard.layout) as Layout,
+            option: JSON.parse(data.defaultDashboard.option) as DashboardOption
           }
         } else {
           await directDashboardAccess(dashboardId)
@@ -635,7 +640,8 @@ export default function useGraphQl(
         state.dashboard = {
           id: data.id,
           name: data.name,
-          layout: JSON.parse(data.layout) as Layout
+          layout: JSON.parse(data.layout) as Layout,
+          option: JSON.parse(data.option) as DashboardOption
         }
       }, 0)
     }
@@ -666,10 +672,16 @@ export default function useGraphQl(
         id, token, iconToken, name
       }
       state.dashboards = session.dashboards
+        .map(d => {
+          d.option = JSON.parse(d.option) as DashboardOption
+          return d
+        })
+        .sort(sortId)
       state.dashboard = {
         id: session.defaultDashboard.id,
         name: session.defaultDashboard.name,
-        layout: JSON.parse(session.defaultDashboard.layout) as Layout
+        layout: JSON.parse(session.defaultDashboard.layout) as Layout,
+        option: JSON.parse(session.defaultDashboard.option) as DashboardOption
       }
       state.sessionDataList = session.sessionDataList.map(d => {
         const raw = JSON.parse(d.data)
@@ -776,7 +788,8 @@ export default function useGraphQl(
           state.dashboards.push(dashboard)
           state.dashboard = {
             ...dashboard,
-            layout: JSON.parse(data.layout) as Layout
+            layout: JSON.parse(data.layout) as Layout,
+            option: JSON.parse(data.option) as DashboardOption
           }
         }
       },
@@ -886,15 +899,14 @@ export default function useGraphQl(
           const dashboard = state.dashboards.find(d => d.id === data.id)
           if (dashboard) {
             dashboard.name = data.name
+            dashboard.option = JSON.parse(data.option)
           }
           if (state.dashboard && state.dashboard.id === data.id) {
-            const dashboardTemp = state.dashboard
-            state.dashboard = null
-            dashboardTemp.name = data.name
-            dashboardTemp.layout = JSON.parse(data.layout)
-            dashboardTemp.option = JSON.parse(data.option)
+            state.dashboard.name = data.name
+            state.dashboard.layout = null
+            state.dashboard.option = JSON.parse(data.option)
             setTimeout(() => {
-              state.dashboard = dashboardTemp
+              state.dashboard.layout = JSON.parse(data.layout)
             }, 0)
           }
         }

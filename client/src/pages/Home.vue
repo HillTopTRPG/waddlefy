@@ -10,10 +10,7 @@
           <span class="d-inline-block text-left" style="white-space: nowrap">TRPGセッションに<br>１画面ちょい足し</span>
         </p>
 
-        <v-sheet
-          class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10"
-          style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap"
-        >
+        <v-sheet class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10" style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap">
           <p>多くのデータ、特殊なルール……<br>大変じゃないですか？<br>楽しさに集中したいそんなあなたに</p>
           <ruby class="text-h5" style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
         </v-sheet>
@@ -64,6 +61,53 @@
             ログインに失敗しました
           </v-card-actions>
         </v-card>
+
+        <v-sheet class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10" style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap">
+          <h4>機能一覧</h4>
+          <ul>
+            <!--
+            <li>
+              汎用
+              <ul>
+                <li>
+                  方眼紙（四角形）
+                  <ul>
+                    <li>直線描画</li>
+                    <li>マスの塗りつぶし</li>
+                    <li>描画した直線やマスとの交点で構成される多角形の塗りつぶし</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            -->
+            <li>
+              忍術バトルRPG シノビガミ
+              <ul>
+                <li>
+                  キャラシ登録
+                  <ul>
+                    <li>キャラクターシート倉庫のURLを使って登録</li>
+                  </ul>
+                </li>
+                <li>
+                  キャラクターシート覧表示
+                  <ul>
+                    <li>公開情報のみを１画面に集約</li>
+                    <li>ダメージの簡易入力・記録</li>
+                    <li>特技表の判定値計算ツール</li>
+                  </ul>
+                </li>
+                <li>
+                  特技表比較
+                  <ul>
+                    <li>2〜6キャラ分のキャラクターシートの特技表を簡易表示</li>
+                    <li>選んだ特技について複数のキャラクターの目標値をまとめて見る</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </v-sheet>
       </div>
     </v-container>
   </v-main>

@@ -11,6 +11,8 @@
     hide-details
     ref="textFieldElm"
     @keydown.enter="$event.keyCode === 13 && submit()"
+    :autofocus="true"
+    @click:control.stop
     @click:append-inner.stop
   >
     <template v-slot:append-inner>
@@ -80,7 +82,7 @@ function editStart() {
 
 .name-text-field:deep(.v-field__input),
 .name-text-field:deep(.v-field__append-inner) {
-  padding-top: 0
+  padding-top: 0 !important;
 }
 
 .name-text-field:deep(.v-field__input) {

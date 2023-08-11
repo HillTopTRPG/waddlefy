@@ -9,6 +9,14 @@
   >
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
+        <v-list-subheader style="min-height: auto; background: none;">名前</v-list-subheader>
+        <v-list-item>
+          <natural-text-field
+            label="あなたの名前"
+            :value="graphQlStore?.state.user?.name || ''"
+            @submit="v => graphQlStore?.updateUserName(v)"
+          />
+        </v-list-item>
         <v-list-item>
           <v-btn
             @click="onChangeIcon()"
@@ -24,6 +32,7 @@
 
 <script lang="ts" setup>
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
+import NaturalTextField from '@/components/NaturalTextField.vue'
 
 import { inject } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'

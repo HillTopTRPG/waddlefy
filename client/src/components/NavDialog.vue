@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     :model-value="modalValue"
-    :attach="attach"
+    :contained="true"
     :fullscreen="true"
     :scrim="false"
     :no-click-animation="true"
@@ -23,7 +23,6 @@
 const props = defineProps<{
   modalValue: boolean
   title: string
-  attach: string
 }>()
 
 const emits = defineEmits<{

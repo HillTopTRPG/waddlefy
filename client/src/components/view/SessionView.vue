@@ -3,7 +3,7 @@
   <share-overlay :modal-value="dialog === 'share'" @close="dialog = ''" />
   <owner-overlay :modal-value="dialog === 'owner'" @close="dialog = ''" />
   <setting-overlay :modal-value="dialog === 'setting'" @close="dialog = ''" />
-  <player-overlay :modal-value="Boolean(dialog) && ['share', 'owner', 'setting'].every(s => s !== dialog)" @close="dialog = ''" />
+  <player-overlay :modal-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog" @close="dialog = ''" />
 
   <v-navigation-drawer
     :permanent='true'
@@ -32,12 +32,19 @@
       </v-list>
     </template>
 
-    <!-- 画面 -->
-    <v-list :nav='true' density='compact' class="pa-0 pt-0 mb-1" @scroll="onScroll($event)" v-if="sessionType !== 'init'">
+    <v-list
+      :nav='true'
+      density='compact'
+      class="pa-0 pt-0 mb-1 overflow-y-auto"
+      v-if="sessionType !== 'init'"
+    >
+      <!-- 画面一覧 -->
       <template v-if="graphQlStore">
         <template v-for="dashboard in graphQlStore.state.dashboards" :key="dashboard.id">
           <user-nav-item
+            v-if="isViewDashboard(dashboard.option.scope)"
             :title="dashboard.name"
+            :subtitle="dashboardSubtitle(dashboard.option.scope)"
             :rail="rail"
             icon="view-dashboard"
             :toggle="true"
@@ -47,7 +54,9 @@
           />
         </template>
       </template>
-      <v-menu v-if="isReady" location="right" :scrim="true" v-model="addDashboardMenu" :close-on-content-click="false">
+
+      <!-- 画面追加 -->
+      <v-menu v-if="isReady && isOwnerControl" location="right" :scrim="true" v-model="addDashboardMenu" :close-on-content-click="false">
         <template v-slot:activator="{ props }">
           <user-nav-item
             v-bind="props"
@@ -77,13 +86,11 @@
           </v-card-actions>
         </v-card>
       </v-menu>
+
       <v-divider/>
-    </v-list>
 
-    <!-- 主催者 -->
-    <v-list :nav='true' if="account-list-nav" density='compact' class="pa-0 pt-0 mb-1">
+      <!-- 主催者 -->
       <v-list-subheader class="pa-0 ma-0">主催者</v-list-subheader>
-
       <user-nav-item
         :title="graphQlStore?.state.user?.name || ''"
         :rail="rail"
@@ -108,10 +115,87 @@
           @click="selectPlayer(player.id)"
         />
       </template>
+
+      <v-divider class="mt-1" />
+      <user-nav-item
+        title="セッションの選択"
+        subtitle="主催者専用"
+        v-if="isOwnerControl"
+        :rail="rail"
+        icon="home-switch"
+        :toggle="false"
+        class="mx-1 mt-1 my-0"
+        style=""
+        color="primary"
+        :active="firstRail"
+        @click="emits('update:first-rail', !firstRail)"
+      />
     </v-list>
 
+    <nav-dialog
+      title="セッションの設定"
+      :modal-value="dialogInNav === 'setting'"
+      @close="dialogInNav = ''"
+      class="mb-11 mt-12 session-setting-nav-dialog"
+      v-if="isReady"
+    >
+      <v-list class="nav-dialog h-100">
+        <v-list-subheader style="min-height: auto; background: none;">セッション名</v-list-subheader>
+        <v-list-item>
+          <v-text-field
+            :readonly="!editSessionName"
+            label=""
+            v-model="inputSessionName"
+            placeholder="セッション名"
+            color="primary"
+            variant="plain"
+            density="compact"
+            class="name-text-field"
+            style="letter-spacing: 1em; min-height: 1em"
+            hide-details
+            ref="sessionNameInputElm"
+            @keydown.enter="$event.keyCode === 13 && updateSessionName()"
+            @click:append-inner.stop
+          >
+            <template v-slot:append-inner v-if="isOwnerControl">
+              <v-divider :vertical="true" />
+              <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
+                <v-btn
+                  v-if="editSessionName"
+                  :disabled="!inputSessionName"
+                  prepend-icon="mdi-check-bold"
+                  text="決定"
+                  class="bg-transparent h-100 px-1"
+                  @click.prevent.stop="updateSessionName()"
+                  @mousedown.prevent.stop
+                  @mouseup.prevent.stop
+                />
+                <v-btn
+                  v-else
+                  prepend-icon="mdi-pencil"
+                  text="編集"
+                  class="bg-transparent h-100 px-1"
+                  @click.prevent.stop="startEditSessionName()"
+                  @mousedown.prevent.stop
+                  @mouseup.prevent.stop
+                />
+              </v-defaults-provider>
+            </template>
+          </v-text-field>
+        </v-list-item>
+        <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length > 1">
+          <delete-dialog-btn
+            :target-name="graphQlStore?.state.session?.name || ''"
+            type="セッション"
+            :sessionId="sessionId"
+            @execute="graphQlStore?.deleteSession(sessionId)"
+          />
+        </v-list-item>
+      </v-list>
+    </nav-dialog>
+
     <template v-slot:append>
-      <v-list :nav='true' density='compact' class="pa-0 my-1">
+      <v-list :nav='true' density='compact' class="pa-0 mb-1">
         <v-divider />
 
         <user-nav-item
@@ -144,82 +228,25 @@
     </template>
   </v-navigation-drawer>
 
-  <nav-dialog
-    title="セッションの設定"
-    attach="#session-nav"
-    :modal-value="dialogInNav === 'setting'"
-    @close="dialogInNav = ''"
-    class="mb-11 mt-12"
-    v-if="isReady"
-  >
-    <v-list class="nav-dialog h-100">
-      <v-list-subheader style="min-height: auto; background: none;">セッション名</v-list-subheader>
-      <v-list-item>
-        <v-text-field
-          :readonly="!editSessionName"
-          label=""
-          v-model="inputSessionName"
-          placeholder="セッション名"
-          color="primary"
-          variant="plain"
-          density="compact"
-          class="name-text-field"
-          style="letter-spacing: 1em; min-height: 1em"
-          hide-details
-          ref="sessionNameInputElm"
-          @keydown.enter="$event.keyCode === 13 && updateSessionName()"
-          @click:append-inner.stop
-        >
-          <template v-slot:append-inner v-if="isOwnerControl">
-            <v-divider :vertical="true" />
-            <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
-              <v-btn
-                v-if="editSessionName"
-                :disabled="!inputSessionName"
-                prepend-icon="mdi-check-bold"
-                text="決定"
-                class="bg-transparent h-100 px-1"
-                @click.prevent.stop="updateSessionName()"
-                @mousedown.prevent.stop
-                @mouseup.prevent.stop
-              />
-              <v-btn
-                v-else
-                prepend-icon="mdi-pencil"
-                text="編集"
-                class="bg-transparent h-100 px-1"
-                @click.prevent.stop="startEditSessionName()"
-                @mousedown.prevent.stop
-                @mouseup.prevent.stop
-              />
-            </v-defaults-provider>
-          </template>
-        </v-text-field>
-      </v-list-item>
-      <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length > 1">
-        <delete-dialog-btn
-          :target-name="graphQlStore?.state.session?.name || ''"
-          type="セッション"
-          :sessionId="sessionId"
-          @execute="graphQlStore?.deleteSession(sessionId)"
-        />
-      </v-list-item>
-    </v-list>
-  </nav-dialog>
-
   <v-app-bar density="compact" height="50" :elevation="0" id="session-main-app-bar" v-if="sessionType !== 'init'">
     <span
-      class="mx-3"
-      style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+      class="mx-3 flex-grow-1"
+      style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; box-sizing: border-box;"
     >{{ graphQlStore?.state.dashboard?.name || '' }}</span>
-    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat' } }">
+    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat', class: 'px-1' } }">
       <v-btn
         prepend-icon="mdi-view-dashboard"
         text="画面の設定"
         value="dialog-setting"
+        v-if="isOwnerControl"
         @click="dialog = dialog === 'setting' ? '' : 'setting'"
       />
-      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
+      <v-btn
+        prepend-icon="mdi-pencil-ruler"
+        text="レイアウト"
+        value="show-bar"
+        @click="showBar = !showBar"
+      />
     </v-defaults-provider>
   </v-app-bar>
 
@@ -258,14 +285,16 @@ import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
 import { addDashboards } from '@/PaneLayoutTemplate'
+import {DashboardOption} from '@/components/graphql/schema'
 
 const props = defineProps<{
   rail: boolean
+  firstRail: boolean
 }>()
 
 const emits = defineEmits<{
   (e: 'update:rail', value: boolean): void
-  (e: 'update:session-selectable', value: boolean): void
+  (e: 'update:first-rail', value: boolean): void
 }>()
 
 const editSessionName = ref(false)
@@ -295,21 +324,15 @@ async function updateSessionName() {
   editSessionName.value = false
 }
 
-function onScroll(event: any) {
-  console.log(event)
-}
-
 const dialog = ref('')
 const dialogInNav = ref('')
 const saveRail = ref(false)
-watch(dialogInNav, () => {
-  if (dialogInNav.value) {
+watch(dialogInNav, v => {
+  if (v) {
     saveRail.value = props.rail
     emits('update:rail', false)
-    emits('update:session-selectable', true)
   } else {
     emits('update:rail', saveRail.value)
-    emits('update:session-selectable', false)
   }
 })
 
@@ -396,6 +419,22 @@ watch(dialog, v => {
     bNavVal.value.splice(idx, 1)
   }
 })
+
+function isViewDashboard(scope: DashboardOption['scope']): boolean {
+  if (scope === 'all' || Boolean(graphQlStore?.state.user?.token)) return true
+  if (scope === 'owner') return false
+  return scope.some(s => s === graphQlStore?.state.player?.id)
+}
+
+function dashboardSubtitle(scope: DashboardOption['scope']): string {
+  if (scope === 'all') return ''
+  if (scope === 'owner') return '主催者専用'
+  if (!graphQlStore) return ''
+  return graphQlStore.state.players
+    .filter(p => scope.some(s => s === p.id))
+    .map(p => p.name)
+    .join(', ')
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
@@ -404,6 +443,12 @@ watch(dialog, v => {
   background-image: url('/paint_00003.jpg');
   background-color: rgba(255, 255, 255, 0.5);
   background-blend-mode: lighten;
+}
+
+#session-nav:deep(.v-navigation-drawer__content) {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: scroll;
 }
 
 .splitpanes--vertical > .splitpanes__splitter {

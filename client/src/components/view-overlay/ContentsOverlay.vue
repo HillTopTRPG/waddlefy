@@ -11,7 +11,7 @@
     class="contents-overlay ma-0"
     style="max-width: 400px;"
     :style="`border-left: ${color} 2px solid; --img:url('/${image}')`"
-    content-class="w-100 h-100"
+    content-class="w-100 h-100 bg-white"
   >
     <v-layout class="w-100 h-100">
       <v-card class="w-100 ma-0 d-flex flex-column" style="border-radius: 0">

@@ -493,11 +493,4 @@ watch(cLayout, () => {
 .split-panes-layer.on-hold-right {
   border-right: 6px solid red;
 }
-
-.v-select__selection-text {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 100%;
-}
 </style>

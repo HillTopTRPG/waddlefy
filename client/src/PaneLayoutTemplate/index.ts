@@ -27,7 +27,6 @@ export async function addDashboards(graphQlStore: GraphQlStore, sessionType: str
     return new Promise((resolve: () => void) => {
       const timerId = setInterval(() => {
         const dashboardNum = graphQlStore.state.dashboards.length
-        console.log(dashboardNum)
         if (dashboardNum === num) {
           clearInterval(timerId)
           resolve()

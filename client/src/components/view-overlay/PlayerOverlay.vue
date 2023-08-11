@@ -1,23 +1,48 @@
 <template>
   <contents-overlay
-    title="Playerrrrr"
+    :title="(player?.name || '') + (player?.token ? '(あなた)' : '')"
     color="bg-light-green"
-    :modal-value="modalValue"
+    :modal-value="Boolean(modalValue)"
     image="white_00053.jpg"
     @close="emits('close')"
   >
-
+    <v-card-text class="pa-2 overflow-auto h-100">
+      <v-list class="ma-0 pa-0 bg-transparent">
+        <v-list-item>
+          <v-btn
+            @click="onChangeIcon()"
+            v-if="player?.token"
+            variant="outlined"
+            text="アイコンを変更する"
+          />
+        </v-list-item>
+      </v-list>
+    </v-card-text>
   </contents-overlay>
 </template>
 
 <script lang="ts" setup>
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
-defineProps<{
-  modalValue: boolean
+import {computed, inject} from 'vue'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+
+const props = defineProps<{
+  modalValue: string
 }>()
 
 const emits = defineEmits<{
   (e: 'close'): void
 }>()
+
+const player = computed(() => {
+  if (!graphQlStore) return null
+  if (graphQlStore.state.player?.id === props.modalValue) return graphQlStore.state.player
+  return graphQlStore.state.players.find(p => p.id === props.modalValue)
+})
+
+function onChangeIcon() {
+  graphQlStore?.updatePlayerIcon()
+}
 </script>

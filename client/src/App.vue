@@ -4,6 +4,29 @@
   </v-app>
 </template>
 
+<script lang="ts" setup>
+const images = []
+function preload() {
+  for (let i = 0; i < arguments.length; i++) {
+    images[i] = new Image()
+    images[i].onload = () => {
+      console.log(arguments[i])
+    }
+    images[i].src = arguments[i]
+  }
+}
+
+preload(
+  "/paint_00001.jpg",
+  "/paint_00003.jpg",
+  "/paint_00005.jpg",
+  "/paint_00007.jpg",
+  "/paint_00019.jpg",
+  "/paint_00022.jpg",
+  "/white_00053.jpg"
+)
+</script>
+
 <style lang="scss">
 html {
   overscroll-behavior-x: none;
@@ -22,10 +45,6 @@ $htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, sm
 center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead,
 tr, th, td, article;
 
-html .v-list-item__overlay {
-  --v-activated-opacity: 0;
-}
-
 #app {
   font-family: $body-font-family;
 
@@ -41,6 +60,10 @@ html .v-list-item__overlay {
     #{$htmlTag} {
       font-family: $body-font-family;
     }
+  }
+
+  li > ul {
+    margin-left: 1em;
   }
 }
 </style>

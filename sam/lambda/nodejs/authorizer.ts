@@ -126,7 +126,6 @@ export const handler = async event => {
           admitFields.push('Query.directPlayerAccess')
           admitFields.push('Mutation.updatePlayerName')
           admitFields.push('Mutation.updatePlayerIcon')
-          admitFields.push('Mutation.updateSessionData')
         }
       }
     } else if (split.length === 2) {
@@ -142,6 +141,7 @@ export const handler = async event => {
           admitFields.push('Mutation.resetPlayerPassword')
           admitFields.push('Query.getSessionPlayer')
           admitFields.push('Query.directDashboardAccess')
+          admitFields.push('Mutation.updateSessionData')
         }
       }
       if (split[0] === 'si') {

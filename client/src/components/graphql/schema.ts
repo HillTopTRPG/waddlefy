@@ -203,14 +203,12 @@ mutation PlayerSignIn($playerId: String!, $playerPassword: String!) {
       dashboards {
         id
         name
-        option
       }
       defaultDashboardId
       defaultDashboard {
         id
         name
         layout
-        option
       }
       sessionDataList {
         id
@@ -676,6 +674,12 @@ query DirectPlayerAccess {
         name
         layout
         option
+      }
+      sessionDataList {
+        id
+        type
+        sessionId
+        data
       }
     }
   }
