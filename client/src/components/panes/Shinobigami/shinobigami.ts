@@ -65,6 +65,80 @@ export type ShinobiGami = {
   skill: SaikoroFictionTokugi // 特技
 }
 
+export type DiffType = {
+  op: 'replace' | 'add' | 'delete'
+  path: string
+  before: string | number
+  after: string | number
+}
+export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
+  const diffs: DiffType[] = []
+  const simpleParams: (keyof Pick<
+    ShinobiGami,
+    'url',
+    'playerName',
+    'characterName',
+    'characterNameKana',
+    'regulation',
+    'foe',
+    'exp',
+    'memo',
+    'upperStyle',
+    'subStyle',
+    'level',
+    'age',
+    'sex',
+    'cover',
+    'belief',
+    'stylerule'
+  >)[] = [
+    'url',
+    'playerName',
+    'characterName',
+    'characterNameKana',
+    'regulation',
+    'foe',
+    'exp',
+    'memo',
+    'upperStyle',
+    'subStyle',
+    'level',
+    'age',
+    'sex',
+    'cover',
+    'belief',
+    'stylerule'
+  ]
+  simpleParams.forEach(p => {
+    if (d1[p] === d2[p]) return
+    diffs.push({
+      op: 'replace',
+      path: p.toString(),
+      before: d1[p],
+      after: d2[p]
+    })
+  })
+  const deleteList = d1.skill.learnedList
+    .filter(sl1 => d2.skill.learnedList.every(sl2 => sl2.name !== sl1.name))
+    .map(sl1 => ({
+      op: 'delete',
+      path: 'skill.learnedList',
+      before: sl1.name,
+      after: ''
+    }))
+  diffs.push(...deleteList)
+  const addList = d2.skill.learnedList
+    .filter(sl2 => d1.skill.learnedList.every(sl1 => sl1.name !== sl2.name))
+    .map(sl2 => ({
+      op: 'add',
+      path: 'skill.learnedList',
+      before: '',
+      after: sl2.name
+    }))
+  diffs.push(...addList)
+  return diffs
+}
+
 export class ShinobigamiHelper {
   protected readonly url: string
   protected readonly sheetViewPass: string

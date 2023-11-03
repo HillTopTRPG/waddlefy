@@ -26,40 +26,6 @@
           </template>
         </v-list>
       </v-navigation-drawer>
-
-      <!-- 通知Snackbar START -->
-      <v-sheet
-        v-if="graphQlStore"
-        class="position-fixed d-flex flex-column bg-transparent"
-        style="right: 0; top: 34px; z-index: 10000000000"
-        :height="Math.max(graphQlStore.state.notifications.length * 60 - 10, 0)"
-        width="344"
-      >
-        <template v-for="(notification, idx) in graphQlStore.state.notifications" :key="notification.id">
-          <v-snackbar
-            class="notify-snackbar"
-            variant="flat"
-            transition="slide-x-transition"
-            :timeout="3000"
-            :color="notification.type === 'success' ? 'green' : notification.type === 'warn' ? 'yellow' : 'red'"
-            content-class="border rounded-s-xl"
-            :contained="true"
-            :width="250"
-            :model-value="notification.view"
-            :style="`margin-bottom: ${idx * 60}px;`"
-            @update:model-value="graphQlStore.closeNotification(notification.id)"
-            @click="graphQlStore.closeNotification(notification.id)"
-          >
-            <v-icon
-              :icon="`mdi-${
-                notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'
-              }`"
-            />
-            {{ notification.text }}{{ idx }}
-          </v-snackbar>
-        </template>
-      </v-sheet>
-      <!-- 通知Snackbar END -->
     </template>
     <template v-slot:default>
       <character-sheet-view
@@ -98,13 +64,13 @@ import CharacterSheetView from '@/components/panes/Shinobigami/CharacterSheetVie
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
@@ -115,20 +81,16 @@ watch(navigationDrawer, v => {
   if (v) selectSkill.value = ''
 })
 
-const characterWraps = computed<CharacterWrap[]>(() => {
-  if (!graphQlStore) return []
+function getCharacterWraps(): CharacterWrap[] {
   return graphQlStore.state.sessionDataList
     .filter(sd => sd.type === 'character' && sd.data?.character)
     .map(sd => sd.data as CharacterWrap)
-})
+}
 
-watch(
-  characterWraps,
-  v => {
-    graphQlStore?.addNotification('success', 'aaaaaa')
-  },
-  { immediate: false }
-)
+const characterWraps = computed<CharacterWrap[]>(() => {
+  if (!graphQlStore) return []
+  return getCharacterWraps()
+})
 
 const selectSkill = ref('')
 watch(selectSkill, v => {

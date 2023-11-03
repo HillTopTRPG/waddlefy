@@ -8,6 +8,40 @@
 
     <v-main :scrollable="true">
       <session-view v-model:first-rail="sessionSelectable" v-model:rail="secondRail" />
+
+      <!-- 通知Snackbar START -->
+      <v-sheet
+        v-if="graphQlStore"
+        class="position-fixed d-flex flex-column bg-transparent"
+        style="right: 0; top: 34px; z-index: 10000000000"
+        :height="Math.max(graphQlStore.state.notifications.length * 60 - 10, 0)"
+        width="344"
+      >
+        <template v-for="(notification, idx) in graphQlStore.state.notifications" :key="notification.id">
+          <v-snackbar
+            class="notify-snackbar"
+            variant="flat"
+            transition="slide-x-transition"
+            :timeout="3000"
+            :color="notification.type === 'success' ? 'green' : notification.type === 'warn' ? 'yellow' : 'red'"
+            content-class="border rounded-s-xl"
+            :contained="true"
+            :width="250"
+            :model-value="notification.view"
+            :style="`margin-bottom: ${idx * 60}px;`"
+            @update:model-value="graphQlStore.closeNotification(notification.id)"
+            @click="graphQlStore.closeNotification(notification.id)"
+          >
+            <v-icon
+              :icon="`mdi-${
+                notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'
+              }`"
+            />
+            {{ notification.text }}
+          </v-snackbar>
+        </template>
+      </v-sheet>
+      <!-- 通知Snackbar END -->
     </v-main>
   </template>
 </template>
@@ -17,7 +51,9 @@ import { inject, ref, computed, watch } from 'vue'
 import PlayMainNavigationDrawer from '@/components/PlayMainNavigationDrawer.vue'
 import SessionView from '@/components/view/SessionView.vue'
 
-import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { getDiff } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // noinspection TypeScriptValidateTypes
@@ -68,5 +104,55 @@ watch(
     history.replaceState(null, '', pathName)
   },
   { immediate: true }
+)
+
+function getCharacterWraps(): CharacterWrap[] {
+  return graphQlStore.state.sessionDataList
+    .filter(sd => sd.type === 'character' && sd.data?.character)
+    .map(sd => sd.data as CharacterWrap)
+}
+
+let oldCharacterWraps: CharacterWrap[] = clone(getCharacterWraps())
+
+const characterWraps = computed<CharacterWrap[]>(() => {
+  if (!graphQlStore) return []
+  return getCharacterWraps()
+})
+
+watch(
+  characterWraps,
+  vn => {
+    if (vn.length === oldCharacterWraps.length) {
+      vn.forEach(vne => {
+        const n = vne.character
+        const o = oldCharacterWraps.find(old => vne.id === old.id)?.character
+        if (!o || JSON.stringify(o) === JSON.stringify(n)) return
+        const diffs = getDiff(o, n)
+        console.log(JSON.stringify(diffs, null, 2))
+        if (diffs.length === 1) {
+          const diff = diffs[0]
+          let message: string
+          if (diff.op === 'delete') {
+            if (diff.path === 'skill.learnedList') {
+              message = `${o.characterName}の${diff.before}が未習得になりました`
+            } else {
+              message = `${o.characterName}が${diff.before}を失いました`
+            }
+          } else if (diff.op === 'add') {
+            if (diff.path === 'skill.learnedList') {
+              message = `${o.characterName}が${diff.after}を習得しました`
+            } else {
+              message = `${o.characterName}が${diff.after}を得ました`
+            }
+          } else {
+            message = `${o.characterName}の${diff.before}が${diff.after}に変更されました`
+          }
+          graphQlStore?.addNotification('success', message)
+        }
+      })
+    }
+    oldCharacterWraps = clone(vn)
+  },
+  { immediate: false }
 )
 </script>
