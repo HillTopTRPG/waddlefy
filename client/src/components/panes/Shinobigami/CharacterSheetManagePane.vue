@@ -79,13 +79,13 @@ const characterWraps = computed<CharacterWrap[]>(() => {
 
 const players = computed(() => [{ id: '', name: 'なし' }, ...graphQlStore.state.players] || [])
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void

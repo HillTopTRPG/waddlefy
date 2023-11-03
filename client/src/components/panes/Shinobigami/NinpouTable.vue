@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { NinjaArts } from '@/components/panes/Shinobigami/shinobigami'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list?: NinjaArts[]
 }>()

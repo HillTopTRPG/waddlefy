@@ -49,7 +49,7 @@ watch(
   },
   { immediate: true }
 )
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const label = computed(() => items.find(item => item.val === sessionType.value)?.label || '')
 
 const vAlertDefault = {
