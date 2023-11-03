@@ -9,7 +9,14 @@
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
         <v-list-item>
-          <v-btn @click="onChangeIcon()" v-if="player?.token" variant="outlined" text="アイコンを変更する" />
+          <v-btn
+            @click="onChangeIcon()"
+            v-if="player?.token"
+            variant="outlined"
+            text="アイコンを変更する"
+            :loading="isLoading"
+            :disabled="isLoading"
+          />
         </v-list-item>
       </v-list>
     </v-card-text>
@@ -19,7 +26,7 @@
 <script lang="ts" setup>
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
-import { computed, inject } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -37,7 +44,17 @@ const player = computed(() => {
   return graphQlStore.state.players.find(p => p.id === props.modalValue)
 })
 
+const isLoading = ref(false)
+watch(
+  () => graphQlStore.state.player?.iconToken,
+  v => {
+    if (!v) return
+    isLoading.value = false
+  }
+)
+
 function onChangeIcon() {
+  isLoading.value = true
   graphQlStore?.updatePlayerIcon()
 }
 </script>

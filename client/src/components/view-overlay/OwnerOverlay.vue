@@ -23,6 +23,8 @@
             v-if="graphQlStore?.state.user?.token"
             variant="outlined"
             text="アイコンを変更する"
+            :loading="isLoading"
+            :disabled="isLoading"
           />
         </v-list-item>
       </v-list>
@@ -34,7 +36,7 @@
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 import NaturalTextField from '@/components/NaturalTextField.vue'
 
-import { inject } from 'vue'
+import { inject, ref, watch } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -46,7 +48,17 @@ const emits = defineEmits<{
   (e: 'close'): void
 }>()
 
+const isLoading = ref(false)
+watch(
+  () => graphQlStore?.state.user?.iconToken,
+  v => {
+    if (!v) return
+    isLoading.value = false
+  }
+)
+
 function onChangeIcon() {
+  isLoading.value = true
   graphQlStore?.updateUserIcon()
 }
 </script>
