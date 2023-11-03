@@ -14,69 +14,70 @@
   <v-sheet class="overflow-auto">
     <table class="speciality-table bg-white" :class="info ? '' : 'disabled'">
       <thead>
-      <tr class="bg-grey-darken-4">
-        <template v-for="(kind, idx) in SkillKind" :key="idx">
-          <th class="blank">
+        <tr class="bg-grey-darken-4">
+          <template v-for="(kind, idx) in SkillKind" :key="idx">
+            <th class="blank">
+              <input
+                v-if="editing"
+                type="checkbox"
+                :checked="tokugi?.spaceList.some(s => s === idx)"
+                @change="onChangeBlank(idx, $event.target.checked)"
+              />
+            </th>
+            <th>
+              <span class="d-flex flex-row align-center justify-space-around">
+                {{ kind }}
+                <input
+                  type="checkbox"
+                  :checked="tokugi?.damagedColList.some(c => c === idx)"
+                  @change="onChangeDamaged(idx, $event.target.checked)"
+                />
+              </span>
+            </th>
+          </template>
+          <th class="blank"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(skills, idx) in SkillTable" :key="idx">
+          <template v-for="i in [...Array(6)].map((_, j) => j)" :key="i">
+            <td :class="spaceClass(i)"></td>
+            <td
+              v-if="targetValues && targetValues.some(tv => tv.name === skills[i])"
+              class="bg-amber"
+              :class="cellClass(skills[i])"
+              @click="onClickSkill(skills[i])"
+            >
+              >=
+              {{ targetValues.find(tv => tv.name === skills[i])?.targetValue }}
+            </td>
+            <td v-else :class="cellClass(skills[i])" @click="onClickSkill(skills[i])">
+              {{ skills[i] }}
+            </td>
+          </template>
+          <td class="blank bg-black">{{ idx + 2 }}</td>
+        </tr>
+        <tr>
+          <td
+            colspan="13"
+            class="text-left"
+            :class="tokugi?.outRow ? 'bg-black' : 'bg-white'"
+            style="height: 1em !important"
+          >
             <input
               v-if="editing"
               type="checkbox"
-              :checked="tokugi?.spaceList.some(s => s === idx)"
-              @change="onChangeBlank(idx, $event.target.checked)"
+              :checked="tokugi?.outRow"
+              @change="onChangeOutRow($event.target.checked)"
             />
-          </th>
-          <th>
-            <span class="d-flex flex-row align-center justify-space-around">
-              {{ kind }}
-              <input
-                type="checkbox"
-                :checked="tokugi?.damagedColList.some(c => c === idx)"
-                @change="onChangeDamaged(idx, $event.target.checked)"
-              />
-            </span>
-          </th>
-        </template>
-        <th class="blank"></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(skills, idx) in SkillTable" :key="idx">
-        <template v-for="i in [...Array(6)].map((_, j) => j)" :key="i">
-          <td :class="spaceClass(i)"></td>
-          <td
-            v-if="targetValues && targetValues.some(tv => tv.name === skills[i])"
-            class="bg-amber"
-            :class="cellClass(skills[i])"
-            @click="onClickSkill(skills[i])"
-          >>= {{ targetValues.find(tv => tv.name === skills[i])?.targetValue }}</td>
-          <td
-            v-else
-            :class="cellClass(skills[i])"
-            @click="onClickSkill(skills[i])"
-          >{{ skills[i] }}</td>
-        </template>
-        <td class="blank bg-black">{{ idx + 2 }}</td>
-      </tr>
-      <tr>
-        <td
-          colspan="13"
-          class="text-left"
-          :class="tokugi?.outRow ? 'bg-black' : 'bg-white'"
-          style="height: 1em !important;"
-        >
-          <input
-            v-if="editing"
-            type="checkbox"
-            :checked="tokugi?.outRow"
-            @change="onChangeOutRow($event.target.checked)"
-          />
-        </td>
-      </tr>
+          </td>
+        </tr>
       </tbody>
     </table>
   </v-sheet>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import {
   calcTargetValue,
@@ -109,15 +110,25 @@ function changeHandler(notifyParent: boolean = false) {
   if (notifyParent) emits('update:info', tokugi.value)
 }
 
-watch(() => props.selectSkill, () => changeHandler())
+watch(
+  () => props.selectSkill,
+  () => changeHandler()
+)
 
-watch(() => props.info, v => {
-  tokugi.value = props.info
-}, { deep: true })
+watch(
+  () => props.info,
+  () => {
+    tokugi.value = props.info
+  },
+  { deep: true }
+)
 
-watch(() => props.editing, v => {
-  emits('update:selectSkill', '')
-})
+watch(
+  () => props.editing,
+  () => {
+    emits('update:selectSkill', '')
+  }
+)
 
 function onClickSkill(skill: string) {
   if (props.editing) {
@@ -178,13 +189,13 @@ function onChangeBlank(col: number, value: boolean) {
 
 function onChangeOutRow(outRow: boolean) {
   if (!tokugi.value) return
-  tokugi.outRow = outRow
+  tokugi.value.outRow = outRow
   changeHandler(true)
 }
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .speciality-table {
   border-left: 1px solid #aaa;
   border-top: 1px solid #aaa;
@@ -198,7 +209,8 @@ function onChangeOutRow(outRow: boolean) {
     color: lightgray !important;
   }
 
-  th, td {
+  th,
+  td {
     padding: 0 2px !important;
     line-height: 1em;
     height: 1.8em !important;

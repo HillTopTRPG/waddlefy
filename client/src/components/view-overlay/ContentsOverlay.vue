@@ -9,7 +9,7 @@
     :close-on-back="true"
     :no-click-animation="true"
     class="contents-overlay ma-0"
-    style="max-width: 400px;"
+    style="max-width: 400px"
     :style="`border-left: ${color} 2px solid; --img:url('/${image}')`"
     content-class="w-100 h-100 bg-white"
   >

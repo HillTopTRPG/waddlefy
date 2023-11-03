@@ -9,7 +9,7 @@
         <p>削除するにはこの{{ type }}の名前を入力してください。</p>
       </v-card-text>
       <v-card-item>
-        <v-text-field v-model="inputTargetName" :placeholder="targetName"/>
+        <v-text-field v-model="inputTargetName" :placeholder="targetName" />
       </v-card-item>
       <v-card-actions>
         <v-btn
@@ -39,10 +39,13 @@ const emits = defineEmits<{
   (e: 'execute'): Promise<void>
 }>()
 
-watch(() => props.sessionId, () => {
-  deleteDialog.value = false
-  inputTargetName.value = ''
-})
+watch(
+  () => props.sessionId,
+  () => {
+    deleteDialog.value = false
+    inputTargetName.value = ''
+  }
+)
 
 const deleteDialog = ref(false)
 const inputTargetName = ref('')

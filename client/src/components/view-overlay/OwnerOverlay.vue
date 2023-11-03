@@ -9,7 +9,7 @@
   >
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
-        <v-list-subheader style="min-height: auto; background: none;">名前</v-list-subheader>
+        <v-list-subheader style="min-height: auto; background: none">名前</v-list-subheader>
         <v-list-item>
           <natural-text-field
             label="あなたの名前"

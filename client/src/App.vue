@@ -17,13 +17,13 @@ function preload() {
 }
 
 preload(
-  "/paint_00001.jpg",
-  "/paint_00003.jpg",
-  "/paint_00005.jpg",
-  "/paint_00007.jpg",
-  "/paint_00019.jpg",
-  "/paint_00022.jpg",
-  "/white_00053.jpg"
+  '/paint_00001.jpg',
+  '/paint_00003.jpg',
+  '/paint_00005.jpg',
+  '/paint_00007.jpg',
+  '/paint_00019.jpg',
+  '/paint_00022.jpg',
+  '/white_00053.jpg'
 )
 </script>
 
@@ -36,14 +36,12 @@ html {
 $body-font-family: 'M PLUS Rounded 1c', sans-serif !important;
 
 // Vuetifyが提供しているTypography系のoptions一覧
-$vuetifyTypographyOptions: text-h1, text-h2, text-h3, text-h4, text-h5, text-h6, text-headline,
-text-title, text-subtitle-1, text-subtitle-2, text-body-1, text-body-2, text-button, text-caption,
-text-overline;
+$vuetifyTypographyOptions: text-h1, text-h2, text-h3, text-h4, text-h5, text-h6, text-headline, text-title,
+  text-subtitle-1, text-subtitle-2, text-body-1, text-body-2, text-button, text-caption, text-overline;
 
 // テキスト関係のHTMLタグ一覧
-$htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, small, strike, strong,
-center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead,
-tr, th, td, article;
+$htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, small, strike, strong, center, dl, dt, dd,
+  ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article;
 
 #app {
   font-family: $body-font-family;

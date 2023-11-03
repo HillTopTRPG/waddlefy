@@ -39,14 +39,17 @@ const emits = defineEmits<{
   (e: 'submit', sessionType: string): void
 }>()
 
-const items = [
-  { label: 'シノビガミ', val: 'Shinobigami' },
-]
+const items = [{ label: 'シノビガミ', val: 'Shinobigami' }]
 
 const sessionType = ref('Shinobigami')
-watch(sessionType, v => {
-  console.log(v)
-}, { immediate: true })
+watch(
+  sessionType,
+  v => {
+    console.log(v)
+  },
+  { immediate: true }
+)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const label = computed(() => items.find(item => item.val === sessionType.value)?.label || '')
 
 const vAlertDefault = {

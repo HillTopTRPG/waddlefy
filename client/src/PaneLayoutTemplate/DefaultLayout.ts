@@ -12,9 +12,9 @@ const object: Layout = {
       componentGroup: '',
       component: '初期画面',
       payload: null,
-      panes: [],
-    },
-  ],
+      panes: []
+    }
+  ]
 }
 
 export default object

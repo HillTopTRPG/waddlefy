@@ -1,16 +1,16 @@
 <template>
-  <v-tooltip :class='tooltipClass'>
-    <template #activator='{ props }'>
+  <v-tooltip :class="tooltipClass">
+    <template #activator="{ props }">
       <v-btn
-        variant='text'
-        :class='btnClass'
-        v-bind='props'
+        variant="text"
+        :class="btnClass"
+        v-bind="props"
         :stacked="stack || false"
         :size="btnSize as any"
-        :icon='stack ? undefined : btnIcon as any'
+        :icon="stack ? undefined : btnIcon as any"
         :prepend-icon="stack ? btnIcon as any : undefined"
         :text="btnText || ''"
-        @click='emits("click")'
+        @click="emits('click')"
       />
     </template>
     {{ tooltipText }}
@@ -29,6 +29,6 @@ defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'click'): void;
+  (e: 'click'): void
 }>()
 </script>

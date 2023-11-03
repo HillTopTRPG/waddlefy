@@ -12,9 +12,9 @@ const object: Layout = {
       componentGroup: 'シノビガミ',
       component: '特技表比較',
       payload: null,
-      panes: [],
-    },
-  ],
+      panes: []
+    }
+  ]
 }
 
 export default object

@@ -13,10 +13,8 @@ const props = defineProps<{
   dashboardId?: string
 }>()
 
-provide(GraphQlKey, useGraphQl(
-  props.userToken || '',
-  props.playerToken || '',
-  props.sessionId || '',
-  props.dashboardId || ''
-))
+provide(
+  GraphQlKey,
+  useGraphQl(props.userToken || '', props.playerToken || '', props.sessionId || '', props.dashboardId || '')
+)
 </script>

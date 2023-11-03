@@ -6,7 +6,7 @@ const group = ''
 export default [
   {
     component: DefaultPane,
-    info     : DefaultPaneInfo,
-    group    : group,
-  },
+    info: DefaultPaneInfo,
+    group: group
+  }
 ]

@@ -37,13 +37,15 @@ const copied = ref(false)
 let copyTimeoutId: number | null = null
 watch(copied, value => {
   if (!value) return
-  if (copyTimeoutId !== null)  {
+  if (copyTimeoutId !== null) {
     window.clearTimeout(copyTimeoutId)
   }
-  copyTimeoutId = window.setTimeout(() => { copied.value = false }, 2000)
+  copyTimeoutId = window.setTimeout(() => {
+    copied.value = false
+  }, 2000)
 })
 
-const subtitleWrap = computed(() => copied.value ? 'クリップボードにコピーしました' : props.subtitle)
+const subtitleWrap = computed(() => (copied.value ? 'クリップボードにコピーしました' : props.subtitle))
 
 async function writeUrlClipboard() {
   copied.value = false
@@ -60,11 +62,17 @@ async function writeUrlClipboard() {
 }
 
 .v-list-item {
-  border-color: rgba(0, 0, 0, 0.2)
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 @keyframes r1 {
-  0%   { transform: rotate(270deg) scale(0.4); opacity: 0; }
-  100% { transform: rotate(360deg) scale(1.4); opacity: 100; }
+  0% {
+    transform: rotate(270deg) scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(360deg) scale(1.4);
+    opacity: 100;
+  }
 }
 </style>

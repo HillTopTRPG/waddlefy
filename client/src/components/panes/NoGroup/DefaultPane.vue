@@ -1,15 +1,15 @@
-<script lang='ts'>
-import { defineComponent } from '@vue/runtime-core'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
 export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
-  name : 'DefaultPane',
-  label: '初期画面',
+  name: 'DefaultPane',
+  label: '初期画面'
 }
 </script>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { Layout } from '@/components/panes'
 import { componentMap } from '../index'
 import layouts from '@/PaneLayoutTemplate'
@@ -20,10 +20,11 @@ const props = defineProps<{
 }>()
 
 const isEqualLayout = (layout: Layout): boolean => {
-  const replaceFunc = (str: string) => str
-    .replace(/"uuid": ?".+?"/g, '')
-    .replace(/"payload": ?[^,}]+/g, '')
-    .replace(/"size": ?[^,}]+/g, '')
+  const replaceFunc = (str: string) =>
+    str
+      .replace(/"uuid": ?".+?"/g, '')
+      .replace(/"payload": ?[^,}]+/g, '')
+      .replace(/"size": ?[^,}]+/g, '')
   return replaceFunc(JSON.stringify(layout)) === replaceFunc(JSON.stringify(props.rootLayout))
 }
 
@@ -34,53 +35,52 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <div class='root fill-height'>
-    <h3 class='mx-5 mt-5'>空のペイン</h3>
-    <p class='mx-5'>
-      ペインはツールを１つ選んで表示できます。<br>
+  <div class="root fill-height">
+    <h3 class="mx-5 mt-5">空のペイン</h3>
+    <p class="mx-5">
+      ペインはツールを１つ選んで表示できます。<br />
       メニューバーの
-      <v-icon icon='mdi-pencil-ruler' />
+      <v-icon icon="mdi-pencil-ruler" />
       でペイン編集モードを切り替えることでペインを追加したり、後から表示するツールを変更できます。
     </p>
-    <p class='mx-5 mt-5'>表示するツールを選ぶ</p>
-    <v-list density='compact' class='mx-5 mb-5' open-strategy='multiple'>
-      <template
-        v-for='g in componentMap'
-        :key='g.group'
-      >
-        <v-list-group v-if='g.group'>
-          <template #activator='{ props }'>
-            <v-list-item v-bind='props' :title='g.group' @keydown.enter.stop='$event.target.click()' />
+    <p class="mx-5 mt-5">表示するツールを選ぶ</p>
+    <v-list density="compact" class="mx-5 mb-5" open-strategy="multiple">
+      <template v-for="g in componentMap" :key="g.group">
+        <v-list-group v-if="g.group">
+          <template #activator="{ props }">
+            <v-list-item v-bind="props" :title="g.group" @keydown.enter.stop="$event.target.click()" />
           </template>
 
           <v-list-item
-            v-for='n in Object.keys(g.items)'
-            :title='n'
-            :value='n'
-            @click='emits("change-component", g.group, n)'
-            @keydown.enter.stop='$event.target.click()'
+            v-for="n in Object.keys(g.items)"
+            :title="n"
+            :value="n"
+            :key="n"
+            @click="emits('change-component', g.group, n)"
+            @keydown.enter.stop="$event.target.click()"
           />
         </v-list-group>
         <template v-else>
           <v-list-item
-            v-for='n in Object.keys(g.items).filter(m => m !== "初期画面")'
-            :title='n'
-            :value='n'
-            @click='emits("change-component", g.group, n)'
-            @keydown.enter.stop='$event.target.click()'
+            v-for="n in Object.keys(g.items).filter(m => m !== '初期画面')"
+            :title="n"
+            :value="n"
+            :key="n"
+            @click="emits('change-component', g.group, n)"
+            @keydown.enter.stop="$event.target.click()"
           />
         </template>
       </template>
     </v-list>
-    <p class='mx-5 mt-5'>または...</p>
-    <p class='mx-5 mt-5'>構成済みレイアウトのプリセットを選ぶ</p>
-    <v-list density='compact' class='mx-5 mb-5' open-strategy='multiple'>
-      <template v-for='l in layouts' :key='l.title'>
+    <p class="mx-5 mt-5">または...</p>
+    <p class="mx-5 mt-5">構成済みレイアウトのプリセットを選ぶ</p>
+    <v-list density="compact" class="mx-5 mb-5" open-strategy="multiple">
+      <template v-for="l in layouts" :key="l.title">
         <v-list-item
-          @click='emits("change-layout", l.layout)'
-          v-if='!isEqualLayout(l.layout)'
-          @keydown.enter.stop='$event.target.click()'
-        >{{ l.title }}
+          @click="emits('change-layout', l.layout)"
+          v-if="!isEqualLayout(l.layout)"
+          @keydown.enter.stop="$event.target.click()"
+          >{{ l.title }}
         </v-list-item>
       </template>
     </v-list>
@@ -88,7 +88,7 @@ const emits = defineEmits<{
 </template>
 
 <!--suppress HtmlUnknownAttribute -->
-<style deep lang='css'>
+<style deep lang="css">
 .v-card.chat-input-container {
   border-radius: 0;
   background: transparent !important;

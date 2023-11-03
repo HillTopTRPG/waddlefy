@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{
+defineProps<{
   modalValue: boolean
   title: string
 }>()

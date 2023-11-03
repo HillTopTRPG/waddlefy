@@ -31,7 +31,7 @@
       <v-sheet
         v-if="graphQlStore"
         class="position-fixed d-flex flex-column bg-transparent"
-        style="right: 0; top: 34px; z-index: 10000000000;"
+        style="right: 0; top: 34px; z-index: 10000000000"
         :height="Math.max(graphQlStore.state.notifications.length * 60 - 10, 0)"
         width="344"
       >
@@ -50,13 +50,16 @@
             @update:model-value="graphQlStore.closeNotification(notification.id)"
             @click="graphQlStore.closeNotification(notification.id)"
           >
-            <v-icon :icon="`mdi-${notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'}`" />
-            {{ notification.text }}{{idx}}
+            <v-icon
+              :icon="`mdi-${
+                notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'
+              }`"
+            />
+            {{ notification.text }}{{ idx }}
           </v-snackbar>
         </template>
       </v-sheet>
       <!-- 通知Snackbar END -->
-
     </template>
     <template v-slot:default>
       <character-sheet-view
@@ -68,25 +71,25 @@
         v-model:select-skill="selectSkill"
       />
       <span v-if="!characterWraps.length" class="ma-3">
-        0件<br>
+        0件<br />
         キャラクターシートを登録してください。
       </span>
     </template>
   </pane-frame>
 </template>
 
-<script lang='ts'>
-import { defineComponent } from '@vue/runtime-core'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
 export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
-  name : 'CharacterSheetViewPane',
-  label: 'キャラクターシート表示',
+  name: 'CharacterSheetViewPane',
+  label: 'キャラクターシート表示'
 }
 </script>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
@@ -95,11 +98,13 @@ import CharacterSheetView from '@/components/panes/Shinobigami/CharacterSheetVie
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
@@ -117,9 +122,13 @@ const characterWraps = computed<CharacterWrap[]>(() => {
     .map(sd => sd.data as CharacterWrap)
 })
 
-watch(characterWraps, v => {
-  graphQlStore?.addNotification('success', 'aaaaaa')
-}, { immediate: false })
+watch(
+  characterWraps,
+  v => {
+    graphQlStore?.addNotification('success', 'aaaaaa')
+  },
+  { immediate: false }
+)
 
 const selectSkill = ref('')
 watch(selectSkill, v => {
@@ -131,7 +140,7 @@ watch(tokugiTableEditing, v => console.log(v))
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .notify-snackbar {
   :deep(.v-snackbar__wrapper) {
     border-radius: 0;

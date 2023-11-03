@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import Avatar from 'vue-boring-avatars'
 
 defineProps<{
@@ -6,18 +6,18 @@ defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'click'): void;
+  (e: 'click'): void
 }>()
 
 const colors = ['#f8f8d6', '#f90050', '#5d7e62', '#C7EA46', '#FFC300']
 </script>
 
 <template>
-  <Avatar variant='beam' class="avatar" :size='32' :name='token' :colors='colors' @click="emits('click')" />
+  <Avatar variant="beam" class="avatar" :size="32" :name="token" :colors="colors" @click="emits('click')" />
 </template>
 
 <!--suppress CssUnusedSymbol, HtmlUnknownAttribute, CssUnresolvedCustomProperty -->
-<style deep lang='css'>
+<style deep lang="css">
 .avatar {
   cursor: pointer;
 }

@@ -2,29 +2,29 @@ import { convertNumberZero } from './PrimaryDataUtility'
 import { SkillTable } from './shinobigami'
 
 export type TokugiInfo = {
-  name: string;
-  row: number;
-  column: number;
-};
+  name: string
+  row: number
+  column: number
+}
 
 export type SaikoroFictionTokugi = {
-  learnedList: TokugiInfo[];
-  damagedList: TokugiInfo[];
-  damagedColList: number[];
-  spaceList: number[];
-  outRow: boolean;
-  isUseColDamage: boolean;
-  isUseSingleDamage: boolean;
-  isOutputSingleDamage: boolean;
-};
+  learnedList: TokugiInfo[]
+  damagedList: TokugiInfo[]
+  damagedColList: number[]
+  spaceList: number[]
+  outRow: boolean
+  isUseColDamage: boolean
+  isUseSingleDamage: boolean
+  isOutputSingleDamage: boolean
+}
 
 export type Personality = {
-  emotion: string; // 感情
-  name: string; // 人物名
-  place: boolean; // 居所
-  secret: boolean; // 秘密
-  specialEffect: boolean; // 奥義
-};
+  emotion: string // 感情
+  name: string // 人物名
+  place: boolean // 居所
+  secret: boolean // 秘密
+  specialEffect: boolean // 奥義
+}
 
 const emotionList: string[][] = [
   ['なし', 'なし'],
@@ -40,10 +40,7 @@ const emotionList: string[][] = [
 export function createEmotion(json: any): Personality[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (json.personalities as any[]).map(p => ({
-    emotion:
-      emotionList[convertNumberZero(p.emotion)][
-        convertNumberZero(p.direction) - 1
-      ],
+    emotion: emotionList[convertNumberZero(p.emotion)][convertNumberZero(p.direction) - 1],
     name: p.name || '',
     place: p.place !== null,
     secret: p.secret !== null,
@@ -54,8 +51,8 @@ export function createEmotion(json: any): Personality[] {
 function outputTable<T>(
   data: T,
   props: {
-    label: string;
-    prop: keyof T | null;
+    label: string
+    prop: keyof T | null
   }[],
   idx: number,
   convertFunc?: (
@@ -81,9 +78,9 @@ function outputTable<T>(
 export function outputTableList<T>(
   dataList: T[],
   props: {
-    label: string;
-    prop: keyof T | null;
-    align: 'left' | 'center' | 'right';
+    label: string
+    prop: keyof T | null
+    align: 'left' | 'center' | 'right'
   }[],
   convertFunc?: (
     prop: { label: string; prop: keyof T | null },
@@ -94,14 +91,7 @@ export function outputTableList<T>(
 ): string[] {
   const strList: string[] = []
   strList.push(`|${props.map(p => p.label).join('|')}|`)
-  strList.push(
-    `|${props
-      .map(
-        p =>
-          `${p.align === 'right' ? '' : ':'}---${p.align === 'left' ? '' : ':'}`
-      )
-      .join('|')}|`
-  )
+  strList.push(`|${props.map(p => `${p.align === 'right' ? '' : ':'}---${p.align === 'left' ? '' : ':'}`).join('|')}|`)
   strList.push(
     ...dataList.map((d, idx) =>
       outputTable<T>(
@@ -118,25 +108,21 @@ export function outputTableList<T>(
 export function outputPersonalityList(
   personalityList: Personality[],
   props: {
-    prop: keyof Personality;
-    label: string;
-    align: 'left' | 'center' | 'right';
+    prop: keyof Personality
+    label: string
+    align: 'left' | 'center' | 'right'
   }[]
 ): string[] {
   return outputTableList(personalityList, props, (prop, value) => {
     if (prop.prop === 'emotion') {
-      return `{感情}[${emotionList
-        .flatMap((l, idx) => (idx ? l : [l[0]]))
-        .join('|')}](${value})`
+      return `{感情}[${emotionList.flatMap((l, idx) => (idx ? l : [l[0]])).join('|')}](${value})`
     }
     return null
   })
 }
 
 export function outputTokugiChatPalette(tokugi: SaikoroFictionTokugi): string[] {
-  return tokugi.learnedList.map(
-    t => `2D6>=5 《${SkillTable[t.row][t.column]}》`
-  )
+  return tokugi.learnedList.map(t => `2D6>=5 《${SkillTable[t.row][t.column]}》`)
 }
 
 export function createTokugi(
@@ -157,9 +143,9 @@ export function createTokugi(
     isUseColDamage,
     isUseSingleDamage,
     isOutputSingleDamage
-  };
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (json.learned as any[])
+  ;(json.learned as any[])
     .filter(t => t.id)
     .forEach(t => {
       const id = t.id
@@ -177,10 +163,7 @@ export function createTokugi(
       if (sp === 6) sp = 0
       tokugi.spaceList.push(sp)
     }
-    if (
-      json.skills.damage &&
-      json.skills.damage[`check${i}`] !== null
-    ) {
+    if (json.skills.damage && json.skills.damage[`check${i}`] !== null) {
       tokugi.damagedColList.push(i)
     }
     for (let j = 0; j < 11; j++) {
@@ -213,15 +196,13 @@ function mergeList<T>(
   originalRecover = true
 ): void {
   list2.forEach(i2 => {
-    (Object.keys(i2) as (keyof T)[]).forEach(k => {
+    ;(Object.keys(i2) as (keyof T)[]).forEach(k => {
       const val = i2[k]
       if (typeof val === 'string') {
         if (keyProp === k) {
-          i2[k] = (val.replaceAll('<br>', '') as unknown) as T[keyof T]
+          i2[k] = val.replaceAll('<br>', '') as unknown as T[keyof T]
         } else {
-          i2[k] = (val
-            .replaceAll('。<br>', '。')
-            .replaceAll('<br>', '\n') as unknown) as T[keyof T]
+          i2[k] = val.replaceAll('。<br>', '。').replaceAll('<br>', '\n') as unknown as T[keyof T]
         }
       }
     })
@@ -235,9 +216,7 @@ function mergeList<T>(
     }
   })
   if (originalRecover) {
-    list1.push(
-      ...list2.filter(i2 => !list1.some(i1 => i1[keyProp] === i2[keyProp]))
-    )
+    list1.push(...list2.filter(i2 => !list1.some(i1 => i1[keyProp] === i2[keyProp])))
   }
 }
 
@@ -347,8 +326,8 @@ export const regStr = {
 }
 
 type FilterKeys<T, U> = {
-  [P in keyof T]: T[P] extends U ? P : never;
-}[keyof T];
+  [P in keyof T]: T[P] extends U ? P : never
+}[keyof T]
 
 export function readMultiLine<T>(
   list: T[],
@@ -359,20 +338,14 @@ export function readMultiLine<T>(
   copyProp: { [k: number]: [keyof T, 'b' | 'n' | 's'] },
   originalRecover = true
 ): void {
-  const findList: T[] = Array.from(
-    text.matchAll(new RegExp(`^\\|${regExpStr}\\|$`, 'gm'))
-  ).map((r) => {
+  const findList: T[] = Array.from(text.matchAll(new RegExp(`^\\|${regExpStr}\\|$`, 'gm'))).map(r => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const obj: any = {}
 
-    obj[keyProp] = r[keyPropMatchIndex];
-    ((Object.keys(copyProp) as unknown) as number[]).forEach(t => {
+    obj[keyProp] = r[keyPropMatchIndex]
+    ;(Object.keys(copyProp) as unknown as number[]).forEach(t => {
       obj[copyProp[t][0]] =
-        copyProp[t][1] === 'b'
-          ? r[t] === 'x'
-          : copyProp[t][1] === 'n'
-            ? convertNumberZero(r[t])
-            : r[t]
+        copyProp[t][1] === 'b' ? r[t] === 'x' : copyProp[t][1] === 'n' ? convertNumberZero(r[t]) : r[t]
     })
     return obj as T
   })

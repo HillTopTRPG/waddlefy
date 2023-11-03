@@ -1,7 +1,7 @@
 <template>
   <v-main class="bg-transparent">
     <v-container class="px-0 px-sm-16">
-      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0;">
+      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0">
         <logo-component color="#aaa" height="90vh" class="ml-md-16" />
       </div>
       <v-row class="pt-0 pt-md-16 align-md-end">
@@ -20,14 +20,16 @@
             elevation="5"
             class="d-inline-block text-left pa-4"
             :class="signUpFailure ? 'failure' : undefined"
-            style="background-color: rgba(255, 255, 255, 0.5);"
+            style="background-color: rgba(255, 255, 255, 0.5)"
           >
-            <v-card-title v-if="player">ようこそ <span class="text-h4">{{ player?.name }}</span> さん</v-card-title>
+            <v-card-title v-if="player"
+              >ようこそ <span class="text-h4">{{ player?.name }}</span> さん</v-card-title
+            >
             <v-card-text class="ma-0 pa-0">
               <v-text-field
                 v-if="!player"
                 label="なまえ*"
-                :rules="[(x) => !!x || '必須項目']"
+                :rules="[x => !!x || '必須項目']"
                 variant="solo-filled"
                 v-model="playerName"
                 @keydown.enter="$event.keyCode === 13 && playerName && passwordElm.focus()"
@@ -79,11 +81,7 @@ import {
   playerSignUp,
   resetPlayerPassword
 } from '@/components/graphql/graphql'
-import {
-  Queries,
-  QueryResult,
-  AbstractPlayer
-} from '@/components/graphql/schema'
+import { Queries, QueryResult, AbstractPlayer } from '@/components/graphql/schema'
 
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -94,11 +92,17 @@ const props = defineProps<{
   playerId?: string
 }>()
 
-console.log(JSON.stringify({
-  sessionToken: props.sessionToken,
-  signUpToken: props.signUpToken,
-  playerId: props.playerId,
-}, null, 2))
+console.log(
+  JSON.stringify(
+    {
+      sessionToken: props.sessionToken,
+      signUpToken: props.signUpToken,
+      playerId: props.playerId
+    },
+    null,
+    2
+  )
+)
 
 const playerName = ref('')
 const password = ref('')

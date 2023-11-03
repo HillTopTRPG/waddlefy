@@ -1,12 +1,13 @@
 <template>
   <template v-if="graphQlStore?.state.ready">
-    <play-main-navigation-drawer v-model:rail="firstRail" :sessionSelectable="sessionSelectable" v-if="graphQlStore?.state.user?.token" />
+    <play-main-navigation-drawer
+      v-model:rail="firstRail"
+      :sessionSelectable="sessionSelectable"
+      v-if="graphQlStore?.state.user?.token"
+    />
 
     <v-main :scrollable="true">
-      <session-view
-        v-model:first-rail="sessionSelectable"
-        v-model:rail="secondRail"
-      />
+      <session-view v-model:first-rail="sessionSelectable" v-model:rail="secondRail" />
     </v-main>
   </template>
 </template>
@@ -44,7 +45,7 @@ const sessionSelectable = ref(false)
 
 function createPathName() {
   const firstNav = sessionId.value ? `/${sessionId.value}` : ''
-  const secondNav = firstNav ? dashboardId.value ? `/${dashboardId.value}` : '' : ''
+  const secondNav = firstNav ? (dashboardId.value ? `/${dashboardId.value}` : '') : ''
   const firstRailString = firstRail.value ? '1' : '0'
   const secondRailString = `,${secondRail.value ? '1' : '0'}`
   if (graphQlStore) {
@@ -60,8 +61,12 @@ function createPathName() {
   return ''
 }
 
-watch([firstRail, secondRail, sessionId, dashboardId], async () => {
-  const pathName = createPathName()
-  history.replaceState(null, '', pathName)
-}, { immediate: true })
+watch(
+  [firstRail, secondRail, sessionId, dashboardId],
+  async () => {
+    const pathName = createPathName()
+    history.replaceState(null, '', pathName)
+  },
+  { immediate: true }
+)
 </script>

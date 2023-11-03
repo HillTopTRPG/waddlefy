@@ -8,7 +8,9 @@
   >
     <v-card-text class="px-4 py-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
-        <v-list-subheader class="pa-0" style="padding-inline-start: 0 !important; min-height: auto;">事前に参加者アカウントを用意する（おすすめ）</v-list-subheader>
+        <v-list-subheader class="pa-0" style="padding-inline-start: 0 !important; min-height: auto"
+          >事前に参加者アカウントを用意する（おすすめ）</v-list-subheader
+        >
         <v-list-item class="mt-4 mb-8 py-0 px-0 overflow-visible">
           <v-text-field
             label="参加者名"
@@ -22,7 +24,6 @@
             @keydown.enter="$event.keyCode === 13 && callAddPlayer()"
             @click:append-inner.stop
           >
-            <template v-slot:append class="ma-0"></template>
             <template v-slot:append-inner>
               <v-divider :vertical="true" />
               <v-btn
@@ -131,7 +132,7 @@ function playerStatusMessage(player: Player) {
 }
 
 .name-text-field:deep(.v-field--appended) {
-  padding-inline-end: 0
+  padding-inline-end: 0;
 }
 
 .name-text-field:deep(.v-input__append) {

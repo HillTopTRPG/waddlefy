@@ -1,20 +1,12 @@
 import jsonp from 'jsonp'
 
-export async function getJsonByGet<T>(
-  url: string,
-  authorization?: string
-): Promise<T> {
+export async function getJsonByGet<T>(url: string, authorization?: string): Promise<T> {
   const headers: HeadersInit = {}
   if (authorization !== undefined) {
     headers.Authorization = authorization
   }
 
-  let result: Response
-  try {
-    result = await window.fetch(url, { method: 'GET', headers })
-  } catch (err) {
-    throw err
-  }
+  const result: Response = await window.fetch(url, { method: 'GET', headers })
 
   const status = result.status
   if (status !== 200) {
@@ -23,7 +15,7 @@ export async function getJsonByGet<T>(
     throw new Error(`${status}: ${errMsg} [GET] ${url}`)
   }
 
-  return await result.json() as T
+  return (await result.json()) as T
 }
 
 export async function getJsonByJsonp<T>(url: string): Promise<T> {

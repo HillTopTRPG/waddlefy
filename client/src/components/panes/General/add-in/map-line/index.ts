@@ -4,24 +4,25 @@ import { merge } from 'lodash'
 import axios from 'axios'
 import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
 import {
-  drawMapLineImageData, getNearestMapLineUuid, getNearPoint,
+  drawMapLineImageData,
+  getNearestMapLineUuid,
+  getNearPoint
 } from '~/components/panes/PlayBoard/add-in/map-line/coordinate'
 import { fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
 
 const lineLocParams = ['x1', 'y1', 'x2', 'y2', 'play_board_uuid'] as const
-export type LineParams = Pick<MapLine, typeof lineParams[number]>
-export type LineLoc = Pick<MapLine, typeof lineLocParams[number]>
+export type LineParams = Pick<MapLine, (typeof lineParams)[number]>
+export type LineLoc = Pick<MapLine, (typeof lineLocParams)[number]>
 const isEqlLineLoc = (p1: LineLoc, p2: LineLoc) => !lineLocParams.some(key => p1[key] !== p2[key])
-const isEqlLine    = (p1: LineParams, p2: LineParams) => !lineParams.some(key => p1[key] !== p2[key])
 
 export default class {
-  private holdWriteMapLines: LineParams[]       = []
-  private mouseNearMapLineUuid: string | null   = null
+  private holdWriteMapLines: LineParams[] = []
+  private mouseNearMapLineUuid: string | null = null
   private drawingMapLineInfo: LineParams | null = null
 
   public onUpdateMapLines(store: RoomCollectionStore) {
     this.holdWriteMapLines
-      .map((l, idx) => store.mapLines.value.some(ml => isEqlLineLoc(ml, l)) ? idx : null)
+      .map((l, idx) => (store.mapLines.value.some(ml => isEqlLineLoc(ml, l)) ? idx : null))
       .filter((idx): idx is number => idx !== null)
       .reverse()
       .forEach(idx => this.holdWriteMapLines.splice(idx, 1))
@@ -29,7 +30,7 @@ export default class {
 
   public onStartMove(moveInfo: MoveInfo, play_board_uuid: string, color: string, gridSize: number) {
     switch (moveInfo.mode) {
-      case 'add-in:add':
+      case 'add-in:add': {
         const p = getNearPoint(moveInfo, gridSize)
 
         this.drawingMapLineInfo = {
@@ -38,9 +39,10 @@ export default class {
           y1: p.y,
           x2: p.x,
           y2: p.y,
-          color,
+          color
         }
         break
+      }
       case 'add-in:delete':
         // TODO
         break
@@ -66,9 +68,16 @@ export default class {
       if (dmlInfo) {
         if (dmlInfo.x1 !== dmlInfo.x2 || dmlInfo.y1 !== dmlInfo.y2) {
           this.holdWriteMapLines.push(dmlInfo)
-          store.addMapLine(merge({
-            axios,
-          }, dmlInfo)).then()
+          store
+            .addMapLine(
+              merge(
+                {
+                  axios
+                },
+                dmlInfo
+              )
+            )
+            .then()
         }
         this.drawingMapLineInfo = null
       }
@@ -76,20 +85,24 @@ export default class {
   }
 
   public paint({
-                 imageData,
-                 gridSize,
-                 moveInfo,
-                 playBoardUuid,
-                 store,
-                 canvasWidth,
-                 color,
-               }: {
-    imageData: ImageData, gridSize: number, moveInfo: MoveInfo, playBoardUuid: string, store: RoomCollectionStore, canvasWidth: number, color: number[],
+    imageData,
+    gridSize,
+    moveInfo,
+    playBoardUuid,
+    store,
+    canvasWidth,
+    color
+  }: {
+    imageData: ImageData
+    gridSize: number
+    moveInfo: MoveInfo
+    playBoardUuid: string
+    store: RoomCollectionStore
+    canvasWidth: number
+    color: number[]
   }) {
-    const filterFunc = (ml: LineParams & { uuid?: string }) => ml.play_board_uuid ===
-      playBoardUuid &&
-      ml.uuid !==
-      this.mouseNearMapLineUuid
+    const filterFunc = (ml: LineParams & { uuid?: string }) =>
+      ml.play_board_uuid === playBoardUuid && ml.uuid !== this.mouseNearMapLineUuid
 
     const useDrawMapLine = drawMapLineImageData.bind(null, imageData, gridSize, false, canvasWidth)
 
@@ -112,10 +125,10 @@ export default class {
 
     // マウスカーソルの点を描く
     if (moveInfo.toolType === 'line' && moveInfo.mode === 'add-in:add') {
-      const p  = getNearPoint(moveInfo, gridSize)
+      const p = getNearPoint(moveInfo, gridSize)
       const px = p.x * gridSize
       const py = p.y * gridSize
-      const s  = 3
+      const s = 3
       fillRectImageData(imageData, canvasWidth, color, px - s, py - s, s * 2, s * 2)
     }
   }

@@ -17,7 +17,11 @@
   >
     <template v-slot:append-inner>
       <v-divider :vertical="true" />
-      <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
+      <v-defaults-provider
+        :defaults="{
+          VBtn: { stacked: true, variant: 'text', size: 'x-small' }
+        }"
+      >
         <v-btn
           v-if="editing"
           :disabled="!inputValue"
@@ -77,7 +81,7 @@ function editStart() {
 }
 
 .name-text-field:deep(.v-field--appended) {
-  padding-inline-end: 0
+  padding-inline-end: 0;
 }
 
 .name-text-field:deep(.v-field__input),

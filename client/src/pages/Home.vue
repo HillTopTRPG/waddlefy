@@ -1,17 +1,24 @@
 <template>
   <v-main class="bg-transparent">
     <v-container class="px-0 px-sm-16">
-      <div style="position: fixed; right: 0; bottom: 0; z-index: 0;">
+      <div style="position: fixed; right: 0; bottom: 0; z-index: 0">
         <logo-component color="#aaa" height="90vh" class="mr-md-16" />
       </div>
-      <div class="d-flex d-sm-inline-flex flex-column align-center align-sm-start text-left mx-5 mx-sm-0 position-relative">
+      <div
+        class="d-flex d-sm-inline-flex flex-column align-center align-sm-start text-left mx-5 mx-sm-0 position-relative"
+      >
         <p class="text-h5 d-block d-sm-none">TRPGセッションに１画面ちょい足し</p>
         <p class="text-h3 text-lg-h2 d-none d-sm-block font-style-top">
-          <span class="d-inline-block text-left" style="white-space: nowrap">TRPGセッションに<br>１画面ちょい足し</span>
+          <span class="d-inline-block text-left" style="white-space: nowrap"
+            >TRPGセッションに<br />１画面ちょい足し</span
+          >
         </p>
 
-        <v-sheet class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10" style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap">
-          <p>多くのデータ、特殊なルール……<br>大変じゃないですか？<br>楽しさに集中したいそんなあなたに</p>
+        <v-sheet
+          class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10"
+          style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap"
+        >
+          <p>多くのデータ、特殊なルール……<br />大変じゃないですか？<br />楽しさに集中したいそんなあなたに</p>
           <ruby class="text-h5" style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
         </v-sheet>
 
@@ -19,12 +26,12 @@
           elevation="5"
           class="pa-4 mt-5"
           :class="loginFailure ? 'failure' : undefined"
-          style="background-color: rgba(255, 255, 255, 0.5);"
+          style="background-color: rgba(255, 255, 255, 0.5)"
         >
           <v-card-item class="ma-0 pa-0">
             <v-text-field
               label="ユーザID*"
-              :rules="[(x) => !!x || '必須項目']"
+              :rules="[x => !!x || '必須項目']"
               variant="solo-filled"
               :autofocus="!Boolean(defaultUserId)"
               @keydown.enter="$event.keyCode === 13 && userId && passwordElm.focus()"
@@ -55,14 +62,19 @@
               :loading="!ready"
               @click="callSignIn()"
             />
-            <v-btn variant="flat" rounded href="/sign-up" @click="toSignUp()">または<v-chip variant="text" color="primary">新規登録</v-chip></v-btn>
+            <v-btn variant="flat" rounded href="/sign-up" @click="toSignUp()"
+              >または<v-chip variant="text" color="primary">新規登録</v-chip></v-btn
+            >
           </v-card-actions>
           <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="loginFailure">
             ログインに失敗しました
           </v-card-actions>
         </v-card>
 
-        <v-sheet class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10" style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap">
+        <v-sheet
+          class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10"
+          style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap"
+        >
           <h4>機能一覧</h4>
           <ul>
             <!--
@@ -116,11 +128,7 @@
 <script lang="ts" setup>
 import LogoComponent from '@/components/parts/LogoComponent.vue'
 import { ref } from 'vue'
-import {
-  fetchGraphQlConnectionInfo,
-  makeGraphQlClient,
-  userSignIn
-} from '@/components/graphql/graphql'
+import { fetchGraphQlConnectionInfo, makeGraphQlClient, userSignIn } from '@/components/graphql/graphql'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 
 import { useRouter } from 'vue-router'

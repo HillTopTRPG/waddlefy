@@ -1,10 +1,17 @@
 <template>
   <pane-frame title="特技表比較ツール">
     <template v-slot:title-action>
-      <v-defaults-provider :defaults="{
-        VSelect: { variant: 'plain', density: 'compact', hideDetails: true, class: 'menu-select ml-5' }
-      }">
-        <v-select prefix="比較数: " :items="[2,3,4,5,6]" style="max-width: 6em" v-model="nums" />
+      <v-defaults-provider
+        :defaults="{
+          VSelect: {
+            variant: 'plain',
+            density: 'compact',
+            hideDetails: true,
+            class: 'menu-select ml-5'
+          }
+        }"
+      >
+        <v-select prefix="比較数: " :items="[2, 3, 4, 5, 6]" style="max-width: 6em" v-model="nums" />
         <v-select prefix="忍法表示: " :items="['なし', 'あり']" style="max-width: 8em" v-model="viewNinpou">
           <template #selection="{ item }">
             <span style="white-space: nowrap">{{ item.value }}</span>
@@ -27,7 +34,11 @@
             <ninpou-table
               v-if="viewNinpou === 'あり'"
               :list="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.ninjaArtsList"
-              @click-skill="v => { selectSkill = v === selectSkill ? '' : v }"
+              @click-skill="
+                v => {
+                  selectSkill = v === selectSkill ? '' : v
+                }
+              "
             />
           </v-sheet>
         </template>
@@ -36,20 +47,19 @@
   </pane-frame>
 </template>
 
-<script lang='ts'>
-import { defineComponent } from '@vue/runtime-core'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
 export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
-  name : 'SpecialityTableDiffPane',
-  label: '特技表比較',
+  name: 'SpecialityTableDiffPane',
+  label: '特技表比較'
 }
 </script>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, inject, ref, watch } from 'vue'
-import { uuid } from 'vue-uuid'
 import { Layout } from '@/components/panes'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
@@ -67,13 +77,13 @@ const characterWraps = computed<CharacterWrap[]>(() => {
     .map(sd => sd.data as CharacterWrap)
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-const uid = "a" + uuid.v4()
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
@@ -95,8 +105,8 @@ const vSelectDefaults = {
 const selectCharacters = ref<(string | null)[]>([null, null])
 const nums = ref(2)
 watch(nums, v => {
-  for (let i = v; i > selectCharacters.value.length;) selectCharacters.value.push(null)
-  for (let i = v; i < selectCharacters.value.length;) selectCharacters.value.splice(i, 1)
+  for (let i = v; i > selectCharacters.value.length; ) selectCharacters.value.push(null)
+  for (let i = v; i < selectCharacters.value.length; ) selectCharacters.value.splice(i, 1)
 })
 
 const viewNinpou = ref('なし')
@@ -113,7 +123,7 @@ async function updateInfo(id: string, info: SaikoroFictionTokugi) {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .character-select {
   max-width: 30em;
 

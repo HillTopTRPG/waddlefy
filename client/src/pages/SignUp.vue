@@ -1,19 +1,24 @@
 <template>
   <v-main class="bg-transparent">
     <v-container class="px-0 px-sm-16">
-      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0;">
+      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0">
         <logo-component color="#aaa" height="90vh" class="ml-md-16" />
       </div>
       <v-row class="pt-0 pt-md-16 align-md-end">
         <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-end position-relative">
-          <v-sheet class="rounded-xl pa-5 font-style-top text-left mx-0 mx-md-16" style="background-color: rgba(255, 255, 255, 0.5);">
+          <v-sheet
+            class="rounded-xl pa-5 font-style-top text-left mx-0 mx-md-16"
+            style="background-color: rgba(255, 255, 255, 0.5)"
+          >
             <p class="text-h5">
-              <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>の利用方法
+              <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby
+              >の利用方法
             </p>
-            <ol class="ml-4 mt-5" style="line-height: 2em;">
+            <ol class="ml-4 mt-5" style="line-height: 2em">
               <li>ログイン</li>
-              <li>画面を作る
-                <ul class="ml-5" style="line-height: 2em;">
+              <li>
+                画面を作る
+                <ul class="ml-5" style="line-height: 2em">
                   <li>用途に合わせた画面セットを選ぶ</li>
                   <li>パーツを選んで画面をカスタム</li>
                   <li>画面にデータを入力</li>
@@ -30,12 +35,12 @@
             elevation="5"
             class="d-inline-block text-left pa-4"
             :class="signUpFailure ? 'failure' : undefined"
-            style="background-color: rgba(255, 255, 255, 0.5);"
+            style="background-color: rgba(255, 255, 255, 0.5)"
           >
             <v-card-item class="ma-0 pa-0">
               <v-text-field
                 label="ユーザID*"
-                :rules="[(x) => !!x || '必須項目']"
+                :rules="[x => !!x || '必須項目']"
                 variant="solo-filled"
                 :autofocus="true"
                 v-model="userId"
@@ -45,7 +50,7 @@
               />
               <v-text-field
                 label="ユーザ名*"
-                :rules="[(x) => !!x || '必須項目']"
+                :rules="[x => !!x || '必須項目']"
                 variant="solo-filled"
                 v-model="userName"
                 @keydown.enter="$event.keyCode === 13 && userName && passwordElm.focus()"
@@ -74,7 +79,9 @@
                 :loading="!ready"
                 @click="callSignUp()"
               />
-              <v-btn variant="flat" rounded href="/">または<v-chip variant="text" color="primary">ログイン</v-chip></v-btn>
+              <v-btn variant="flat" rounded href="/"
+                >または<v-chip variant="text" color="primary">ログイン</v-chip></v-btn
+              >
             </v-card-actions>
             <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
               新規登録に失敗しました

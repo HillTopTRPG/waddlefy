@@ -12,9 +12,9 @@ const object: Layout = {
       componentGroup: 'シノビガミ',
       component: 'キャラクターシート管理',
       payload: null,
-      panes: [],
-    },
-  ],
+      panes: []
+    }
+  ]
 }
 
 export default object

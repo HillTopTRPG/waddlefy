@@ -32,10 +32,7 @@ export function clone<T>(obj: T | null): T | null {
  * @param str
  * @param radix
  */
-export function convertNumberNull(
-  str: string | null,
-  radix = 10
-): number | null {
+export function convertNumberNull(str: string | null, radix = 10): number | null {
   if (!str) return null
   str = str.trim().replace(/^\+/, '')
   if (radix === 16 && /^-?[0-9a-fA-F]+$/.test(str)) return parseInt(str, 16)
@@ -50,10 +47,7 @@ export function convertNumberNull(
  * @param str
  * @param radix
  */
-export function convertNumberZero(
-  str: string | null,
-  radix = 10
-): number {
+export function convertNumberZero(str: string | null, radix = 10): number {
   return convertNumberNull(str, radix) || 0
 }
 
@@ -79,10 +73,7 @@ export function convertBooleanNull(str: string | null): boolean | null {
  * @param list
  * @param filterFunc
  */
-export function listDelete<T>(
-  list: T[],
-  filterFunc: (item: T, idx: number) => boolean
-): void {
+export function listDelete<T>(list: T[], filterFunc: (item: T, idx: number) => boolean): void {
   const deleteIndexList = list
     .map((item, idx) => ({ item, idx }))
     .filter(info => filterFunc(info.item, info.idx))

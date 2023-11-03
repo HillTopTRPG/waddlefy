@@ -14,10 +14,10 @@ import GraphQlProvider from '@/components/graphql/GraphQLProvider.vue'
 import PlayMain from '@/components/PlayMain.vue'
 
 defineProps<{
-  userToken?: string,
-  playerToken?: string,
-  sessionId?: string,
-  dashboardId?: string,
-  rail?: string,
+  userToken?: string
+  playerToken?: string
+  sessionId?: string
+  dashboardId?: string
+  rail?: string
 }>()
 </script>

@@ -15,52 +15,52 @@ import { register } from '@/components/panes/plugin'
 import { createI18n } from 'vue-i18n'
 
 const i18n = createI18n({
-  locale         : 'ja-JP', // set locale
-  fallbackLocale : 'en-US', // set fallback locale
+  locale: 'ja-JP', // set locale
+  fallbackLocale: 'en-US', // set fallback locale
   datetimeFormats: {
     'en-US': {
       short: {
-        year : 'numeric',
+        year: 'numeric',
         month: 'short',
-        day  : 'numeric',
+        day: 'numeric'
       },
-      long : {
-        year   : 'numeric',
-        month  : 'short',
-        day    : 'numeric',
+      long: {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
         weekday: 'short',
-        hour   : 'numeric',
-        minute : 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
       },
-      time : {
-        hour  : 'numeric',
+      time: {
+        hour: 'numeric',
         minute: 'numeric',
-        second: 'numeric',
-      },
+        second: 'numeric'
+      }
     },
     'ja-JP': {
       short: {
-        year : 'numeric',
+        year: 'numeric',
         month: 'short',
-        day  : 'numeric',
+        day: 'numeric'
       },
-      long : {
-        year   : 'numeric',
-        month  : 'short',
-        day    : 'numeric',
+      long: {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
         weekday: 'short',
-        hour   : 'numeric',
-        minute : 'numeric',
-        hour12 : true,
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
       },
-      time : {
-        hour  : 'numeric',
+      time: {
+        hour: 'numeric',
         minute: 'numeric',
         hour12: true,
-        second: 'numeric',
-      },
-    },
-  },
+        second: 'numeric'
+      }
+    }
+  }
 })
 
 const app = createApp(App)

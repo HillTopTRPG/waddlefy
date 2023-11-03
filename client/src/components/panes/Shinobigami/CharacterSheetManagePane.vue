@@ -1,9 +1,7 @@
 <template>
   <pane-frame title="キャラクターシート管理">
-    <template v-slot:title-action>
-    </template>
-    <template v-slot:layout>
-    </template>
+    <template v-slot:title-action> </template>
+    <template v-slot:layout> </template>
     <template v-slot:default>
       <v-sheet class="w-100 d-flex flex-wrap">
         <v-text-field
@@ -33,10 +31,7 @@
       </v-sheet>
       <v-sheet class="w-100 d-flex flex-wrap">
         <v-list>
-          <v-list-item
-            v-for="cw in characterWraps"
-            :key="cw.id"
-          >
+          <v-list-item v-for="cw in characterWraps" :key="cw.id">
             <v-list-item-title>{{ cw.character.characterName }}</v-list-item-title>
             <v-select
               label="プレイヤー"
@@ -55,18 +50,18 @@
   </pane-frame>
 </template>
 
-<script lang='ts'>
-import { defineComponent } from '@vue/runtime-core'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
 export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
-  name : 'CharacterSheetManagePane',
-  label: 'キャラクターシート管理',
+  name: 'CharacterSheetManagePane',
+  label: 'キャラクターシート管理'
 }
 </script>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, inject, ref } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
@@ -82,13 +77,15 @@ const characterWraps = computed<CharacterWrap[]>(() => {
     .map(sd => sd.data as CharacterWrap)
 })
 
-const players = computed(() => [{ id: '', name: 'なし' }, ...graphQlStore?.state.players] || [])
+const players = computed(() => [{ id: '', name: 'なし' }, ...graphQlStore.state.players] || [])
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
@@ -115,5 +112,4 @@ async function updateCharacterPlayer(characterId: string, playerId: string) {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>

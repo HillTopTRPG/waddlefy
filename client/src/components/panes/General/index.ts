@@ -6,7 +6,7 @@ const group = '汎用'
 export default [
   {
     component: PlayBoardPane,
-    info     : PlayBoardPaneInfo,
-    group    : group,
-  },
+    info: PlayBoardPaneInfo,
+    group: group
+  }
 ]

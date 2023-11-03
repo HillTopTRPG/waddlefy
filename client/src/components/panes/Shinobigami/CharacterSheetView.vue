@@ -6,18 +6,25 @@
           <v-row>
             <v-col>
               <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{props}">
+                <template v-slot:activator="{ props }">
                   <v-btn variant="text" v-bind="props" class="text-h5 px-1">
                     <v-icon icon="mdi-triangle-small-down" size="x-small" class="mr-0" />
                     {{ characterSheet.characterName }}
                   </v-btn>
                 </template>
                 <v-container class="base-info px-2 pt-2 pb-1">
-                  <v-defaults-provider :defaults="{
+                  <v-defaults-provider
+                    :defaults="{
                       VCol: { class: 'py-0' },
                       VRow: { class: 'py-0 my-0' },
-                      VChip: { class: 'px-3 mr-1', size: 'small', variant: 'outlined', style: 'border-color: #666' }
-                    }">
+                      VChip: {
+                        class: 'px-3 mr-1',
+                        size: 'small',
+                        variant: 'outlined',
+                        style: 'border-color: #666'
+                      }
+                    }"
+                  >
                     <v-row class="mb-1">
                       <v-col>
                         <v-chip :text="characterSheet.level" v-if="characterSheet.level" />
@@ -29,7 +36,8 @@
                     <v-row>
                       <v-col>
                         <v-chip size="large">
-                          {{ characterSheet.upperStyle }}{{ characterSheet.subStyle ? ` - ${characterSheet.subStyle}` : '' }}
+                          {{ characterSheet.upperStyle
+                          }}{{ characterSheet.subStyle ? ` - ${characterSheet.subStyle}` : '' }}
                         </v-chip>
                       </v-col>
                     </v-row>
@@ -37,7 +45,9 @@
                       <v-col>
                         <div class="tree">
                           <ul>
-                            <li v-if="characterSheet.stylerule">{{ characterSheet.stylerule }}</li>
+                            <li v-if="characterSheet.stylerule">
+                              {{ characterSheet.stylerule }}
+                            </li>
                             <li v-if="characterSheet.foe">仇敵：{{ characterSheet.foe }}</li>
                           </ul>
                         </div>
@@ -46,7 +56,14 @@
                   </v-defaults-provider>
                 </v-container>
               </v-menu>
-              <v-btn icon="mdi-open-in-new" size="small" variant="flat" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
+              <v-btn
+                icon="mdi-open-in-new"
+                size="small"
+                variant="flat"
+                target="_blank"
+                rel="noopener noreferrer"
+                :href="characterSheet.url"
+              />
             </v-col>
           </v-row>
           <v-row class="pb-2">
@@ -61,7 +78,11 @@
               <ninpou-table
                 class="mr-2"
                 :list="characterSheet.ninjaArtsList"
-                @click-skill="v => { selectSkill = v === selectSkill ? '' : v }"
+                @click-skill="
+                  v => {
+                    emits('update:select-skill', v === selectSkill ? '' : v)
+                  }
+                "
               />
             </v-col>
           </v-row>
@@ -81,7 +102,7 @@
   </v-sheet>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
@@ -91,7 +112,7 @@ import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import {clone} from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -125,7 +146,7 @@ async function updateInfo(info: SaikoroFictionTokugi) {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .abs-menu {
   right: 0;
 }
@@ -133,9 +154,10 @@ async function updateInfo(info: SaikoroFictionTokugi) {
   padding: 0;
 }
 
-.tree {/*親要素*/
+.tree {
+  /*親要素*/
   position: relative;
-  font-size: .85rem;
+  font-size: 0.85rem;
   line-height: 1.5;
   margin-left: 1em;
 }
@@ -176,6 +198,6 @@ async function updateInfo(info: SaikoroFictionTokugi) {
 }
 
 .base-info {
-  background-image: url("/paint_00001.jpg");
+  background-image: url('/paint_00001.jpg');
 }
 </style>

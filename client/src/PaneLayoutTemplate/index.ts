@@ -8,8 +8,8 @@ import { DashboardOption } from '@/components/graphql/schema'
 export default [
   {
     layout: DefaultLayout,
-    title : '空のペインのみ',
-  },
+    title: '空のペインのみ'
+  }
 ]
 
 module Scope {

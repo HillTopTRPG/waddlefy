@@ -1,19 +1,22 @@
 import { mergeColorImageData } from '~/components/panes/PlayBoard/add-in/index'
 
-const loop4 = Array(4).fill(0).map((_, idx) => idx)
+const loop4 = Array(4)
+  .fill(0)
+  .map((_, idx) => idx)
 
 export function toImageDataPixelPos(x: number, y: number, canvasWidth: number) {
   const a = canvasWidth * y + x
   return a * 4
 }
 
-export function fillRectImageData(imgData: ImageData,
-                                  canvasWidth: number,
-                                  color: number[],
-                                  x: number,
-                                  y: number,
-                                  width: number,
-                                  height: number,
+export function fillRectImageData(
+  imgData: ImageData,
+  canvasWidth: number,
+  color: number[],
+  x: number,
+  y: number,
+  width: number,
+  height: number
 ) {
   const minX = Math.min(x, x + width)
   const minY = Math.min(y, y + height)
@@ -30,29 +33,33 @@ export function fillRectImageData(imgData: ImageData,
 }
 
 export function changeColor(colorStr: string): number[] {
-  const color: number[] = colorStr.slice(1).match(/.{2}/g)!.map(s => parseInt(s, 16))
+  const color: number[] = colorStr
+    .slice(1)
+    .match(/.{2}/g)!
+    .map(s => parseInt(s, 16))
   if (color.length === 3) {
     color.push(255)
   }
   return color
 }
 
-export function drawLineImageData(imgData: ImageData,
-                                  x0: number,
-                                  y0: number,
-                                  x1: number,
-                                  y1: number,
-                                  width: number,
-                                  colorStr: string,
-                                  canvasWidth: number,
+export function drawLineImageData(
+  imgData: ImageData,
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  width: number,
+  colorStr: string,
+  canvasWidth: number
 ) {
   const dx = Math.abs(x1 - x0)
   const dy = Math.abs(y1 - y0)
   const sx = x0 < x1 ? 1 : -1
   const sy = y0 < y1 ? 1 : -1
-  let err  = dx - dy
+  let err = dx - dy
 
-  const drawLine  = fillRectImageData.bind(null, imgData, canvasWidth, changeColor(colorStr))
+  const drawLine = fillRectImageData.bind(null, imgData, canvasWidth, changeColor(colorStr))
   const flWidth12 = Math.floor(width / 2 - 0.5)
 
   if (x0 === x1) {
@@ -60,11 +67,11 @@ export function drawLineImageData(imgData: ImageData,
     return
   }
 
-  const deg      = Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI
+  const deg = (Math.atan2(y1 - y0, x1 - x0) * 180) / Math.PI
   const quadrant = Math.floor(Math.abs(deg) / 45)
-  const qFlg     = quadrant !== 1 && quadrant !== 2 // 縦に伸ばす
+  const qFlg = quadrant !== 1 && quadrant !== 2 // 縦に伸ばす
 
-  while (sx < 0 && x0 > x1 || sx > 0 && x0 < x1 || sy < 0 && y0 > y1 || sy < 0 && y0 < y1) {
+  while ((sx < 0 && x0 > x1) || (sx > 0 && x0 < x1) || (sy < 0 && y0 > y1) || (sy < 0 && y0 < y1)) {
     if (qFlg) {
       drawLine(x0, y0 - flWidth12, 1, width)
     } else {
@@ -91,12 +98,13 @@ export function drawLineImageData(imgData: ImageData,
  * @param {number} canvasWidth
  * @param {number} canvasHeight
  */
-export function fillColor(startX: number,
-                          startY: number,
-                          imgData: ImageData,
-                          penColor: number[],
-                          canvasWidth: number,
-                          canvasHeight: number,
+export function fillColor(
+  startX: number,
+  startY: number,
+  imgData: ImageData,
+  penColor: number[],
+  canvasWidth: number,
+  canvasHeight: number
 ) {
   const startPixelPos = toImageDataPixelPos(startX, startY, canvasWidth)
 
@@ -136,8 +144,8 @@ export function fillColor(startX: number,
   }
 
   while (buffer.length > 0) {
-    const y    = buffer.pop()!
-    let leftX  = buffer.pop()!
+    const y = buffer.pop()!
+    let leftX = buffer.pop()!
     let rightX = leftX
     if (isMatchColor(leftX, y, penColor)) {
       continue
@@ -152,7 +160,7 @@ export function fillColor(startX: number,
 
     for (let x = leftX; x <= rightX; x++) {
       const pp = toImageDataPixelPos(x, y, canvasWidth)
-      loop4.forEach(idx => imgData.data[pp + idx] = penColor[idx])
+      loop4.forEach(idx => (imgData.data[pp + idx] = penColor[idx]))
     }
     y + 1 < canvasHeight && scanLine(leftX, rightX, y + 1)
     y - 1 >= 0 && scanLine(leftX, rightX, y - 1)

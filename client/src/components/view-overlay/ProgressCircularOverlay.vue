@@ -13,13 +13,16 @@
 
 <script lang="ts" setup>
 // noinspection TypeScriptValidateTypes
-withDefaults(defineProps<{
-  modalValue: boolean
-  size?: number
-  width?: number
-  color?: string
-}>(), {
-  size: 64,
-  width: 10
-})
+withDefaults(
+  defineProps<{
+    modalValue: boolean
+    size?: number
+    width?: number
+    color?: string
+  }>(),
+  {
+    size: 64,
+    width: 10
+  }
+)
 </script>

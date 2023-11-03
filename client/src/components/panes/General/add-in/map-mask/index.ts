@@ -5,33 +5,32 @@ import axios from 'axios'
 import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
 import { changeColor, fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
 
-const getAlphaColor = (c: string) => c
-  .replace(/^(#.{6})$/, '$1FF')
-  .replace(/.{2}$/, s => Math.max(parseInt(s, 16) * 0.6, 20).toString(16))
+const getAlphaColor = (c: string) =>
+  c.replace(/^(#.{6})$/, '$1FF').replace(/.{2}$/, s => Math.max(parseInt(s, 16) * 0.6, 20).toString(16))
 
 const matchLocation = (location: Location, mm: MapMask) => mm.grid_x === location.x && mm.grid_y === location.y
 
 const maskLocParams = ['grid_x', 'grid_y', 'play_board_uuid'] as const
-type MaskLoc = Pick<MapMask, typeof maskLocParams[number]>
-type MaskParams = Pick<MapMask, typeof maskParams[number]>
+type MaskLoc = Pick<MapMask, (typeof maskLocParams)[number]>
+type MaskParams = Pick<MapMask, (typeof maskParams)[number]>
 const isEqlMaskLoc = (p1: MaskLoc, p2: MaskLoc) => !maskLocParams.some(key => p1[key] !== p2[key])
-const isEqlMask    = (p1: MaskParams, p2: MaskParams) => !maskParams.some(key => p1[key] !== p2[key])
+const isEqlMask = (p1: MaskParams, p2: MaskParams) => !maskParams.some(key => p1[key] !== p2[key])
 
 export default class {
   private holdWriteMapMasks: MaskParams[] = []
-  private createMapMasks: MaskParams[]    = []
-  private holdDeleteMapMasks: MaskLoc[]   = []
-  private deleteUuids: string[]           = []
+  private createMapMasks: MaskParams[] = []
+  private holdDeleteMapMasks: MaskLoc[] = []
+  private deleteUuids: string[] = []
 
   public onUpdateMapMasks(store: RoomCollectionStore) {
     this.holdWriteMapMasks
-      .map((l, idx) => store.mapMasks.value.some(mm => isEqlMaskLoc(mm, l)) ? idx : null)
+      .map((l, idx) => (store.mapMasks.value.some(mm => isEqlMaskLoc(mm, l)) ? idx : null))
       .filter((idx): idx is number => idx !== null)
       .reverse()
       .forEach(idx => this.holdWriteMapMasks.splice(idx, 1))
 
     this.holdDeleteMapMasks
-      .map((l, idx) => store.mapMasks.value.some(mm => isEqlMaskLoc(mm, l)) ? null : idx)
+      .map((l, idx) => (store.mapMasks.value.some(mm => isEqlMaskLoc(mm, l)) ? null : idx))
       .filter((idx): idx is number => idx !== null)
       .reverse()
       .forEach(idx => this.holdDeleteMapMasks.splice(idx, 1))
@@ -47,10 +46,15 @@ export default class {
 
         // 位置だけ一致したら上書き保存する
         mm.bg_color = payload.bg_color
-        return store.updateMapMask(merge({
-          axios,
-          map_mask_uuid: mm.uuid,
-        }, pick(mm, ...maskParams)))
+        return store.updateMapMask(
+          merge(
+            {
+              axios,
+              map_mask_uuid: mm.uuid
+            },
+            pick(mm, ...maskParams)
+          )
+        )
       }
     }
     if (this.holdWriteMapMasks.some(isEqlMaskLoc.bind(null, payload))) {
@@ -77,20 +81,21 @@ export default class {
     this.deleteUuids.push(...deleteList.map(mm => mm.uuid))
   }
 
-  private executeMapMaskDrag(moveInfo: MoveInfo,
-                             playBoardUuid: string,
-                             color: string,
-                             store: RoomCollectionStore,
-                             targetSubMode: '' | 'moving',
+  private executeMapMaskDrag(
+    moveInfo: MoveInfo,
+    playBoardUuid: string,
+    color: string,
+    store: RoomCollectionStore,
+    targetSubMode: '' | 'moving'
   ) {
     if (moveInfo.subMode !== targetSubMode) {
       return
     }
 
     const gridColumn = store.playBoards.value.find(pb => pb.uuid === playBoardUuid)?.width || 0
-    const gridRow    = store.playBoards.value.find(pb => pb.uuid === playBoardUuid)?.height || 0
-    const mGridX     = moveInfo.mGrid.x
-    const mGridY     = moveInfo.mGrid.y
+    const gridRow = store.playBoards.value.find(pb => pb.uuid === playBoardUuid)?.height || 0
+    const mGridX = moveInfo.mGrid.x
+    const mGridY = moveInfo.mGrid.y
 
     if (mGridX < 0 || gridColumn <= mGridX || mGridY < 0 || gridRow <= mGridY) {
       return
@@ -98,9 +103,9 @@ export default class {
 
     const mapMaskBase = {
       play_board_uuid: playBoardUuid,
-      grid_x         : moveInfo.mGrid.x,
-      grid_y         : moveInfo.mGrid.y,
-      bg_color       : color,
+      grid_x: moveInfo.mGrid.x,
+      grid_y: moveInfo.mGrid.y,
+      bg_color: color
     }
     switch (moveInfo.mode) {
       case 'add-in:add':
@@ -120,71 +125,88 @@ export default class {
   public onEndMove(moveInfo: MoveInfo, store: RoomCollectionStore) {
     if (moveInfo.mode === 'add-in:add') {
       if (this.createMapMasks.length) {
-        store.addMapMasks({
-          axios,
-          list: this.createMapMasks,
-        }).then()
+        store
+          .addMapMasks({
+            axios,
+            list: this.createMapMasks
+          })
+          .then()
         this.createMapMasks.splice(0, this.createMapMasks.length)
       }
     }
     if (moveInfo.mode === 'add-in:delete') {
       if (this.deleteUuids.length) {
-        store.deleteMapMask({
-          axios,
-          uuids: this.deleteUuids,
-        }).then()
+        store
+          .deleteMapMask({
+            axios,
+            uuids: this.deleteUuids
+          })
+          .then()
         this.deleteUuids.splice(0, this.deleteUuids.length)
       }
     }
     if (moveInfo.mode === 'add-in:move') {
       const matchList = store.mapMasks.value.filter(mm => matchLocation(moveInfo.mGridStart, mm))
       if (matchList.length) {
-        const mm  = matchList.slice(-1)[0]
+        const mm = matchList.slice(-1)[0]
         mm.grid_x = moveInfo.mGrid.x
         mm.grid_y = moveInfo.mGrid.y
-        store.updateMapMask(merge({
-          axios,
-          map_mask_uuid: mm.uuid,
-        }, pick(mm, ...maskParams))).then()
+        store
+          .updateMapMask(
+            merge(
+              {
+                axios,
+                map_mask_uuid: mm.uuid
+              },
+              pick(mm, ...maskParams)
+            )
+          )
+          .then()
       }
     }
   }
 
   public paint({
-                 imageData,
-                 gridSize,
-                 moveInfo,
-                 playBoardUuid,
-                 store,
-                 canvasWidth,
-                 columns,
-                 rows,
-               }: {
-    imageData: ImageData, gridSize: number, moveInfo: MoveInfo, playBoardUuid: string, store: RoomCollectionStore, canvasWidth: number, columns: number, rows: number,
+    imageData,
+    gridSize,
+    moveInfo,
+    playBoardUuid,
+    store,
+    canvasWidth,
+    columns,
+    rows
+  }: {
+    imageData: ImageData
+    gridSize: number
+    moveInfo: MoveInfo
+    playBoardUuid: string
+    store: RoomCollectionStore
+    canvasWidth: number
+    columns: number
+    rows: number
   }) {
     let movingMapMask: MapMask | null = null
     if (moveInfo.mode === 'add-in:move' && moveInfo.toolType === 'grid' && moveInfo.subMode === 'moving') {
-      movingMapMask = [...store.mapMasks.value]
-        .reverse()
-        .find(matchLocation.bind(null, moveInfo.mGridStart)) || null
+      movingMapMask = [...store.mapMasks.value].reverse().find(matchLocation.bind(null, moveInfo.mGridStart)) || null
     }
 
-    const paintMapMask = (getXY: (mm: MaskParams & { uuid?: string }) => Location,
-                          mm: MaskParams & { uuid?: string },
+    const paintMapMask = (
+      getXY: (mm: MaskParams & { uuid?: string }) => Location,
+      mm: MaskParams & { uuid?: string }
     ) => {
       if (playBoardUuid !== mm.play_board_uuid || this.holdDeleteMapMasks.some(dmm => isEqlMaskLoc(dmm, mm))) {
         return
       }
 
-      const p    = getXY(mm)
+      const p = getXY(mm)
       const cStr = movingMapMask?.uuid === mm.uuid ? getAlphaColor(mm.bg_color) : mm.bg_color
       fillRectImageData(imageData, canvasWidth, changeColor(cStr), p.x, p.y, gridSize + 1, gridSize + 1)
     }
 
     const getBasicXY = (mm: MaskParams) => new Location(mm.grid_x * gridSize, mm.grid_y * gridSize)
 
-    const mcs                = moveInfo.mcStart
-    const movingMapMaskPoint = new Location(moveInfo.mc.x - mcs.x % gridSize, moveInfo.mc.y - mcs.y % gridSize)
+    const mcs = moveInfo.mcStart
+    const movingMapMaskPoint = new Location(moveInfo.mc.x - (mcs.x % gridSize), moveInfo.mc.y - (mcs.y % gridSize))
 
     store.mapMasks.value.forEach(mm => {
       if (movingMapMask?.uuid !== mm.uuid) {

@@ -1,6 +1,6 @@
 <template>
   <v-menu open-on-click location="bottom center" :z-index="10000000">
-    <template v-slot:activator="{props}">
+    <template v-slot:activator="{ props }">
       <v-chip
         :color="color"
         :prepend-icon="icon"
@@ -11,10 +11,13 @@
         size="small"
         class="mr-2"
         v-bind="props"
-      >{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</v-chip>
+        >{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</v-chip
+      >
     </template>
     <div class="mt-2 border pa-2 rounded text-body-2" :class="chipClass">
-      <p class="overflow-auto" style="white-space: pre; font-size: 0.8em !important;">{{ chip }}</p>
+      <p class="overflow-auto" style="white-space: pre; font-size: 0.8em !important">
+        {{ chip }}
+      </p>
     </div>
   </v-menu>
 </template>
@@ -29,7 +32,7 @@ const props = defineProps<{
   type: string
 }>()
 
-const usePoint = computed(() => isNaN(props.point) ? 0 : Number(props.point))
+const usePoint = computed(() => (isNaN(props.point) ? 0 : Number(props.point)))
 
 function typeValue(strong: string, weak: string): string {
   if (props.type === '長所') return strong

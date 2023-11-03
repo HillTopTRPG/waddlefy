@@ -3,17 +3,14 @@
   <share-overlay :modal-value="dialog === 'share'" @close="dialog = ''" />
   <owner-overlay :modal-value="dialog === 'owner'" @close="dialog = ''" />
   <setting-overlay :modal-value="dialog === 'setting'" @close="dialog = ''" />
-  <player-overlay :modal-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog" @close="dialog = ''" />
+  <player-overlay
+    :modal-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog"
+    @close="dialog = ''"
+  />
 
-  <v-navigation-drawer
-    :permanent='true'
-    location="left"
-    :rail="rail"
-    :elevation="0"
-    id="session-nav"
-  >
+  <v-navigation-drawer :permanent="true" location="left" :rail="rail" :elevation="0" id="session-nav">
     <template v-slot:prepend>
-      <v-list :nav='true' density='compact' class="pa-0 mb-1">
+      <v-list :nav="true" density="compact" class="pa-0 mb-1">
         <v-list-item class="ma-0 sub-nav d-flex">
           <template v-slot:prepend>
             <v-btn
@@ -32,12 +29,7 @@
       </v-list>
     </template>
 
-    <v-list
-      :nav='true'
-      density='compact'
-      class="pa-0 pt-0 mb-1 overflow-y-auto"
-      v-if="sessionType !== 'init'"
-    >
+    <v-list :nav="true" density="compact" class="pa-0 pt-0 mb-1 overflow-y-auto" v-if="sessionType !== 'init'">
       <!-- 画面一覧 -->
       <template v-if="graphQlStore">
         <template v-for="dashboard in graphQlStore.state.dashboards" :key="dashboard.id">
@@ -56,7 +48,13 @@
       </template>
 
       <!-- 画面追加 -->
-      <v-menu v-if="isReady && isOwnerControl" location="right" :scrim="true" v-model="addDashboardMenu" :close-on-content-click="false">
+      <v-menu
+        v-if="isReady && isOwnerControl"
+        location="right"
+        :scrim="true"
+        v-model="addDashboardMenu"
+        :close-on-content-click="false"
+      >
         <template v-slot:activator="{ props }">
           <user-nav-item
             v-bind="props"
@@ -87,7 +85,7 @@
         </v-card>
       </v-menu>
 
-      <v-divider/>
+      <v-divider />
 
       <!-- 主催者 -->
       <v-list-subheader class="pa-0 ma-0">主催者</v-list-subheader>
@@ -103,7 +101,9 @@
       <v-divider class="mt-1" />
 
       <!-- 参加者 -->
-      <v-list-subheader class="pa-0 ma-0">参加者{{ rail ? '' : `: ${graphQlStore?.state.players.length || 0}人` }}</v-list-subheader>
+      <v-list-subheader class="pa-0 ma-0"
+        >参加者{{ rail ? '' : `: ${graphQlStore?.state.players.length || 0}人` }}</v-list-subheader
+      >
       <template v-for="player in graphQlStore?.state.players" :key="player.id">
         <user-nav-item
           :title="player.name || ''"
@@ -140,7 +140,7 @@
       v-if="isReady"
     >
       <v-list class="nav-dialog h-100">
-        <v-list-subheader style="min-height: auto; background: none;">セッション名</v-list-subheader>
+        <v-list-subheader style="min-height: auto; background: none">セッション名</v-list-subheader>
         <v-list-item>
           <v-text-field
             :readonly="!editSessionName"
@@ -159,7 +159,11 @@
           >
             <template v-slot:append-inner v-if="isOwnerControl">
               <v-divider :vertical="true" />
-              <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
+              <v-defaults-provider
+                :defaults="{
+                  VBtn: { stacked: true, variant: 'text', size: 'x-small' }
+                }"
+              >
                 <v-btn
                   v-if="editSessionName"
                   :disabled="!inputSessionName"
@@ -195,7 +199,7 @@
     </nav-dialog>
 
     <template v-slot:append>
-      <v-list :nav='true' density='compact' class="pa-0 mb-1">
+      <v-list :nav="true" density="compact" class="pa-0 mb-1">
         <v-divider />
 
         <user-nav-item
@@ -231,9 +235,19 @@
   <v-app-bar density="compact" height="50" :elevation="0" id="session-main-app-bar" v-if="sessionType !== 'init'">
     <span
       class="mx-3 flex-grow-1"
-      style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; box-sizing: border-box;"
-    >{{ graphQlStore?.state.dashboard?.name || '' }}</span>
-    <v-defaults-provider :defaults="{ VBtn: { stacked: true, size: 'x-small', variant: 'flat', class: 'px-1' } }">
+      style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; box-sizing: border-box"
+      >{{ graphQlStore?.state.dashboard?.name || '' }}</span
+    >
+    <v-defaults-provider
+      :defaults="{
+        VBtn: {
+          stacked: true,
+          size: 'x-small',
+          variant: 'flat',
+          class: 'px-1'
+        }
+      }"
+    >
       <v-btn
         prepend-icon="mdi-view-dashboard"
         text="画面の設定"
@@ -241,12 +255,7 @@
         v-if="isOwnerControl"
         @click="dialog = dialog === 'setting' ? '' : 'setting'"
       />
-      <v-btn
-        prepend-icon="mdi-pencil-ruler"
-        text="レイアウト"
-        value="show-bar"
-        @click="showBar = !showBar"
-      />
+      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
     </v-defaults-provider>
   </v-app-bar>
 
@@ -285,7 +294,7 @@ import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
 import { addDashboards } from '@/PaneLayoutTemplate'
-import {DashboardOption} from '@/components/graphql/schema'
+import { DashboardOption } from '@/components/graphql/schema'
 
 const props = defineProps<{
   rail: boolean
@@ -311,9 +320,12 @@ watch([sessionId, dashboardId], () => {
 
 const showBar = ref(false)
 const inputSessionName = ref(graphQlStore?.state.session?.name || '')
-watch(() => graphQlStore?.state.session?.name, () => {
-  inputSessionName.value = graphQlStore?.state.session?.name
-})
+watch(
+  () => graphQlStore?.state.session?.name,
+  () => {
+    inputSessionName.value = graphQlStore?.state.session?.name
+  }
+)
 
 async function updateSessionName() {
   const session = graphQlStore?.state.session
@@ -468,12 +480,12 @@ function dashboardSubtitle(scope: DashboardOption['scope']): string {
 }
 
 .name-text-field:deep(.v-field--appended) {
-  padding-inline-end: 0
+  padding-inline-end: 0;
 }
 
 .name-text-field:deep(.v-field__input),
 .name-text-field:deep(.v-field__append-inner) {
-  padding-top: 0
+  padding-top: 0;
 }
 
 .name-text-field:deep(.v-field__input) {

@@ -10,11 +10,7 @@
       <v-list class="ma-0 pa-0 bg-transparent">
         <v-list-item>
           <v-card-subtitle class="pa-0">画面名</v-card-subtitle>
-          <natural-text-field
-            label="画面名"
-            :value="dashboard?.name || ''"
-            @submit="v => updateDashboardName(v)"
-          />
+          <natural-text-field label="画面名" :value="dashboard?.name || ''" @submit="v => updateDashboardName(v)" />
         </v-list-item>
         <v-list-item>
           <v-card-subtitle class="pa-0">使える人（主催者はどの画面も必ず使えます）</v-card-subtitle>
@@ -84,8 +80,7 @@ import NaturalTextField from '@/components/NaturalTextField.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
-import {DashboardOption} from '@/components/graphql/schema'
-import {clone} from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { DashboardOption } from '@/components/graphql/schema'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{
@@ -113,7 +108,10 @@ const scopeSelector = computed(() => {
   return [
     { label: '全員', value: 'all' },
     { label: '主催者のみ', value: 'owner' },
-    ...(graphQlStore?.state.players || []).map(p => ({ label: p.name, value: p.id }))
+    ...(graphQlStore?.state.players || []).map(p => ({
+      label: p.name,
+      value: p.id
+    }))
   ]
 })
 
@@ -145,7 +143,7 @@ async function updateScope(scope: DashboardOption['scope'] | string) {
 
   if (JSON.stringify(graphQlStore.state.dashboard?.option.scope) === JSON.stringify(useScope)) return
   await graphQlStore.updateDashboardOption({
-    ...graphQlStore.state.dashboard?.option || {},
+    ...(graphQlStore.state.dashboard?.option || {}),
     scope: useScope
   })
 }
