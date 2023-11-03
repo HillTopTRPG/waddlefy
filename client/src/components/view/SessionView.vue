@@ -42,7 +42,7 @@
             :toggle="true"
             color="primary"
             :active="dashboardId === dashboard.id"
-            @click="dashboardId !== dashboard.id && graphQlStore?.directDashboardAccess(dashboard.id)"
+            @click="changePane(dashboard.id)"
           />
         </template>
       </template>
@@ -255,7 +255,13 @@
         v-if="isOwnerControl"
         @click="dialog = dialog === 'setting' ? '' : 'setting'"
       />
-      <v-btn prepend-icon="mdi-pencil-ruler" text="レイアウト" value="show-bar" @click="showBar = !showBar" />
+      <v-btn
+        prepend-icon="mdi-pencil-ruler"
+        text="レイアウト"
+        value="show-bar"
+        v-if="isOwnerControl"
+        @click="showBar = !showBar"
+      />
     </v-defaults-provider>
   </v-app-bar>
 
@@ -272,6 +278,10 @@
       <init-session @submit="onSubmitSessionType" v-else-if="sessionType === 'init'" />
     </div>
   </v-layout>
+
+  <v-overlay :model-value="isLoading" class="align-center justify-center">
+    <v-progress-circular color="primary" indeterminate size="128" width="20"></v-progress-circular>
+  </v-overlay>
 </template>
 
 <script setup lang="ts">
@@ -446,6 +456,15 @@ function dashboardSubtitle(scope: DashboardOption['scope']): string {
     .filter(p => scope.some(s => s === p.id))
     .map(p => p.name)
     .join(', ')
+}
+
+const isLoading = ref(false)
+
+async function changePane(nextDashboardId: string) {
+  if (dashboardId.value === nextDashboardId) return
+  isLoading.value = true
+  await graphQlStore?.changeDashboard(nextDashboardId)
+  isLoading.value = false
 }
 </script>
 

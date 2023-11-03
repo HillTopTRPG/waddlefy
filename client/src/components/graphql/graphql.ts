@@ -22,6 +22,7 @@ import {
 } from '@/components/graphql/schema'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import { uuid } from 'vue-uuid'
+import { clone } from 'lodash'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
 const DEFAULT_URL = 'https://z46ue3pn4fc6pesko32rxh6w6a.appsync-api.ap-northeast-1.amazonaws.com/graphql'
@@ -268,6 +269,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     dashboard: Dashboard | null
     sessionDataList: SessionData[]
     notifications: Notification[]
+    dashboardCache: Map<string, Dashboard>
   }>({
     ready: false,
     user: null,
@@ -278,7 +280,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     dashboards: [],
     dashboard: null,
     sessionDataList: [],
-    notifications: []
+    notifications: [],
+    dashboardCache: new Map<string, Dashboard>()
   })
 
   // ロジック
@@ -620,6 +623,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             layout: JSON.parse(data.defaultDashboard.layout) as Layout,
             option: JSON.parse(data.defaultDashboard.option) as DashboardOption
           }
+          state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
         } else {
           await directDashboardAccess(dashboardId)
         }
@@ -641,6 +645,23 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     }
   }
 
+  async function changeDashboard(dashboardId: string) {
+    const newDashboard = state.dashboardCache.get(dashboardId)
+    if (state.dashboard && newDashboard) {
+      state.dashboard.id = newDashboard.id
+      state.dashboard.name = newDashboard.name
+      state.dashboard.option = newDashboard.option
+      state.dashboard.layout = null
+      setTimeout(() => {
+        if (state.dashboard) {
+          state.dashboard.layout = newDashboard.layout
+        }
+      })
+    } else {
+      await directDashboardAccess(dashboardId)
+    }
+  }
+
   async function directDashboardAccess(dashboardId: string) {
     if (!appSyncClient) return
     operation = 'query directDashboardAccess'
@@ -659,6 +680,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
           layout: JSON.parse(data.layout) as Layout,
           option: JSON.parse(data.option) as DashboardOption
         }
+        state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
       }, 0)
     }
   }
@@ -706,6 +728,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         layout: JSON.parse(session.defaultDashboard.layout) as Layout,
         option: JSON.parse(session.defaultDashboard.option) as DashboardOption
       }
+      state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
       state.sessionDataList = session.sessionDataList.map(d => {
         const raw = JSON.parse(d.data)
         return {
@@ -814,6 +837,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             layout: JSON.parse(data.layout) as Layout,
             option: JSON.parse(data.option) as DashboardOption
           }
+          state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
         }
       },
       error(errorValue: any) {
@@ -924,18 +948,26 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         const data = value.data?.onUpdateDashboard
         if (data && state.session && state.session.id === sessionId) {
           const dashboard = state.dashboards.find(d => d.id === data.id)
+          const layout = JSON.parse(data.layout)
+          const option = JSON.parse(data.option)
           if (dashboard) {
             dashboard.name = data.name
-            dashboard.option = JSON.parse(data.option)
+            dashboard.option = option
           }
           if (state.dashboard && state.dashboard.id === data.id) {
             state.dashboard.name = data.name
             state.dashboard.layout = null
-            state.dashboard.option = JSON.parse(data.option)
+            state.dashboard.option = option
             setTimeout(() => {
-              state.dashboard.layout = JSON.parse(data.layout)
+              state.dashboard.layout = layout
             }, 0)
           }
+          state.dashboardCache.set(data.id, {
+            id: data.id,
+            name: data.name,
+            layout,
+            option
+          })
         }
       },
       error(errorValue: any) {
@@ -1081,6 +1113,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addDefaultSession,
     addDashboard,
     directSessionAccess,
+    changeDashboard,
     directDashboardAccess,
     addPlayerByUser,
     addCharacter,
