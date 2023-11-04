@@ -7,8 +7,8 @@
         v-bind="props"
         :stacked="stack || false"
         :size="btnSize as any"
-        :icon="stack ? undefined : btnIcon as any"
-        :prepend-icon="stack ? btnIcon as any : undefined"
+        :icon="stack ? undefined : (btnIcon as any)"
+        :prepend-icon="stack ? (btnIcon as any) : undefined"
         :text="btnText || ''"
         @click="emits('click')"
       />

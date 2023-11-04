@@ -242,7 +242,7 @@ function setPaneComponent(pane: Layout, n: { [key: string]: string }, g: { group
             style="gap: 1em; top: 0; left: 0"
           >
             <template v-if="pane.type === 'horizontal' || pane.type === 'vertical'">
-              <v-defaults-provider :defaults='{ VBtn: { size: "x-small" } } as any'>
+              <v-defaults-provider :defaults="{ VBtn: { size: 'x-small' } } as any">
                 <v-tooltip>
                   <template #activator="{ props }">
                     <v-btn
@@ -278,7 +278,7 @@ function setPaneComponent(pane: Layout, n: { [key: string]: string }, g: { group
                 </v-tooltip>
               </template>
               <v-container class="text-center">
-                <v-defaults-provider :defaults='{ VBtn: { rounded: 0, variant: "text" } } as any'>
+                <v-defaults-provider :defaults="{ VBtn: { rounded: 0, variant: 'text' } } as any">
                   <v-row>
                     <v-col class="pa-0">
                       <v-btn
@@ -410,11 +410,13 @@ function setPaneComponent(pane: Layout, n: { [key: string]: string }, g: { group
           :is-nest="true"
           :show-bar="showBar"
           :component-target="pane.component"
-          @change-component="(componentGroup: any, componentObj: any) => {
-            cLayout.componentGroup = componentGroup;
-            cLayout.component = componentObj
-          }"
-          @change-layout='(newLayout: any) => emits("change-layout", newLayout)'
+          @change-component="
+            (componentGroup: any, componentObj: any) => {
+              cLayout.componentGroup = componentGroup
+              cLayout.component = componentObj
+            }
+          "
+          @change-layout="(newLayout: any) => emits('change-layout', newLayout)"
           ref="childLayer"
         />
       </div>
@@ -433,8 +435,13 @@ function setPaneComponent(pane: Layout, n: { [key: string]: string }, g: { group
       :is="componentMap.find(p => p.group === cLayout.componentGroup)?.items[cLayout.component] || ''"
       :layout="cLayout"
       :root-layout="rootLayout"
-      @change-component="(componentGroup: any, componentObj: any) => {cLayout.componentGroup = componentGroup; cLayout.component = componentObj}"
-      @change-layout='(newLayout: any) => emits("change-layout", newLayout)'
+      @change-component="
+        (componentGroup: any, componentObj: any) => {
+          cLayout.componentGroup = componentGroup
+          cLayout.component = componentObj
+        }
+      "
+      @change-layout="(newLayout: any) => emits('change-layout', newLayout)"
       ref="component"
     />
   </keep-alive>

@@ -40,7 +40,7 @@
               :hide-details="true"
               :flat="true"
               variant="solo-filled"
-              :model-value="editText"
+              v-model="editText"
             >
               <template v-slot:label>
                 <v-icon :icon="icon" class="mr-1" />
@@ -81,6 +81,13 @@ const emits = defineEmits<{
 
 const dialog = ref(false)
 const editText = ref(props.text)
+
+watch(
+  () => props.text,
+  () => {
+    editText.value = props.text
+  }
+)
 
 watch(dialog, v => {
   if (v) {

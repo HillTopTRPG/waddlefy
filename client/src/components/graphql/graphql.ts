@@ -295,7 +295,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       case 'query directSessionAccess':
       case 'mutation addPlayerByUser':
       case 'mutation addSession':
-      case 'mutation addSessionData':
       case 'mutation addDashboard':
       case 'mutation deleteSession':
       case 'mutation updateUserName':
@@ -314,6 +313,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         authorize = `p/${playerToken}/${playerSecret || ''}`
         break
       }
+      case 'mutation addSessionData':
       case 'mutation updateSessionData':
       case 'query directDashboardAccess':
         authorize = `s/${state.session?.token || ''}`
@@ -455,6 +455,45 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         data: JSON.stringify({
           player: playerId,
           character: data
+        })
+      }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    // subscriptionにて更新される
+  }
+
+  async function updateCharacterSessionMemo(sessionMemoId: string, characterId: string, text: string) {
+    if (!appSyncClient) return
+    operation = 'mutation updateSessionData'
+    const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
+      mutation: Mutations.updateSessionData,
+      variables: {
+        id: sessionMemoId,
+        sessionId: state.session?.id || '',
+        data: JSON.stringify({
+          characterId,
+          text
+        })
+      }
+    })
+    console.log(JSON.stringify(result.data, null, 2))
+    // subscriptionにて更新される
+  }
+
+  async function updateCharacterPrivateMemo(privateMemoId: string, characterId: string, text: string) {
+    if (!appSyncClient) return
+    operation = 'mutation updateSessionData'
+    const isOwnerControl = Boolean(state.user?.token)
+    const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
+      mutation: Mutations.updateSessionData,
+      variables: {
+        id: privateMemoId,
+        sessionId: state.session?.id || '',
+        data: JSON.stringify({
+          ownerType: isOwnerControl ? 'user' : 'player',
+          ownerId: isOwnerControl ? null : state.player?.id,
+          characterId,
+          text
         })
       }
     })
@@ -793,6 +832,47 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
+  async function addCharacterSessionMemo(characterId: string, text: string): Promise<void> {
+    if (!appSyncClient) return
+
+    const sessionId = state.session?.id || ''
+    const type = 'character-session-memo'
+    const wrapData = {
+      characterId,
+      text: text
+    }
+    const data = JSON.stringify(wrapData)
+
+    operation = 'mutation addSessionData'
+    await appSyncClient.mutate<MutationResult.AddSessionData>({
+      mutation: Mutations.addSessionData,
+      variables: { sessionId, type, data }
+    })
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
+    if (!appSyncClient) return
+
+    const sessionId = state.session?.id || ''
+    const isOwnerControl = Boolean(state.user?.token)
+    const type = 'character-private-memo'
+    const wrapData = {
+      ownerType: isOwnerControl ? 'user' : 'player',
+      ownerId: isOwnerControl ? null : state.player?.id,
+      characterId,
+      text
+    }
+    const data = JSON.stringify(wrapData)
+
+    operation = 'mutation addSessionData'
+    await appSyncClient.mutate<MutationResult.AddSessionData>({
+      mutation: Mutations.addSessionData,
+      variables: { sessionId, type, data }
+    })
+    // Subscriptionによってstateに登録される
+  }
+
   function onAddPlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnAddPlayer>> {
     if (!appSyncClient) return
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnAddPlayer>({
@@ -1117,6 +1197,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     directDashboardAccess,
     addPlayerByUser,
     addCharacter,
+    addCharacterSessionMemo,
+    addCharacterPrivateMemo,
     generatePlayerResetCode,
     updateUserName,
     updateUserIcon,
@@ -1125,6 +1207,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateDashboardLayout,
     updateDashboardOption,
     updateCharacter,
+    updateCharacterSessionMemo,
+    updateCharacterPrivateMemo,
     updatePlayerName,
     updatePlayerIcon,
     deleteSession,

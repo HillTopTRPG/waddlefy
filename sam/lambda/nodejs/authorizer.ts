@@ -106,7 +106,6 @@ export const handler = async event => {
           admitFields.push('Mutation.addSession')
           admitFields.push('Mutation.addDashboard')
           admitFields.push('Mutation.addPlayerByUser')
-          admitFields.push('Mutation.addSessionData')
           admitFields.push('Mutation.generatePlayerResetCode')
           admitFields.push('Mutation.updateUserName')
           admitFields.push('Mutation.updateUserIcon')
@@ -141,6 +140,7 @@ export const handler = async event => {
           admitFields.push('Mutation.resetPlayerPassword')
           admitFields.push('Query.getSessionPlayer')
           admitFields.push('Query.directDashboardAccess')
+          admitFields.push('Mutation.addSessionData')
           admitFields.push('Mutation.updateSessionData')
         }
       }

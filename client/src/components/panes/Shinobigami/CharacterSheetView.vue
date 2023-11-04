@@ -103,12 +103,7 @@
       />
     </v-sheet>
     <v-sheet class="overflow-auto mt-2 mr-3 mb-3">
-      <character-sheet-tab-view
-        :character-id="characterId"
-        :text-rows="textRows"
-        @update-room-memo="v => updateRoomMemo(v)"
-        @update-private-memo="v => updatePrivateMemo(v)"
-      />
+      <character-sheet-tab-view :character-id="characterId" :text-rows="textRows" />
     </v-sheet>
   </v-sheet>
 </template>
@@ -157,14 +152,6 @@ async function updateInfo(info: SaikoroFictionTokugi) {
   const characterSheet = clone(props.characterSheet)!
   characterSheet.skill = info
   await graphQlStore.updateCharacter(props.characterId, props.playerId, characterSheet)
-}
-
-function updateRoomMemo(text: string) {
-  console.log(text)
-}
-
-function updatePrivateMemo(text: string) {
-  console.log(text)
 }
 </script>
 
