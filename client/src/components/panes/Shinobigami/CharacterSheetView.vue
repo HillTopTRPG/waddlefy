@@ -103,85 +103,12 @@
       />
     </v-sheet>
     <v-sheet class="overflow-auto mt-2 mr-3 mb-3">
-      <v-card class="d-flex flex-row" variant="tonal">
-        <v-tabs v-model="tab" direction="vertical" color="primary">
-          <v-tab value="room-memo">
-            <v-icon :start="true">mdi-antenna</v-icon>
-            共有メモ
-          </v-tab>
-          <v-tab value="private-memo">
-            <v-icon :start="true">mdi-account</v-icon>
-            個人メモ
-          </v-tab>
-          <v-tab value="secret">
-            <v-icon :start="true">mdi-lock</v-icon>
-            秘密
-          </v-tab>
-        </v-tabs>
-        <v-window v-model="tab">
-          <v-window-item value="room-memo">
-            <v-textarea
-              label="共有メモ"
-              :rows="textRows"
-              :readonly="true"
-              :no-resize="true"
-              :model-value="
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
-              "
-            >
-              <template v-slot:details>
-                <v-btn icon="mdi-pencil" class="mb-2" variant="outlined" density="comfortable" size="small" />
-              </template>
-            </v-textarea>
-          </v-window-item>
-          <v-window-item value="private-memo">
-            <v-textarea
-              label="個人メモ"
-              :rows="textRows"
-              :readonly="true"
-              :no-resize="true"
-              :model-value="
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
-              "
-            >
-              <template v-slot:details>
-                <v-btn icon="mdi-pencil" class="mb-2" variant="outlined" density="comfortable" size="small" />
-              </template>
-            </v-textarea>
-          </v-window-item>
-          <v-window-item value="secret">
-            <v-textarea
-              label="秘密"
-              :rows="textRows"
-              :readonly="true"
-              :no-resize="true"
-              :hide-details="false"
-              :model-value="
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
-              "
-            >
-              <template v-slot:details>
-                <v-btn icon="mdi-pencil" style="visibility: hidden" class="mb-2" variant="outlined" density="comfortable" size="small" />
-              </template>
-            </v-textarea>
-          </v-window-item>
-        </v-window>
-      </v-card>
+      <character-sheet-tab-view
+        :character-id="characterId"
+        :text-rows="textRows"
+        @update-room-memo="v => updateRoomMemo(v)"
+        @update-private-memo="v => updatePrivateMemo(v)"
+      />
     </v-sheet>
   </v-sheet>
 </template>
@@ -197,6 +124,7 @@ import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFict
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import CharacterSheetTabView from '@/components/panes/Shinobigami/CharacterSheetTabView.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -215,8 +143,6 @@ const emits = defineEmits<{
   (e: 'update:select-skill', selectSkill: string): void
 }>()
 
-const tab = ref('room-memo')
-
 const navigationDrawer = ref(false)
 watch(navigationDrawer, v => {
   if (v) {
@@ -231,6 +157,14 @@ async function updateInfo(info: SaikoroFictionTokugi) {
   const characterSheet = clone(props.characterSheet)!
   characterSheet.skill = info
   await graphQlStore.updateCharacter(props.characterId, props.playerId, characterSheet)
+}
+
+function updateRoomMemo(text: string) {
+  console.log(text)
+}
+
+function updatePrivateMemo(text: string) {
+  console.log(text)
 }
 </script>
 

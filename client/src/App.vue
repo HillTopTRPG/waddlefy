@@ -64,4 +64,8 @@ $htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, sm
     margin-left: 1em;
   }
 }
+
+textarea {
+  font-family: 'M PLUS Rounded 1c', sans-serif !important;
+}
 </style>
