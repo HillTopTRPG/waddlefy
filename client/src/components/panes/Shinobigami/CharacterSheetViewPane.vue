@@ -18,35 +18,12 @@
               表示制御
             </v-btn>
           </template>
-          <div style="background-color: white; margin-top: -2px;" class="pa-1 border-s border-e border-b border-t">
-            <v-select
-              label="忍法一覧"
-              density="compact"
-              class="mt-2"
-              variant="outlined"
-              :items="['なし', 'あり']"
-              style="max-width: 8em"
-              v-model="viewNinpou"
-              :hide-details="true"
-            >
-              <template #selection="{ item }">
-                <span style="white-space: nowrap">{{ item.value }}</span>
-              </template>
-            </v-select>
-            <v-select
-              label="特技表"
-              density="compact"
-              class="mt-3"
-              variant="outlined"
-              :items="['なし', 'あり']"
-              style="max-width: 9em"
-              v-model="viewTokugi"
-              :hide-details="true"
-            >
-              <template #selection="{ item }">
-                <span style="white-space: nowrap">{{ item.value }}</span>
-              </template>
-            </v-select>
+          <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
+            <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
+            <v-checkbox-btn label="特技表" v-model="viewTokugi" />
+            <v-divider class="my-1 ml-2" />
+            <v-label class="text-body-2 ml-2">テキスト行数</v-label>
+            <v-slider density="compact" class="ml-3" v-model="textRows" :min="2" :step="1" :max="20" />
           </div>
         </v-menu>
       </v-defaults-provider>
@@ -83,8 +60,9 @@
         :character-id="cw.id"
         :player-id="cw.player"
         :character-sheet="cw.character"
-        :ninpou-view="viewNinpou !== 'なし'"
-        :tokugi-view="viewTokugi !== 'なし'"
+        :ninpou-view="viewNinpou"
+        :tokugi-view="viewTokugi"
+        :text-rows="textRows"
         v-model:select-skill="selectSkill"
       />
       <span v-if="!characterWraps.length" class="ma-3">
@@ -132,8 +110,9 @@ watch(navigationDrawer, v => {
   if (v) selectSkill.value = ''
 })
 
-const viewNinpou = ref('あり')
-const viewTokugi = ref('あり')
+const viewNinpou = ref(true)
+const viewTokugi = ref(true)
+const textRows = ref(10)
 
 function getCharacterWraps(): CharacterWrap[] {
   return graphQlStore.state.sessionDataList

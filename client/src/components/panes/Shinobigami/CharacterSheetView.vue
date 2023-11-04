@@ -1,7 +1,7 @@
 <template>
   <v-sheet class="w-100 d-flex flex-wrap">
-    <v-sheet>
-      <v-container>
+    <v-sheet class="mr-3 mb-3">
+      <v-container class="pr-0">
         <v-defaults-provider :defaults="{ VCol: { class: 'pa-0' } }">
           <v-row>
             <v-col>
@@ -92,7 +92,7 @@
         </v-defaults-provider>
       </v-container>
     </v-sheet>
-    <v-sheet class="overflow-auto" v-if="tokugiView">
+    <v-sheet class="overflow-auto mr-3 mb-3" v-if="tokugiView">
       <speciality-table
         :select-skill="selectSkill"
         @update:select-skill="v => emits('update:select-skill', v)"
@@ -101,6 +101,87 @@
         @update:info="v => updateInfo(v)"
         :editable="true"
       />
+    </v-sheet>
+    <v-sheet class="overflow-auto mt-2 mr-3 mb-3">
+      <v-card class="d-flex flex-row" variant="tonal">
+        <v-tabs v-model="tab" direction="vertical" color="primary">
+          <v-tab value="room-memo">
+            <v-icon :start="true">mdi-antenna</v-icon>
+            共有メモ
+          </v-tab>
+          <v-tab value="private-memo">
+            <v-icon :start="true">mdi-account</v-icon>
+            個人メモ
+          </v-tab>
+          <v-tab value="secret">
+            <v-icon :start="true">mdi-lock</v-icon>
+            秘密
+          </v-tab>
+        </v-tabs>
+        <v-window v-model="tab">
+          <v-window-item value="room-memo">
+            <v-textarea
+              label="共有メモ"
+              :rows="textRows"
+              :readonly="true"
+              :no-resize="true"
+              :model-value="
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
+              "
+            >
+              <template v-slot:details>
+                <v-btn icon="mdi-pencil" class="mb-2" variant="outlined" density="comfortable" size="small" />
+              </template>
+            </v-textarea>
+          </v-window-item>
+          <v-window-item value="private-memo">
+            <v-textarea
+              label="個人メモ"
+              :rows="textRows"
+              :readonly="true"
+              :no-resize="true"
+              :model-value="
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
+              "
+            >
+              <template v-slot:details>
+                <v-btn icon="mdi-pencil" class="mb-2" variant="outlined" density="comfortable" size="small" />
+              </template>
+            </v-textarea>
+          </v-window-item>
+          <v-window-item value="secret">
+            <v-textarea
+              label="秘密"
+              :rows="textRows"
+              :readonly="true"
+              :no-resize="true"
+              :hide-details="false"
+              :model-value="
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
+                'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
+              "
+            >
+              <template v-slot:details>
+                <v-btn icon="mdi-pencil" style="visibility: hidden" class="mb-2" variant="outlined" density="comfortable" size="small" />
+              </template>
+            </v-textarea>
+          </v-window-item>
+        </v-window>
+      </v-card>
     </v-sheet>
   </v-sheet>
 </template>
@@ -125,6 +206,7 @@ const props = defineProps<{
   selectSkill: string
   ninpouView: boolean
   tokugiView: boolean
+  textRows: number
 }>()
 
 const emits = defineEmits<{
@@ -132,6 +214,8 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
   (e: 'update:select-skill', selectSkill: string): void
 }>()
+
+const tab = ref('room-memo')
 
 const navigationDrawer = ref(false)
 watch(navigationDrawer, v => {
