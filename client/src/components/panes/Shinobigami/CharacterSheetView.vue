@@ -76,7 +76,7 @@
               </template>
             </v-col>
           </v-row>
-          <v-row class="pb-2">
+          <v-row class="pb-2" v-if="ninpouView">
             <v-col>
               <ninpou-table
                 class="mr-2"
@@ -92,7 +92,7 @@
         </v-defaults-provider>
       </v-container>
     </v-sheet>
-    <v-sheet class="overflow-auto">
+    <v-sheet class="overflow-auto" v-if="tokugiView">
       <speciality-table
         :select-skill="selectSkill"
         @update:select-skill="v => emits('update:select-skill', v)"
@@ -123,6 +123,8 @@ const props = defineProps<{
   playerId: string
   characterSheet: ShinobiGami
   selectSkill: string
+  ninpouView: boolean
+  tokugiView: boolean
 }>()
 
 const emits = defineEmits<{

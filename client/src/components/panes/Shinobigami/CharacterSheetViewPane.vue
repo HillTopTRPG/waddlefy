@@ -1,6 +1,55 @@
 <template>
   <pane-frame title="キャラクターシート表示">
     <template v-slot:title-action>
+      <v-defaults-provider
+        :defaults="{
+          VSelect: {
+            variant: 'plain',
+            density: 'compact',
+            hideDetails: true,
+            class: 'menu-select ml-5'
+          }
+        }"
+      >
+        <v-menu :close-on-content-click="false">
+          <template v-slot:activator="{ props }">
+            <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
+              <v-icon icon="mdi-triangle-small-down" />
+              表示制御
+            </v-btn>
+          </template>
+          <div style="background-color: white; margin-top: -2px;" class="pa-1 border-s border-e border-b border-t">
+            <v-select
+              label="忍法一覧"
+              density="compact"
+              class="mt-2"
+              variant="outlined"
+              :items="['なし', 'あり']"
+              style="max-width: 8em"
+              v-model="viewNinpou"
+              :hide-details="true"
+            >
+              <template #selection="{ item }">
+                <span style="white-space: nowrap">{{ item.value }}</span>
+              </template>
+            </v-select>
+            <v-select
+              label="特技表"
+              density="compact"
+              class="mt-3"
+              variant="outlined"
+              :items="['なし', 'あり']"
+              style="max-width: 9em"
+              v-model="viewTokugi"
+              :hide-details="true"
+            >
+              <template #selection="{ item }">
+                <span style="white-space: nowrap">{{ item.value }}</span>
+              </template>
+            </v-select>
+          </div>
+        </v-menu>
+      </v-defaults-provider>
       <v-btn
         size="x-small"
         variant="text"
@@ -34,6 +83,8 @@
         :character-id="cw.id"
         :player-id="cw.player"
         :character-sheet="cw.character"
+        :ninpou-view="viewNinpou !== 'なし'"
+        :tokugi-view="viewTokugi !== 'なし'"
         v-model:select-skill="selectSkill"
       />
       <span v-if="!characterWraps.length" class="ma-3">
@@ -81,6 +132,9 @@ watch(navigationDrawer, v => {
   if (v) selectSkill.value = ''
 })
 
+const viewNinpou = ref('あり')
+const viewTokugi = ref('あり')
+
 function getCharacterWraps(): CharacterWrap[] {
   return graphQlStore.state.sessionDataList
     .filter(sd => sd.type === 'character' && sd.data?.character)
@@ -106,6 +160,15 @@ watch(tokugiTableEditing, v => console.log(v))
 .notify-snackbar {
   :deep(.v-snackbar__wrapper) {
     border-radius: 0;
+  }
+}
+
+.menu-select {
+  :deep(.v-field__append-inner),
+  :deep(.v-text-field__prefix),
+  :deep(.v-field__input) {
+    padding-top: 0;
+    min-height: auto;
   }
 }
 </style>

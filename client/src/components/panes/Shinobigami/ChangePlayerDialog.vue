@@ -11,7 +11,7 @@
       <v-card-title class="text-h5 grey lighten-2">{{ characterName }}のプレイヤー変更</v-card-title>
 
       <v-card-item>
-        <div class="d-flex flex-row align-center">
+        <div class="d-flex flex-row align-end">
           <div>{{ playerName }} →</div>
           <v-select
             label="プレイヤー"
