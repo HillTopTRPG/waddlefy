@@ -132,18 +132,22 @@ watch(
         if (diffs.length === 1) {
           const diff = diffs[0]
           let message: string
+          const deleteMap = {
+            'skill.damagedColList': `${o.characterName}が${diff.before}を回復しました`,
+            'skill.learnedList': `${o.characterName}の${diff.before}が未習得になりました`,
+            'skill.outRow': `${o.characterName}の特技表の上下が繋がらなくなりました`,
+            other: `${o.characterName}が${diff.before}を失いました`
+          }
+          const addMap = {
+            'skill.damagedColList': `${o.characterName}が${diff.after}にダメージを受けました`,
+            'skill.learnedList': `${o.characterName}が${diff.after}を習得しました`,
+            'skill.outRow': `${o.characterName}の特技表の上下が繋がりました`,
+            other: `${o.characterName}が${diff.after}を得ました`
+          }
           if (diff.op === 'delete') {
-            if (diff.path === 'skill.learnedList') {
-              message = `${o.characterName}の${diff.before}が未習得になりました`
-            } else {
-              message = `${o.characterName}が${diff.before}を失いました`
-            }
+            message = deleteMap[diff.path] || deleteMap['other']
           } else if (diff.op === 'add') {
-            if (diff.path === 'skill.learnedList') {
-              message = `${o.characterName}が${diff.after}を習得しました`
-            } else {
-              message = `${o.characterName}が${diff.after}を得ました`
-            }
+            message = addMap[diff.path] || addMap['other']
           } else {
             message = `${o.characterName}の${diff.before}が${diff.after}に変更されました`
           }

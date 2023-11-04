@@ -1,4 +1,4 @@
-import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi } from './SaikoroFiction'
+import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi, TokugiInfo } from './SaikoroFiction'
 import { convertNumberZero } from './PrimaryDataUtility'
 import { getJsonByGet, getJsonByJsonp } from './fetch-util'
 
@@ -118,24 +118,63 @@ export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
       after: d2[p]
     })
   })
-  const deleteList = d1.skill.learnedList
-    .filter(sl1 => d2.skill.learnedList.every(sl2 => sl2.name !== sl1.name))
-    .map(sl1 => ({
-      op: 'delete',
-      path: 'skill.learnedList',
-      before: sl1.name,
-      after: ''
-    }))
-  diffs.push(...deleteList)
-  const addList = d2.skill.learnedList
-    .filter(sl2 => d1.skill.learnedList.every(sl1 => sl1.name !== sl2.name))
-    .map(sl2 => ({
-      op: 'add',
-      path: 'skill.learnedList',
-      before: '',
-      after: sl2.name
-    }))
-  diffs.push(...addList)
+
+  function getDiffTokugiInfo(
+    tokugiListOne: TokugiInfo[],
+    tokugiListTwo: TokugiInfo[],
+    op: 'delete' | 'add',
+    path: string
+  ): DiffType[] {
+    return tokugiListOne
+      .filter(t1 => tokugiListTwo.every(t2 => t2.name !== t1.name))
+      .map(t1 => ({
+        op,
+        path,
+        before: op === 'delete' ? t1.name : '',
+        after: op === 'add' ? t1.name : ''
+      }))
+  }
+  diffs.push(...getDiffTokugiInfo(d1.skill.learnedList, d2.skill.learnedList, 'delete', 'skill.learnedList'))
+  diffs.push(...getDiffTokugiInfo(d2.skill.learnedList, d1.skill.learnedList, 'add', 'skill.learnedList'))
+  diffs.push(...getDiffTokugiInfo(d1.skill.damagedList, d2.skill.damagedList, 'delete', 'skill.damagedList'))
+  diffs.push(...getDiffTokugiInfo(d2.skill.damagedList, d1.skill.damagedList, 'add', 'skill.damagedList'))
+
+  function getDiffSpace(
+    spaceListOne: number[],
+    spaceListTwo: number[],
+    op: 'delete' | 'add',
+    path: string,
+    mappingList: string[]
+  ): DiffType[] {
+    return spaceListOne
+      .filter(s1 => spaceListTwo.every(s2 => s2 !== s1))
+      .map(s1 => ({
+        op,
+        path,
+        before: op === 'delete' ? mappingList[s1] : '',
+        after: op === 'add' ? mappingList[s1] : ''
+      }))
+  }
+  const colMappingList = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
+  const spaceMappingList = colMappingList.map(
+    (col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`
+  )
+  diffs.push(...getDiffSpace(d1.skill.spaceList, d2.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
+  diffs.push(...getDiffSpace(d2.skill.spaceList, d1.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
+  diffs.push(
+    ...getDiffSpace(d1.skill.damagedColList, d2.skill.damagedColList, 'delete', 'skill.damagedColList', colMappingList)
+  )
+  diffs.push(
+    ...getDiffSpace(d2.skill.damagedColList, d1.skill.damagedColList, 'add', 'skill.damagedColList', colMappingList)
+  )
+  if (d1.skill.outRow !== d2.skill.outRow) {
+    diffs.push({
+      op: d1.skill.outRow ? 'delete' : 'add',
+      path: 'skill.outRow',
+      before: '特技表の下辺ギャップ',
+      after: '特技表の下辺ギャップ'
+    })
+  }
   return diffs
 }
 

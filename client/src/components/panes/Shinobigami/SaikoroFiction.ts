@@ -196,7 +196,8 @@ function mergeList<T>(
   originalRecover = true
 ): void {
   list2.forEach(i2 => {
-    ;(Object.keys(i2) as (keyof T)[]).forEach(k => {
+    const keys: (keyof T)[] = Object.keys(i2)
+    keys.forEach(k => {
       const val = i2[k]
       if (typeof val === 'string') {
         if (keyProp === k) {
