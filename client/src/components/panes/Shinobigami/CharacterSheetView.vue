@@ -64,6 +64,9 @@
                 rel="noopener noreferrer"
                 :href="characterSheet.url"
               />
+              <span class="text-body-2"
+                >({{ graphQlStore?.state.players.find(p => p.id === playerId)?.name || 'PL未割当' }})</span
+              >
             </v-col>
           </v-row>
           <v-row class="pb-2">

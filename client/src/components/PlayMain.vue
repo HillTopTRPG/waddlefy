@@ -124,10 +124,10 @@ watch(
   vn => {
     if (vn.length === oldCharacterWraps.length) {
       vn.forEach(vne => {
-        const n = vne.character
-        const o = oldCharacterWraps.find(old => vne.id === old.id)?.character
-        if (!o || JSON.stringify(o) === JSON.stringify(n)) return
-        const diffs = getDiff(o, n)
+        const one = oldCharacterWraps.find(old => vne.id === old.id)
+        const o = one?.character
+        if (!o || JSON.stringify(vne) === JSON.stringify(one)) return
+        const diffs = getDiff(one, vne, graphQlStore?.state.players)
         console.log(JSON.stringify(diffs, null, 2))
         if (diffs.length === 1) {
           const diff = diffs[0]
@@ -149,7 +149,11 @@ watch(
           } else if (diff.op === 'add') {
             message = addMap[diff.path] || addMap['other']
           } else {
-            message = `${o.characterName}の${diff.before}が${diff.after}に変更されました`
+            if (diff.path === 'player') {
+              message = `${o.characterName}のプレイヤー変更: ${diff.before} → ${diff.after}`
+            } else {
+              message = `${o.characterName}の${diff.before}が${diff.after}に変更されました`
+            }
           }
           graphQlStore?.addNotification('success', message)
         }

@@ -1,6 +1,8 @@
 import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi, TokugiInfo } from './SaikoroFiction'
 import { convertNumberZero } from './PrimaryDataUtility'
 import { getJsonByGet, getJsonByJsonp } from './fetch-util'
+import { CharacterWrap } from '@/components/graphql/graphql'
+import { Player } from '@/components/graphql/schema'
 
 export type Background = {
   name: string
@@ -71,8 +73,10 @@ export type DiffType = {
   before: string | number
   after: string | number
 }
-export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
+export function getDiff(d1: CharacterWrap, d2: CharacterWrap, players: Player[]): DiffType[] {
   const diffs: DiffType[] = []
+  const c1 = d1.character
+  const c2 = d2.character
   const simpleParams: (keyof Pick<
     ShinobiGami,
     'url',
@@ -110,12 +114,12 @@ export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
     'stylerule'
   ]
   simpleParams.forEach(p => {
-    if (d1[p] === d2[p]) return
+    if (c1[p] === c2[p]) return
     diffs.push({
       op: 'replace',
       path: p.toString(),
-      before: d1[p],
-      after: d2[p]
+      before: c1[p],
+      after: c2[p]
     })
   })
 
@@ -134,10 +138,10 @@ export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
         after: op === 'add' ? t1.name : ''
       }))
   }
-  diffs.push(...getDiffTokugiInfo(d1.skill.learnedList, d2.skill.learnedList, 'delete', 'skill.learnedList'))
-  diffs.push(...getDiffTokugiInfo(d2.skill.learnedList, d1.skill.learnedList, 'add', 'skill.learnedList'))
-  diffs.push(...getDiffTokugiInfo(d1.skill.damagedList, d2.skill.damagedList, 'delete', 'skill.damagedList'))
-  diffs.push(...getDiffTokugiInfo(d2.skill.damagedList, d1.skill.damagedList, 'add', 'skill.damagedList'))
+  diffs.push(...getDiffTokugiInfo(c1.skill.learnedList, c2.skill.learnedList, 'delete', 'skill.learnedList'))
+  diffs.push(...getDiffTokugiInfo(c2.skill.learnedList, c1.skill.learnedList, 'add', 'skill.learnedList'))
+  diffs.push(...getDiffTokugiInfo(c1.skill.damagedList, c2.skill.damagedList, 'delete', 'skill.damagedList'))
+  diffs.push(...getDiffTokugiInfo(c2.skill.damagedList, c1.skill.damagedList, 'add', 'skill.damagedList'))
 
   function getDiffSpace(
     spaceListOne: number[],
@@ -157,22 +161,32 @@ export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
   }
   const colMappingList = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
   const spaceMappingList = colMappingList.map((col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`)
-  diffs.push(...getDiffSpace(d1.skill.spaceList, d2.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
-  diffs.push(...getDiffSpace(d2.skill.spaceList, d1.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
+  diffs.push(...getDiffSpace(c1.skill.spaceList, c2.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
+  diffs.push(...getDiffSpace(c2.skill.spaceList, c1.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
   diffs.push(
-    ...getDiffSpace(d1.skill.damagedColList, d2.skill.damagedColList, 'delete', 'skill.damagedColList', colMappingList)
+    ...getDiffSpace(c1.skill.damagedColList, c2.skill.damagedColList, 'delete', 'skill.damagedColList', colMappingList)
   )
   diffs.push(
-    ...getDiffSpace(d2.skill.damagedColList, d1.skill.damagedColList, 'add', 'skill.damagedColList', colMappingList)
+    ...getDiffSpace(c2.skill.damagedColList, c1.skill.damagedColList, 'add', 'skill.damagedColList', colMappingList)
   )
-  if (d1.skill.outRow !== d2.skill.outRow) {
+  if (c1.skill.outRow !== c2.skill.outRow) {
     diffs.push({
-      op: d1.skill.outRow ? 'delete' : 'add',
+      op: c1.skill.outRow ? 'delete' : 'add',
       path: 'skill.outRow',
       before: '特技表の下辺ギャップ',
       after: '特技表の下辺ギャップ'
     })
   }
+
+  if (d1.player !== d2.player) {
+    diffs.push({
+      op: 'replace',
+      path: 'player',
+      before: players.find(p => p.id === d1.player)?.name || 'なし',
+      after: players.find(p => p.id === d2.player)?.name || 'なし'
+    })
+  }
+
   return diffs
 }
 
