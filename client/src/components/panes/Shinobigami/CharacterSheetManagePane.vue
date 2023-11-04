@@ -30,21 +30,16 @@
         </v-text-field>
       </v-sheet>
       <v-sheet class="w-100 d-flex flex-wrap">
-        <v-list>
-          <v-list-item v-for="cw in characterWraps" :key="cw.id">
-            <v-list-item-title>{{ cw.character.characterName }}</v-list-item-title>
-            <v-select
-              label="プレイヤー"
-              style="min-width: 200px"
-              density="compact"
-              :items="players"
-              item-title="name"
-              item-value="id"
-              :model-value="cw.player"
-              @update:model-value="v => updateCharacterPlayer(cw.id, v)"
+        <v-card class="ma-3 w-100" variant="tonal" v-for="cw in characterWraps" :key="cw.id">
+          <v-card-title>
+            <span>{{ cw.character.characterName }}</span>
+            <change-player-dialog
+              :character-name="cw.character.characterName"
+              :player="cw.player"
+              @submit="v => updateCharacterPlayer(cw.id, v)"
             />
-          </v-list-item>
-        </v-list>
+          </v-card-title>
+        </v-card>
       </v-sheet>
     </template>
   </pane-frame>
@@ -68,6 +63,7 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { ShinobigamiHelper } from '@/components/panes/Shinobigami/shinobigami'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import ChangePlayerDialog from '@/components/panes/Shinobigami/ChangePlayerDialog.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const characterWraps = computed<CharacterWrap[]>(() => {
@@ -76,8 +72,6 @@ const characterWraps = computed<CharacterWrap[]>(() => {
     .filter(sd => sd.type === 'character' && sd.data?.character)
     .map(sd => sd.data as CharacterWrap)
 })
-
-const players = computed(() => [{ id: '', name: 'なし' }, ...graphQlStore.state.players] || [])
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{

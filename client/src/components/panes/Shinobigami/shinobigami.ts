@@ -156,9 +156,7 @@ export function getDiff(d1: ShinobiGami, d2: ShinobiGami): DiffType[] {
       }))
   }
   const colMappingList = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
-  const spaceMappingList = colMappingList.map(
-    (col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`
-  )
+  const spaceMappingList = colMappingList.map((col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`)
   diffs.push(...getDiffSpace(d1.skill.spaceList, d2.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
   diffs.push(...getDiffSpace(d2.skill.spaceList, d1.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
   diffs.push(
