@@ -1080,11 +1080,18 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
                 ...JSON.parse(data.data)
               }
               const next = state.sessionDataList[idx].data
-              if (state.sessionDataList[idx].type === 'character') {
+              const dataType = state.sessionDataList[idx].type
+              if (dataType === 'character') {
                 const characterName = old.character.characterName
                 getCharacterDiffMessages(old, next, state.players, characterName).forEach(msg =>
                   addNotification('success', msg)
                 )
+              }
+              if (dataType === 'character-session-memo') {
+                console.log(JSON.stringify(next, 0, 2))
+                const characterName = state.sessionDataList.find(c => c.id === next.characterId)?.data.character
+                  .characterName
+                addNotification('success', `${characterName}の共有メモが更新されました`)
               }
             }
           }
