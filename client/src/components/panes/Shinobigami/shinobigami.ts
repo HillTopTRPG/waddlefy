@@ -73,10 +73,15 @@ export type DiffType = {
   before: string | number
   after: string | number
 }
-export function getDiff(d1: CharacterWrap, d2: CharacterWrap, players: Player[]): DiffType[] {
+export function getCharacterDiffMessages(
+  wrapOne: CharacterWrap,
+  wrapTwo: CharacterWrap,
+  players: Player[],
+  characterName: string
+): string[] {
   const diffs: DiffType[] = []
-  const c1 = d1.character
-  const c2 = d2.character
+  const cOne = wrapOne.character
+  const cTwo = wrapTwo.character
   const simpleParams: (keyof Pick<
     ShinobiGami,
     'url',
@@ -114,12 +119,12 @@ export function getDiff(d1: CharacterWrap, d2: CharacterWrap, players: Player[])
     'stylerule'
   ]
   simpleParams.forEach(p => {
-    if (c1[p] === c2[p]) return
+    if (cOne[p] === cTwo[p]) return
     diffs.push({
       op: 'replace',
       path: p.toString(),
-      before: c1[p],
-      after: c2[p]
+      before: cOne[p],
+      after: cTwo[p]
     })
   })
 
@@ -138,10 +143,10 @@ export function getDiff(d1: CharacterWrap, d2: CharacterWrap, players: Player[])
         after: op === 'add' ? t1.name : ''
       }))
   }
-  diffs.push(...getDiffTokugiInfo(c1.skill.learnedList, c2.skill.learnedList, 'delete', 'skill.learnedList'))
-  diffs.push(...getDiffTokugiInfo(c2.skill.learnedList, c1.skill.learnedList, 'add', 'skill.learnedList'))
-  diffs.push(...getDiffTokugiInfo(c1.skill.damagedList, c2.skill.damagedList, 'delete', 'skill.damagedList'))
-  diffs.push(...getDiffTokugiInfo(c2.skill.damagedList, c1.skill.damagedList, 'add', 'skill.damagedList'))
+  diffs.push(...getDiffTokugiInfo(cOne.skill.learnedList, cTwo.skill.learnedList, 'delete', 'skill.learnedList'))
+  diffs.push(...getDiffTokugiInfo(cTwo.skill.learnedList, cOne.skill.learnedList, 'add', 'skill.learnedList'))
+  diffs.push(...getDiffTokugiInfo(cOne.skill.damagedList, cTwo.skill.damagedList, 'delete', 'skill.damagedList'))
+  diffs.push(...getDiffTokugiInfo(cTwo.skill.damagedList, cOne.skill.damagedList, 'add', 'skill.damagedList'))
 
   function getDiffSpace(
     spaceListOne: number[],
@@ -161,33 +166,62 @@ export function getDiff(d1: CharacterWrap, d2: CharacterWrap, players: Player[])
   }
   const colMappingList = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
   const spaceMappingList = colMappingList.map((col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`)
-  diffs.push(...getDiffSpace(c1.skill.spaceList, c2.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
-  diffs.push(...getDiffSpace(c2.skill.spaceList, c1.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
+  diffs.push(...getDiffSpace(cOne.skill.spaceList, cTwo.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
+  diffs.push(...getDiffSpace(cTwo.skill.spaceList, cOne.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
   diffs.push(
-    ...getDiffSpace(c1.skill.damagedColList, c2.skill.damagedColList, 'delete', 'skill.damagedColList', colMappingList)
+    ...getDiffSpace(
+      cOne.skill.damagedColList,
+      cTwo.skill.damagedColList,
+      'delete',
+      'skill.damagedColList',
+      colMappingList
+    )
   )
   diffs.push(
-    ...getDiffSpace(c2.skill.damagedColList, c1.skill.damagedColList, 'add', 'skill.damagedColList', colMappingList)
+    ...getDiffSpace(cTwo.skill.damagedColList, cOne.skill.damagedColList, 'add', 'skill.damagedColList', colMappingList)
   )
-  if (c1.skill.outRow !== c2.skill.outRow) {
+  if (cOne.skill.outRow !== cTwo.skill.outRow) {
     diffs.push({
-      op: c1.skill.outRow ? 'delete' : 'add',
+      op: cOne.skill.outRow ? 'delete' : 'add',
       path: 'skill.outRow',
       before: '特技表の下辺ギャップ',
       after: '特技表の下辺ギャップ'
     })
   }
 
-  if (d1.player !== d2.player) {
+  if (wrapOne.player !== wrapTwo.player) {
     diffs.push({
       op: 'replace',
       path: 'player',
-      before: players.find(p => p.id === d1.player)?.name || 'なし',
-      after: players.find(p => p.id === d2.player)?.name || 'なし'
+      before: players.find(p => p.id === wrapOne.player)?.name || 'なし',
+      after: players.find(p => p.id === wrapTwo.player)?.name || 'なし'
     })
   }
 
-  return diffs
+  return diffs.map(diff => {
+    const deleteMap = {
+      'skill.damagedColList': `${characterName}が${diff.before}を回復しました`,
+      'skill.learnedList': `${characterName}の${diff.before}が未習得になりました`,
+      'skill.outRow': `${characterName}の特技表の上下が繋がらなくなりました`,
+      other: `${characterName}が${diff.before}を失いました`
+    }
+    const addMap = {
+      'skill.damagedColList': `${characterName}が${diff.after}にダメージを受けました`,
+      'skill.learnedList': `${characterName}が${diff.after}を習得しました`,
+      'skill.outRow': `${characterName}の特技表の上下が繋がりました`,
+      other: `${characterName}が${diff.after}を得ました`
+    }
+    if (diff.op === 'delete') {
+      return deleteMap[diff.path] || deleteMap['other']
+    } else if (diff.op === 'add') {
+      return addMap[diff.path] || addMap['other']
+    } else {
+      if (diff.path === 'player') {
+        return `${characterName}のプレイヤー変更: ${diff.before} → ${diff.after}`
+      }
+      return `${characterName}の${diff.before}が${diff.after}に変更されました`
+    }
+  })
 }
 
 export class ShinobigamiHelper {
