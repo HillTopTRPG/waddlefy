@@ -7,12 +7,15 @@
     :flat="true"
     variant="solo"
     :model-value="text"
+    @click="dialog = editable"
   >
     <template v-slot:label>
       <v-icon :icon="icon" class="mr-1" />
       {{ label }}
     </template>
     <template v-slot:details>
+      <div v-if="hint" class="mb-2 align-self-center">{{ hint }}</div>
+      <v-spacer />
       <v-dialog width="auto" :persistent="true" v-model="dialog">
         <template v-slot:activator="{ props }">
           <v-btn
@@ -23,13 +26,12 @@
             density="comfortable"
             size="small"
             :style="{ visibility: editable ? 'visible' : 'hidden' }"
-            @click="dialog = editable"
             v-bind="props"
           />
         </template>
         <v-card>
           <v-toolbar density="compact" color="primary">
-            <v-toolbar-title>{{ characterName }}の{{ label }}</v-toolbar-title>
+            <v-toolbar-title>{{ label }}({{ characterName }})</v-toolbar-title>
           </v-toolbar>
           <v-card-item class="pa-2">
             <v-textarea
@@ -37,9 +39,11 @@
               :no-resize="true"
               style="width: 20rem"
               :autofocus="true"
-              :hide-details="true"
+              :persistent-hint="true"
+              :hide-details="!Boolean(hint)"
               :flat="true"
               variant="solo-filled"
+              :hint="hint"
               v-model="editText"
             >
               <template v-slot:label>
@@ -73,6 +77,7 @@ const props = defineProps<{
   label: string
   textRows: number
   editable: boolean
+  hint?: string
 }>()
 
 const emits = defineEmits<{

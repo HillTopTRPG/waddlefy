@@ -18,6 +18,7 @@
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
           :text="sessionMemo?.text || ''"
+          hint="全員で閲覧・編集できます"
           @update="v => updateSessionMemo(v)"
         />
       </v-window-item>
@@ -29,6 +30,7 @@
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
           :text="privateMemo?.text || ''"
+          hint="あなた専用のメモです"
           @update="v => updatePrivateMemo(v)"
         />
       </v-window-item>
