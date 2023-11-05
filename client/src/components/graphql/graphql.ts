@@ -444,7 +444,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて更新される
   }
 
-  async function updateCharacter(characterId: string, playerId: string, data: ShinobiGami) {
+  async function updateShinobigamiCharacter(characterId: string, playerId: string, data: ShinobiGami) {
     if (!appSyncClient) return
     operation = 'mutation updateSessionData'
     const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
@@ -462,7 +462,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて更新される
   }
 
-  async function updateCharacterSessionMemo(sessionMemoId: string, characterId: string, text: string) {
+  async function updateShinobigamiCharacterSessionMemo(sessionMemoId: string, characterId: string, text: string) {
     if (!appSyncClient) return
     operation = 'mutation updateSessionData'
     const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
@@ -480,7 +480,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて更新される
   }
 
-  async function updateCharacterPrivateMemo(privateMemoId: string, characterId: string, text: string) {
+  async function updateShinobigamiCharacterPrivateMemo(privateMemoId: string, characterId: string, text: string) {
     if (!appSyncClient) return
     operation = 'mutation updateSessionData'
     const isOwnerControl = Boolean(state.user?.token)
@@ -813,7 +813,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addCharacter(dataObj: ShinobiGami): Promise<void> {
+  async function addShinobigamiCharacter(dataObj: ShinobiGami): Promise<void> {
     if (!appSyncClient) return
 
     const sessionId = state.session?.id || ''
@@ -832,7 +832,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addCharacterSessionMemo(characterId: string, text: string): Promise<void> {
+  async function addShinobigamiCharacterSessionMemo(characterId: string, text: string): Promise<void> {
     if (!appSyncClient) return
 
     const sessionId = state.session?.id || ''
@@ -851,7 +851,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
+  async function addShinobigamiCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
     if (!appSyncClient) return
 
     const sessionId = state.session?.id || ''
@@ -1210,9 +1210,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     changeDashboard,
     directDashboardAccess,
     addPlayerByUser,
-    addCharacter,
-    addCharacterSessionMemo,
-    addCharacterPrivateMemo,
     generatePlayerResetCode,
     updateUserName,
     updateUserIcon,
@@ -1220,16 +1217,19 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateDashboardName,
     updateDashboardLayout,
     updateDashboardOption,
-    updateCharacter,
-    updateCharacterSessionMemo,
-    updateCharacterPrivateMemo,
     updatePlayerName,
     updatePlayerIcon,
     deleteSession,
     deleteDashboard,
     deletePlayer,
     addNotification,
-    closeNotification
+    closeNotification,
+    addShinobigamiCharacter,
+    addShinobigamiCharacterSessionMemo,
+    addShinobigamiCharacterPrivateMemo,
+    updateShinobigamiCharacter,
+    updateShinobigamiCharacterSessionMemo,
+    updateShinobigamiCharacterPrivateMemo
   }
 }
 

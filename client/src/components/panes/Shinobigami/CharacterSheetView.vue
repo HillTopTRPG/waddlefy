@@ -154,7 +154,7 @@ async function updateInfo(info: SaikoroFictionTokugi) {
   if (!graphQlStore) return
   const characterSheet = clone(props.characterSheet)!
   characterSheet.skill = info
-  await graphQlStore.updateCharacter(props.characterId, props.playerId, characterSheet)
+  await graphQlStore.updateShinobigamiCharacter(props.characterId, props.playerId, characterSheet)
 }
 </script>
 

@@ -29,8 +29,7 @@
         </v-menu>
       </v-defaults-provider>
     </template>
-    <template v-slot:layout>
-    </template>
+    <template v-slot:layout></template>
     <template v-slot:default>
       <character-sheet-view
         v-for="cw in characterWraps"

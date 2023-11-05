@@ -91,13 +91,13 @@ async function callAddCharacter() {
   const helper = new ShinobigamiHelper(addUrl.value, '')
   if (helper.isThis()) {
     const { data } = await helper.getData()
-    await graphQlStore?.addCharacter(data)
+    await graphQlStore?.addShinobigamiCharacter(data)
   }
 }
 
 async function updateCharacterPlayer(characterId: string, playerId: string) {
   console.log(characterId, playerId)
-  await graphQlStore?.updateCharacter(
+  await graphQlStore?.updateShinobigamiCharacter(
     characterId,
     playerId,
     characterWraps.value.find(cw => cw.id === characterId)?.character

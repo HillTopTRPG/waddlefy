@@ -94,17 +94,17 @@ const sessionMemo = computed(
 
 async function updateSessionMemo(text: string) {
   if (sessionMemo.value) {
-    await graphQlStore?.updateCharacterSessionMemo(sessionMemo.value.id, props.characterId, text)
+    await graphQlStore?.updateShinobigamiCharacterSessionMemo(sessionMemo.value.id, props.characterId, text)
   } else {
-    await graphQlStore?.addCharacterSessionMemo(props.characterId, text)
+    await graphQlStore?.addShinobigamiCharacterSessionMemo(props.characterId, text)
   }
 }
 
 async function updatePrivateMemo(text: string) {
   if (privateMemo.value) {
-    await graphQlStore?.updateCharacterPrivateMemo(privateMemo.value.id, props.characterId, text)
+    await graphQlStore?.updateShinobigamiCharacterPrivateMemo(privateMemo.value.id, props.characterId, text)
   } else {
-    await graphQlStore?.addCharacterPrivateMemo(props.characterId, text)
+    await graphQlStore?.addShinobigamiCharacterPrivateMemo(props.characterId, text)
   }
 }
 
