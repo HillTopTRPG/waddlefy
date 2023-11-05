@@ -51,9 +51,7 @@ import { inject, ref, computed, watch } from 'vue'
 import PlayMainNavigationDrawer from '@/components/PlayMainNavigationDrawer.vue'
 import SessionView from '@/components/view/SessionView.vue'
 
-import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import { getDiff } from '@/components/panes/Shinobigami/shinobigami'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // noinspection TypeScriptValidateTypes
@@ -104,63 +102,5 @@ watch(
     history.replaceState(null, '', pathName)
   },
   { immediate: true }
-)
-
-function getCharacterWraps(): CharacterWrap[] {
-  return graphQlStore.state.sessionDataList
-    .filter(sd => sd.type === 'character' && sd.data?.character)
-    .map(sd => sd.data as CharacterWrap)
-}
-
-let oldCharacterWraps: CharacterWrap[] = clone(getCharacterWraps())
-
-const characterWraps = computed<CharacterWrap[]>(() => {
-  if (!graphQlStore) return []
-  return getCharacterWraps()
-})
-
-watch(
-  characterWraps,
-  vn => {
-    if (vn.length === oldCharacterWraps.length) {
-      vn.forEach(vne => {
-        const one = oldCharacterWraps.find(old => vne.id === old.id)
-        const o = one?.character
-        if (!o || JSON.stringify(vne) === JSON.stringify(one)) return
-        const diffs = getDiff(one, vne, graphQlStore?.state.players)
-        console.log(JSON.stringify(diffs, null, 2))
-        if (diffs.length === 1) {
-          const diff = diffs[0]
-          let message: string
-          const deleteMap = {
-            'skill.damagedColList': `${o.characterName}が${diff.before}を回復しました`,
-            'skill.learnedList': `${o.characterName}の${diff.before}が未習得になりました`,
-            'skill.outRow': `${o.characterName}の特技表の上下が繋がらなくなりました`,
-            other: `${o.characterName}が${diff.before}を失いました`
-          }
-          const addMap = {
-            'skill.damagedColList': `${o.characterName}が${diff.after}にダメージを受けました`,
-            'skill.learnedList': `${o.characterName}が${diff.after}を習得しました`,
-            'skill.outRow': `${o.characterName}の特技表の上下が繋がりました`,
-            other: `${o.characterName}が${diff.after}を得ました`
-          }
-          if (diff.op === 'delete') {
-            message = deleteMap[diff.path] || deleteMap['other']
-          } else if (diff.op === 'add') {
-            message = addMap[diff.path] || addMap['other']
-          } else {
-            if (diff.path === 'player') {
-              message = `${o.characterName}のプレイヤー変更: ${diff.before} → ${diff.after}`
-            } else {
-              message = `${o.characterName}の${diff.before}が${diff.after}に変更されました`
-            }
-          }
-          graphQlStore?.addNotification('success', message)
-        }
-      })
-    }
-    oldCharacterWraps = clone(vn)
-  },
-  { immediate: false }
 )
 </script>

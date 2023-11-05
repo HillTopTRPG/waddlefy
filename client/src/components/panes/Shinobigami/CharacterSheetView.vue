@@ -97,7 +97,7 @@
         :select-skill="selectSkill"
         @update:select-skill="v => emits('update:select-skill', v)"
         v-model:editing="tokugiTableEditing"
-        :info="characterSheet.skill"
+        :info="computedSkills"
         @update:info="v => updateInfo(v)"
         :editable="true"
       />
@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
@@ -131,6 +131,8 @@ const props = defineProps<{
   tokugiView: boolean
   textRows: number
 }>()
+
+const computedSkills = computed(() => clone(props.characterSheet.skill))
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void

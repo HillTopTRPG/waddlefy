@@ -20,9 +20,9 @@ import {
   SessionData,
   DashboardOption
 } from '@/components/graphql/schema'
-import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
+import { getCharacterDiffMessages, ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import { uuid } from 'vue-uuid'
-import { clone } from 'lodash'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
 const DEFAULT_URL = 'https://z46ue3pn4fc6pesko32rxh6w6a.appsync-api.ap-northeast-1.amazonaws.com/graphql'
@@ -1074,10 +1074,17 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
           if (state.session && state.session.id === sessionId) {
             const idx = state.sessionDataList.findIndex(sd => sd.id === data.id)
             if (idx >= 0) {
-              const raw = JSON.parse(data.data)
+              const old = clone(state.sessionDataList[idx].data)
               state.sessionDataList[idx].data = {
                 id: data.id,
-                ...raw
+                ...JSON.parse(data.data)
+              }
+              const next = state.sessionDataList[idx].data
+              if (state.sessionDataList[idx].type === 'character') {
+                const characterName = old.character.characterName
+                getCharacterDiffMessages(old, next, state.players, characterName).forEach(msg =>
+                  addNotification('success', msg)
+                )
               }
             }
           }
