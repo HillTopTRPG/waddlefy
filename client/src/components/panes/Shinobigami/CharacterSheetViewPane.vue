@@ -22,36 +22,14 @@
             <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
             <v-checkbox-btn label="特技表" v-model="viewTokugi" />
             <v-divider class="my-1 ml-2" />
+            <v-checkbox-btn label="テキスト" v-model="viewText" />
             <v-label class="text-body-2 ml-2">テキスト行数</v-label>
             <v-slider density="compact" class="ml-3" v-model="textRows" :min="2" :step="1" :max="20" />
           </div>
         </v-menu>
       </v-defaults-provider>
-      <v-btn
-        size="x-small"
-        variant="text"
-        class="bg-transparent"
-        icon="mdi-menu"
-        @click="navigationDrawer = !navigationDrawer"
-      />
     </template>
     <template v-slot:layout>
-      <v-navigation-drawer
-        width="200"
-        class="mt-8"
-        :scrim="false"
-        elevation="0"
-        border
-        location="right"
-        style="border-top: none; z-index: 10000000"
-        v-model="navigationDrawer"
-      >
-        <v-list>
-          <template v-for="cw in characterWraps" :key="cw.id">
-            <v-list-item>{{ cw.character.characterName }}</v-list-item>
-          </template>
-        </v-list>
-      </v-navigation-drawer>
     </template>
     <template v-slot:default>
       <character-sheet-view
@@ -62,6 +40,7 @@
         :character-sheet="cw.character"
         :ninpou-view="viewNinpou"
         :tokugi-view="viewTokugi"
+        :text-view="viewText"
         :text-rows="textRows"
         v-model:select-skill="selectSkill"
       />
@@ -112,6 +91,7 @@ watch(navigationDrawer, v => {
 
 const viewNinpou = ref(true)
 const viewTokugi = ref(true)
+const viewText = ref(true)
 const textRows = ref(10)
 
 function getCharacterWraps(): CharacterWrap[] {

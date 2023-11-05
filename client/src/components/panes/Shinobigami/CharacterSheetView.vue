@@ -102,7 +102,7 @@
         :editable="true"
       />
     </v-sheet>
-    <v-sheet class="overflow-auto mt-2 mr-3 mb-3">
+    <v-sheet class="overflow-auto mt-2 mr-3 mb-3" v-if="textView">
       <character-sheet-tab-view :character-id="characterId" :text-rows="textRows" />
     </v-sheet>
   </v-sheet>
@@ -129,6 +129,7 @@ const props = defineProps<{
   selectSkill: string
   ninpouView: boolean
   tokugiView: boolean
+  textView: boolean
   textRows: number
 }>()
 
