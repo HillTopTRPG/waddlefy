@@ -508,7 +508,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     )
   }
 
-  async function updateDashboardName(name: string) {
+  async function updateDashboardHelper(name?: string, layout?: Layout, option?: DashboardOption) {
     if (!appSyncClient) return
     if (!state.user?.token) return
     operation = 'mutation updateDashboard'
@@ -517,49 +517,25 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       variables: {
         sessionId: state.session?.id || '',
         dashboardId: state.dashboard?.id || '',
-        name,
-        layout: JSON.stringify(state.dashboard?.layout || {}),
-        option: JSON.stringify(state.dashboard?.option || {})
+        name: name || state.dashboard?.name || '',
+        layout: JSON.stringify(layout || state.dashboard?.layout || {}),
+        option: JSON.stringify(option || state.dashboard?.option || {})
       }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
+  }
+
+  async function updateDashboardName(name: string) {
+    await updateDashboardHelper(name, null, null)
   }
 
   async function updateDashboardLayout(layout: Layout) {
-    if (!appSyncClient) return
-    if (!state.user?.token) return
-    operation = 'mutation updateDashboard'
-    const result = await appSyncClient.mutate<MutationResult.UpdateDashboard>({
-      mutation: Mutations.updateDashboard,
-      variables: {
-        sessionId: state.session?.id || '',
-        dashboardId: state.dashboard?.id || '',
-        name: state.dashboard?.name || '',
-        layout: JSON.stringify(layout),
-        option: JSON.stringify(state.dashboard?.option || {})
-      }
-    })
-    console.log(JSON.stringify(result.data, null, 2))
-    // subscriptionにて更新される
+    await updateDashboardHelper(null, layout, null)
   }
 
   async function updateDashboardOption(option: DashboardOption) {
-    if (!appSyncClient) return
-    if (!state.user?.token) return
-    operation = 'mutation updateDashboard'
-    const result = await appSyncClient.mutate<MutationResult.UpdateDashboard>({
-      mutation: Mutations.updateDashboard,
-      variables: {
-        sessionId: state.session?.id || '',
-        dashboardId: state.dashboard?.id || '',
-        name: state.dashboard?.name || '',
-        layout: JSON.stringify(state.dashboard?.layout || {}),
-        option: JSON.stringify(option)
-      }
-    })
-    console.log(JSON.stringify(result.data, null, 2))
-    // subscriptionにて更新される
+    await updateDashboardHelper(null, null, option)
   }
 
   async function updatePlayerName(playerName: string) {
@@ -896,6 +872,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnAddPlayer>) {
+        console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onAddPlayer
         if (data && state.session?.id === sessionId) {
           state.players.push(data)

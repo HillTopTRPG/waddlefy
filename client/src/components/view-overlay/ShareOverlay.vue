@@ -110,13 +110,13 @@ function playerStatusMessage(player: Player) {
   let result
   switch (player.status) {
     case 'init':
-      result = 'パスワードを設定しつつログインする状態'
+      result = '初回ログイン状態'
       break
     case 'reset':
       result = `リセットコード: ${player.resetCode || ''}`
       break
     default:
-      result = 'パスワード認証してログインする状態'
+      result = 'パスワード設定済'
   }
   return result
 }
