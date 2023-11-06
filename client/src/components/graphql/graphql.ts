@@ -444,61 +444,68 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて更新される
   }
 
-  async function updateShinobigamiCharacter(characterId: string, playerId: string, data: ShinobiGami) {
+  async function updateSessionDataHelper(id: string, data: string) {
     if (!appSyncClient) return
     operation = 'mutation updateSessionData'
     const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
       mutation: Mutations.updateSessionData,
       variables: {
-        id: characterId,
+        id,
         sessionId: state.session?.id || '',
-        data: JSON.stringify({
-          player: playerId,
-          character: data
-        })
+        data
       }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
+  }
+
+  async function updateShinobigamiCharacter(characterId: string, playerId: string, data: ShinobiGami) {
+    await updateSessionDataHelper(
+      characterId,
+      JSON.stringify({
+        player: playerId,
+        character: data
+      })
+    )
   }
 
   async function updateShinobigamiCharacterSessionMemo(sessionMemoId: string, characterId: string, text: string) {
-    if (!appSyncClient) return
-    operation = 'mutation updateSessionData'
-    const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
-      mutation: Mutations.updateSessionData,
-      variables: {
-        id: sessionMemoId,
-        sessionId: state.session?.id || '',
-        data: JSON.stringify({
-          characterId,
-          text
-        })
-      }
-    })
-    console.log(JSON.stringify(result.data, null, 2))
-    // subscriptionにて更新される
+    await updateSessionDataHelper(
+      sessionMemoId,
+      JSON.stringify({
+        characterId,
+        text
+      })
+    )
   }
 
   async function updateShinobigamiCharacterPrivateMemo(privateMemoId: string, characterId: string, text: string) {
-    if (!appSyncClient) return
-    operation = 'mutation updateSessionData'
     const isOwnerControl = Boolean(state.user?.token)
-    const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
-      mutation: Mutations.updateSessionData,
-      variables: {
-        id: privateMemoId,
-        sessionId: state.session?.id || '',
-        data: JSON.stringify({
-          ownerType: isOwnerControl ? 'user' : 'player',
-          ownerId: isOwnerControl ? null : state.player?.id,
-          characterId,
-          text
-        })
-      }
-    })
-    console.log(JSON.stringify(result.data, null, 2))
-    // subscriptionにて更新される
+    await updateSessionDataHelper(
+      privateMemoId,
+      JSON.stringify({
+        ownerType: isOwnerControl ? 'user' : 'player',
+        ownerId: isOwnerControl ? null : state.player?.id,
+        characterId,
+        text
+      })
+    )
+  }
+
+  async function updateShinobigamiCharacterSecret(
+    secretId: string,
+    characterId: string,
+    text: string,
+    shareCharacterIdList: string[]
+  ) {
+    await updateSessionDataHelper(
+      secretId,
+      JSON.stringify({
+        characterId,
+        text,
+        shareCharacterIdList
+      })
+    )
   }
 
   async function updateDashboardName(name: string) {
@@ -813,63 +820,70 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
+  async function addSessionDataHelper(type: string, data: string) {
+    const sessionId = state.session?.id || ''
+
+    operation = 'mutation addSessionData'
+    await appSyncClient.mutate<MutationResult.AddSessionData>({
+      mutation: Mutations.addSessionData,
+      variables: { sessionId, type, data }
+    })
+  }
+
   async function addShinobigamiCharacter(dataObj: ShinobiGami): Promise<void> {
     if (!appSyncClient) return
 
-    const sessionId = state.session?.id || ''
-    const type = 'character'
     const characterWrap: Omit<CharacterWrap, 'id'> = {
       player: '',
       character: dataObj
     }
     const data = JSON.stringify(characterWrap)
 
-    operation = 'mutation addSessionData'
-    await appSyncClient.mutate<MutationResult.AddSessionData>({
-      mutation: Mutations.addSessionData,
-      variables: { sessionId, type, data }
-    })
+    await addSessionDataHelper('character', data)
     // Subscriptionによってstateに登録される
   }
 
   async function addShinobigamiCharacterSessionMemo(characterId: string, text: string): Promise<void> {
     if (!appSyncClient) return
 
-    const sessionId = state.session?.id || ''
-    const type = 'character-session-memo'
-    const wrapData = {
+    const data = JSON.stringify({
       characterId,
-      text: text
-    }
-    const data = JSON.stringify(wrapData)
-
-    operation = 'mutation addSessionData'
-    await appSyncClient.mutate<MutationResult.AddSessionData>({
-      mutation: Mutations.addSessionData,
-      variables: { sessionId, type, data }
+      text
     })
+
+    await addSessionDataHelper('character-session-memo', data)
     // Subscriptionによってstateに登録される
   }
 
   async function addShinobigamiCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
     if (!appSyncClient) return
 
-    const sessionId = state.session?.id || ''
     const isOwnerControl = Boolean(state.user?.token)
-    const type = 'character-private-memo'
-    const wrapData = {
+    const data = JSON.stringify({
       ownerType: isOwnerControl ? 'user' : 'player',
       ownerId: isOwnerControl ? null : state.player?.id,
       characterId,
       text
-    }
-    const data = JSON.stringify(wrapData)
-
-    operation = 'mutation addSessionData'
-    await appSyncClient.mutate<MutationResult.AddSessionData>({
-      mutation: Mutations.addSessionData,
-      variables: { sessionId, type, data }
     })
+
+    await addSessionDataHelper('character-private-memo', data)
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addShinobigamiCharacterSecret(
+    characterId: string,
+    text: string,
+    shareCharacterIdList: string[]
+  ): Promise<void> {
+    if (!appSyncClient) return
+
+    const data = JSON.stringify({
+      characterId,
+      text,
+      shareCharacterIdList
+    })
+
+    await addSessionDataHelper('character-secret', data)
     // Subscriptionによってstateに登録される
   }
 
@@ -1227,9 +1241,11 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiCharacter,
     addShinobigamiCharacterSessionMemo,
     addShinobigamiCharacterPrivateMemo,
+    addShinobigamiCharacterSecret,
     updateShinobigamiCharacter,
     updateShinobigamiCharacterSessionMemo,
-    updateShinobigamiCharacterPrivateMemo
+    updateShinobigamiCharacterPrivateMemo,
+    updateShinobigamiCharacterSecret
   }
 }
 

@@ -4,7 +4,7 @@
       <v-container class="pr-0">
         <v-defaults-provider :defaults="{ VCol: { class: 'pa-0' } }">
           <v-row>
-            <v-col>
+            <v-col class="mr-2">
               <v-menu :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
                   <v-btn variant="text" v-bind="props" class="text-h5 px-1">
@@ -65,7 +65,7 @@
                 :href="characterSheet.url"
               />
               <span class="text-body-2"
-                >({{ graphQlStore?.state.players.find(p => p.id === playerId)?.name || 'PL未割当' }})</span
+                >({{ graphQlStore?.state.players.find(p => p.id === playerId)?.name || 'PL割当なし' }})</span
               >
             </v-col>
           </v-row>

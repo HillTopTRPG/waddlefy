@@ -45,7 +45,7 @@ import { computed, inject, ref, watch } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-const players = computed(() => [{ id: '', name: 'なし' }, ...graphQlStore.state.players] || [])
+const players = computed(() => [{ id: '', name: '割当なし' }, ...graphQlStore.state.players] || [])
 const playerName = computed(() => players.value.find(p => p.id === props.player)?.name || '')
 
 const dialog = ref(false)

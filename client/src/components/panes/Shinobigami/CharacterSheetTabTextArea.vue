@@ -5,12 +5,12 @@
     :no-resize="true"
     style="width: 20rem"
     :flat="true"
-    variant="solo"
-    :model-value="text"
+    :variant="variant || 'solo'"
+    :model-value="text || ' '"
     @click="dialog = editable"
   >
     <template v-slot:label>
-      <v-icon :icon="icon" class="mr-1" />
+      <v-icon v-if="icon" :icon="icon" class="mr-1" />
       {{ label }}
     </template>
     <template v-slot:details>
@@ -47,17 +47,17 @@
               v-model="editText"
             >
               <template v-slot:label>
-                <v-icon :icon="icon" class="mr-1" />
+                <v-icon v-if="icon" :icon="icon" class="mr-1" />
                 {{ label }}
               </template>
             </v-textarea>
           </v-card-item>
-          <v-divider class="mt-0" />
-          <v-card-actions class="justify-end px-5">
-            <v-btn color="primary" class="w-50" style="box-sizing: border-box" variant="flat" @click="onSave()"
+          <v-divider />
+          <v-card-actions class="px-2">
+            <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()"
               >保存</v-btn
             >
-            <v-btn color="secondary" class="w-50" style="box-sizing: border-box" variant="flat" @click="dialog = false"
+            <v-btn color="secondary" class="flex-0-1-100" variant="flat" @click="dialog = false"
               >キャンセル</v-btn
             >
           </v-card-actions>
@@ -78,6 +78,7 @@ const props = defineProps<{
   textRows: number
   editable: boolean
   hint?: string
+  variant?: string
 }>()
 
 const emits = defineEmits<{

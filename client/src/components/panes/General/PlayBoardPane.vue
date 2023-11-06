@@ -21,23 +21,6 @@ export class Location {
     return `{x: ${this.x}, y: ${this.y}}`
   }
 }
-</script>
-
-<script setup lang="ts">
-import { computed, inject, onMounted, ref, watch } from 'vue'
-import { AddIn } from '@/components/panes/General/add-in'
-import { InjectionKeySymbol as roomCollectionsKey, StoreType as RoomCollectionStore } from '@/data/RoomCollections'
-import axios from 'axios'
-import { merge } from 'lodash'
-
-const store = inject(roomCollectionsKey) as RoomCollectionStore
-const addIn = new AddIn()
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const props = defineProps<{
-  layout: Layout
-  rootLayout: Layout
-}>()
 
 export type MoveInfo = {
   mode: string
@@ -53,6 +36,22 @@ export type MoveInfo = {
   cursor: string
   toolType: 'grid' | 'line' | 'shape'
 }
+</script>
+
+<script setup lang="ts">
+import { computed, inject, onMounted, ref, watch } from 'vue'
+import { AddIn } from '@/components/panes/General/add-in'
+import { merge } from 'lodash'
+import { Layout } from '@/components/panes'
+
+const store = inject(roomCollectionsKey) as RoomCollectionStore
+const addIn = new AddIn()
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+const props = defineProps<{
+  layout: Layout
+  rootLayout: Layout
+}>()
 
 const initMoveInfo: MoveInfo = {
   mode: '',
@@ -68,6 +67,8 @@ const initMoveInfo: MoveInfo = {
   cursor: 'default',
   toolType: 'grid'
 }
+// import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+// const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const currentBoardUuid = ref<string>(store.playBoards.value[0]?.uuid || '')
 const gridRow = computed(() => store.playBoards.value.find(pb => pb.uuid === currentBoardUuid.value)?.height || 0)

@@ -4,10 +4,18 @@
       <v-tab value="session-memo" size="small" variant="text" density="comfortable" prepend-icon="mdi-antenna">
         共有メモ
       </v-tab>
-      <v-tab value="private-memo" size="small" variant="text" density="comfortable" prepend-icon="mdi-account">
+      <v-tab value="private-memo" size="small" variant="text" density="comfortable" prepend-icon="mdi-account-outline">
         個人メモ
       </v-tab>
-      <v-tab value="secret" variant="text" size="small" density="comfortable" prepend-icon="mdi-lock">秘密</v-tab>
+      <v-tab
+        value="secret"
+        variant="text"
+        size="small"
+        density="comfortable"
+        :disabled="!secretOpen"
+        :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
+        >秘密</v-tab
+      >
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item value="session-memo">
@@ -25,7 +33,7 @@
       <v-window-item value="private-memo">
         <character-sheet-tab-text-area
           label="個人メモ"
-          icon="mdi-account"
+          icon="mdi-account-outline"
           :editable="true"
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
@@ -37,18 +45,11 @@
       <v-window-item value="secret">
         <character-sheet-tab-text-area
           label="秘密"
-          icon="mdi-lock"
+          :icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
           :editable="false"
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
-          :text="
-            `${characterInfo?.character.characterName}の秘密\n` +
-            'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-            'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-            'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-            'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.\n' +
-            'The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through.'
-          "
+          :text="secretText"
         />
       </v-window-item>
     </v-window>
@@ -60,6 +61,7 @@ import { computed, ComputedRef, inject, ref } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CharacterSheetTabTextArea from '@/components/panes/Shinobigami/CharacterSheetTabTextArea.vue'
+import { CharacterSecret } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -114,6 +116,28 @@ const characterInfo: ComputedRef<CharacterWrap> = computed(
       sd => sd.type === 'character' && sd.data?.character && sd.id === props.characterId
     )?.data
 )
+
+const secretOpen = computed(() => {
+  const secret: CharacterSecret | undefined = graphQlStore?.state.sessionDataList.find(
+    sd => sd.type === 'character-secret' && sd.data.characterId === props.characterId
+  )?.data
+  if (!secret) return ''
+  if (isOwnerControl.value) return secret.text
+
+  return secret.shareCharacterIdList
+    .map(sci => graphQlStore?.state.sessionDataList.find(sd => sd.type === 'character' && sd.id === sci)?.data?.player)
+    .some(p => p === graphQlStore?.state.player?.id)
+})
+
+const secretText = computed(() => {
+  const secret: CharacterSecret | undefined = graphQlStore?.state.sessionDataList.find(
+    sd => sd.type === 'character-secret' && sd.data.characterId === props.characterId
+  )?.data
+  if (!secret) return ''
+  if (isOwnerControl.value) return secret.text
+
+  return secretOpen.value ? secret.text : '閲覧不可'
+})
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

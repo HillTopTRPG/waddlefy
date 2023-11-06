@@ -30,7 +30,7 @@
         </v-text-field>
       </v-sheet>
       <v-sheet class="w-100 d-flex flex-wrap">
-        <v-card class="ma-3 w-100" variant="tonal" v-for="cw in characterWraps" :key="cw.id">
+        <v-card class="ma-3 w-100" variant="outlined" v-for="cw in characterWraps" :key="cw.id">
           <v-card-title>
             <span>{{ cw.character.characterName }}</span>
             <change-player-dialog
@@ -39,6 +39,48 @@
               @submit="v => updateCharacterPlayer(cw.id, v)"
             />
           </v-card-title>
+          <v-card-item class="pt-0">
+            <v-card variant="tonal">
+              <template v-slot:title>
+                <v-icon icon="mdi-lock" />
+                秘密
+              </template>
+              <v-sheet class="flex-row d-flex pt-2">
+                <character-sheet-tab-text-area
+                  label="秘密の内容"
+                  icon=""
+                  :editable="true"
+                  :text-rows="10"
+                  :character-name="cw.character.characterName"
+                  :text="
+                    graphQlStore?.state.sessionDataList.find(
+                      sd => sd.type === 'character-secret' && sd.data.characterId === cw.id
+                    )?.data.text || ''
+                  "
+                  hint=""
+                  @update="v => updateSecretText(cw.id, v)"
+                  variant="outlined"
+                  class="mx-4 flex-grow-0"
+                />
+                <v-list density="compact" class="pa-0">
+                  <v-list-subheader>この秘密を閲覧できるキャラクター</v-list-subheader>
+                  <v-list-item v-for="cwc in characterWraps" :key="cwc.id">
+                    <v-checkbox-btn
+                      :model-value="
+                        graphQlStore?.state.sessionDataList
+                          .find(sd => sd.type === 'character-secret' && sd.data.characterId === cw.id)
+                          ?.data.shareCharacterIdList.some(id => id === cwc.id)
+                      "
+                      @change="v => updateSecretShare(cw.id, cwc.id, v.target.checked)"
+                      :label="`${cwc.character.characterName}(${
+                        graphQlStore?.state.players.find(p => p.id === cwc.player)?.name || 'PL割当なし'
+                      })`"
+                    />
+                  </v-list-item>
+                </v-list>
+              </v-sheet>
+            </v-card>
+          </v-card-item>
         </v-card>
       </v-sheet>
     </template>
@@ -64,6 +106,7 @@ import { ShinobigamiHelper } from '@/components/panes/Shinobigami/shinobigami'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ChangePlayerDialog from '@/components/panes/Shinobigami/ChangePlayerDialog.vue'
+import CharacterSheetTabTextArea from '@/components/panes/Shinobigami/CharacterSheetTabTextArea.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const characterWraps = computed<CharacterWrap[]>(() => {
@@ -102,6 +145,53 @@ async function updateCharacterPlayer(characterId: string, playerId: string) {
     playerId,
     characterWraps.value.find(cw => cw.id === characterId)?.character
   )
+}
+
+async function updateSecretText(characterId: string, text: string) {
+  if (!graphQlStore) return
+  const owner = graphQlStore.state.sessionDataList.find(
+    sd => sd.type === 'character-secret' && sd.data.characterId === characterId
+  )
+  if (owner) {
+    owner.data.text = text
+    await graphQlStore?.updateShinobigamiCharacterSecret(owner.id, characterId, text, owner.data.shareCharacterIdList)
+  } else {
+    await graphQlStore?.addShinobigamiCharacterSecret(characterId, text, [])
+  }
+}
+
+async function updateSecretShare(characterId: string, targetId: string, share: boolean) {
+  if (!graphQlStore) return
+  console.log(characterId, targetId, share)
+  const owner = graphQlStore.state.sessionDataList.find(
+    sd => sd.type === 'character-secret' && sd.data.characterId === characterId
+  )
+  if (owner) {
+    const idx = owner.data.shareCharacterIdList.findIndex(sci => sci === targetId)
+    if (idx < 0 && share) {
+      owner.data.shareCharacterIdList.push(targetId)
+      await graphQlStore?.updateShinobigamiCharacterSecret(
+        owner.id,
+        characterId,
+        owner.data.text,
+        owner.data.shareCharacterIdList
+      )
+    } else if (idx >= 0 && !share) {
+      owner.data.shareCharacterIdList.splice(idx, 1)
+      await graphQlStore?.updateShinobigamiCharacterSecret(
+        owner.id,
+        characterId,
+        owner.data.text,
+        owner.data.shareCharacterIdList
+      )
+    }
+  } else {
+    const shareCharacterIdList = []
+    if (share) {
+      shareCharacterIdList.push(targetId)
+    }
+    await graphQlStore?.addShinobigamiCharacterSecret(characterId, '', shareCharacterIdList)
+  }
 }
 </script>
 

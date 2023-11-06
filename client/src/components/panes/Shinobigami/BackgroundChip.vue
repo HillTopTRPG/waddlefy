@@ -1,3 +1,4 @@
+kground
 <template>
   <v-menu open-on-click location="bottom center" :z-index="10000000">
     <template v-slot:activator="{ props }">
@@ -9,7 +10,7 @@
         :elevation="3"
         variant="flat"
         size="small"
-        class="mr-2"
+        class="mr-2 mb-2"
         v-bind="props"
         >{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</v-chip
       >

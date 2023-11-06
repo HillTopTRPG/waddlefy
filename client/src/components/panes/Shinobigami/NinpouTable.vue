@@ -18,7 +18,7 @@
               {{ arts.name }}
             </td>
           </template>
-          <v-container class="arts-detail px-2 pt-2 pb-1">
+          <v-container class="arts-detail px-2 pt-2 pb-1 border">
             <v-defaults-provider
               :defaults="{
                 VCol: { class: 'py-0' },

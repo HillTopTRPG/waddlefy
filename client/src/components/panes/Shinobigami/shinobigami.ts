@@ -67,6 +67,12 @@ export type ShinobiGami = {
   skill: SaikoroFictionTokugi // 特技
 }
 
+export type CharacterSecret = {
+  characterId: string
+  text: string
+  shareCharacterIdList: string[]
+}
+
 export type DiffType = {
   op: 'replace' | 'add' | 'delete'
   path: string
