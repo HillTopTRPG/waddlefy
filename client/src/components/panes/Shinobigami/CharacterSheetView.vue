@@ -69,8 +69,8 @@
               >
             </v-col>
           </v-row>
-          <v-row class="pb-2">
-            <v-col>
+          <v-row v-if="backgroundView">
+            <v-col style="width: 1px; min-width: 250px;">
               <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
                 <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
               </template>
@@ -127,6 +127,7 @@ const props = defineProps<{
   playerId: string
   characterSheet: ShinobiGami
   selectSkill: string
+  backgroundView: boolean
   ninpouView: boolean
   tokugiView: boolean
   textView: boolean

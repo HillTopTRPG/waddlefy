@@ -19,6 +19,7 @@
             </v-btn>
           </template>
           <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
+            <v-checkbox-btn label="背景" v-model="viewBackground" />
             <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
             <v-checkbox-btn label="特技表" v-model="viewTokugi" />
             <v-divider class="my-1 ml-2" />
@@ -37,6 +38,7 @@
         :character-id="cw.id"
         :player-id="cw.player"
         :character-sheet="cw.character"
+        :background-view="viewBackground"
         :ninpou-view="viewNinpou"
         :tokugi-view="viewTokugi"
         :text-view="viewText"
@@ -88,6 +90,7 @@ watch(navigationDrawer, v => {
   if (v) selectSkill.value = ''
 })
 
+const viewBackground = ref(true)
 const viewNinpou = ref(true)
 const viewTokugi = ref(true)
 const viewText = ref(true)
