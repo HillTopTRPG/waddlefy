@@ -12,34 +12,48 @@
       <!-- 通知Snackbar START -->
       <v-sheet
         v-if="graphQlStore"
-        class="position-fixed d-flex flex-column bg-transparent"
-        style="right: 0; top: 34px; z-index: 10000000000"
-        :height="Math.max(graphQlStore.state.notifications.length * 60 - 10, 0)"
-        width="344"
+        class="position-fixed d-flex flex-column align-end bg-transparent"
+        style="right: 0; top: 74px; z-index: 1000"
       >
-        <template v-for="(notification, idx) in graphQlStore.state.notifications" :key="notification.id">
+        <v-defaults-provider
+          :defaults="{
+            VSnackbar: {
+              location: 'top right',
+              variant: 'flat',
+              transition: 'slide-x-reverse-transition',
+              timeout: -1,
+              contained: true,
+              class: 'notify-snackbar mx-0 mt-0 mb-1 position-relative',
+              style: 'cursor: pointer'
+            }
+          }"
+        >
           <v-snackbar
-            class="notify-snackbar"
-            variant="flat"
-            transition="slide-x-transition"
-            :timeout="3000"
-            :color="notification.type === 'success' ? 'green' : notification.type === 'warn' ? 'yellow' : 'red'"
-            content-class="border rounded-s-xl"
-            :contained="true"
-            :width="250"
-            :model-value="notification.view"
-            :style="`margin-bottom: ${idx * 60}px;`"
-            @update:model-value="graphQlStore.closeNotification(notification.id)"
-            @click="graphQlStore.closeNotification(notification.id)"
+            color="orange-lighten-3"
+            class="pa-0"
+            content-class="border rounded-xl position-static text-center pa-0"
+            @update:model-value="graphQlStore.closeNotificationAll()"
+            @click="graphQlStore.closeNotificationAll()"
+            min-width="1px"
+            min-height="30px"
+            :model-value="graphQlStore.state.notifications.filter(n => n.view).length > 1"
           >
-            <v-icon
-              :icon="`mdi-${
-                notification.type === 'success' ? 'check' : notification.type === 'warn' ? 'warn' : 'error'
-              }`"
-            />
-            {{ notification.text }}
+            <template v-slot:default> 通知を全て閉じる </template>
           </v-snackbar>
-        </template>
+          <template v-for="notification in graphQlStore.state.notifications" :key="notification.id">
+            <v-snackbar
+              :color="notification.color"
+              content-class="border rounded-0 rounded-s-xl position-static"
+              :width="250"
+              :model-value="notification.view"
+              @update:model-value="graphQlStore.closeNotification(notification.id)"
+              @click="graphQlStore.closeNotification(notification.id)"
+            >
+              <v-icon :icon="notification.icon" />
+              {{ notification.text }}
+            </v-snackbar>
+          </template>
+        </v-defaults-provider>
       </v-sheet>
       <!-- 通知Snackbar END -->
     </v-main>

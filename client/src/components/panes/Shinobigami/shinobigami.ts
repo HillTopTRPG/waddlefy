@@ -206,16 +206,48 @@ export function getCharacterDiffMessages(
 
   return diffs.map(diff => {
     const deleteMap = {
-      'skill.damagedColList': `${characterName}が${diff.before}を回復しました`,
-      'skill.learnedList': `${characterName}の${diff.before}が未習得になりました`,
-      'skill.outRow': `${characterName}の特技表の上下が繋がらなくなりました`,
-      other: `${characterName}が${diff.before}を失いました`
+      'skill.damagedColList': {
+        text: `${characterName}が${diff.before}を回復`,
+        icon: 'mdi-medical-bag',
+        color: 'green-lighten-4'
+      },
+      'skill.learnedList': {
+        text: `${characterName}の${diff.before}が未習得になりました`,
+        icon: 'mdi-head-question-outline',
+        color: 'blue-grey-lighten-4'
+      },
+      'skill.outRow': {
+        text: `${characterName}の特技表の上下が繋がらなくなりました`,
+        icon: 'mdi-check',
+        color: 'blue-grey-lighten-4'
+      },
+      other: {
+        text: `${characterName}が${diff.before}を失いました`,
+        icon: 'mdi-minus-box-outline',
+        color: 'blue-grey-lighten-4'
+      }
     }
     const addMap = {
-      'skill.damagedColList': `${characterName}が${diff.after}にダメージを受けました`,
-      'skill.learnedList': `${characterName}が${diff.after}を習得しました`,
-      'skill.outRow': `${characterName}の特技表の上下が繋がりました`,
-      other: `${characterName}が${diff.after}を得ました`
+      'skill.damagedColList': {
+        text: `${characterName}の${diff.after}にダメージ`,
+        icon: 'mdi-liquid-spot',
+        color: 'red-lighten-4'
+      },
+      'skill.learnedList': {
+        text: `${characterName}が${diff.after}を習得しました`,
+        icon: 'mdi-head-lightbulb-outline',
+        color: 'light-blue-lighten-4'
+      },
+      'skill.outRow': {
+        text: `${characterName}の特技表の上下が繋がりました`,
+        icon: 'mdi-check',
+        color: 'light-blue-lighten-4'
+      },
+      other: {
+        text: `${characterName}が${diff.after}を得ました`,
+        icon: 'mdi-plus-box-outline',
+        color: 'light-blue-lighten-4'
+      }
     }
     if (diff.op === 'delete') {
       return deleteMap[diff.path] || deleteMap['other']
@@ -223,9 +255,17 @@ export function getCharacterDiffMessages(
       return addMap[diff.path] || addMap['other']
     } else {
       if (diff.path === 'player') {
-        return `${characterName}のプレイヤー変更: ${diff.before} → ${diff.after}`
+        return {
+          text: `${characterName}のプレイヤー変更: ${diff.before} → ${diff.after}`,
+          icon: 'mdi-check',
+          color: 'white'
+        }
       }
-      return `${characterName}の${diff.before}が${diff.after}に変更されました`
+      return {
+        text: `${characterName}の${diff.before}が${diff.after}に変更されました`,
+        icon: 'mdi-check',
+        color: 'white'
+      }
     }
   })
 }

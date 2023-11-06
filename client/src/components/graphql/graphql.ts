@@ -252,7 +252,8 @@ export async function fetchGraphQlConnectionInfo() {
 export type Notification = {
   id: string
   view: boolean
-  type: 'success' | 'warn' | 'error'
+  color: string
+  icon: string
   text: string
 }
 
@@ -1074,15 +1075,15 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
               const dataType = state.sessionDataList[idx].type
               if (dataType === 'character') {
                 const characterName = old.character.characterName
-                getCharacterDiffMessages(old, next, state.players, characterName).forEach(msg =>
-                  addNotification('success', msg)
+                getCharacterDiffMessages(old, next, state.players, characterName).forEach(({ text, icon, color }) =>
+                  addNotification(text, icon, color)
                 )
               }
               if (dataType === 'character-session-memo') {
                 console.log(JSON.stringify(next, 0, 2))
                 const characterName = state.sessionDataList.find(c => c.id === next.characterId)?.data.character
                   .characterName
-                addNotification('success', `${characterName}の共有メモが更新されました`)
+                addNotification(`${characterName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
               }
             }
           }
@@ -1173,12 +1174,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function addNotification(type: Notification['type'], text: string) {
-    state.notifications.push({
+  function addNotification(text: string, icon: string, color: string) {
+    state.notifications.unshift({
       id: uuid.v4(),
       view: true,
-      type,
-      text
+      text,
+      icon,
+      color
     })
   }
 
@@ -1190,6 +1192,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       const idx = state.notifications.findIndex(n => n.id === id)
       if (idx < 0) return
       state.notifications.splice(idx, 1)
+    }, 300)
+  }
+
+  function closeNotificationAll() {
+    state.notifications.forEach(n => (n.view = false))
+    setTimeout(() => {
+      state.notifications.splice(0, state.notifications.length)
     }, 300)
   }
 
@@ -1215,6 +1224,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     deletePlayer,
     addNotification,
     closeNotification,
+    closeNotificationAll,
     addShinobigamiCharacter,
     addShinobigamiCharacterSessionMemo,
     addShinobigamiCharacterPrivateMemo,
