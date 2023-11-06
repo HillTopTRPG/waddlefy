@@ -11,7 +11,9 @@
         @keydown.enter.stop="$event.target.click()"
       >
         <template #prepend>
-          <v-icon size="small" class="mr-6" style="margin-left: 2px" v-if="icon">mdi-{{ icon }}</v-icon>
+          <div class="ml-1 mr-3" v-if="icon">
+            <v-icon size="small" style="margin-left: 2px">mdi-{{ icon }}</v-icon>
+          </div>
           <user-avatar v-if="iconToken" :token="iconToken || ''" class="mr-3" />
         </template>
         <v-list-item-title>{{ title }}</v-list-item-title>

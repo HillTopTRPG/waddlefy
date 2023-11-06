@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="特技表比較ツール">
+  <pane-frame title="特技比較ツール">
     <template v-slot:title-action>
       <v-defaults-provider
         :defaults="{
@@ -54,7 +54,7 @@ export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
   name: 'SpecialityTableDiffPane',
-  label: '特技表比較'
+  label: '特技比較'
 }
 </script>
 

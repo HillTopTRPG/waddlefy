@@ -54,12 +54,8 @@
           </v-card-item>
           <v-divider />
           <v-card-actions class="px-2">
-            <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()"
-              >保存</v-btn
-            >
-            <v-btn color="secondary" class="flex-0-1-100" variant="flat" @click="dialog = false"
-              >キャンセル</v-btn
-            >
+            <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()">保存</v-btn>
+            <v-btn color="secondary" class="flex-0-1-100" variant="flat" @click="dialog = false">キャンセル</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

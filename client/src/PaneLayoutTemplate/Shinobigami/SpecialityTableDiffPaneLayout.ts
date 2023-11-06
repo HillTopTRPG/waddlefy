@@ -10,7 +10,7 @@ const object: Layout = {
       type: 'normal',
       uuid: uuid.v4(),
       componentGroup: 'シノビガミ',
-      component: '特技表比較',
+      component: '特技比較',
       payload: null,
       panes: []
     }

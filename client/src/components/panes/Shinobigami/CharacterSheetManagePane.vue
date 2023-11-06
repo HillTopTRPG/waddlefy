@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="キャラクターシート管理">
+  <pane-frame title="キャラクターシート管理ツール">
     <template v-slot:title-action> </template>
     <template v-slot:layout> </template>
     <template v-slot:default>

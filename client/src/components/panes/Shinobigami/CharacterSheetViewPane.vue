@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="キャラクターシート表示">
+  <pane-frame title="キャラクターシート表示ツール">
     <template v-slot:title-action>
       <v-defaults-provider
         :defaults="{

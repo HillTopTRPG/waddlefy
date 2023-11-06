@@ -31,6 +31,7 @@
 
     <v-list :nav="true" density="compact" class="pa-0 pt-0 mb-1 overflow-y-auto" v-if="sessionType !== 'init'">
       <!-- 画面一覧 -->
+      <v-list-subheader class="pa-0 ma-0">画面</v-list-subheader>
       <template v-if="graphQlStore">
         <template v-for="dashboard in graphQlStore.state.dashboards" :key="dashboard.id">
           <user-nav-item
@@ -236,7 +237,7 @@
     <span
       class="mx-3 flex-grow-1"
       style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; box-sizing: border-box"
-      >{{ graphQlStore?.state.dashboard?.name || '' }}</span
+      >{{ graphQlStore?.state.dashboard?.name || '' }}画面</span
     >
     <v-defaults-provider
       :defaults="{

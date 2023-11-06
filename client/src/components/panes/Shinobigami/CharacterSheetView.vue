@@ -70,7 +70,7 @@
             </v-col>
           </v-row>
           <v-row v-if="backgroundView">
-            <v-col style="width: 1px; min-width: 250px;">
+            <v-col style="width: 1px; min-width: 250px">
               <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
                 <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
               </template>
