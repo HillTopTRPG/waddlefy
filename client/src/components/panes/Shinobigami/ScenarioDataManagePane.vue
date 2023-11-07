@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="ハンドアウト管理ツール">
+  <pane-frame title="シナリオデータ管理ツール">
     <template v-slot:title-action> </template>
     <template v-slot:layout> </template>
     <template v-slot:default>
@@ -27,10 +27,10 @@
         </v-card>
       </v-sheet>
       <v-sheet class="w-100 d-flex flex-row flex-wrap align-start">
-        <handout-card v-for="handout in handoutList" :key="handout.id" :data-id="handout.id" />
-        <handout-card v-for="enigma in enigmaList" :key="enigma.id" :data-id="enigma.id" />
-        <handout-card v-for="persona in personaList" :key="persona.id" :data-id="persona.id" />
-        <handout-card v-for="prize in prizeList" :key="prize.id" :data-id="prize.id" />
+        <scenario-data-card v-for="handout in handoutList" :key="handout.id" :data-id="handout.id" />
+        <scenario-data-card v-for="enigma in enigmaList" :key="enigma.id" :data-id="enigma.id" />
+        <scenario-data-card v-for="persona in personaList" :key="persona.id" :data-id="persona.id" />
+        <scenario-data-card v-for="prize in prizeList" :key="prize.id" :data-id="prize.id" />
       </v-sheet>
     </template>
   </pane-frame>
@@ -43,7 +43,7 @@ export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
   name: 'HandoutManagePane',
-  label: 'ハンドアウト管理'
+  label: 'シナリオデータ管理'
 }
 </script>
 
@@ -53,7 +53,7 @@ import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import HandoutCard from '@/components/panes/Shinobigami/HandoutCard.vue'
+import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars

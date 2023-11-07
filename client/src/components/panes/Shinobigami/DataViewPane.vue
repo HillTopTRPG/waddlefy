@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="キャラクターシート表示ツール">
+  <pane-frame title="データ閲覧ツール">
     <template v-slot:title-action>
       <v-defaults-provider
         :defaults="{
@@ -61,7 +61,7 @@ export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
   name: 'CharacterSheetViewPane',
-  label: 'キャラクターシート表示'
+  label: 'データ閲覧'
 }
 </script>
 

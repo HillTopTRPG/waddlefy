@@ -1,10 +1,10 @@
 // noinspection TypeScriptCheckImport
 import SpecialityTableDiffPane, { componentInfo as SpecialityTableDiffPaneInfo } from './SpecialityTableDiffPane.vue'
-import CharacterSheetViewPane, { componentInfo as CharacterSheetViewPaneInfo } from './CharacterSheetViewPane.vue'
+import DataViewPane, { componentInfo as DataViewPaneInfo } from './DataViewPane.vue'
 import CharacterSheetManagePane, {
   componentInfo as CharacterSheetManagePaneInfo
 } from '@/components/panes/Shinobigami/CharacterSheetManagePane.vue'
-import HandoutManagePane, { componentInfo as HandoutManagePaneInfo } from './HandoutManagePane.vue'
+import ScenarioDataManagePane, { componentInfo as ScenarioDataManagePaneInfo } from './ScenarioDataManagePane.vue'
 
 const group = 'シノビガミ'
 
@@ -15,8 +15,8 @@ export default [
     group: group
   },
   {
-    component: CharacterSheetViewPane,
-    info: CharacterSheetViewPaneInfo,
+    component: DataViewPane,
+    info: DataViewPaneInfo,
     group: group
   },
   {
@@ -25,8 +25,8 @@ export default [
     group: group
   },
   {
-    component: HandoutManagePane,
-    info: HandoutManagePaneInfo,
+    component: ScenarioDataManagePane,
+    info: ScenarioDataManagePaneInfo,
     group: group
   }
 ]
