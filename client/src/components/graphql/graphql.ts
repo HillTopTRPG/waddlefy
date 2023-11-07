@@ -509,6 +509,94 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     )
   }
 
+  async function updateShinobigamiHandout(
+    handoutId: string,
+    name: string,
+    objective: string,
+    secret: string,
+    person: string,
+    leakedList: string[]
+  ) {
+    await updateSessionDataHelper(
+      handoutId,
+      JSON.stringify({
+        name,
+        objective,
+        secret,
+        person,
+        leakedList
+      })
+    )
+  }
+
+  async function updateShinobigamiEnigma(
+    enigmaId: string,
+    name: string,
+    threat: number,
+    disableJudgement: string,
+    camouflage: string,
+    entityName: string,
+    effect: string,
+    bind: string,
+    used: boolean,
+    disabled: boolean
+  ) {
+    await updateSessionDataHelper(
+      enigmaId,
+      JSON.stringify({
+        name,
+        threat,
+        disableJudgement,
+        camouflage,
+        entityName,
+        effect,
+        bind,
+        used,
+        disabled
+      })
+    )
+  }
+
+  async function updateShinobigamiPersona(
+    personaId: string,
+    name: string,
+    effect: string,
+    bind: string,
+    leaked: boolean
+  ) {
+    await updateSessionDataHelper(
+      personaId,
+      JSON.stringify({
+        name,
+        effect,
+        bind,
+        leaked
+      })
+    )
+  }
+
+  async function updateShinobigamiPrize(
+    prizeId: string,
+    name: string,
+    description: string,
+    secret: string,
+    owner: string,
+    readableList: string[],
+    leakedList: string[]
+  ) {
+    await updateSessionDataHelper(
+      prizeId,
+      JSON.stringify({
+        name,
+        description,
+        secret,
+        owner,
+        readableList,
+        leakedList
+      })
+    )
+  }
+
   async function updateDashboardHelper(name?: string, layout?: Layout, option?: DashboardOption) {
     if (!appSyncClient) return
     if (!state.user?.token) return
@@ -798,18 +886,16 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addSessionDataHelper(type: string, data: string) {
-    const sessionId = state.session?.id || ''
+    if (!appSyncClient) return
 
     operation = 'mutation addSessionData'
     await appSyncClient.mutate<MutationResult.AddSessionData>({
       mutation: Mutations.addSessionData,
-      variables: { sessionId, type, data }
+      variables: { sessionId: state.session?.id || '', type, data }
     })
   }
 
   async function addShinobigamiCharacter(dataObj: ShinobiGami): Promise<void> {
-    if (!appSyncClient) return
-
     const characterWrap: Omit<CharacterWrap, 'id'> = {
       player: '',
       character: dataObj
@@ -821,29 +907,87 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addShinobigamiCharacterSessionMemo(characterId: string, text: string): Promise<void> {
-    if (!appSyncClient) return
-
-    const data = JSON.stringify({
-      characterId,
-      text
-    })
-
-    await addSessionDataHelper('character-session-memo', data)
+    await addSessionDataHelper(
+      'character-session-memo',
+      JSON.stringify({
+        characterId,
+        text
+      })
+    )
     // Subscriptionによってstateに登録される
   }
 
   async function addShinobigamiCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
-    if (!appSyncClient) return
-
     const isOwnerControl = Boolean(state.user?.token)
-    const data = JSON.stringify({
-      ownerType: isOwnerControl ? 'user' : 'player',
-      ownerId: isOwnerControl ? null : state.player?.id,
-      characterId,
-      text
-    })
+    await addSessionDataHelper(
+      'character-private-memo',
+      JSON.stringify({
+        ownerType: isOwnerControl ? 'user' : 'player',
+        ownerId: isOwnerControl ? null : state.player?.id,
+        characterId,
+        text
+      })
+    )
+    // Subscriptionによってstateに登録される
+  }
 
-    await addSessionDataHelper('character-private-memo', data)
+  async function addShinobigamiHandout(): Promise<void> {
+    await addSessionDataHelper(
+      'shinobigami-handout',
+      JSON.stringify({
+        name: '',
+        objective: '',
+        secret: '',
+        person: '',
+        leakedList: []
+      })
+    )
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addShinobigamiEnigma(): Promise<void> {
+    await addSessionDataHelper(
+      'shinobigami-enigma',
+      JSON.stringify({
+        name: '',
+        threat: 1,
+        disableJudgement: '',
+        camouflage: '',
+        entityName: '',
+        effect: '',
+        bind: '',
+        used: false,
+        disabled: false
+      })
+    )
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addShinobigamiPersona(): Promise<void> {
+    await addSessionDataHelper(
+      'shinobigami-persona',
+      JSON.stringify({
+        name: '',
+        effect: '',
+        bind: '',
+        leaked: false
+      })
+    )
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addShinobigamiPrize(): Promise<void> {
+    await addSessionDataHelper(
+      'shinobigami-prize',
+      JSON.stringify({
+        name: '',
+        description: '',
+        secret: '',
+        owner: '',
+        readableList: [],
+        leakedList: []
+      })
+    )
     // Subscriptionによってstateに登録される
   }
 
@@ -852,15 +996,14 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     text: string,
     shareCharacterIdList: string[]
   ): Promise<void> {
-    if (!appSyncClient) return
-
-    const data = JSON.stringify({
-      characterId,
-      text,
-      shareCharacterIdList
-    })
-
-    await addSessionDataHelper('character-secret', data)
+    await addSessionDataHelper(
+      'character-secret',
+      JSON.stringify({
+        characterId,
+        text,
+        shareCharacterIdList
+      })
+    )
     // Subscriptionによってstateに登録される
   }
 
@@ -1233,10 +1376,18 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiCharacterSessionMemo,
     addShinobigamiCharacterPrivateMemo,
     addShinobigamiCharacterSecret,
+    addShinobigamiHandout,
+    addShinobigamiEnigma,
+    addShinobigamiPersona,
+    addShinobigamiPrize,
     updateShinobigamiCharacter,
     updateShinobigamiCharacterSessionMemo,
     updateShinobigamiCharacterPrivateMemo,
-    updateShinobigamiCharacterSecret
+    updateShinobigamiCharacterSecret,
+    updateShinobigamiHandout,
+    updateShinobigamiEnigma,
+    updateShinobigamiPersona,
+    updateShinobigamiPrize
   }
 }
 

@@ -61,7 +61,6 @@ import { computed, ComputedRef, inject, ref } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CharacterSheetTabTextArea from '@/components/panes/Shinobigami/CharacterSheetTabTextArea.vue'
-import { CharacterSecret } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
