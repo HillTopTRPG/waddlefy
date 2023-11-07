@@ -4,6 +4,7 @@ import CharacterSheetManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/Cha
 import CharacterSheetViewPaneLayout from '@/PaneLayoutTemplate/Shinobigami/CharacterSheetViewPaneLayout'
 import SpecialityTableDiffPaneLayout from '@/PaneLayoutTemplate/Shinobigami/SpecialityTableDiffPaneLayout'
 import { DashboardOption } from '@/components/graphql/schema'
+import HandoutManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/HandoutManagePaneLayout'
 
 export default [
   {
@@ -35,10 +36,11 @@ export async function addDashboards(graphQlStore: GraphQlStore, sessionType: str
     })
   }
   if (sessionType === 'Shinobigami') {
+    await graphQlStore.addDashboard('ハンドアウト管理', HandoutManagePaneLayout, Scope.OWNER)
     await graphQlStore.addDashboard('キャラクターシート管理', CharacterSheetManagePaneLayout, Scope.OWNER)
     await graphQlStore.addDashboard('キャラクターシート表示', CharacterSheetViewPaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('特技比較', SpecialityTableDiffPaneLayout, Scope.ALL)
-    await waitDashboardNum(3)
+    await waitDashboardNum(4)
     return graphQlStore.state.dashboards.find(d => d.name === 'キャラクターシート表示')?.id || ''
   }
   return ''

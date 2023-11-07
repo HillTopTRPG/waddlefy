@@ -4,6 +4,7 @@ import CharacterSheetViewPane, { componentInfo as CharacterSheetViewPaneInfo } f
 import CharacterSheetManagePane, {
   componentInfo as CharacterSheetManagePaneInfo
 } from '@/components/panes/Shinobigami/CharacterSheetManagePane.vue'
+import HandoutManagePane, { componentInfo as HandoutManagePaneInfo } from './HandoutManagePane.vue'
 
 const group = 'シノビガミ'
 
@@ -21,6 +22,11 @@ export default [
   {
     component: CharacterSheetManagePane,
     info: CharacterSheetManagePaneInfo,
+    group: group
+  },
+  {
+    component: HandoutManagePane,
+    info: HandoutManagePaneInfo,
     group: group
   }
 ]
