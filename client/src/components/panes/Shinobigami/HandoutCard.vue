@@ -56,11 +56,7 @@
           <v-card variant="text" class="bg-white pa-3">
             <v-card-subtitle class="text-body-2">このキャラの秘密を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
-              <handout-multi-checkbox
-                :list="dataObj.data.leakedList"
-                @update="onUpdateShinobigamiHandoutLeakedList"
-                :exclude="dataObj.id"
-              />
+              <handout-multi-checkbox :list="dataObj.data.leakedList" @update="onUpdateShinobigamiHandoutLeakedList" />
             </v-sheet>
           </v-card>
         </template>

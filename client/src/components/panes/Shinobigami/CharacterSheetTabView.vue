@@ -1,21 +1,22 @@
 <template>
   <v-card class="d-flex flex-row" variant="tonal">
     <v-tabs v-model="tab" direction="vertical" color="primary">
-      <v-tab value="session-memo" size="small" variant="text" density="comfortable" prepend-icon="mdi-antenna">
-        共有メモ
-      </v-tab>
-      <v-tab value="private-memo" size="small" variant="text" density="comfortable" prepend-icon="mdi-account-outline">
-        個人メモ
-      </v-tab>
-      <v-tab
-        value="secret"
-        variant="text"
-        size="small"
-        density="comfortable"
-        :disabled="!secretOpen"
-        :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
-        >秘密</v-tab
+      <v-defaults-provider
+        :defaults="{
+          VTab: { size: 'small', variant: 'text', density: 'comfortable' }
+        }"
       >
+        <v-tab value="session-memo" prepend-icon="mdi-antenna">共有メモ</v-tab>
+        <v-tab value="private-memo" prepend-icon="mdi-account-outline">個人メモ</v-tab>
+
+        <v-tab value="objective" prepend-icon="mdi-account-outline">使命</v-tab>
+        <v-tab
+          value="secret"
+          :disabled="!secretOpen"
+          :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
+          >秘密</v-tab
+        >
+      </v-defaults-provider>
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item value="session-memo">
@@ -40,6 +41,16 @@
           :text="privateMemo?.text || ''"
           hint="あなた専用のメモです"
           @update="v => updatePrivateMemo(v)"
+        />
+      </v-window-item>
+      <v-window-item value="objective">
+        <character-sheet-tab-text-area
+          label="使命"
+          icon="mdi-lock-open-outline"
+          :editable="false"
+          :text-rows="textRows"
+          :character-name="characterInfo?.character.characterName"
+          :text="handout?.data.objective"
         />
       </v-window-item>
       <v-window-item value="secret">
@@ -110,36 +121,31 @@ async function updatePrivateMemo(text: string) {
 }
 
 const characterInfo: ComputedRef<CharacterWrap> = computed(
-  () =>
-    graphQlStore?.state.sessionDataList.find(
-      sd => sd.type === 'character' && sd.data?.character && sd.id === props.characterId
-    )?.data
+  () => graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)?.data
 )
 
-const secret = computed(
-  () =>
-    graphQlStore?.state.sessionDataList.find(
-      sd => sd.type === 'character-secret' && sd.data.characterId === props.characterId
-    )?.data
-)
+const handout = computed(() => {
+  return graphQlStore?.state.sessionDataList.find(
+    sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
+  )
+})
 
 const secretOpen = computed((): boolean => {
   if (isOwnerControl.value) return true
 
-  return (
-    secret.value?.shareCharacterIdList
-      .map(
-        sci => graphQlStore?.state.sessionDataList.find(sd => sd.type === 'character' && sd.id === sci)?.data?.player
-      )
-      .some(p => p === graphQlStore?.state.player?.id) || false
-  )
+  return handout.value?.data.leakedList.some(l => {
+    const leakedHandout = graphQlStore?.state.sessionDataList.find(sd => sd.id === l)
+    if (!leakedHandout?.data.person) return false
+    const leakedCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === leakedHandout?.data.person)
+    return leakedCharacter?.data.player === graphQlStore?.state.player?.id
+  })
 })
 
 const secretText = computed((): string => {
-  if (isOwnerControl.value) return secret.value?.text || ''
-  if (!secret.value) return ''
+  if (isOwnerControl.value) return handout.value?.data.secret || ''
+  if (!handout.value) return ''
 
-  return secretOpen.value ? secret.value.text : '閲覧不可'
+  return secretOpen.value ? handout.value?.data.secret : '閲覧不可'
 })
 </script>
 

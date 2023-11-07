@@ -493,22 +493,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     )
   }
 
-  async function updateShinobigamiCharacterSecret(
-    secretId: string,
-    characterId: string,
-    text: string,
-    shareCharacterIdList: string[]
-  ) {
-    await updateSessionDataHelper(
-      secretId,
-      JSON.stringify({
-        characterId,
-        text,
-        shareCharacterIdList
-      })
-    )
-  }
-
   async function updateShinobigamiHandout(
     handoutId: string,
     name: string,
@@ -991,22 +975,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addShinobigamiCharacterSecret(
-    characterId: string,
-    text: string,
-    shareCharacterIdList: string[]
-  ): Promise<void> {
-    await addSessionDataHelper(
-      'character-secret',
-      JSON.stringify({
-        characterId,
-        text,
-        shareCharacterIdList
-      })
-    )
-    // Subscriptionによってstateに登録される
-  }
-
   function onAddPlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnAddPlayer>> {
     if (!appSyncClient) return
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnAddPlayer>({
@@ -1375,7 +1343,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiCharacter,
     addShinobigamiCharacterSessionMemo,
     addShinobigamiCharacterPrivateMemo,
-    addShinobigamiCharacterSecret,
     addShinobigamiHandout,
     addShinobigamiEnigma,
     addShinobigamiPersona,
@@ -1383,7 +1350,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateShinobigamiCharacter,
     updateShinobigamiCharacterSessionMemo,
     updateShinobigamiCharacterPrivateMemo,
-    updateShinobigamiCharacterSecret,
     updateShinobigamiHandout,
     updateShinobigamiEnigma,
     updateShinobigamiPersona,
