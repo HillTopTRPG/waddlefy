@@ -16,6 +16,12 @@
           :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
           >秘密</v-tab
         >
+        <v-tab v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id" prepend-icon="mdi-bomb"
+          >エニグマ{{ idx + 1 }}</v-tab
+        >
+        <v-tab v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id" :prepend-icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
+          >ペルソナ{{ idx + 1 }}</v-tab
+        >
       </v-defaults-provider>
     </v-tabs>
     <v-window v-model="tab">
@@ -61,6 +67,26 @@
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
           :text="secretText"
+        />
+      </v-window-item>
+      <v-window-item v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id">
+        <character-sheet-tab-text-area
+          :label="`エニグマ${idx + 1}`"
+          icon="mdi-bomb"
+          :editable="false"
+          :text-rows="textRows"
+          :character-name="characterInfo?.character.characterName"
+          :text="enigma.data.effect"
+        />
+      </v-window-item>
+      <v-window-item v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id">
+        <character-sheet-tab-text-area
+          :label="`ペルソナ${idx + 1}`"
+          :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
+          :editable="false"
+          :text-rows="textRows"
+          :character-name="characterInfo?.character.characterName"
+          :text="persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
         />
       </v-window-item>
     </v-window>
@@ -127,6 +153,28 @@ const characterInfo: ComputedRef<CharacterWrap> = computed(
 const handout = computed(() => {
   return graphQlStore?.state.sessionDataList.find(
     sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
+  )
+})
+
+const boundEnigmaList = computed(() => {
+  const handout = graphQlStore?.state.sessionDataList.find(
+    sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
+  )
+  if (!handout) return null
+
+  return graphQlStore?.state.sessionDataList.filter(
+    enigma => enigma.type === 'shinobigami-enigma' && enigma.data.bind === handout.id
+  )
+})
+
+const boundPersonaList = computed(() => {
+  const handout = graphQlStore?.state.sessionDataList.find(
+    sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
+  )
+  if (!handout) return null
+
+  return graphQlStore?.state.sessionDataList.filter(
+    enigma => enigma.type === 'shinobigami-persona' && enigma.data.bind === handout.id
   )
 })
 
