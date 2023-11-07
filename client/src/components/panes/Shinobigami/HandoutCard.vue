@@ -40,9 +40,9 @@
             @update="onUpdateShinobigamiHandoutSecret"
           />
           <v-select
-            :items="graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'character') || []"
+            :items="hasEmptyCharacterList"
             item-value="id"
-            item-title="data.character.characterName"
+            item-title="name"
             variant="solo"
             :flat="true"
             label="担当キャラ"
@@ -54,11 +54,12 @@
             @update:model-value="v => onUpdateShinobigamiHandoutPerson(v)"
           />
           <v-card variant="text" class="bg-white pa-3">
-            <v-card-subtitle class="text-body-2">秘密を知るハンドアウト</v-card-subtitle>
+            <v-card-subtitle class="text-body-2">このキャラの秘密を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
               <handout-multi-checkbox
                 :list="dataObj.data.leakedList"
                 @update="onUpdateShinobigamiHandoutLeakedList"
+                :exclude="dataObj.id"
               />
             </v-sheet>
           </v-card>
@@ -123,9 +124,9 @@
             @update="onUpdateShinobigamiEnigmaEffect"
           />
           <v-select
-            :items="graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout') || []"
+            :items="hasEmptyHandoutList"
             item-value="id"
-            item-title="data.name"
+            item-title="name"
             variant="solo"
             :flat="true"
             label="バインド"
@@ -167,9 +168,9 @@
             @update="onUpdateShinobigamiPersonaEffect"
           />
           <v-select
-            :items="graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout') || []"
-            item-title="data.name"
+            :items="hasEmptyHandoutList"
             item-value="id"
+            item-title="name"
             variant="solo"
             :flat="true"
             label="所有されるハンドアウト"
@@ -216,9 +217,9 @@
             @update="onUpdateShinobigamiPrizeSecret"
           />
           <v-select
-            :items="graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout') || []"
+            :items="hasEmptyHandoutList"
             item-value="id"
-            item-title="data.name"
+            item-title="name"
             variant="solo"
             :flat="true"
             label="所有者"
@@ -231,7 +232,7 @@
             @update:model-value="v => onUpdateShinobigamiPrizeOwner(v)"
           />
           <v-card variant="text" class="bg-white pa-3">
-            <v-card-subtitle class="text-body-2">存在を知るハンドアウト</v-card-subtitle>
+            <v-card-subtitle class="text-body-2">このプライズの存在を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
               <handout-multi-checkbox
                 :list="dataObj.data.readableList"
@@ -240,12 +241,9 @@
             </v-sheet>
           </v-card>
           <v-card variant="text" class="bg-white pa-3">
-            <v-card-subtitle class="text-body-2">秘密を知るハンドアウト</v-card-subtitle>
+            <v-card-subtitle class="text-body-2">このプライズの秘密を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
-              <handout-multi-checkbox
-                :list="dataObj.data.leakedList"
-                @update="onUpdateShinobigamiPrizeLeakedList"
-              />
+              <handout-multi-checkbox :list="dataObj.data.leakedList" @update="onUpdateShinobigamiPrizeLeakedList" />
             </v-sheet>
           </v-card>
         </template>
@@ -282,6 +280,54 @@ const typeList = [
   { value: 'shinobigami-persona', label: 'ペルソナ', color: 'cyan-lighten-4' },
   { value: 'shinobigami-prize', label: 'プライズ', color: 'amber-lighten-4' }
 ]
+
+const hasEmptyHandoutList = computed(() => {
+  const handoutList = graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout') || []
+  const resultList = handoutList.map(h => {
+    const characterInfo = graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person)
+    const nameList = [h.data.name]
+    if (characterInfo) {
+      const characterName = characterInfo.data.character.characterName
+      if (characterName) {
+        nameList.push(` (${characterName}`)
+      }
+      if (characterInfo.data.player) {
+        const player = graphQlStore?.state.players.find(p => p.id === characterInfo.data.player)
+        if (player) {
+          nameList.push(` : ${player.name})`)
+        }
+      }
+      if (nameList.length < 3) {
+        nameList.push(')')
+      }
+    }
+    return {
+      id: h.id,
+      name: nameList.join('')
+    }
+  })
+  resultList.unshift({ id: '', name: '割当なし' })
+  return resultList
+})
+
+const hasEmptyCharacterList = computed(() => {
+  const characterList = graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'character') || []
+  const resultList = characterList.map(c => {
+    const nameList = [c.data.character.characterName]
+    if (c.data.player) {
+      const player = graphQlStore?.state.players.find(p => p.id === c.data.player)
+      if (player) {
+        nameList.push(`(${player.name})`)
+      }
+    }
+    return {
+      id: c.id,
+      name: nameList.join('')
+    }
+  })
+  resultList.unshift({ id: '', name: '割当なし' })
+  return resultList
+})
 
 async function onUpdateShinobigamiHandoutName(name: string) {
   await graphQlStore?.updateShinobigamiHandout(
