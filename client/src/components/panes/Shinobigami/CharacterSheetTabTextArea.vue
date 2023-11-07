@@ -104,4 +104,11 @@ function onSave() {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.v-textarea {
+  :deep(.v-field) {
+    --v-field-padding-start: 0.5rem;
+    --v-field-padding-end: 0.5rem;
+  }
+}
+</style>

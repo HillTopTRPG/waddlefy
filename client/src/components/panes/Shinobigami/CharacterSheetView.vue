@@ -1,111 +1,99 @@
 <template>
-  <v-sheet class="w-100 d-flex flex-wrap">
-    <v-sheet class="mr-3 mb-3">
-      <v-container class="pr-0">
-        <v-defaults-provider :defaults="{ VCol: { class: 'pa-0' } }">
-          <v-row>
-            <v-col class="mr-2">
-              <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{ props }">
-                  <v-btn variant="text" v-bind="props" class="text-h5 px-1">
-                    <v-icon icon="mdi-triangle-small-down" size="x-small" class="mr-0" />
-                    {{ characterSheet.characterName }}
-                  </v-btn>
-                </template>
-                <v-container class="base-info px-2 pt-2 pb-1">
-                  <v-defaults-provider
-                    :defaults="{
-                      VCol: { class: 'py-0' },
-                      VRow: { class: 'py-0 my-0' },
-                      VChip: {
-                        class: 'px-3 mr-1',
-                        size: 'small',
-                        variant: 'outlined',
-                        style: 'border-color: #666'
-                      }
-                    }"
-                  >
-                    <v-row class="mb-1">
-                      <v-col>
-                        <v-chip :text="characterSheet.level" v-if="characterSheet.level" />
-                        <v-chip :text="characterSheet.age" v-if="characterSheet.age" />
-                        <v-chip :text="characterSheet.sex" v-if="characterSheet.sex" />
-                        <v-chip :text="characterSheet.cover" v-if="characterSheet.cover" />
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
-                        <v-chip size="large">
-                          {{ characterSheet.upperStyle
-                          }}{{ characterSheet.subStyle ? ` - ${characterSheet.subStyle}` : '' }}
-                        </v-chip>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
-                        <div class="tree">
-                          <ul>
-                            <li v-if="characterSheet.stylerule">
-                              {{ characterSheet.stylerule }}
-                            </li>
-                            <li v-if="characterSheet.foe">仇敵：{{ characterSheet.foe }}</li>
-                          </ul>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-defaults-provider>
-                </v-container>
-              </v-menu>
-              <v-btn
-                icon="mdi-open-in-new"
-                size="small"
-                variant="flat"
-                target="_blank"
-                rel="noopener noreferrer"
-                :href="characterSheet.url"
-              />
-              <span class="text-body-2"
-                >({{ graphQlStore?.state.players.find(p => p.id === playerId)?.name || 'PL割当なし' }})</span
-              >
-            </v-col>
-          </v-row>
-          <v-row v-if="backgroundView">
-            <v-col style="width: 1px; min-width: 250px">
-              <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
-                <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
-              </template>
-            </v-col>
-          </v-row>
-          <v-row class="pb-2" v-if="ninpouView">
-            <v-col>
-              <ninpou-table
-                class="mr-2"
-                :list="characterSheet.ninjaArtsList"
-                @click-skill="
-                  v => {
-                    emits('update:select-skill', v === selectSkill ? '' : v)
-                  }
-                "
-              />
-            </v-col>
-          </v-row>
-        </v-defaults-provider>
-      </v-container>
-    </v-sheet>
-    <v-sheet class="overflow-auto mr-3 mb-3" v-if="tokugiView">
-      <speciality-table
-        :select-skill="selectSkill"
-        @update:select-skill="v => emits('update:select-skill', v)"
-        v-model:editing="tokugiTableEditing"
-        :info="computedSkills"
-        @update:info="v => updateInfo(v)"
-        :editable="true"
+  <v-card variant="flat">
+    <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row">
+      <v-menu :close-on-content-click="false">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" class="text-h5 px-1">
+            <v-icon icon="mdi-triangle-small-down" size="x-small" class="mr-0" />
+            {{ characterSheet.characterName }}
+          </v-btn>
+        </template>
+        <v-container class="base-info px-2 pt-2 pb-1">
+          <v-defaults-provider
+            :defaults="{
+              VCol: { class: 'py-0' },
+              VRow: { class: 'py-0 my-0' },
+              VChip: {
+                class: 'px-3 mr-1',
+                size: 'small',
+                variant: 'outlined',
+                style: 'border-color: #666'
+              }
+            }"
+          >
+            <v-row class="mb-1">
+              <v-col>
+                <v-chip :text="characterSheet.level" v-if="characterSheet.level" />
+                <v-chip :text="characterSheet.age" v-if="characterSheet.age" />
+                <v-chip :text="characterSheet.sex" v-if="characterSheet.sex" />
+                <v-chip :text="characterSheet.cover" v-if="characterSheet.cover" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-chip size="large">
+                  {{ characterSheet.upperStyle }}{{ characterSheet.subStyle ? ` - ${characterSheet.subStyle}` : '' }}
+                </v-chip>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <div class="tree">
+                  <ul>
+                    <li v-if="characterSheet.stylerule">
+                      {{ characterSheet.stylerule }}
+                    </li>
+                    <li v-if="characterSheet.foe">仇敵：{{ characterSheet.foe }}</li>
+                  </ul>
+                </div>
+              </v-col>
+            </v-row>
+          </v-defaults-provider>
+        </v-container>
+      </v-menu>
+      <v-btn
+        icon="mdi-open-in-new"
+        size="small"
+        variant="flat"
+        target="_blank"
+        rel="noopener noreferrer"
+        :href="characterSheet.url"
       />
-    </v-sheet>
-    <v-sheet class="overflow-auto mt-2 mr-3 mb-3" v-if="textView">
-      <character-sheet-tab-view :character-id="characterId" :text-rows="textRows" />
-    </v-sheet>
-  </v-sheet>
+      <span class="text-body-2"
+        >({{ graphQlStore?.state.players.find(p => p.id === playerId)?.name || 'PL割当なし' }})</span
+      >
+    </v-card-title>
+    <v-card-title v-if="backgroundView" class="pt-0 d-flex flex-wrap" style="gap: 5px">
+      <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
+        <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
+      </template>
+    </v-card-title>
+    <v-card-item class="py-0">
+      <v-sheet class="w-100 d-flex flex-wrap" style="gap: 5px">
+        <v-sheet v-if="tokugiView">
+          <speciality-table
+            class="mb-2"
+            :select-skill="selectSkill"
+            @update:select-skill="v => emits('update:select-skill', v)"
+            v-model:editing="tokugiTableEditing"
+            :info="computedSkills"
+            @update:info="v => updateInfo(v)"
+            :editable="true"
+          />
+        </v-sheet>
+        <v-sheet v-if="ninpouView">
+          <ninpou-table
+            class="mb-2"
+            :list="characterSheet.ninjaArtsList"
+            @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
+          />
+        </v-sheet>
+        <v-sheet v-if="textView">
+          <character-sheet-tab-view class="mb-2" :character-id="characterId" :text-rows="textRows" />
+        </v-sheet>
+      </v-sheet>
+    </v-card-item>
+  </v-card>
 </template>
 
 <script setup lang="ts">

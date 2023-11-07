@@ -1,16 +1,4 @@
 <template>
-  <v-radio-group
-    :hide-details="true"
-    density="compact"
-    direction="horizontal"
-    :inline="true"
-    :model-value="editing"
-    @update:model-value="v => emits('update:editing', v)"
-    v-if="editable"
-  >
-    <v-radio :value="true" label="設定" density="compact" />
-    <v-radio :value="false" label="判定" density="compact" />
-  </v-radio-group>
   <v-sheet class="overflow-auto">
     <table class="speciality-table bg-white" :class="info ? '' : 'disabled'">
       <thead>
@@ -74,6 +62,18 @@
         </tr>
       </tbody>
     </table>
+    <v-radio-group
+      :hide-details="true"
+      density="compact"
+      direction="horizontal"
+      :inline="true"
+      :model-value="editing"
+      @update:model-value="v => emits('update:editing', v)"
+      v-if="editable"
+    >
+      <v-radio :value="true" label="設定" density="compact" />
+      <v-radio :value="false" label="判定" density="compact" />
+    </v-radio-group>
   </v-sheet>
 </template>
 

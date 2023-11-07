@@ -1083,7 +1083,11 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
                 console.log(JSON.stringify(next, 0, 2))
                 const characterName = state.sessionDataList.find(c => c.id === next.characterId)?.data.character
                   .characterName
-                addNotification(`${characterName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
+                addNotification(
+                  `${characterName}の共有メモが更新されました`,
+                  'mdi-pencil-circle-outline',
+                  'lime-lighten-4'
+                )
               }
             }
           }

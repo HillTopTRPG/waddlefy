@@ -30,8 +30,8 @@
         </v-text-field>
       </v-sheet>
       <v-sheet class="w-100 d-flex flex-wrap">
-        <v-card class="ma-3 w-100" variant="outlined" v-for="cw in characterWraps" :key="cw.id">
-          <v-card-title>
+        <v-card class="mx-0 w-100 mb-0 pa-0" variant="flat" v-for="cw in characterWraps" :key="cw.id">
+          <v-card-title class="pb-0">
             <span>{{ cw.character.characterName }}</span>
             <change-player-dialog
               :character-name="cw.character.characterName"

@@ -1,16 +1,18 @@
 <template>
-  <v-dialog v-model="dialog" width="500">
-    <template v-slot:activator="{ attrs }">
+  <v-dialog v-model="dialog" :persistent="true" width="auto">
+    <template v-slot:activator="{ props }">
       <span class="text-body-2 mx-3">
         <span>プレイヤー：{{ playerName }}</span>
-        <v-btn icon="mdi-pencil" size="small" v-bind="attrs" variant="text" @click="dialog = true"></v-btn>
+        <v-btn icon="mdi-pencil" size="small" v-bind="props" variant="text" @click="dialog = true"></v-btn>
       </span>
     </template>
 
     <v-card>
-      <v-card-title class="text-h5 grey lighten-2">{{ characterName }}のプレイヤー変更</v-card-title>
+      <v-toolbar density="compact" color="primary" elevation="3">
+        <v-toolbar-title>{{ characterName }}のプレイヤー変更</v-toolbar-title>
+      </v-toolbar>
 
-      <v-card-item>
+      <v-card-item class="mt-5">
         <div class="d-flex flex-row align-end">
           <div>{{ playerName }} →</div>
           <v-select
@@ -26,14 +28,13 @@
         </div>
       </v-card-item>
 
-      <v-card-text class="text-body-2"> 設定した秘密情報がこのプレイヤーから見えるようになります。 </v-card-text>
+      <v-card-text class="text-body-2 mb-5">設定した秘密情報がこのプレイヤーから見えるようになります</v-card-text>
 
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="submit()">確定</v-btn>
-        <v-btn color="primary" text @click="dialog = false">キャンセル</v-btn>
+        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="submit()">保存</v-btn>
+        <v-btn color="secondary" class="flex-0-1-100" variant="flat" @click="dialog = false">キャンセル</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -49,6 +50,10 @@ const players = computed(() => [{ id: '', name: '割当なし' }, ...graphQlStor
 const playerName = computed(() => players.value.find(p => p.id === props.player)?.name || '')
 
 const dialog = ref(false)
+
+watch(dialog, () => {
+  selectValue.value = props.player
+})
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{

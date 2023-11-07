@@ -20,8 +20,8 @@
           </template>
           <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
             <v-checkbox-btn label="背景" v-model="viewBackground" />
-            <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
             <v-checkbox-btn label="特技表" v-model="viewTokugi" />
+            <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
             <v-divider class="my-1 ml-2" />
             <v-checkbox-btn label="テキスト" v-model="viewText" />
             <v-label class="text-body-2 ml-2">テキスト行数</v-label>
@@ -32,19 +32,20 @@
     </template>
     <template v-slot:layout></template>
     <template v-slot:default>
-      <character-sheet-view
-        v-for="cw in characterWraps"
-        :key="cw.id"
-        :character-id="cw.id"
-        :player-id="cw.player"
-        :character-sheet="cw.character"
-        :background-view="viewBackground"
-        :ninpou-view="viewNinpou"
-        :tokugi-view="viewTokugi"
-        :text-view="viewText"
-        :text-rows="textRows"
-        v-model:select-skill="selectSkill"
-      />
+      <template v-for="(cw, idx) in characterWraps" :key="cw.id">
+        <v-divider v-if="idx" />
+        <character-sheet-view
+          :character-id="cw.id"
+          :player-id="cw.player"
+          :character-sheet="cw.character"
+          :background-view="viewBackground"
+          :ninpou-view="viewNinpou"
+          :tokugi-view="viewTokugi"
+          :text-view="viewText"
+          :text-rows="textRows"
+          v-model:select-skill="selectSkill"
+        />
+      </template>
       <span v-if="!characterWraps.length" class="ma-3">
         0件<br />
         キャラクターシートを登録してください。

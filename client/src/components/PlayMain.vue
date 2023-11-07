@@ -38,7 +38,7 @@
             min-height="30px"
             :model-value="graphQlStore.state.notifications.filter(n => n.view).length > 1"
           >
-            <template v-slot:default> 通知を全て閉じる </template>
+            <template v-slot:default>通知を全て閉じる</template>
           </v-snackbar>
           <template v-for="notification in graphQlStore.state.notifications" :key="notification.id">
             <v-snackbar
@@ -49,8 +49,10 @@
               @update:model-value="graphQlStore.closeNotification(notification.id)"
               @click="graphQlStore.closeNotification(notification.id)"
             >
-              <v-icon :icon="notification.icon" />
-              {{ notification.text }}
+              <div class="d-flex flex-row">
+                <v-icon :icon="notification.icon" class="mr-2" />
+                <span>{{ notification.text }}</span>
+              </div>
             </v-snackbar>
           </template>
         </v-defaults-provider>

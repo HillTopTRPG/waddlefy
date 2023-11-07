@@ -10,7 +10,6 @@ kground
         :elevation="3"
         variant="flat"
         size="small"
-        class="mr-2 mb-2"
         v-bind="props"
         >{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</v-chip
       >
