@@ -3,7 +3,7 @@
     :rows="textRows"
     :readonly="true"
     :no-resize="true"
-    style="width: 20rem"
+    style="width: 20rem; max-width: 20rem"
     :flat="true"
     :variant="variant || 'solo'"
     :model-value="text || ' '"
@@ -31,7 +31,11 @@
         </template>
         <v-card>
           <v-toolbar density="compact" color="primary">
-            <v-toolbar-title>{{ label }}({{ characterName }})</v-toolbar-title>
+            <v-toolbar-title>
+              <span>{{ label }}</span>
+              <span v-if="characterName">({{ characterName }})</span>
+              <span>の編集</span>
+            </v-toolbar-title>
           </v-toolbar>
           <v-card-item class="pa-2">
             <v-textarea
@@ -68,7 +72,7 @@ import { ref, watch } from 'vue'
 
 const props = defineProps<{
   text: string
-  characterName: string
+  characterName?: string
   icon: string
   label: string
   textRows: number

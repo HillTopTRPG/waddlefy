@@ -180,10 +180,15 @@ defineExpose({
   }
 })
 
+// let oldLayout = JSON.stringify(props.layout)
 watch(
   cLayout,
   () => {
+    // const afterLayoutStr = JSON.stringify(cLayout.value)
+    // if (afterLayoutStr.replaceAll(/"size":[0-9.]+/g, '') !== oldLayout.replaceAll(/"size":[0-9.]+/g, '')) {
     emits('change-root-layout', cLayout.value)
+    // }
+    // oldLayout = JSON.stringify(cLayout.value)
   },
   { deep: true }
 )

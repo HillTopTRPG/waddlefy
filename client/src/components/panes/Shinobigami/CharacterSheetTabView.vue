@@ -117,26 +117,30 @@ const characterInfo: ComputedRef<CharacterWrap> = computed(
     )?.data
 )
 
-const secretOpen = computed(() => {
-  const secret: CharacterSecret | undefined = graphQlStore?.state.sessionDataList.find(
-    sd => sd.type === 'character-secret' && sd.data.characterId === props.characterId
-  )?.data
-  if (!secret) return ''
-  if (isOwnerControl.value) return secret.text
+const secret = computed(
+  () =>
+    graphQlStore?.state.sessionDataList.find(
+      sd => sd.type === 'character-secret' && sd.data.characterId === props.characterId
+    )?.data
+)
 
-  return secret.shareCharacterIdList
-    .map(sci => graphQlStore?.state.sessionDataList.find(sd => sd.type === 'character' && sd.id === sci)?.data?.player)
-    .some(p => p === graphQlStore?.state.player?.id)
+const secretOpen = computed((): boolean => {
+  if (isOwnerControl.value) return true
+
+  return (
+    secret.value?.shareCharacterIdList
+      .map(
+        sci => graphQlStore?.state.sessionDataList.find(sd => sd.type === 'character' && sd.id === sci)?.data?.player
+      )
+      .some(p => p === graphQlStore?.state.player?.id) || false
+  )
 })
 
-const secretText = computed(() => {
-  const secret: CharacterSecret | undefined = graphQlStore?.state.sessionDataList.find(
-    sd => sd.type === 'character-secret' && sd.data.characterId === props.characterId
-  )?.data
-  if (!secret) return ''
-  if (isOwnerControl.value) return secret.text
+const secretText = computed((): string => {
+  if (isOwnerControl.value) return secret.value?.text || ''
+  if (!secret.value) return ''
 
-  return secretOpen.value ? secret.text : '閲覧不可'
+  return secretOpen.value ? secret.value.text : '閲覧不可'
 })
 </script>
 
