@@ -6,7 +6,7 @@
     rounded="lg"
   >
     <v-card-title class="ma-0 py-2" color="red">
-      <v-icon :icon="typeList.find(t => t.value === dataObj.type)?.icon(dataObj)" class="mr-1" />
+      <v-icon :icon="typeList.find(t => t.value === dataObj.type)?.icon(dataObj.data)" class="mr-1" />
       <span>{{ typeList.find(t => t.value === dataObj.type)?.label || '' }}</span>
     </v-card-title>
     <v-card-item class="pa-0">
@@ -36,7 +36,7 @@
             :model-value="dataObj.data.player"
             @update:model-value="v => onUpdateShinobigamiCharacterPlayer(v)"
           >
-            <template v-slot:label="{ label, icon }">
+            <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -91,7 +91,7 @@
             :model-value="dataObj.data.person"
             @update:model-value="v => onUpdateShinobigamiHandoutPerson(v)"
           >
-            <template v-slot:label="{ label, icon }">
+            <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -149,7 +149,7 @@
               :model-value="dataObj.data.threat"
               @update:model-value="v => onUpdateShinobigamiEnigmaThreat(v)"
             >
-              <template v-slot:label="{ label, icon }">
+              <template v-slot:label="{ label }">
                 <v-icon icon="mdi-altimeter" class="mr-1" />
                 {{ label }}
               </template>
@@ -191,7 +191,7 @@
             :model-value="dataObj.data.bind"
             @update:model-value="v => onUpdateShinobigamiEnigmaBind(v)"
           >
-            <template v-slot:label="{ label, icon }">
+            <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -244,7 +244,7 @@
             :model-value="dataObj.data.bind"
             @update:model-value="v => onUpdateShinobigamiPersonaBind(v)"
           >
-            <template v-slot:label="{ label, icon }">
+            <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -305,7 +305,7 @@
             :model-value="dataObj.data.owner"
             @update:model-value="v => onUpdateShinobigamiPrizeOwner(v)"
           >
-            <template v-slot:label="{ label, icon }">
+            <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -350,7 +350,6 @@ import MenuEditTextField from '@/components/panes/Shinobigami/MenuEditTextField.
 import MenuEditTextArea from '@/components/panes/Shinobigami/MenuEditTextArea.vue'
 import HandoutMultiCheckbox from '@/components/panes/Shinobigami/HandoutMultiCheckbox.vue'
 import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
-import {da} from 'vuetify/locale'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -365,8 +364,18 @@ const dataObj = computed(() => {
 
 const typeList = [
   { value: 'shinobigami-character', label: 'キャラクター', color: 'light-blue-accent-1', icon: () => 'mdi-human' },
-  { value: 'shinobigami-handout', label: 'ハンドアウト', color: 'teal-lighten-4', icon: () => 'mdi-smart-card-outline' },
-  { value: 'shinobigami-enigma', label: 'エニグマ', color: 'indigo-lighten-4', icon: data => data.disabled ? 'mdi-bomb-off' : 'mdi-bomb' },
+  {
+    value: 'shinobigami-handout',
+    label: 'ハンドアウト',
+    color: 'teal-lighten-4',
+    icon: () => 'mdi-smart-card-outline'
+  },
+  {
+    value: 'shinobigami-enigma',
+    label: 'エニグマ',
+    color: 'indigo-lighten-4',
+    icon: data => (data.disabled ? 'mdi-bomb-off' : 'mdi-bomb')
+  },
   { value: 'shinobigami-persona', label: 'ペルソナ', color: 'cyan-lighten-4', icon: () => 'mdi-badge-account-outline' },
   { value: 'shinobigami-prize', label: 'プライズ', color: 'amber-lighten-4', icon: () => 'mdi-treasure-chest-outline' }
 ]

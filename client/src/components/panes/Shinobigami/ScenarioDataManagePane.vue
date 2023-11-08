@@ -23,28 +23,22 @@
       </v-menu>
     </template>
     <template v-slot:layout>
-      <v-sheet class="w-100 d-flex flex-row flex-wrap align-end">
-        <v-card variant="flat" class="w-100 ma-0">
-          <v-card-item class="pa-2">
-            <v-sheet class="d-flex flex-row flex-wrap pa-0" style="gap: 0.1rem">
-              <v-defaults-provider
-                :defaults="{
-                  VBtn: {
-                    variant: 'text',
-                    color: 'primary',
-                    density: 'comfortable',
-                    class: 'text-decoration-underline'
-                  }
-                }"
-              >
-                <v-btn @click="onAddData('handout')">ハンドアウト追加</v-btn>
-                <v-btn @click="onAddData('enigma')">エニグマ追加</v-btn>
-                <v-btn @click="onAddData('persona')">ペルソナ追加</v-btn>
-                <v-btn @click="onAddData('prize')">プライズ追加</v-btn>
-              </v-defaults-provider>
-            </v-sheet>
-          </v-card-item>
-        </v-card>
+      <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
+        <v-defaults-provider
+          :defaults="{
+            VBtn: {
+              variant: 'text',
+              color: 'primary',
+              density: 'comfortable',
+              class: 'text-decoration-underline'
+            }
+          }"
+        >
+          <v-btn @click="onAddData('handout')">ハンドアウト追加</v-btn>
+          <v-btn @click="onAddData('enigma')">エニグマ追加</v-btn>
+          <v-btn @click="onAddData('persona')">ペルソナ追加</v-btn>
+          <v-btn @click="onAddData('prize')">プライズ追加</v-btn>
+        </v-defaults-provider>
       </v-sheet>
     </template>
     <template v-slot:default>
