@@ -38,7 +38,7 @@
               <v-text-field
                 label="パスワード"
                 type="password"
-                hide-details
+                :hide-details="true"
                 class="mb-1"
                 variant="solo-filled"
                 v-model="password"

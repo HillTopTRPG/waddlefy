@@ -29,17 +29,8 @@
           </template>
         </v-text-field>
       </v-sheet>
-      <v-sheet class="w-100 d-flex flex-wrap">
-        <v-card class="mx-0 w-100 mb-0 pa-0" variant="flat" v-for="cw in characterWraps" :key="cw.id">
-          <v-card-title class="pb-0">
-            <span>{{ cw.character.characterName }}</span>
-            <change-player-dialog
-              :character-name="cw.character.characterName"
-              :player="cw.player"
-              @submit="v => updateCharacterPlayer(cw.id, v)"
-            />
-          </v-card-title>
-        </v-card>
+      <v-sheet class="w-100 d-flex flex-row align-start justify-start flex-wrap px-0">
+        <scenario-data-card v-for="cw in characterWraps" :key="cw.id" :data-id="cw.id" :text-rows="textRows" />
       </v-sheet>
     </template>
   </pane-frame>
@@ -63,13 +54,13 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { ShinobigamiHelper } from '@/components/panes/Shinobigami/shinobigami'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ChangePlayerDialog from '@/components/panes/Shinobigami/ChangePlayerDialog.vue'
+import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const characterWraps = computed<CharacterWrap[]>(() => {
   if (!graphQlStore) return []
   return graphQlStore.state.sessionDataList
-    .filter(sd => sd.type === 'character' && sd.data?.character)
+    .filter(sd => sd.type === 'shinobigami-character' && sd.data?.character)
     .map(sd => sd.data as CharacterWrap)
 })
 
@@ -85,6 +76,7 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
+const textRows = ref(3)
 const addUrl = ref('')
 const addUrlErrorMessage = ref('')
 async function callAddCharacter() {
@@ -93,15 +85,6 @@ async function callAddCharacter() {
     const { data } = await helper.getData()
     await graphQlStore?.addShinobigamiCharacter(data)
   }
-}
-
-async function updateCharacterPlayer(characterId: string, playerId: string) {
-  console.log(characterId, playerId)
-  await graphQlStore?.updateShinobigamiCharacter(
-    characterId,
-    playerId,
-    characterWraps.value.find(cw => cw.id === characterId)?.character
-  )
 }
 </script>
 

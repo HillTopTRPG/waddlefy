@@ -8,7 +8,7 @@
     density="comfortable"
     class="name-text-field"
     style="letter-spacing: 1em; min-height: 1em"
-    hide-details
+    :hide-details="true"
     ref="textFieldElm"
     @keydown.enter="$event.keyCode === 13 && submit()"
     :autofocus="true"

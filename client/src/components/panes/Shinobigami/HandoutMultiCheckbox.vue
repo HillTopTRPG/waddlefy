@@ -5,7 +5,7 @@
     :value="data.id"
     :label="data.name"
     density="compact"
-    hide-details
+    :hide-details="true"
     :model-value="list"
     @update:model-value="v => emits('update', v)"
   >

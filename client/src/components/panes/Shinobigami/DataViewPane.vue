@@ -1,40 +1,37 @@
 <template>
   <pane-frame title="データ閲覧ツール">
     <template v-slot:title-action>
-      <v-defaults-provider
-        :defaults="{
-          VSelect: {
-            variant: 'plain',
-            density: 'compact',
-            hideDetails: true,
-            class: 'menu-select ml-5'
-          }
-        }"
-      >
-        <v-menu :close-on-content-click="false">
-          <template v-slot:activator="{ props }">
-            <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
-              <v-icon icon="mdi-triangle-small-down" />
-              表示制御
-            </v-btn>
-          </template>
-          <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
-            <v-checkbox-btn label="背景" v-model="viewBackground" />
-            <v-checkbox-btn label="特技表" v-model="viewTokugi" />
-            <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
-            <v-divider class="my-1 ml-2" />
-            <v-checkbox-btn label="テキスト" v-model="viewText" />
-            <v-label class="text-body-2 ml-2">テキスト行数</v-label>
-            <v-slider density="compact" class="ml-3" v-model="textRows" :min="2" :step="1" :max="20" />
-          </div>
-        </v-menu>
-      </v-defaults-provider>
+      <v-menu :close-on-content-click="false">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
+            <v-icon icon="mdi-triangle-small-down" />
+            表示制御
+          </v-btn>
+        </template>
+        <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
+          <v-checkbox-btn label="背景" v-model="viewBackground" />
+          <v-checkbox-btn label="特技表" v-model="viewTokugi" />
+          <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
+          <v-divider class="my-1 ml-2" />
+          <v-checkbox-btn label="テキスト" v-model="viewText" />
+          <v-label class="text-body-2 ml-4">テキスト行数</v-label>
+          <v-slider
+            density="compact"
+            class="ml-4"
+            :hide-details="true"
+            v-model="textRows"
+            :min="2"
+            :step="1"
+            :max="20"
+          />
+        </div>
+      </v-menu>
     </template>
     <template v-slot:layout></template>
     <template v-slot:default>
       <template v-for="(cw, idx) in characterWraps" :key="cw.id">
         <v-divider v-if="idx" />
-        <character-sheet-view
+        <data-view-card
           :character-id="cw.id"
           :player-id="cw.player"
           :character-sheet="cw.character"
@@ -69,7 +66,7 @@ export const componentInfo = {
 import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
-import CharacterSheetView from '@/components/panes/Shinobigami/CharacterSheetView.vue'
+import DataViewCard from '@/components/panes/Shinobigami/DataViewCard.vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -99,7 +96,7 @@ const textRows = ref(10)
 
 function getCharacterWraps(): CharacterWrap[] {
   return graphQlStore.state.sessionDataList
-    .filter(sd => sd.type === 'character' && sd.data?.character)
+    .filter(sd => sd.type === 'shinobigami-character' && sd.data?.character)
     .map(sd => sd.data as CharacterWrap)
 }
 

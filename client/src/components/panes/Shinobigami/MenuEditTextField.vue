@@ -1,9 +1,16 @@
 <template>
-  <v-dialog width="auto" :persistent="true" v-model="dialog">
+  <v-menu
+    width="auto"
+    v-model="dialog"
+    location="bottom center"
+    transition="scroll-y-transition"
+    scroll-strategy="close"
+    :close-on-content-click="false"
+  >
     <template v-slot:activator="{ props }">
       <v-text-field
-        :label="label"
         variant="solo"
+        :placeholder="placeholder"
         :readonly="true"
         :flat="true"
         :style="`width: ${width}rem; max-width: ${width}rem`"
@@ -11,32 +18,40 @@
         :hide-details="true"
         :model-value="text"
         v-bind="props"
-      />
+      >
+        <template v-slot:label>
+          <v-icon v-if="icon" :icon="icon" class="mr-1" />
+          {{ label }}
+        </template>
+      </v-text-field>
     </template>
-    <v-card>
-      <v-toolbar density="compact" color="primary">
-        <v-toolbar-title>
-          <span>{{ title }}</span>
-        </v-toolbar-title>
-      </v-toolbar>
+    <v-card :rounded="false" border>
       <v-card-item class="pa-2">
         <v-text-field
           :label="label"
-          variant="solo"
+          variant="solo-filled"
+          :placeholder="placeholder"
           :flat="true"
           :style="`width: ${width}rem; max-width: ${width}rem`"
           :persistent-placeholder="true"
           :hide-details="true"
+          :autofocus="true"
           v-model="editingText"
-        />
+          ref="editElm"
+        >
+          <template v-slot:label>
+            <v-icon v-if="icon" :icon="icon" class="mr-1" />
+            {{ label }}
+          </template>
+        </v-text-field>
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
+        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="dialog = false">キャンセル</v-btn>
         <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()">保存</v-btn>
-        <v-btn color="secondary" class="flex-0-1-100" variant="flat" @click="dialog = false">キャンセル</v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-menu>
 </template>
 
 <script setup lang="ts">
@@ -47,6 +62,8 @@ const props = defineProps<{
   title: string
   label: string
   text: string
+  icon: string
+  placeholder: string
   width: number
   editable: boolean
 }>()
@@ -56,6 +73,7 @@ const emits = defineEmits<{
 }>()
 
 const dialog = ref(false)
+const editElm = ref()
 const editingText = ref(props.text)
 
 watch(
@@ -65,9 +83,14 @@ watch(
   }
 )
 
-watch(dialog, () => {
+watch(dialog, v => {
   if (!props.editable) {
     dialog.value = false
+  }
+  if (v) {
+    setTimeout(() => editElm.value?.focus(), 300)
+  } else {
+    editingText.value = props.text
   }
 })
 
@@ -78,4 +101,8 @@ function onSave() {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(input[readonly]) {
+  cursor: pointer;
+}
+</style>

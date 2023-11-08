@@ -62,7 +62,7 @@
       <span class="text-body-2"
         >({{
           graphQlStore?.state.sessionDataList.find(
-            sd => sd.type === 'shinobigami-handout' && sd.data.person === characterId
+            sd => sd.type === 'shinobigami-handout' && sd.data?.person === characterId
           )?.data.name || 'ハンドアウトなし'
         }})</span
       >
@@ -96,7 +96,7 @@
           />
         </v-sheet>
         <v-sheet v-if="textView">
-          <character-sheet-tab-view class="mb-2" :character-id="characterId" :text-rows="textRows" />
+          <data-view-card-tab-container class="mb-2" :character-id="characterId" :text-rows="textRows" />
         </v-sheet>
       </v-sheet>
     </v-card-item>
@@ -114,7 +114,7 @@ import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFict
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import CharacterSheetTabView from '@/components/panes/Shinobigami/CharacterSheetTabView.vue'
+import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCardTabContainer.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{

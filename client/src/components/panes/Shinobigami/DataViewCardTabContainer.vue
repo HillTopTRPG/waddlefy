@@ -1,9 +1,9 @@
 <template>
-  <v-card class="d-flex flex-row" variant="tonal">
+  <v-card class="d-flex flex-row" variant="outlined" rounded="lg">
     <v-tabs v-model="tab" direction="vertical" color="primary">
       <v-defaults-provider
         :defaults="{
-          VTab: { size: 'small', variant: 'text', density: 'comfortable' }
+          VTab: { size: 'small', variant: 'text', flat: true, density: 'comfortable' }
         }"
       >
         <v-tab text="共有メモ" value="session-memo" prepend-icon="mdi-antenna" />
@@ -39,69 +39,82 @@
         </template>
       </v-defaults-provider>
     </v-tabs>
+    <v-divider :vertical="true" />
     <v-window v-model="tab">
       <v-window-item value="session-memo">
-        <character-sheet-tab-text-area
+        <menu-edit-text-area
           label="共有メモ"
-          icon="mdi-antenna"
-          :editable="true"
-          :text-rows="textRows"
-          :character-name="characterInfo?.character.characterName"
-          :text="sessionMemo?.text || ''"
           hint="全員で閲覧・編集できます"
-          @update="v => updateSessionMemo(v)"
+          :text="sessionMemo?.text || ''"
+          icon="mdi-antenna"
+          variant="solo-filled"
+          :editable="true"
+          textareaClass="ma-2"
+          :text-rows="textRows"
+          :offset="-textRows * 24"
+          @update="updateSessionMemo"
         />
       </v-window-item>
       <v-window-item value="private-memo">
-        <character-sheet-tab-text-area
+        <menu-edit-text-area
           label="個人メモ"
-          icon="mdi-account-outline"
-          :editable="true"
-          :text-rows="textRows"
-          :character-name="characterInfo?.character.characterName"
-          :text="privateMemo?.text || ''"
           hint="あなた専用のメモです"
-          @update="v => updatePrivateMemo(v)"
+          :text="privateMemo?.text || ''"
+          icon="mdi-account-outline"
+          variant="solo-filled"
+          :editable="true"
+          textareaClass="ma-2"
+          :text-rows="textRows"
+          :offset="-textRows * 24"
+          @update="updatePrivateMemo"
         />
       </v-window-item>
       <v-window-item value="objective">
-        <character-sheet-tab-text-area
+        <menu-edit-text-area
           label="使命"
-          icon="mdi-bullseye"
-          :editable="false"
-          :text-rows="textRows"
-          :character-name="characterInfo?.character.characterName"
+          hint="編集不可"
           :text="handout?.data.objective"
+          icon="mdi-bullseye"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="ma-2"
+          :text-rows="textRows"
         />
       </v-window-item>
       <v-window-item value="secret">
-        <character-sheet-tab-text-area
+        <menu-edit-text-area
           label="秘密"
-          :icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
-          :editable="false"
-          :text-rows="textRows"
-          :character-name="characterInfo?.character.characterName"
+          hint="編集不可"
           :text="secretText"
+          :icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="ma-2"
+          :text-rows="textRows"
         />
       </v-window-item>
       <v-window-item v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id">
-        <character-sheet-tab-text-area
+        <menu-edit-text-area
           :label="`エニグマ${idx + 1}`"
-          :icon="enigma.data.disabled ? 'mdi-bomb-off' : 'mdi-bomb'"
-          :editable="false"
-          :text-rows="textRows"
-          :character-name="characterInfo?.character.characterName"
+          hint="編集不可"
           :text="`${enigma.data.disabled ? '【解除済】\n' : ''}${enigma.data.effect}`"
+          :icon="enigma.data.disabled ? 'mdi-bomb-off' : 'mdi-bomb'"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="ma-2"
+          :text-rows="textRows"
         />
       </v-window-item>
       <v-window-item v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id">
-        <character-sheet-tab-text-area
+        <menu-edit-text-area
           :label="`ペルソナ${idx + 1}`"
-          :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
-          :editable="false"
-          :text-rows="textRows"
-          :character-name="characterInfo?.character.characterName"
+          hint="編集不可"
           :text="persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
+          :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="ma-2"
+          :text-rows="textRows"
         />
       </v-window-item>
     </v-window>
@@ -109,10 +122,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef, inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
+import MenuEditTextArea from '@/components/panes/Shinobigami/MenuEditTextArea.vue'
 
-import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import CharacterSheetTabTextArea from '@/components/panes/Shinobigami/CharacterSheetTabTextArea.vue'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -126,7 +139,7 @@ const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 const privateMemo = computed(
   () =>
     graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'character-private-memo') return false
+      if (sd.type !== 'shinobigami-character-private-memo') return false
       if (sd.data.characterId !== props.characterId) return false
       if (isOwnerControl.value) {
         if (sd.data.ownerType !== 'user') return false
@@ -140,7 +153,7 @@ const privateMemo = computed(
 const sessionMemo = computed(
   () =>
     graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'character-session-memo') return false
+      if (sd.type !== 'shinobigami-character-session-memo') return false
       return sd.data.characterId === props.characterId
     })?.data
 )
@@ -160,10 +173,6 @@ async function updatePrivateMemo(text: string) {
     await graphQlStore?.addShinobigamiCharacterPrivateMemo(props.characterId, text)
   }
 }
-
-const characterInfo: ComputedRef<CharacterWrap> = computed(
-  () => graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)?.data
-)
 
 const handout = computed(() => {
   return graphQlStore?.state.sessionDataList.find(

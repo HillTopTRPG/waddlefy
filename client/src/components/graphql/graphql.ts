@@ -737,7 +737,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       } else {
         state.dashboard = null
       }
-      state.sessionDataList = data.sessionDataList.map(d => {
+      state.sessionDataList = data.sessionDataList.sort(sortId).map(d => {
         const raw = JSON.parse(d.data)
         return {
           id: d.id,
@@ -896,15 +896,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       player: '',
       character: dataObj
     }
-    const data = JSON.stringify(characterWrap)
-
-    await addSessionDataHelper('character', data)
+    await addSessionDataHelper('shinobigami-character', JSON.stringify(characterWrap))
     // Subscriptionによってstateに登録される
   }
 
   async function addShinobigamiCharacterSessionMemo(characterId: string, text: string): Promise<void> {
     await addSessionDataHelper(
-      'character-session-memo',
+      'shinobigami-character-session-memo',
       JSON.stringify({
         characterId,
         text
@@ -916,7 +914,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function addShinobigamiCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
     const isOwnerControl = Boolean(state.user?.token)
     await addSessionDataHelper(
-      'character-private-memo',
+      'shinobigami-character-private-memo',
       JSON.stringify({
         ownerType: isOwnerControl ? 'user' : 'player',
         ownerId: isOwnerControl ? null : state.player?.id,
@@ -1204,13 +1202,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
               }
               const next = state.sessionDataList[idx].data
               const dataType = state.sessionDataList[idx].type
-              if (dataType === 'character') {
+              if (dataType === 'shinobigami-character') {
                 const characterName = old.character.characterName
                 getCharacterDiffMessages(old, next, state.players, characterName).forEach(({ text, icon, color }) =>
                   addNotification(text, icon, color)
                 )
               }
-              if (dataType === 'character-session-memo') {
+              if (dataType === 'shinobigami-character-session-memo') {
                 console.log(JSON.stringify(next, 0, 2))
                 const characterName = state.sessionDataList.find(c => c.id === next.characterId)?.data.character
                   .characterName

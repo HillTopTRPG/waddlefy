@@ -76,7 +76,7 @@
               :autofocus="true"
               v-model="addDashboardName"
               ref="addDashboardNameElm"
-              hide-details
+              :hide-details="true"
               @keydown.enter="$event.keyCode === 13 && addDashboard()"
             />
           </v-card-item>
@@ -153,7 +153,7 @@
             density="compact"
             class="name-text-field"
             style="letter-spacing: 1em; min-height: 1em"
-            hide-details
+            :hide-details="true"
             ref="sessionNameInputElm"
             @keydown.enter="$event.keyCode === 13 && updateSessionName()"
             @click:append-inner.stop

@@ -79,7 +79,7 @@
                   :autofocus="true"
                   v-model="addSessionName"
                   ref="addSessionNameElm"
-                  hide-details
+                  :hide-details="true"
                   @keydown.enter="$event.keyCode === 13 && addSession()"
                 />
               </v-card-item>
