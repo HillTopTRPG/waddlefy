@@ -391,7 +391,7 @@ async function onSubmitSessionType(sessionType: string): Promise<void> {
 
 async function addDashboard() {
   if (!graphQlStore) return
-  await graphQlStore.addDashboard(addDashboardName.value, defaultLayout)
+  await graphQlStore.addDashboard(addDashboardName.value, defaultLayout, { scope: 'all' })
   addDashboardName.value = DEFAULT_DASHBOARD_NAME
   addDashboardMenu.value = false
 }

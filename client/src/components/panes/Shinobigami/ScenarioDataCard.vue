@@ -9,7 +9,7 @@
       typeList.find(t => t.value === dataObj.type)?.label || ''
     }}</v-card-title>
     <v-card-item class="pa-0">
-      <v-sheet class="d-flex flex-column align-self-start px-2 pb-2 bg-transparent" style="gap: 0.5rem">
+      <v-sheet class="d-flex flex-column align-self-start px-2 bg-transparent" style="gap: 0.5rem">
         <template v-if="dataObj.type === 'shinobigami-handout'">
           <dialog-edit-text-field
             :title="`${dataObj.data.name || 'ななし'}の名前編集`"
@@ -246,7 +246,12 @@
       </v-sheet>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="red" variant="text">削除</v-btn>
+        <delete-dialog-btn
+          :target-name="dataObj.data.name"
+          :session-id="graphQlStore?.state.session?.id"
+          :type="typeList.find(t => t.value === dataObj.type)?.label || ''"
+          @execute="onDeleteSessionData"
+        />
       </v-card-actions>
     </v-card-item>
   </v-card>
@@ -259,6 +264,7 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import DialogEditTextField from '@/components/panes/Shinobigami/DialogEditTextField.vue'
 import DialogEditTextArea from '@/components/panes/Shinobigami/DialogEditTextArea.vue'
 import HandoutMultiCheckbox from '@/components/panes/Shinobigami/HandoutMultiCheckbox.vue'
+import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -625,6 +631,10 @@ async function onUpdateShinobigamiPrizeLeakedList(leakedList: boolean) {
     dataObj.value.data.readableList,
     leakedList
   )
+}
+
+async function onDeleteSessionData() {
+  await graphQlStore?.deleteSessionData(props.dataId)
 }
 </script>
 

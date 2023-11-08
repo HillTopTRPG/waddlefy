@@ -215,7 +215,7 @@ Resources:
         DashboardTableDataSourceName: !GetAtt DashboardTableDataSource.Name
 
   # mutation deleteSessionData
-  MutationDeleteSessionStack:
+  MutationDeleteSessionDataStack:
     Type: AWS::Serverless::Application
     Properties:
       Location: mutation/delete-session-data.template.yaml

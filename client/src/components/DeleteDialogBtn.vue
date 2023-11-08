@@ -4,7 +4,7 @@
       <v-btn color="error" variant="outlined" v-bind="props">この{{ type }}を削除</v-btn>
     </template>
     <v-card>
-      <v-card-title class="bg-warning">{{ targetName }} の削除</v-card-title>
+      <v-card-title class="bg-warning">{{ type }} の削除</v-card-title>
       <v-card-text>
         <p>削除するにはこの{{ type }}の名前を入力してください。</p>
       </v-card-text>

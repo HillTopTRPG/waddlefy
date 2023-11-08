@@ -446,6 +446,15 @@ mutation DeletePlayer($playerId: String!) {
 }
 `)
 
+const deleteSessionData = gql(`
+mutation DeleteSessionData($sessionDataId: String!) {
+  deleteSessionData(input: {id: $sessionDataId}) {
+    id
+    sessionId
+  }
+}
+`)
+
 export namespace MutationResult {
   export type UserSignUp = {
     userSignUp: UserForUser
@@ -511,6 +520,9 @@ export namespace MutationResult {
   }
   export type DeletePlayer = {
     deletePlayer: DeletedId
+  }
+  export type DeleteSessionData = {
+    deleteSessionData: DeletedId
   }
 }
 
@@ -918,6 +930,14 @@ subscription OnDeletePlayer($sessionId: String!) {
 }
 `)
 
+const onDeleteSessionData = gql(`
+subscription OnDeleteSessionData($sessionId: String!) {
+  onDeleteSessionData(sessionId: $sessionId) {
+    id
+  }
+}
+`)
+
 export namespace SubscriptionResult {
   export type OnAddPlayer = {
     onAddPlayer: AbstractPlayer
@@ -949,6 +969,9 @@ export namespace SubscriptionResult {
   export type OnDeletePlayer = {
     onDeletePlayer: { id: string }
   }
+  export type OnDeleteSessionData = {
+    onDeleteSessionData: { id: string }
+  }
 }
 
 export const Mutations = {
@@ -972,7 +995,8 @@ export const Mutations = {
   updatePlayerIcon,
   deleteSession,
   deleteDashboard,
-  deletePlayer
+  deletePlayer,
+  deleteSessionData
 }
 
 export const Queries = {
@@ -989,6 +1013,7 @@ export const Subscriptions = {
   onAddDashboard,
   onAddSessionData,
   onDeletePlayer,
+  onDeleteSessionData,
   onDeleteDashboard,
   onUpdateUser,
   onUpdateSession,

@@ -17,9 +17,4 @@ Resources:
       FieldName: deleteSessionData
       DataSourceName: !Ref SessionDataTableDataSourceName
       RequestMappingTemplateS3Location: ../vtl/delete-item-where-id-input-id.vm
-      ResponseMappingTemplate: |
-        #if($ctx.result && $ctx.result.error)
-          $util.error($ctx.result.error)
-        #end
-        #set($ctx.result.sessionId = $ctx.result.id)
-        $util.toJson($ctx.result)
+      ResponseMappingTemplateS3Location: ../vtl/return-result.vm

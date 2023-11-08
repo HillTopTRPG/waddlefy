@@ -200,7 +200,6 @@ input DeletePlayerInput {
 }
 
 input DeleteSessionDataInput {
-  sessionId: String!
   id: String!
 }
 

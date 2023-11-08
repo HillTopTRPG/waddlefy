@@ -60,6 +60,13 @@
         :href="characterSheet.url"
       />
       <span class="text-body-2"
+        >({{
+          graphQlStore?.state.sessionDataList.find(
+            sd => sd.type === 'shinobigami-handout' && sd.data.person === characterId
+          )?.data.name || 'ハンドアウトなし'
+        }})</span
+      >
+      <span class="text-body-2"
         >({{ graphQlStore?.state.players.find(p => p.id === playerId)?.name || 'PL割当なし' }})</span
       >
     </v-card-title>

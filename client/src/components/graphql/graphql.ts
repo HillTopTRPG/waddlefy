@@ -25,7 +25,7 @@ import { uuid } from 'vue-uuid'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
-const DEFAULT_URL = 'https://z46ue3pn4fc6pesko32rxh6w6a.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+const DEFAULT_URL = 'https://r6dvpxfwunaazhhdtfi2wb7vly.appsync-api.ap-northeast-1.amazonaws.com/graphql'
 const DEFAULT_REGION = 'ap-northeast-1'
 
 export const DEFAULT_SESSION_NAME = 'No title session'
@@ -302,6 +302,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       case 'mutation updateUserIcon':
       case 'mutation updateSession':
       case 'mutation deletePlayer':
+      case 'mutation deleteSessionData':
       case 'mutation generatePlayerResetCode': {
         const userSecret = JSON.parse(localStorage.getItem(userToken) || '{}')?.secret
         authorize = `u/${userToken}/${userSecret || ''}`
@@ -368,6 +369,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         onUpdateSessionDataSubscription(sessionId)
         onUpdatePlayerSubscription(sessionId)
         onDeletePlayerSubscription(sessionId)
+        onDeleteSessionDataSubscription(sessionId)
         onDeleteDashboardSubscription(sessionId)
       },
       { immediate: true }
@@ -677,6 +679,16 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて削除される
   }
 
+  async function deleteSessionData(sessionDataId: string) {
+    if (!appSyncClient) return
+    operation = 'mutation deleteSessionData'
+    await appSyncClient.mutate<MutationResult.DeleteSessionData>({
+      mutation: Mutations.deleteSessionData,
+      variables: { sessionDataId }
+    })
+    // subscriptionにて削除される
+  }
+
   async function directSessionAccess(sessionId: string) {
     if (!appSyncClient) return
     state.players = []
@@ -916,10 +928,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addShinobigamiHandout(): Promise<void> {
+    const type = 'shinobigami-handout'
+    const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
     await addSessionDataHelper(
-      'shinobigami-handout',
+      type,
       JSON.stringify({
-        name: '',
+        name: `PC${next}`,
         objective: '',
         secret: '',
         person: '',
@@ -930,10 +944,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addShinobigamiEnigma(): Promise<void> {
+    const type = 'shinobigami-enigma'
+    const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
     await addSessionDataHelper(
-      'shinobigami-enigma',
+      type,
       JSON.stringify({
-        name: '',
+        name: `エニグマ${next}`,
         threat: 1,
         disableJudgement: '',
         camouflage: '',
@@ -948,10 +964,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addShinobigamiPersona(): Promise<void> {
+    const type = 'shinobigami-persona'
+    const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
     await addSessionDataHelper(
-      'shinobigami-persona',
+      type,
       JSON.stringify({
-        name: '',
+        name: `ペルソナ${next}`,
         effect: '',
         bind: '',
         leaked: false
@@ -961,10 +979,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addShinobigamiPrize(): Promise<void> {
+    const type = 'shinobigami-prize'
+    const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
     await addSessionDataHelper(
-      'shinobigami-prize',
+      type,
       JSON.stringify({
-        name: '',
+        name: `プライズ${next}`,
         description: '',
         secret: '',
         owner: '',
@@ -1250,10 +1270,36 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnDeletePlayer>) {
+        console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onDeletePlayer
         if (data && state.session?.id === sessionId) {
           const idx = state.players.findIndex(p => p.id === data.id)
           state.players.splice(idx, 1)
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
+  function onDeleteSessionDataSubscription(
+    sessionId: string
+  ): Observable<FetchResult<SubscriptionResult.OnDeleteSessionData>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<SubscriptionResult.OnDeleteSessionData>({
+      query: Subscriptions.onDeleteSessionData,
+      variables: { sessionId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<SubscriptionResult.OnDeleteSessionData>) {
+        console.log(JSON.stringify(value.data, null, 2))
+        const data = value.data?.onDeleteSessionData
+        if (data && state.session?.id === sessionId) {
+          const idx = state.sessionDataList.findIndex(sd => sd.id === data.id)
+          state.sessionDataList.splice(idx, 1)
         }
       },
       error(errorValue: any) {
@@ -1337,6 +1383,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     deleteSession,
     deleteDashboard,
     deletePlayer,
+    deleteSessionData,
     addNotification,
     closeNotification,
     closeNotificationAll,

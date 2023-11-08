@@ -6,22 +6,37 @@
           VTab: { size: 'small', variant: 'text', density: 'comfortable' }
         }"
       >
-        <v-tab value="session-memo" prepend-icon="mdi-antenna">共有メモ</v-tab>
-        <v-tab value="private-memo" prepend-icon="mdi-account-outline">個人メモ</v-tab>
+        <v-tab text="共有メモ" value="session-memo" prepend-icon="mdi-antenna" />
+        <v-tab text="個人メモ" value="private-memo" prepend-icon="mdi-account-outline" />
 
-        <v-tab value="objective" prepend-icon="mdi-account-outline">使命</v-tab>
-        <v-tab
-          value="secret"
-          :disabled="!secretOpen"
-          :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
-          >秘密</v-tab
-        >
-        <v-tab v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id" prepend-icon="mdi-bomb"
-          >エニグマ{{ idx + 1 }}</v-tab
-        >
-        <v-tab v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id" :prepend-icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
-          >ペルソナ{{ idx + 1 }}</v-tab
-        >
+        <!-- ハンドアウト -->
+        <template v-if="handout">
+          <v-tab text="使命" value="objective" prepend-icon="mdi-bullseye" />
+          <v-tab
+            text="秘密"
+            value="secret"
+            :disabled="!secretOpen"
+            :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
+          />
+        </template>
+
+        <!-- エニグマ -->
+        <template v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id">
+          <v-tab
+            :text="`エニグマ${idx + 1}`"
+            :value="enigma.id"
+            :prepend-icon="enigma.data.disabled ? 'mdi-bomb-off' : 'mdi-bomb'"
+          />
+        </template>
+
+        <!-- ペルソナ -->
+        <template v-for="(persona, idx) in boundPersonaList" :key="persona.id">
+          <v-tab
+            :text="`ペルソナ${idx + 1}`"
+            :value="persona.id"
+            :prepend-icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
+          />
+        </template>
       </v-defaults-provider>
     </v-tabs>
     <v-window v-model="tab">
@@ -52,7 +67,7 @@
       <v-window-item value="objective">
         <character-sheet-tab-text-area
           label="使命"
-          icon="mdi-lock-open-outline"
+          icon="mdi-bullseye"
           :editable="false"
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
@@ -72,11 +87,11 @@
       <v-window-item v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id">
         <character-sheet-tab-text-area
           :label="`エニグマ${idx + 1}`"
-          icon="mdi-bomb"
+          :icon="enigma.data.disabled ? 'mdi-bomb-off' : 'mdi-bomb'"
           :editable="false"
           :text-rows="textRows"
           :character-name="characterInfo?.character.characterName"
-          :text="enigma.data.effect"
+          :text="`${enigma.data.disabled ? '【解除済】\n' : ''}${enigma.data.effect}`"
         />
       </v-window-item>
       <v-window-item v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id">
