@@ -1,6 +1,13 @@
 <template>
-  <v-card class="d-flex flex-row" variant="outlined" rounded="lg">
-    <v-tabs v-model="tab" direction="vertical" color="primary">
+  <v-card class="d-flex flex-row" variant="outlined" rounded="lg" :height="(textRows + 2) * 24 + 22">
+    <v-tabs
+      v-model="tab"
+      direction="vertical"
+      color="primary"
+      :center-active="true"
+      prev-icon="mdi-chevron-up"
+      next-icon="mdi-chevron-down"
+    >
       <v-defaults-provider
         :defaults="{
           VTab: { size: 'small', variant: 'text', flat: true, density: 'comfortable' }

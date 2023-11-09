@@ -88,9 +88,8 @@ watch(dialog, v => {
     dialog.value = false
   }
   if (v) {
-    setTimeout(() => editElm.value?.focus(), 300)
-  } else {
     editingText.value = props.text
+    setTimeout(() => editElm.value?.focus(), 300)
   }
 })
 

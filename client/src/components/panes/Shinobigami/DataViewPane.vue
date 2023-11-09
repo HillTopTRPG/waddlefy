@@ -9,21 +9,37 @@
           </v-btn>
         </template>
         <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
-          <v-checkbox-btn label="背景" v-model="viewBackground" />
-          <v-checkbox-btn label="特技表" v-model="viewTokugi" />
-          <v-checkbox-btn label="忍法一覧" v-model="viewNinpou" />
-          <v-divider class="my-1 ml-2" />
-          <v-checkbox-btn label="テキスト" v-model="viewText" />
-          <v-label class="text-body-2 ml-4">テキスト行数</v-label>
-          <v-slider
-            density="compact"
-            class="ml-4"
-            :hide-details="true"
-            v-model="textRows"
-            :min="2"
-            :step="1"
-            :max="20"
-          />
+          <v-defaults-provider
+            :defaults="{
+              VSwitch: {
+                color: 'primary',
+                density: 'compact',
+                hideDetails: true,
+                class: 'pl-3',
+                inset: true,
+                trueIcon: 'mdi-check'
+              }
+            }"
+          >
+            <v-switch label="背景" v-model="viewBackground" />
+            <v-switch label="特技表" v-model="viewTokugi" />
+            <v-switch label="忍法一覧" v-model="viewNinpou" />
+            <v-divider class="my-1 ml-2" />
+            <v-switch label="テキスト" v-model="viewText" />
+            <v-label class="text-body-2 ml-4">テキスト行数</v-label>
+            <v-slider
+              density="compact"
+              class="ml-4"
+              :hide-details="true"
+              v-model="textRows"
+              :rounded="true"
+              color="primary"
+              :thumb-label="true"
+              :min="2"
+              :step="1"
+              :max="20"
+            />
+          </v-defaults-provider>
         </div>
       </v-menu>
     </template>

@@ -15,7 +15,7 @@
         >
           <v-menu
             v-model="readUrlDialog"
-            location="bottom right"
+            location="bottom left"
             :close-on-content-click="false"
             scroll-strategy="close"
           >
