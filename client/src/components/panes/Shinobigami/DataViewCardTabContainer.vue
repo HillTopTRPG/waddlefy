@@ -1,12 +1,12 @@
 <template>
   <v-card class="d-flex flex-row" variant="outlined" rounded="lg" :height="(textRows + 2) * 24 + 22">
     <v-tabs
-      v-model="tab"
-      direction="vertical"
       color="primary"
-      :center-active="true"
+      direction="vertical"
       prev-icon="mdi-chevron-up"
       next-icon="mdi-chevron-down"
+      :center-active="false"
+      v-model="tab"
     >
       <v-defaults-provider
         :defaults="{

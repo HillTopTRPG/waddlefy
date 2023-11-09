@@ -1072,6 +1072,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
               ...raw
             }
           })
+          const dataType = data.type
+          if (dataType === 'shinobigami-character-session-memo') {
+            const character = state.sessionDataList.find(sd => sd.id === raw.characterId)
+            const characterName = character?.data.character.characterName || ''
+            addNotification(`${characterName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
+          }
         }
       },
       error(errorValue: any) {
