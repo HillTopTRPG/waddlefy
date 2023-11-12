@@ -178,7 +178,7 @@
               {{ label }}
             </template>
           </v-select>
-          <correlations-card :data-id="dataId" />
+          <correlations-card mode="edit" :handout-id="dataId" />
         </template>
         <template v-if="dataObj.type === 'shinobigami-enigma'">
           <menu-edit-text-field

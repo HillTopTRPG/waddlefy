@@ -15,10 +15,10 @@
       >
         <v-tab text="共有メモ" value="session-memo" prepend-icon="mdi-antenna" />
         <v-tab text="個人メモ" value="private-memo" prepend-icon="mdi-account-outline" />
-        <v-tab text="人物欄" value="correlations" prepend-icon="mdi-account-heart-outline" />
 
         <!-- ハンドアウト -->
         <template v-if="handout">
+          <v-tab text="人物欄" value="correlations" prepend-icon="mdi-account-heart-outline" />
           <v-tab text="使命" value="objective" prepend-icon="mdi-bullseye" />
           <v-tab
             text="秘密"
@@ -77,8 +77,17 @@
           @update="updatePrivateMemo"
         />
       </v-window-item>
-      <v-window-item value="correlations">
-        {{ '' /* TODO 人物欄 */ }}
+      <v-window-item
+        value="correlations"
+        class="pa-2"
+        :style="`height: ${(textRows + 2) * 24 + 20}px`"
+        v-if="handout"
+      >
+        <v-sheet class="d-flex flex-column overflow-y-auto mb-2" style="gap: .3rem" :style="`height: ${(textRows) * 24 + 23}px`">
+          <correlations-card mode="view" :handout-id="handout.id" />
+        </v-sheet>
+        <v-divider />
+        <div class="text-caption py-1 pl-4" style="opacity: 0.5">編集不可</div>
       </v-window-item>
       <v-window-item value="objective">
         <menu-edit-text-area
@@ -120,7 +129,7 @@
         <menu-edit-text-area
           :label="`ペルソナ${idx + 1}`"
           hint="編集不可"
-          :text="persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
+          :text="isOwnerControl || persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
           :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
           variant="solo-filled"
           :editable="false"
@@ -137,6 +146,7 @@ import { computed, inject, ref } from 'vue'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{

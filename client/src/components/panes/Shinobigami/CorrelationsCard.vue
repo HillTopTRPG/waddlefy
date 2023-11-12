@@ -4,12 +4,36 @@
       sd => sd.type === 'shinobigami-handout' && sd.id !== dataObj.id
     )"
     :key="handout.id"
-    class="d-flex flex-column"
+    class="d-flex flex-column flex-0-0"
+    style="height: auto"
     variant="text"
   >
     <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ getHandoutName(handout) }}</v-card-subtitle>
-    <v-card-item class="py-0 d-inline-flex">
-      <v-card class="d-flex flex-row ma-0 border" :flat="true" rounded="lg">
+    <v-card-item class="py-0 d-inline-flex pr-0">
+      <v-sheet class="d-flex flex-row" style="gap: .3rem" v-if="mode === 'view'">
+        <v-chip
+          text="居所"
+          color="primary"
+          density="comfortable"
+          :variant="hasType(handout.id, 'location') ? 'flat' : 'outlined'"
+          :disabled="!hasType(handout.id, 'location')"
+        />
+        <v-chip
+          text="秘密"
+          color="primary"
+          density="comfortable"
+          :variant="hasType(handout.id, 'secret') ? 'flat' : 'outlined'"
+          :disabled="!hasType(handout.id, 'secret')"
+        />
+        <v-chip
+          :text="getEmotion(handout.id) ? emotionList.find(e => e.value === getEmotion(handout.id))?.label : '感情なし'"
+          color="primary"
+          density="comfortable"
+          :disabled="!getEmotion(handout.id)"
+          :variant="getEmotion(handout.id) ? 'flat' : 'outlined'"
+        />
+      </v-sheet>
+      <v-card class="d-flex flex-row ma-0 border" :flat="true" rounded="lg" v-if="mode === 'edit'">
         <v-defaults-provider
           :defaults="{
             VCardItem: { class: 'pa-0' },
@@ -27,15 +51,7 @@
           <v-card-item>
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
-              :model-value="
-                graphQlStore?.state.sessionDataList.some(
-                  sd =>
-                    sd.type === 'shinobigami-handout-relation' &&
-                    sd.data.ownerId === dataObj.id &&
-                    sd.data.targetId === handout.id &&
-                    sd.data.type === 'location'
-                )
-              "
+              :model-value="hasType(handout.id, 'location')"
               @update:model-value="onUpdateShinobigamiHandoutRelation(handout.id, 'location')"
             >
               <template v-slot:label>
@@ -47,15 +63,7 @@
           <v-card-item>
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
-              :model-value="
-                graphQlStore?.state.sessionDataList.some(
-                  sd =>
-                    sd.type === 'shinobigami-handout-relation' &&
-                    sd.data.ownerId === dataObj.id &&
-                    sd.data.targetId === handout.id &&
-                    sd.data.type === 'secret'
-                )
-              "
+              :model-value="hasType(handout.id, 'secret')"
               @update:model-value="onUpdateShinobigamiHandoutRelation(handout.id, 'secret')"
             >
               <template v-slot:label>
@@ -70,15 +78,7 @@
               :items="emotionList"
               item-title="label"
               item-value="value"
-              :model-value="
-                graphQlStore?.state.sessionDataList.find(
-                  sd =>
-                    sd.type === 'shinobigami-handout-relation' &&
-                    sd.data.ownerId === dataObj.id &&
-                    sd.data.targetId === handout.id &&
-                    !isFixType(sd.data.type)
-                )?.data.type || ''
-              "
+              :model-value="getEmotion(handout.id)"
               @update:model-value="v => onUpdateShinobigamiHandoutRelation(handout.id, v)"
             >
               <template v-slot:label>
@@ -89,79 +89,81 @@
         </v-defaults-provider>
       </v-card>
     </v-card-item>
-    <v-card-item
-      v-for="(arts, idx) in graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.data.person)?.data
-        .character.specialArtsList || []"
-      :key="idx"
-      class="py-0 pr-0"
-    >
-      <v-sheet class="bg-transparent d-flex flex-row align-center justify-start">
-        <v-checkbox-btn class="mr-0 flex-0-0">
-          <template v-slot:label>
-            <div>
-              <span>奥義情報</span>
-            </div>
-          </template>
-        </v-checkbox-btn>
-        <v-menu
-          :close-on-content-click="false"
-          location="top left"
-          scroll-strategy="close"
-          location-strategy="connected"
-        >
-          <template v-slot:activator="{ props }">
-            <v-btn variant="text" class="text-decoration-underline px-2" v-bind="props">
-              <template v-slot:default>
-                <div style="max-width: 13em; white-space: nowrap; overflow-x: hidden; text-overflow: ellipsis">
-                  {{ arts.name }}
-                </div>
-              </template>
-            </v-btn>
-          </template>
-          <v-card max-width="20em">
-            <v-defaults-provider
-              :defaults="{
-                VTextField: {
-                  readonly: true,
-                  variant: 'solo-filled',
-                  hideDetails: true,
-                  noResize: true,
-                  flat: true
-                },
-                VTextarea: {
-                  readonly: true,
-                  variant: 'solo-filled',
-                  hideDetails: true,
-                  noResize: true,
-                  flat: true
-                }
-              }"
-            >
-              <v-card-title class="overflow-x-auto text-wrap text-break" style="line-height: 1.3em">{{
-                arts.name
-              }}</v-card-title>
-              <v-card-item class="py-0">
-                <v-sheet class="d-flex flex-column" style="gap: 0.5rem">
-                  <v-text-field label="指定特技" :model-value="arts.skill" />
-                  <v-textarea
-                    label="効果／強み／弱み"
-                    :auto-grow="true"
-                    :rows="1"
-                    :max-rows="10"
-                    :model-value="arts.effect"
-                  />
-                  <v-textarea label="演出" :auto-grow="true" :rows="1" :max-rows="5" :model-value="arts.direction" />
-                </v-sheet>
-              </v-card-item>
-              <v-card-actions class="px-4">
-                <v-spacer />
-                <v-btn variant="text" class="text-decoration-underline">閉じる</v-btn>
-              </v-card-actions>
-            </v-defaults-provider>
-          </v-card>
-        </v-menu>
-      </v-sheet>
-    </v-card-item>
+    <template v-if="mode === 'edit'">
+      <v-card-item
+        v-for="(arts, idx) in graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.data.person)?.data
+          .character.specialArtsList || []"
+        :key="idx"
+        class="py-0 pr-0"
+      >
+        <v-sheet class="bg-transparent d-flex flex-row align-center justify-start">
+          <v-checkbox-btn :readonly="mode === 'view'" class="mr-0 flex-0-0">
+            <template v-slot:label>
+              <div>
+                <span>奥義情報</span>
+              </div>
+            </template>
+          </v-checkbox-btn>
+          <v-menu
+            :close-on-content-click="false"
+            location="top left"
+            scroll-strategy="close"
+            location-strategy="connected"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn variant="text" class="text-decoration-underline px-2" v-bind="props">
+                <template v-slot:default>
+                  <div style="max-width: 13em; white-space: nowrap; overflow-x: hidden; text-overflow: ellipsis">
+                    {{ arts.name }}
+                  </div>
+                </template>
+              </v-btn>
+            </template>
+            <v-card max-width="20em">
+              <v-defaults-provider
+                :defaults="{
+                  VTextField: {
+                    readonly: true,
+                    variant: 'solo-filled',
+                    hideDetails: true,
+                    noResize: true,
+                    flat: true
+                  },
+                  VTextarea: {
+                    readonly: true,
+                    variant: 'solo-filled',
+                    hideDetails: true,
+                    noResize: true,
+                    flat: true
+                  }
+                }"
+              >
+                <v-card-title class="overflow-x-auto text-wrap text-break" style="line-height: 1.3em">{{
+                  arts.name
+                }}</v-card-title>
+                <v-card-item class="py-0">
+                  <v-sheet class="d-flex flex-column" style="gap: 0.5rem">
+                    <v-text-field label="指定特技" :model-value="arts.skill" />
+                    <v-textarea
+                      label="効果／強み／弱み"
+                      :auto-grow="true"
+                      :rows="1"
+                      :max-rows="10"
+                      :model-value="arts.effect"
+                    />
+                    <v-textarea label="演出" :auto-grow="true" :rows="1" :max-rows="5" :model-value="arts.direction" />
+                  </v-sheet>
+                </v-card-item>
+                <v-card-actions class="px-4">
+                  <v-spacer />
+                  <v-btn variant="text" class="text-decoration-underline">閉じる</v-btn>
+                </v-card-actions>
+              </v-defaults-provider>
+            </v-card>
+          </v-menu>
+        </v-sheet>
+      </v-card-item>
+    </template>
   </v-card>
 </template>
 
@@ -176,11 +178,12 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  dataId: string
+  handoutId: string
+  mode: 'edit' | 'view'
 }>()
 
 const dataObj = computed(() => {
-  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.dataId)
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.handoutId)
 })
 
 const emotionList = [
@@ -211,6 +214,26 @@ function getHandoutName(handout: { data: { name: string; person: string } }): st
 
 function isFixType(type: 'location' | 'secret' | ShinobigamiEmotion) {
   return ['location', 'secret'].some(t => t === type)
+}
+
+function hasType(handoutId: string, type: 'location' | 'secret') {
+  return graphQlStore?.state.sessionDataList.some(
+    sd =>
+      sd.type === 'shinobigami-handout-relation' &&
+      sd.data.ownerId === dataObj.value.id &&
+      sd.data.targetId === handoutId &&
+      sd.data.type === type
+  )
+}
+
+function getEmotion(handoutId: string) {
+  return graphQlStore?.state.sessionDataList.find(
+    sd =>
+      sd.type === 'shinobigami-handout-relation' &&
+      sd.data.ownerId === dataObj.value.id &&
+      sd.data.targetId === handoutId &&
+      !isFixType(sd.data.type)
+  )?.data.type || ''
 }
 
 async function onUpdateShinobigamiHandoutRelation(targetId: string, type: 'location' | 'secret' | ShinobigamiEmotion) {
