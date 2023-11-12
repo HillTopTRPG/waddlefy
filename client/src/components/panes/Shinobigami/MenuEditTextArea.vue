@@ -19,7 +19,8 @@
         :hide-details="!Boolean(hint)"
         :persistent-hint="true"
         :hint="hint || ''"
-        style="width: 20rem; max-width: 20rem; cursor: pointer"
+        :style="`width: ${width || 20}rem; max-width: ${width || 20}rem;`"
+        style="cursor: pointer"
         :flat="true"
         :variant="variant || 'solo'"
         :model-value="text || ''"
@@ -41,7 +42,7 @@
           :hint="hint || ''"
           :persistent-hint="true"
           :hide-details="!Boolean(hint)"
-          style="width: 20rem"
+          :style="`width: ${width || 20}rem; max-width: ${width || 20}rem;`"
           :autofocus="true"
           :flat="true"
           variant="solo-filled"
@@ -75,6 +76,7 @@ const props = defineProps<{
   hint?: string
   textRows: number
   offset?: number
+  width?: number
   variant: string
   editable: boolean
   textareaClass?: string

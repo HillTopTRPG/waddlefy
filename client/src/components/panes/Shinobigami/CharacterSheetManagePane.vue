@@ -68,10 +68,19 @@
                       </v-carousel-item>
                       <v-carousel-item>
                         <div>
+                          <span class="font-weight-bold">シナリオ情報</span>
+                          <span>は読み込みません。</span><br />
+                          <span>ハンドアウトの追加と紐付けで表現します。</span>
+                        </div>
+                        <v-progress-linear :model-value="carouselTimerNum" />
+                      </v-carousel-item>
+                      <v-carousel-item>
+                        <div>
                           <span>秘匿情報閲覧パスは</span>
                           <span class="font-weight-bold">奥義</span>
                           <span>の読込に使います。</span><br />
-                          <span>秘匿情報閲覧パスは必須ではありません。</span>
+                          <span class="font-weight-bold">忍具</span>
+                          <span>は秘匿情報ですが読み込みません。</span>
                         </div>
                         <v-progress-linear :model-value="carouselTimerNum" />
                       </v-carousel-item>
@@ -136,8 +145,8 @@
                   color="primary"
                   @click="callAddCharacter()"
                   :disabled="!addUrl"
-                  >読込</v-btn
-                >
+                  text="読込"
+                />
               </v-card-actions>
             </v-card>
           </v-menu>
@@ -200,8 +209,11 @@ async function callAddCharacter() {
   const helper = new ShinobigamiHelper(addUrl.value, password.value)
   if (helper.isThis()) {
     const { data } = await helper.getData()
-    await graphQlStore?.addShinobigamiCharacter(data)
+    await graphQlStore?.addShinobigamiCharacter(data, password.value)
   }
+  addUrl.value = ''
+  password.value = ''
+  readUrlDialog.value = false
 }
 
 const readUrlDialog = ref(false)

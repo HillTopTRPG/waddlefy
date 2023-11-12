@@ -16,6 +16,7 @@
         :style="`width: ${width}rem; max-width: ${width}rem`"
         :persistent-placeholder="true"
         :hide-details="true"
+        :class="classText || ''"
         :model-value="text"
         v-bind="props"
       >
@@ -66,6 +67,7 @@ const props = defineProps<{
   placeholder: string
   width: number
   editable: boolean
+  classText?: string
 }>()
 
 const emits = defineEmits<{

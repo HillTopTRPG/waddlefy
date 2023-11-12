@@ -1,10 +1,11 @@
 <template>
-  <v-dialog width="auto" v-model="deleteDialog">
+  <v-menu width="auto" v-model="deleteDialog" :close-on-content-click="false">
     <template v-slot:activator="{ props }">
-      <v-btn color="error" variant="text" class="text-decoration-underline" v-bind="props">この{{ type }}を削除</v-btn>
+      <v-btn color="error" variant="text" class="text-decoration-underline" :class="classText || ''" v-bind="props"
+        >この{{ type }}を削除</v-btn
+      >
     </template>
     <v-card>
-      <v-card-title class="bg-warning">{{ type }}の削除</v-card-title>
       <v-card-text class="pb-1">削除するにはこの{{ type }}の名前を入力してください</v-card-text>
       <v-card-item class="pa-2">
         <v-text-field
@@ -17,22 +18,25 @@
           :hide-details="true"
           :persistent-placeholder="true"
           :placeholder="targetName"
+          ref="inputElm"
         />
       </v-card-item>
       <v-divider />
-      <v-card-actions class="px-5">
-        <v-spacer />
+      <v-card-actions class="px-2">
+        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="deleteDialog = false"
+          >キャンセル</v-btn
+        >
         <v-btn
           color="warning"
-          variant="elevated"
+          class="flex-0-1-100"
+          variant="flat"
           :disabled="inputTargetName !== targetName"
-          text="完全に削除"
-          class="px-5"
           @click="deleteExecute()"
-        />
+          >完全に削除</v-btn
+        >
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-menu>
 </template>
 
 <script setup lang="ts">
@@ -43,6 +47,7 @@ const props = defineProps<{
   type: string
   targetName: string
   sessionId: string
+  classText?: string
 }>()
 
 const emits = defineEmits<{
@@ -59,13 +64,18 @@ watch(
 
 const deleteDialog = ref(false)
 const inputTargetName = ref('')
+const inputElm = ref()
+
 async function deleteExecute() {
   await emits('execute')
   deleteDialog.value = false
   inputTargetName.value = ''
 }
 
-watch(deleteDialog, () => {
-  inputTargetName.value = ''
+watch(deleteDialog, v => {
+  if (v) {
+    inputTargetName.value = ''
+    setTimeout(() => inputElm.value?.focus(), 300)
+  }
 })
 </script>

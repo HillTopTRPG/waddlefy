@@ -61,7 +61,7 @@
           </v-select>
         </v-list-item>
         <v-list-item>
-          <delete-dialog-btn
+          <delete-menu-btn
             :target-name="dashboard?.name || ''"
             :session-id="graphQlStore?.state.session?.id || ''"
             type="画面"
@@ -79,7 +79,7 @@ import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 import NaturalTextField from '@/components/NaturalTextField.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
+import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { DashboardOption } from '@/components/graphql/schema'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

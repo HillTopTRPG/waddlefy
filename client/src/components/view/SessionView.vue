@@ -189,7 +189,7 @@
           </v-text-field>
         </v-list-item>
         <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length > 1">
-          <delete-dialog-btn
+          <delete-menu-btn
             :target-name="graphQlStore?.state.session?.name || ''"
             type="セッション"
             :sessionId="sessionId"
@@ -303,7 +303,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 import { Layout } from '@/components/panes'
 import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
-import DeleteDialogBtn from '@/components/DeleteDialogBtn.vue'
+import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { addDashboards } from '@/PaneLayoutTemplate'
 import { DashboardOption } from '@/components/graphql/schema'
 

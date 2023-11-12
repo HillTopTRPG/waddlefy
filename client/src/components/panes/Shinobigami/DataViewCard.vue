@@ -120,6 +120,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   characterId: string
   playerId: string
+  viewPass: string
   characterSheet: ShinobiGami
   selectSkill: string
   backgroundView: boolean
@@ -150,7 +151,7 @@ async function updateInfo(info: SaikoroFictionTokugi) {
   if (!graphQlStore) return
   const characterSheet = clone(props.characterSheet)!
   characterSheet.skill = info
-  await graphQlStore.updateShinobigamiCharacter(props.characterId, props.playerId, characterSheet)
+  await graphQlStore.updateShinobigamiCharacter(props.characterId, props.playerId, props.viewPass, characterSheet)
 }
 </script>
 

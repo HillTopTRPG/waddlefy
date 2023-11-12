@@ -50,6 +50,7 @@
         <data-view-card
           :character-id="cw.id"
           :player-id="cw.player"
+          :view-pass="cw.viewPass"
           :character-sheet="cw.character"
           :background-view="viewBackground"
           :ninpou-view="viewNinpou"

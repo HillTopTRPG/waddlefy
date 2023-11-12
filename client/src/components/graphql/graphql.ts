@@ -20,7 +20,7 @@ import {
   SessionData,
   DashboardOption
 } from '@/components/graphql/schema'
-import { getCharacterDiffMessages, ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
+import { getCharacterDiffMessages, ShinobiGami, ShinobigamiEmotion } from '@/components/panes/Shinobigami/shinobigami'
 import { uuid } from 'vue-uuid'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 
@@ -35,6 +35,7 @@ const DEFAULT_SESSION_TYPE = 'init'
 export type CharacterWrap = {
   id: string
   player: string
+  viewPass: string
   character: ShinobiGami
 }
 
@@ -462,11 +463,17 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて更新される
   }
 
-  async function updateShinobigamiCharacter(characterId: string, playerId: string, data: ShinobiGami) {
+  async function updateShinobigamiCharacter(
+    characterId: string,
+    playerId: string,
+    viewPass: string,
+    data: ShinobiGami
+  ) {
     await updateSessionDataHelper(
       characterId,
       JSON.stringify({
         player: playerId,
+        viewPass,
         character: data
       })
     )
@@ -500,8 +507,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     name: string,
     objective: string,
     secret: string,
-    person: string,
-    leakedList: string[]
+    person: string
   ) {
     await updateSessionDataHelper(
       handoutId,
@@ -509,8 +515,23 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         name,
         objective,
         secret,
-        person,
-        leakedList
+        person
+      })
+    )
+  }
+
+  async function updateShinobigamiHandoutRelation(
+    relationId: string,
+    ownerId: string,
+    targetId: string,
+    type: 'location' | 'secret' | ShinobigamiEmotion
+  ) {
+    await updateSessionDataHelper(
+      relationId,
+      JSON.stringify({
+        ownerId,
+        targetId,
+        type
       })
     )
   }
@@ -891,9 +912,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
   }
 
-  async function addShinobigamiCharacter(dataObj: ShinobiGami): Promise<void> {
+  async function addShinobigamiCharacter(dataObj: ShinobiGami, password: string): Promise<void> {
     const characterWrap: Omit<CharacterWrap, 'id'> = {
       player: '',
+      viewPass: password,
       character: dataObj
     }
     await addSessionDataHelper('shinobigami-character', JSON.stringify(characterWrap))
@@ -934,8 +956,23 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         name: `PC${next}`,
         objective: '',
         secret: '',
-        person: '',
-        leakedList: []
+        person: ''
+      })
+    )
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addShinobigamiHandoutRelation(
+    ownerId: string,
+    targetId: string,
+    type: 'location' | 'secret' | ShinobigamiEmotion
+  ): Promise<void> {
+    await addSessionDataHelper(
+      'shinobigami-handout-relation',
+      JSON.stringify({
+        ownerId,
+        targetId,
+        type
       })
     )
     // Subscriptionによってstateに登録される
@@ -1395,6 +1432,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiCharacterSessionMemo,
     addShinobigamiCharacterPrivateMemo,
     addShinobigamiHandout,
+    addShinobigamiHandoutRelation,
     addShinobigamiEnigma,
     addShinobigamiPersona,
     addShinobigamiPrize,
@@ -1402,6 +1440,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateShinobigamiCharacterSessionMemo,
     updateShinobigamiCharacterPrivateMemo,
     updateShinobigamiHandout,
+    updateShinobigamiHandoutRelation,
     updateShinobigamiEnigma,
     updateShinobigamiPersona,
     updateShinobigamiPrize

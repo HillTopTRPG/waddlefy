@@ -1,8 +1,9 @@
 import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi, TokugiInfo } from './SaikoroFiction'
-import { convertNumberZero } from './PrimaryDataUtility'
+import { clone, convertNumberZero } from './PrimaryDataUtility'
 import { getJsonByGet, getJsonByJsonp } from './fetch-util'
 import { CharacterWrap } from '@/components/graphql/graphql'
 import { Player } from '@/components/graphql/schema'
+import { uuid } from 'vue-uuid'
 
 export type Background = {
   name: string
@@ -12,11 +13,11 @@ export type Background = {
 }
 
 export type SpecialArts = {
+  _id: string
   name: string
   skill: string
   effect: string
   direction: string
-  _openList: string[]
 }
 
 export type NinjaTool = {
@@ -76,19 +77,13 @@ export type CharacterSecret = {
 export type DiffType = {
   op: 'replace' | 'add' | 'delete'
   path: string
+  label: string
   before: string | number
   after: string | number
 }
-export function getCharacterDiffMessages(
-  wrapOne: CharacterWrap,
-  wrapTwo: CharacterWrap,
-  players: Player[],
-  characterName: string
-): string[] {
-  const diffs: DiffType[] = []
-  const cOne = wrapOne.character
-  const cTwo = wrapTwo.character
-  const simpleParams: (keyof Pick<
+
+const basicParams: {
+  path: keyof Pick<
     ShinobiGami,
     'url',
     'playerName',
@@ -106,31 +101,70 @@ export function getCharacterDiffMessages(
     'cover',
     'belief',
     'stylerule'
-  >)[] = [
-    'url',
-    'playerName',
-    'characterName',
-    'characterNameKana',
-    'regulation',
-    'foe',
-    'exp',
-    'memo',
-    'upperStyle',
-    'subStyle',
-    'level',
-    'age',
-    'sex',
-    'cover',
-    'belief',
-    'stylerule'
-  ]
-  simpleParams.forEach(p => {
-    if (cOne[p] === cTwo[p]) return
+  >
+  label: string
+}[] = [
+  { path: 'url', label: 'URL' },
+  { path: 'playerName', label: 'プレイヤー名' },
+  { path: 'characterName', label: 'キャラクター名' },
+  { path: 'characterNameKana', label: 'キャラクター名(カナ)' },
+  { path: 'regulation', label: 'レギュレーション' },
+  { path: 'foe', label: '仇敵' },
+  { path: 'exp', label: '功績' },
+  { path: 'memo', label: '設定' },
+  { path: 'upperStyle', label: '上位流派' },
+  { path: 'subStyle', label: '下位流派' },
+  { path: 'level', label: '階級' },
+  { path: 'age', label: '年齢' },
+  { path: 'sex', label: '性別' },
+  { path: 'cover', label: '表の顔' },
+  { path: 'belief', label: '信念' },
+  { path: 'stylerule', label: '流儀' }
+]
+
+export type DataType = 'basic' | 'tokugi' | 'ninpou' | 'background' | 'specialArts'
+export const fullDataType: DataType[] = ['basic', 'tokugi', 'ninpou', 'background', 'specialArts']
+
+export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, targets: DataType[]): ShinobiGami {
+  const result: ShinobiGami = clone(oldData)
+  if (targets.some(t => t === 'basic')) {
+    basicParams.forEach(p => {
+      result[p.path] = mergeData[p.path]
+    })
+  }
+  if (targets.some(t => t === 'tokugi')) {
+    result.skill = clone(mergeData.skill)
+  }
+  if (targets.some(t => t === 'ninpou')) {
+    result.ninjaArtsList = clone(mergeData.ninjaArtsList)
+  }
+  if (targets.some(t => t === 'background')) {
+    result.backgroundList = clone(mergeData.backgroundList)
+  }
+  if (targets.some(t => t === 'specialArts')) {
+    result.specialArtsList = clone(mergeData.specialArtsList)
+  }
+  return result
+}
+
+export function getCharacterDiffMessages(
+  wrapOne: CharacterWrap,
+  wrapTwo: CharacterWrap,
+  players: Player[],
+  characterName: string
+): string[] {
+  const diffs: DiffType[] = []
+  const cOne = wrapOne.character
+  const cTwo = wrapTwo.character
+
+  basicParams.forEach(p => {
+    if (cOne[p.path] === cTwo[p.path]) return
     diffs.push({
       op: 'replace',
-      path: p.toString(),
-      before: cOne[p],
-      after: cTwo[p]
+      path: p.path,
+      label: p.label,
+      before: cOne[p.path],
+      after: cTwo[p.path]
     })
   })
 
@@ -138,13 +172,15 @@ export function getCharacterDiffMessages(
     tokugiListOne: TokugiInfo[],
     tokugiListTwo: TokugiInfo[],
     op: 'delete' | 'add',
-    path: string
+    path: string,
+    label: string
   ): DiffType[] {
     return tokugiListOne
       .filter(t1 => tokugiListTwo.every(t2 => t2.name !== t1.name))
       .map(t1 => ({
         op,
         path,
+        label: '',
         before: op === 'delete' ? t1.name : '',
         after: op === 'add' ? t1.name : ''
       }))
@@ -166,14 +202,26 @@ export function getCharacterDiffMessages(
       .map(s1 => ({
         op,
         path,
+        label: '',
         before: op === 'delete' ? mappingList[s1] : '',
         after: op === 'add' ? mappingList[s1] : ''
       }))
   }
   const colMappingList = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
   const spaceMappingList = colMappingList.map((col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`)
-  diffs.push(...getDiffSpace(cOne.skill.spaceList, cTwo.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
-  diffs.push(...getDiffSpace(cTwo.skill.spaceList, cOne.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
+  diffs.push(
+    ...getDiffSpace(
+      cOne.skill.spaceList,
+      cTwo.skill.spaceList,
+      'delete',
+      'skill.spaceList',
+      spaceMappingList,
+      'ギャップ'
+    )
+  )
+  diffs.push(
+    ...getDiffSpace(cTwo.skill.spaceList, cOne.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList, 'ギャップ')
+  )
   diffs.push(
     ...getDiffSpace(
       cOne.skill.damagedColList,
@@ -190,6 +238,7 @@ export function getCharacterDiffMessages(
     diffs.push({
       op: cOne.skill.outRow ? 'delete' : 'add',
       path: 'skill.outRow',
+      label: '',
       before: '特技表の下辺ギャップ',
       after: '特技表の下辺ギャップ'
     })
@@ -199,6 +248,7 @@ export function getCharacterDiffMessages(
     diffs.push({
       op: 'replace',
       path: 'player',
+      label: 'プレイヤー名',
       before: players.find(p => p.id === wrapOne.player)?.name || 'なし',
       after: players.find(p => p.id === wrapTwo.player)?.name || 'なし'
     })
@@ -262,7 +312,7 @@ export function getCharacterDiffMessages(
         }
       }
       return {
-        text: `${characterName}の${diff.before}が${diff.after}に変更されました`,
+        text: `${characterName}の${diff.label}が${diff.before}から${diff.after}に変更されました`,
         icon: 'mdi-check',
         color: 'white'
       }
@@ -396,11 +446,11 @@ export class ShinobigamiHelper {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       specialArtsList:
         jsons[1].specialEffect?.map((s: any) => ({
+          _id: uuid.v4(),
           name: textFilter(s.name),
           skill: textFilter(s.skill),
           effect: textFilter(s.effect),
-          direction: textFilter(s.explain),
-          _openList: []
+          direction: textFilter(s.explain)
         })) || [],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ninjaToolList:
@@ -506,4 +556,25 @@ export function calcTargetValue(name: string, skill: SaikoroFictionTokugi): Targ
       if (v1.targetValue < v2.targetValue) return -1
       return v2.targetValue < v1.targetValue ? 1 : 0
     })
+}
+
+// このツールの人物欄としてはハンドアウトのみを対象とする。
+// ハンドアウト以外との関係についてはそちら側からハンドアウトを対象とする形で表現する
+export type ShinobigamiEmotion =
+  | -6 // 殺意
+  | -5 // 劣等感
+  | -4 // 侮蔑
+  | -3 // 妬み
+  | -2 // 怒り
+  | -1 // 不審
+  | 1 // 共感
+  | 2 // 友情
+  | 3 // 愛情
+  | 4 // 忠誠
+  | 5 // 憧憬
+  | 6 // 狂信
+export type HandoutRelation = {
+  ownerId: string
+  targetId: string
+  type: 'location' | 'secret' | ShinobigamiEmotion
 }
