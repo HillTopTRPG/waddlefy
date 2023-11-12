@@ -44,16 +44,13 @@ const dataList = computed(() => {
     if (characterInfo) {
       const characterName = characterInfo.data.character.characterName
       if (characterName) {
-        nameList.push(` (${characterName}`)
+        nameList.push(` : ${characterName}`)
       }
       if (characterInfo.data.player) {
         const player = graphQlStore?.state.players.find(p => p.id === characterInfo.data.player)
         if (player) {
-          nameList.push(` : ${player.name})`)
+          nameList.push(` (${player.name})`)
         }
-      }
-      if (nameList.length < 3) {
-        nameList.push(')')
       }
     }
     return {

@@ -722,7 +722,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       mutation: Queries.directSessionAccess,
       variables: { sessionId }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    // console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.directSessionAccess
     if (data) {
       state.user = {
@@ -823,7 +823,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     const result = await appSyncClient.mutate<QueryResult.DirectPlayerAccess>({
       mutation: Queries.directPlayerAccess
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    // console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.directPlayerAccess
     if (data) {
       const { id, token, iconToken, name, session } = data

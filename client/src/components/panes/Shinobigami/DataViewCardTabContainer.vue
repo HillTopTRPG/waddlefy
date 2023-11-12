@@ -15,6 +15,7 @@
       >
         <v-tab text="共有メモ" value="session-memo" prepend-icon="mdi-antenna" />
         <v-tab text="個人メモ" value="private-memo" prepend-icon="mdi-account-outline" />
+        <v-tab text="人物欄" value="correlations" prepend-icon="mdi-account-heart-outline" />
 
         <!-- ハンドアウト -->
         <template v-if="handout">
@@ -76,6 +77,9 @@
           @update="updatePrivateMemo"
         />
       </v-window-item>
+      <v-window-item value="correlations">
+        {{ '' /* TODO 人物欄 */ }}
+      </v-window-item>
       <v-window-item value="objective">
         <menu-edit-text-area
           label="使命"
@@ -130,7 +134,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue'
-import MenuEditTextArea from '@/components/panes/Shinobigami/MenuEditTextArea.vue'
+import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -218,16 +222,18 @@ const secretOpen = computed((): boolean => {
     if (graphQlStore?.state.player?.id === handoutCharacter?.data.player) return true
   }
 
-  return graphQlStore?.state.sessionDataList
-    .filter(
-      sd =>
-        sd.type === 'shinobigami-handout-relation' && sd.data.type === 'secret' && sd.data.ownerId === handout.value?.id
-    )
-    .some(sd => {
-      const characterId = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.targetId)?.data.person
-      const playerId = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === characterId)
-      return playerId && graphQlStore?.state.player?.id === playerId
-    })
+  const secretRelations = graphQlStore?.state.sessionDataList.filter(
+    sd =>
+      sd.type === 'shinobigami-handout-relation' && sd.data.type === 'secret' && sd.data.targetId === handout.value?.id
+  )
+
+  return (
+    secretRelations.some(sd => {
+      const targetHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
+      const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === targetHandout?.data.person)
+      return character && graphQlStore?.state.player?.id === character.data.player
+    }) || false
+  )
 })
 
 const secretText = computed((): string => {

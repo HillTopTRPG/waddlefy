@@ -10,7 +10,7 @@ function preload() {
   for (let i = 0; i < arguments.length; i++) {
     images[i] = new Image()
     images[i].onload = () => {
-      console.log(arguments[i])
+      // console.log(arguments[i])
     }
     images[i].src = arguments[i]
   }

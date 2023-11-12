@@ -25,8 +25,8 @@
             <v-switch label="特技表" v-model="viewTokugi" />
             <v-switch label="忍法一覧" v-model="viewNinpou" />
             <v-divider class="my-1 ml-2" />
-            <v-switch label="テキスト" v-model="viewText" />
-            <v-label class="text-body-2 ml-4">テキスト行数</v-label>
+            <v-switch label="タブ欄" v-model="viewText" />
+            <v-label class="text-body-2 ml-4">タブ欄高さ</v-label>
             <v-slider
               density="compact"
               class="ml-4"

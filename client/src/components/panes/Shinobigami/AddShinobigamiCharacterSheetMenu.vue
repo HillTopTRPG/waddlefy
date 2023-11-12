@@ -97,9 +97,7 @@ import ShinobigamiCharacterSheetLoadForm from '@/components/panes/Shinobigami/Sh
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const addUrl = ref('')
-const viewPassPasswordView = ref(false)
 const password = ref('')
-const addUrlErrorMessage = ref('')
 async function callAddCharacter() {
   const helper = new ShinobigamiHelper(addUrl.value, password.value)
   if (helper.isThis()) {
