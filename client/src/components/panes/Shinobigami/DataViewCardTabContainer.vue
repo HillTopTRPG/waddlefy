@@ -77,13 +77,12 @@
           @update="updatePrivateMemo"
         />
       </v-window-item>
-      <v-window-item
-        value="correlations"
-        class="pa-2"
-        :style="`height: ${(textRows + 2) * 24 + 20}px`"
-        v-if="handout"
-      >
-        <v-sheet class="d-flex flex-column overflow-y-auto mb-2" style="gap: .3rem" :style="`height: ${(textRows) * 24 + 23}px`">
+      <v-window-item value="correlations" class="pa-2" :style="`height: ${(textRows + 2) * 24 + 20}px`" v-if="handout">
+        <v-sheet
+          class="d-flex flex-column overflow-y-auto mb-2"
+          style="gap: 0.3rem"
+          :style="`height: ${textRows * 24 + 23}px`"
+        >
           <correlations-card mode="view" :handout-id="handout.id" />
         </v-sheet>
         <v-divider />
@@ -129,7 +128,11 @@
         <menu-edit-text-area
           :label="`ペルソナ${idx + 1}`"
           hint="編集不可"
-          :text="isUserControl || persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
+          :text="
+            !perspective || persona.data.leaked
+              ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}`
+              : '未公開'
+          "
           :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
           variant="solo-filled"
           :editable="false"
@@ -152,6 +155,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   characterId: string
   textRows: number
+  perspective: string
 }>()
 
 const tab = ref('session-memo')
@@ -224,12 +228,12 @@ const boundPersonaList = computed(() => {
 })
 
 const secretOpen = computed((): boolean => {
-  if (isUserControl.value) return true
+  if (!props.perspective) return true
 
   // キャラクターのオーナーの場合
   if (handout.value.data.knowSelfSecret) {
     const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.value.data.person)
-    if (graphQlStore?.state.player?.id === handoutCharacter?.data.player) return true
+    if (props.perspective === handoutCharacter?.data.player) return true
   }
 
   const secretRelations = graphQlStore?.state.sessionDataList.filter(
@@ -241,13 +245,13 @@ const secretOpen = computed((): boolean => {
     secretRelations.some(sd => {
       const targetHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
       const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === targetHandout?.data.person)
-      return character && graphQlStore?.state.player?.id === character.data.player
+      return props.perspective === character?.data.player
     }) || false
   )
 })
 
 const secretText = computed((): string => {
-  if (isUserControl.value) return handout.value?.data.secret || ''
+  if (!props.perspective) return handout.value?.data.secret || ''
   if (!handout.value) return ''
 
   return secretOpen.value ? handout.value?.data.secret : '閲覧不可'

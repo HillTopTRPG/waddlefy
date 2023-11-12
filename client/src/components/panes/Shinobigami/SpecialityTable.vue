@@ -90,6 +90,7 @@ import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFict
 const props = defineProps<{
   editable: boolean
   editing: boolean
+  perspective: string
   selectSkill: string
   info?: SaikoroFictionTokugi
 }>()

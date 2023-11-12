@@ -10,7 +10,7 @@
   >
     <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ getHandoutName(handout) }}</v-card-subtitle>
     <v-card-item class="py-0 d-inline-flex pr-0">
-      <v-sheet class="d-flex flex-row" style="gap: .3rem" v-if="mode === 'view'">
+      <v-sheet class="d-flex flex-row" style="gap: 0.3rem" v-if="mode === 'view'">
         <v-chip
           text="居所"
           color="primary"
@@ -227,13 +227,15 @@ function hasType(handoutId: string, type: 'location' | 'secret') {
 }
 
 function getEmotion(handoutId: string) {
-  return graphQlStore?.state.sessionDataList.find(
-    sd =>
-      sd.type === 'shinobigami-handout-relation' &&
-      sd.data.ownerId === dataObj.value.id &&
-      sd.data.targetId === handoutId &&
-      !isFixType(sd.data.type)
-  )?.data.type || ''
+  return (
+    graphQlStore?.state.sessionDataList.find(
+      sd =>
+        sd.type === 'shinobigami-handout-relation' &&
+        sd.data.ownerId === dataObj.value.id &&
+        sd.data.targetId === handoutId &&
+        !isFixType(sd.data.type)
+    )?.data.type || ''
+  )
 }
 
 async function onUpdateShinobigamiHandoutRelation(targetId: string, type: 'location' | 'secret' | ShinobigamiEmotion) {

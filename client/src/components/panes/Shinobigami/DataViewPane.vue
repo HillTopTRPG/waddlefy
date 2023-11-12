@@ -1,6 +1,18 @@
 <template>
   <pane-frame title="データ閲覧ツール">
     <template v-slot:title-action>
+      <v-menu :close-on-content-click="false" v-if="isUserControl">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" class="pl1 pr-2">
+            <v-icon icon="mdi-triangle-small-down" />
+            {{ perspectiveList.find(p => p.value === perspective)?.name || '' }}視点
+          </v-btn>
+        </template>
+        <v-defaults-provider :defaults="{ VSelect: { density: 'compact', variant: 'solo' } }">
+          <v-select label="視点" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective" />
+        </v-defaults-provider>
+      </v-menu>
+
       <v-menu :close-on-content-click="false">
         <template v-slot:activator="{ props }">
           <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
@@ -9,36 +21,16 @@
           </v-btn>
         </template>
         <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
-          <v-defaults-provider
-            :defaults="{
-              VSwitch: {
-                color: 'primary',
-                density: 'compact',
-                hideDetails: true,
-                class: 'pl-3',
-                inset: true,
-                trueIcon: 'mdi-check'
-              }
-            }"
-          >
-            <v-switch label="背景" v-model="viewBackground" />
-            <v-switch label="特技表" v-model="viewTokugi" />
-            <v-switch label="忍法一覧" v-model="viewNinpou" />
+          <v-defaults-provider :defaults="{ VSwitch: { density: 'compact', hideDetails: true, class: 'pl-3' } }">
+            <v-switch label="背景" color="primary" true-icon="mdi-check" v-model="viewBackground" />
+            <v-switch label="特技表" color="primary" true-icon="mdi-check" v-model="viewTokugi" />
+            <v-switch label="忍法一覧" color="primary" true-icon="mdi-check" v-model="viewNinpou" />
             <v-divider class="my-1 ml-2" />
-            <v-switch label="タブ欄" v-model="viewText" />
+            <v-switch label="タブ欄" color="primary" true-icon="mdi-check" v-model="viewText" />
             <v-label class="text-body-2 ml-4">タブ欄高さ</v-label>
-            <v-slider
-              density="compact"
-              class="ml-4"
-              :hide-details="true"
-              v-model="textRows"
-              :rounded="true"
-              color="primary"
-              :thumb-label="true"
-              :min="2"
-              :step="1"
-              :max="20"
-            />
+          </v-defaults-provider>
+          <v-defaults-provider :defaults="{ VSlider: { density: 'compact', hideDetails: true, min: 2, step: 1 } }">
+            <v-slider class="ml-4" v-model="textRows" :rounded="true" color="primary" :thumb-label="true" :max="20" />
           </v-defaults-provider>
         </div>
       </v-menu>
@@ -57,6 +49,7 @@
           :tokugi-view="viewTokugi"
           :text-view="viewText"
           :text-rows="textRows"
+          :perspective="perspective"
           v-model:select-skill="selectSkill"
         />
       </template>
@@ -113,9 +106,16 @@ const textRows = ref(10)
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
+const perspectiveList = computed(() => [
+  { value: '', name: '主催者' },
+  ...(graphQlStore?.state.players.map(p => ({ value: p.id, name: p.name })) || [])
+])
+
+const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
+
 const characterWraps = computed<CharacterWrap[]>(() => {
   if (!graphQlStore) return []
-  if (isUserControl.value)
+  if (!perspective.value)
     return graphQlStore.state.sessionDataList
       .filter(sd => sd.type === 'shinobigami-handout')
       .map(sd => graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person))

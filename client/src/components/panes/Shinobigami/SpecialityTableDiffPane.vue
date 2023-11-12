@@ -26,6 +26,7 @@
             <v-select :prefix="`キャラクター${i + 1}: `" v-model="selectCharacters[i]" />
             <speciality-table
               :info="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.skill || undefined"
+              :perspective="perspective"
               v-model:select-skill="selectSkill"
               @update:info="v => updateInfo(selectCharacters[i], v)"
               :editing="false"
@@ -33,6 +34,7 @@
             />
             <ninpou-table
               v-if="viewNinpou === 'あり'"
+              :perspective="perspective"
               :list="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.ninjaArtsList"
               @click-skill="
                 v => {
@@ -88,6 +90,8 @@ const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
 }>()
+
+const perspective = ref('')
 
 const vSelectDefaults = {
   density: 'compact',

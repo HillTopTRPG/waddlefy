@@ -1,6 +1,18 @@
 <template>
   <pane-frame title="シナリオデータ管理ツール">
     <template v-slot:title-action>
+      <v-menu :close-on-content-click="false" v-if="isUserControl">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" class="pl1 pr-2">
+            <v-icon icon="mdi-triangle-small-down" />
+            {{ perspectiveList.find(p => p.value === perspective)?.name || '' }}視点
+          </v-btn>
+        </template>
+        <v-defaults-provider :defaults="{ VSelect: { density: 'compact', variant: 'solo' } }">
+          <v-select label="視点" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective" />
+        </v-defaults-provider>
+      </v-menu>
+
       <v-menu :close-on-content-click="false">
         <template v-slot:activator="{ props }">
           <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
@@ -10,53 +22,36 @@
         </template>
         <div style="background-color: white; margin-top: -2px" class="pr-2 border-s border-e border-b border-t">
           <v-label class="text-body-2 ml-4">テキスト行数</v-label>
-          <v-slider
-            density="compact"
-            class="ml-4"
-            :hide-details="true"
-            v-model="textRows"
-            :min="2"
-            :step="1"
-            :max="20"
-          />
+          <v-defaults-provider :defaults="{ VSlider: { density: 'compact', hideDetails: true, min: 2, step: 1 } }">
+            <v-slider class="ml-4" :hide-details="true" v-model="textRows" :max="20" />
+          </v-defaults-provider>
         </div>
       </v-menu>
     </template>
     <template v-slot:layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
-        <v-defaults-provider
-          :defaults="{
-            VBtn: {
-              variant: 'text',
-              color: 'primary',
-              density: 'comfortable',
-              class: 'text-decoration-underline'
-            }
-          }"
-        >
-          <v-btn @click="onAddData('handout')">ハンドアウト追加</v-btn>
-          <v-btn @click="onAddData('enigma')">エニグマ追加</v-btn>
-          <v-btn @click="onAddData('persona')">ペルソナ追加</v-btn>
-          <v-btn @click="onAddData('prize')">プライズ追加</v-btn>
+        <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
+          <v-btn class="text-decoration-underline" @click="onAddData('handout')">ハンドアウト追加</v-btn>
+          <v-btn class="text-decoration-underline" @click="onAddData('enigma')">エニグマ追加</v-btn>
+          <v-btn class="text-decoration-underline" @click="onAddData('persona')">ペルソナ追加</v-btn>
+          <v-btn class="text-decoration-underline" @click="onAddData('prize')">プライズ追加</v-btn>
         </v-defaults-provider>
       </v-sheet>
     </template>
     <template v-slot:default>
       <v-sheet class="w-100 d-flex flex-row flex-wrap align-start">
-        <scenario-data-card
-          v-for="handout in handoutList"
-          :key="handout.id"
-          :data-id="handout.id"
-          :text-rows="textRows"
-        />
-        <scenario-data-card v-for="enigma in enigmaList" :key="enigma.id" :data-id="enigma.id" :text-rows="textRows" />
-        <scenario-data-card
-          v-for="persona in personaList"
-          :key="persona.id"
-          :data-id="persona.id"
-          :text-rows="textRows"
-        />
-        <scenario-data-card v-for="prize in prizeList" :key="prize.id" :data-id="prize.id" :text-rows="textRows" />
+        <template v-for="handout in handoutList" :key="handout.id">
+          <scenario-data-card :data-id="handout.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
+        <template v-for="enigma in enigmaList" :key="enigma.id">
+          <scenario-data-card :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
+        <template v-for="persona in personaList" :key="persona.id">
+          <scenario-data-card :data-id="persona.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
+        <template v-for="prize in prizeList" :key="prize.id">
+          <scenario-data-card :data-id="prize.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
       </v-sheet>
     </template>
   </pane-frame>
@@ -82,6 +77,8 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   layout: Layout
@@ -94,12 +91,32 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
+const perspectiveList = computed(() => [
+  { value: '', name: '主催者' },
+  ...(graphQlStore?.state.players.map(p => ({ value: p.id, name: p.name })) || [])
+])
+
+const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 const textRows = ref(3)
 
-const handoutList = computed(() => graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout'))
-const enigmaList = computed(() => graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-enigma'))
-const personaList = computed(() => graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-persona'))
-const prizeList = computed(() => graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize'))
+const handoutList = computed(() => {
+  if (!perspective.value) {
+    return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout')
+  }
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout' && sd.data.published)
+})
+const enigmaList = computed(() => {
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-enigma')
+})
+const personaList = computed(() => {
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-persona')
+})
+const prizeList = computed(() => {
+  if (!perspective.value) {
+    return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize')
+  }
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize')
+})
 
 async function onAddData(type: 'handout' | 'enigma' | 'persona' | 'prize'): Promise<void> {
   if (type === 'handout') return graphQlStore?.addShinobigamiHandout()

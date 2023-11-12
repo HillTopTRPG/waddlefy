@@ -10,7 +10,7 @@
       <span>{{ typeList.find(t => t.value === dataObj.type)?.label || '' }}</span>
     </v-card-title>
     <v-card-item class="pa-0">
-      <v-sheet class="d-flex flex-column align-self-start px-2 bg-transparent" style="gap: 0.5rem">
+      <v-sheet class="d-flex flex-column align-self-start px-2 pb-2 bg-transparent" style="gap: 0.5rem">
         <template v-if="dataObj.type === 'shinobigami-character'">
           <reload-character-sheet-button :character-id="dataObj.id" />
           <menu-edit-text-field
@@ -404,7 +404,7 @@
           </v-card>
         </template>
       </v-sheet>
-      <v-card-actions>
+      <v-card-actions class="pt-0" v-if="!perspective">
         <v-spacer />
         <delete-menu-btn
           :target-name="
@@ -441,6 +441,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   dataId: string
   textRows: number
+  perspective: string
 }>()
 
 const dataObj = computed(() => {
@@ -565,7 +566,16 @@ async function onUpdateSpecialArtsDirection(index: number, direction: string) {
   })
 }
 
-const hasEmptyPlayers = computed(() => [{ id: '', name: '割当なし' }, ...graphQlStore.state.players] || [])
+const hasEmptyPlayers = computed(() => {
+  if (!props.perspective) {
+    return [{ id: '', name: '割当なし' }, { id: 'user', name: '主催者' }, ...graphQlStore.state.players] || []
+  }
+  const player = graphQlStore?.state.players.find(p => p.id === props.perspective)
+  return [
+    { id: '', name: '割当なし' },
+    { id: player?.id || '', name: player?.name || '' }
+  ]
+})
 
 const hasEmptyCharacterList = computed(() => {
   const characterList = graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-character') || []

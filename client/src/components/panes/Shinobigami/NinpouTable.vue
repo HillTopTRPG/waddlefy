@@ -62,6 +62,7 @@ import { NinjaArts } from '@/components/panes/Shinobigami/shinobigami'
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list?: NinjaArts[]
+  perspective: string
 }>()
 
 const emits = defineEmits<{
