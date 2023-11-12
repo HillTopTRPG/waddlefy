@@ -111,11 +111,11 @@ const viewTokugi = ref(true)
 const viewText = ref(true)
 const textRows = ref(10)
 
-const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
 const characterWraps = computed<CharacterWrap[]>(() => {
   if (!graphQlStore) return []
-  if (isOwnerControl.value)
+  if (isUserControl.value)
     return graphQlStore.state.sessionDataList
       .filter(sd => sd.type === 'shinobigami-handout')
       .map(sd => graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person))

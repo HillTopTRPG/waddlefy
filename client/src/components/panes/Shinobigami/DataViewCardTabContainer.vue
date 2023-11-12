@@ -129,7 +129,7 @@
         <menu-edit-text-area
           :label="`ペルソナ${idx + 1}`"
           hint="編集不可"
-          :text="isOwnerControl || persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
+          :text="isUserControl || persona.data.leaked ? `真実名 : ${persona.data.name}\n効果 : \n${persona.data.effect}` : '未公開'"
           :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
           variant="solo-filled"
           :editable="false"
@@ -156,13 +156,13 @@ const props = defineProps<{
 
 const tab = ref('session-memo')
 
-const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 const privateMemo = computed(
   () =>
     graphQlStore?.state.sessionDataList.find(sd => {
       if (sd.type !== 'shinobigami-character-private-memo') return false
       if (sd.data.characterId !== props.characterId) return false
-      if (isOwnerControl.value) {
+      if (isUserControl.value) {
         if (sd.data.ownerType !== 'user') return false
       } else {
         if (sd.data.ownerType !== 'player') return false
@@ -224,7 +224,7 @@ const boundPersonaList = computed(() => {
 })
 
 const secretOpen = computed((): boolean => {
-  if (isOwnerControl.value) return true
+  if (isUserControl.value) return true
 
   // キャラクターのオーナーの場合
   if (handout.value.data.knowSelfSecret) {
@@ -247,7 +247,7 @@ const secretOpen = computed((): boolean => {
 })
 
 const secretText = computed((): string => {
-  if (isOwnerControl.value) return handout.value?.data.secret || ''
+  if (isUserControl.value) return handout.value?.data.secret || ''
   if (!handout.value) return ''
 
   return secretOpen.value ? handout.value?.data.secret : '閲覧不可'

@@ -50,7 +50,7 @@
 
       <!-- 画面追加 -->
       <v-menu
-        v-if="isReady && isOwnerControl"
+        v-if="isReady && isUserControl"
         location="right"
         :scrim="true"
         v-model="addDashboardMenu"
@@ -121,7 +121,7 @@
       <user-nav-item
         title="セッションの選択"
         subtitle="主催者専用"
-        v-if="isOwnerControl"
+        v-if="isUserControl"
         :rail="rail"
         icon="home-switch"
         :toggle="false"
@@ -158,7 +158,7 @@
             @keydown.enter="$event.keyCode === 13 && updateSessionName()"
             @click:append-inner.stop
           >
-            <template v-slot:append-inner v-if="isOwnerControl">
+            <template v-slot:append-inner v-if="isUserControl">
               <v-divider :vertical="true" />
               <v-defaults-provider
                 :defaults="{
@@ -216,7 +216,7 @@
           elevation="0"
           :active="dialog === 'share'"
           @click="dialog = dialog === 'share' ? '' : 'share'"
-          v-if="isOwnerControl && graphQlStore?.state.session?.sessionType !== 'init'"
+          v-if="isUserControl && graphQlStore?.state.session?.sessionType !== 'init'"
         />
 
         <user-nav-item
@@ -253,14 +253,14 @@
         prepend-icon="mdi-view-dashboard"
         text="画面の設定"
         value="dialog-setting"
-        v-if="isOwnerControl"
+        v-if="isUserControl"
         @click="dialog = dialog === 'setting' ? '' : 'setting'"
       />
       <v-btn
         prepend-icon="mdi-pencil-ruler"
         text="レイアウト"
         value="show-bar"
-        v-if="isOwnerControl"
+        v-if="isUserControl"
         @click="showBar = !showBar"
       />
     </v-defaults-provider>
@@ -318,7 +318,7 @@ const emits = defineEmits<{
 }>()
 
 const editSessionName = ref(false)
-const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
 const sessionId = computed(() => graphQlStore?.state.session?.id)
 const dashboardId = computed(() => graphQlStore?.state.dashboard?.id)

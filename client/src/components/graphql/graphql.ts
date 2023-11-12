@@ -490,12 +490,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function updateShinobigamiCharacterPrivateMemo(privateMemoId: string, characterId: string, text: string) {
-    const isOwnerControl = Boolean(state.user?.token)
+    const isUserControl = Boolean(state.user?.token)
     await updateSessionDataHelper(
       privateMemoId,
       JSON.stringify({
-        ownerType: isOwnerControl ? 'user' : 'player',
-        ownerId: isOwnerControl ? null : state.player?.id,
+        ownerType: isUserControl ? 'user' : 'player',
+        ownerId: isUserControl ? null : state.player?.id,
         characterId,
         text
       })
@@ -938,12 +938,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addShinobigamiCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
-    const isOwnerControl = Boolean(state.user?.token)
+    const isUserControl = Boolean(state.user?.token)
     await addSessionDataHelper(
       'shinobigami-character-private-memo',
       JSON.stringify({
-        ownerType: isOwnerControl ? 'user' : 'player',
-        ownerId: isOwnerControl ? null : state.player?.id,
+        ownerType: isUserControl ? 'user' : 'player',
+        ownerId: isUserControl ? null : state.player?.id,
         characterId,
         text
       })
