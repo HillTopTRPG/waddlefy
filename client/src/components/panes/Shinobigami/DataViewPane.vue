@@ -48,10 +48,10 @@
       <template v-for="(cw, idx) in characterWraps" :key="cw.id">
         <v-divider v-if="idx" />
         <data-view-card
-          :character-id="cw.id"
-          :player-id="cw.player"
-          :view-pass="cw.viewPass"
-          :character-sheet="cw.character"
+          :character-id="cw.data.id"
+          :player-id="cw.data.player"
+          :view-pass="cw.data.viewPass"
+          :character-sheet="cw.data.character"
           :background-view="viewBackground"
           :ninpou-view="viewNinpou"
           :tokugi-view="viewTokugi"
@@ -111,15 +111,19 @@ const viewTokugi = ref(true)
 const viewText = ref(true)
 const textRows = ref(10)
 
-function getCharacterWraps(): CharacterWrap[] {
-  return graphQlStore.state.sessionDataList
-    .filter(sd => sd.type === 'shinobigami-character' && sd.data?.character)
-    .map(sd => sd.data as CharacterWrap)
-}
+const isOwnerControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
 const characterWraps = computed<CharacterWrap[]>(() => {
   if (!graphQlStore) return []
-  return getCharacterWraps()
+  if (isOwnerControl.value)
+    return graphQlStore.state.sessionDataList
+      .filter(sd => sd.type === 'shinobigami-handout')
+      .map(sd => graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person))
+      .filter(sd => Boolean(sd))
+  return graphQlStore.state.sessionDataList
+    .filter(sd => sd.type === 'shinobigami-handout' && sd.data.published)
+    .map(sd => graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person))
+    .filter(sd => Boolean(sd))
 })
 
 const selectSkill = ref('')

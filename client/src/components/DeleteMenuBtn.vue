@@ -1,5 +1,5 @@
 <template>
-  <v-menu width="auto" v-model="deleteDialog" :close-on-content-click="false">
+  <v-menu width="auto" v-model="opened" :close-on-content-click="false">
     <template v-slot:activator="{ props }">
       <v-btn color="error" variant="text" class="text-decoration-underline" :class="classText || ''" v-bind="props"
         >この{{ type }}を削除</v-btn
@@ -23,9 +23,7 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="deleteDialog = false"
-          >キャンセル</v-btn
-        >
+        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
         <v-btn
           color="warning"
           class="flex-0-1-100"
@@ -57,22 +55,22 @@ const emits = defineEmits<{
 watch(
   () => props.sessionId,
   () => {
-    deleteDialog.value = false
+    opened.value = false
     inputTargetName.value = ''
   }
 )
 
-const deleteDialog = ref(false)
+const opened = ref(false)
 const inputTargetName = ref('')
 const inputElm = ref()
 
 async function deleteExecute() {
   await emits('execute')
-  deleteDialog.value = false
+  opened.value = false
   inputTargetName.value = ''
 }
 
-watch(deleteDialog, v => {
+watch(opened, v => {
   if (v) {
     inputTargetName.value = ''
     setTimeout(() => inputElm.value?.focus(), 300)

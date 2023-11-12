@@ -1,7 +1,7 @@
 <template>
   <v-menu
     width="auto"
-    v-model="dialog"
+    v-model="opened"
     :close-on-content-click="false"
     transition="scroll-y-transition"
     scroll-strategy="close"
@@ -57,7 +57,7 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="dialog = false">キャンセル</v-btn>
+        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
         <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()">保存</v-btn>
       </v-card-actions>
     </v-card>
@@ -86,13 +86,13 @@ const emits = defineEmits<{
   (e: 'update', value: string): Promise<void>
 }>()
 
-const dialog = ref(false)
+const opened = ref(false)
 const editElm = ref()
 const editingText = ref(props.text)
 
-watch(dialog, v => {
+watch(opened, v => {
   if (!props.editable) {
-    dialog.value = false
+    opened.value = false
   }
   if (v) {
     editingText.value = props.text
@@ -102,7 +102,7 @@ watch(dialog, v => {
 
 function onSave() {
   emits('update', editingText.value)
-  dialog.value = false
+  opened.value = false
 }
 </script>
 

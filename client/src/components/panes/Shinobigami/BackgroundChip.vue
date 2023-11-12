@@ -1,6 +1,6 @@
 kground
 <template>
-  <v-menu open-on-click location="bottom center" :z-index="10000000">
+  <v-menu :open-on-click="true" location="bottom center" :z-index="10000000">
     <template v-slot:activator="{ props }">
       <v-chip
         :color="color"

@@ -115,6 +115,11 @@
           </v-card>
         </template>
         <template v-if="dataObj.type === 'shinobigami-handout'">
+          <v-checkbox-btn
+            label="存在の公開"
+            :model-value="dataObj.data.published"
+            @update:model-value="v => onUpdateShinobigamiHandoutPublished(v)"
+          />
           <menu-edit-text-field
             :title="`${dataObj.data.name || 'ななし'}の名前編集`"
             label="名前"
@@ -149,6 +154,11 @@
             :offset="-textRows * 24 + 18"
             @update="onUpdateShinobigamiHandoutSecret"
           />
+          <v-checkbox-btn
+            label="自身の秘密を知っている"
+            :model-value="dataObj.data.knowSelfSecret"
+            @update:model-value="v => onUpdateShinobigamiHandoutKnowSelfSecret(v)"
+          />
           <v-select
             :items="hasEmptyCharacterList"
             item-value="id"
@@ -176,7 +186,7 @@
             class="d-flex flex-column"
             variant="text"
           >
-            <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ handout.data.name }}</v-card-subtitle>
+            <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ getHandoutName(handout) }}</v-card-subtitle>
             <v-card-item class="py-0 d-inline-flex">
               <v-card class="d-flex flex-row ma-0 border" :flat="true" rounded="lg">
                 <v-defaults-provider
@@ -640,6 +650,16 @@ const emotionList = [
   { value: 6, label: '狂信(6)' }
 ]
 
+function getHandoutName(handout: { data: { name: string; person: string } }): string {
+  const character = graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.data.person)
+  if (!character) return handout.data.name
+  const player = graphQlStore?.state.players.find(p => p.id === character.data.player)
+  const afterName = player
+    ? `${character.data.character.characterName}(${player.name})`
+    : character.data.character.characterName
+  return `${handout.data.name} : ${afterName}`
+}
+
 const hasEmptyHandoutList = computed(() => {
   const handoutList = graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout') || []
   const resultList = handoutList.map(h => {
@@ -793,7 +813,9 @@ async function onUpdateShinobigamiHandoutName(name: string) {
     name,
     dataObj.value.data.objective,
     dataObj.value.data.secret,
-    dataObj.value.data.person
+    dataObj.value.data.person,
+    dataObj.value.data.published,
+    dataObj.value.data.knowSelfSecret
   )
 }
 
@@ -804,7 +826,9 @@ async function onUpdateShinobigamiHandoutObjective(objective: string) {
     dataObj.value.data.name,
     objective,
     dataObj.value.data.secret,
-    dataObj.value.data.person
+    dataObj.value.data.person,
+    dataObj.value.data.published,
+    dataObj.value.data.knowSelfSecret
   )
 }
 
@@ -815,7 +839,9 @@ async function onUpdateShinobigamiHandoutSecret(secret: string) {
     dataObj.value.data.name,
     dataObj.value.data.objective,
     secret,
-    dataObj.value.data.person
+    dataObj.value.data.person,
+    dataObj.value.data.published,
+    dataObj.value.data.knowSelfSecret
   )
 }
 
@@ -826,7 +852,35 @@ async function onUpdateShinobigamiHandoutPerson(person: string) {
     dataObj.value.data.name,
     dataObj.value.data.objective,
     dataObj.value.data.secret,
-    person
+    person,
+    dataObj.value.data.published,
+    dataObj.value.data.knowSelfSecret
+  )
+}
+
+async function onUpdateShinobigamiHandoutPublished(published: boolean) {
+  if (dataObj.value.data.published === published) return
+  await graphQlStore?.updateShinobigamiHandout(
+    dataObj.value.id,
+    dataObj.value.data.name,
+    dataObj.value.data.objective,
+    dataObj.value.data.secret,
+    dataObj.value.data.person,
+    published,
+    dataObj.value.data.knowSelfSecret
+  )
+}
+
+async function onUpdateShinobigamiHandoutKnowSelfSecret(knowSelfSecret: boolean) {
+  if (dataObj.value.data.knowSelfSecret === knowSelfSecret) return
+  await graphQlStore?.updateShinobigamiHandout(
+    dataObj.value.id,
+    dataObj.value.data.name,
+    dataObj.value.data.objective,
+    dataObj.value.data.secret,
+    dataObj.value.data.person,
+    dataObj.value.data.published,
+    knowSelfSecret
   )
 }
 
@@ -834,7 +888,6 @@ function isFixType(type: 'location' | 'secret' | ShinobigamiEmotion) {
   return ['location', 'secret'].some(t => t === type)
 }
 
-// TODO 人物欄の操作関数の追加
 async function onUpdateShinobigamiHandoutRelation(targetId: string, type: 'location' | 'secret' | ShinobigamiEmotion) {
   const ownerId = dataObj.value.id
   const findStr = JSON.stringify({ ownerId, targetId, type })

@@ -212,12 +212,22 @@ const boundPersonaList = computed(() => {
 const secretOpen = computed((): boolean => {
   if (isOwnerControl.value) return true
 
-  return handout.value?.data.leakedList.some(l => {
-    const leakedHandout = graphQlStore?.state.sessionDataList.find(sd => sd.id === l)
-    if (!leakedHandout?.data.person) return false
-    const leakedCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === leakedHandout?.data.person)
-    return leakedCharacter?.data.player === graphQlStore?.state.player?.id
-  })
+  // キャラクターのオーナーの場合
+  if (handout.value.data.knowSelfSecret) {
+    const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.value.data.person)
+    if (graphQlStore?.state.player?.id === handoutCharacter?.data.player) return true
+  }
+
+  return graphQlStore?.state.sessionDataList
+    .filter(
+      sd =>
+        sd.type === 'shinobigami-handout-relation' && sd.data.type === 'secret' && sd.data.ownerId === handout.value?.id
+    )
+    .some(sd => {
+      const characterId = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.targetId)?.data.person
+      const playerId = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === characterId)
+      return playerId && graphQlStore?.state.player?.id === playerId
+    })
 })
 
 const secretText = computed((): string => {

@@ -507,7 +507,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     name: string,
     objective: string,
     secret: string,
-    person: string
+    person: string,
+    published: boolean,
+    knowSelfSecret: boolean
   ) {
     await updateSessionDataHelper(
       handoutId,
@@ -515,7 +517,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         name,
         objective,
         secret,
-        person
+        person,
+        published,
+        knowSelfSecret
       })
     )
   }
@@ -857,7 +861,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         option: JSON.parse(session.defaultDashboard.option) as DashboardOption
       }
       state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
-      state.sessionDataList = session.sessionDataList.map(d => {
+      state.sessionDataList = session.sessionDataList.sort(sortId).map(d => {
         const raw = JSON.parse(d.data)
         return {
           id: d.id,
@@ -956,7 +960,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         name: `PC${next}`,
         objective: '',
         secret: '',
-        person: ''
+        person: '',
+        published: false,
+        knowSelfSecret: true
       })
     )
     // Subscriptionによってstateに登録される

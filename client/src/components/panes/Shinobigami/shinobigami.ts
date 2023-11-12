@@ -172,8 +172,7 @@ export function getCharacterDiffMessages(
     tokugiListOne: TokugiInfo[],
     tokugiListTwo: TokugiInfo[],
     op: 'delete' | 'add',
-    path: string,
-    label: string
+    path: string
   ): DiffType[] {
     return tokugiListOne
       .filter(t1 => tokugiListTwo.every(t2 => t2.name !== t1.name))
