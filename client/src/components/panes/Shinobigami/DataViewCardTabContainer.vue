@@ -18,7 +18,6 @@
 
         <!-- ハンドアウト -->
         <template v-if="handout">
-          <v-tab text="人物欄" value="correlations" prepend-icon="mdi-account-heart-outline" />
           <v-tab text="使命" value="objective" prepend-icon="mdi-bullseye" />
           <v-tab
             text="秘密"
@@ -26,6 +25,7 @@
             :disabled="!secretOpen"
             :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
           />
+          <v-tab text="人物欄" :disabled="!otherHandouts.length" value="correlations" prepend-icon="mdi-account-heart-outline" />
         </template>
 
         <!-- エニグマ -->
@@ -53,7 +53,7 @@
         <menu-edit-text-area
           label="共有メモ"
           hint="全員で閲覧・編集できます"
-          :text="sessionMemo?.text || ''"
+          :text="sessionMemo?.data.text || ''"
           icon="mdi-antenna"
           variant="solo-filled"
           :editable="true"
@@ -67,7 +67,7 @@
         <menu-edit-text-area
           label="個人メモ"
           hint="あなた専用のメモです"
-          :text="privateMemo?.text || ''"
+          :text="privateMemo?.data.text || ''"
           icon="mdi-account-outline"
           variant="solo-filled"
           :editable="true"
@@ -83,7 +83,17 @@
           style="gap: 0.3rem"
           :style="`height: ${textRows * 24 + 23}px`"
         >
-          <correlations-card mode="view" :handout-id="handout.id" />
+          <template v-for="otherHandout in otherHandouts" :key="otherHandout.id">
+            <correlations-card
+              mode="view"
+              :owner-id="handout.id"
+              :target-id="otherHandout.id"
+              :perspective="perspective"
+            />
+          </template>
+          <template v-if="!otherHandouts.length">
+            独り
+          </template>
         </v-sheet>
         <v-divider />
         <div class="text-caption py-1 pl-4" style="opacity: 0.5">編集不可</div>
@@ -158,6 +168,14 @@ const props = defineProps<{
   perspective: string
 }>()
 
+const otherHandouts = computed(() => {
+  return graphQlStore?.state.sessionDataList.filter(sd => {
+    if (sd.type !== 'shinobigami-handout') return false
+    if (sd.id === handout.value.id) return false
+    return !props.perspective || sd.data.published
+  })
+})
+
 const tab = ref('session-memo')
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
@@ -167,20 +185,19 @@ const privateMemo = computed(
       if (sd.type !== 'shinobigami-character-private-memo') return false
       if (sd.data.characterId !== props.characterId) return false
       if (isUserControl.value) {
-        if (sd.data.ownerType !== 'user') return false
+        if (sd.data.ownerType === 'user') return true
       } else {
-        if (sd.data.ownerType !== 'player') return false
-        if (sd.data.ownerId !== graphQlStore?.state.player?.id) return false
+        if (sd.data.ownerType === 'player' && sd.data.ownerId !== graphQlStore?.state.player?.id) return true
       }
-      return true
-    })?.data
+      return false
+    })
 )
 const sessionMemo = computed(
   () =>
     graphQlStore?.state.sessionDataList.find(sd => {
       if (sd.type !== 'shinobigami-character-session-memo') return false
       return sd.data.characterId === props.characterId
-    })?.data
+    })
 )
 
 async function updateSessionMemo(text: string) {

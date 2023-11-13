@@ -1,36 +1,28 @@
 <template>
-  <v-card
-    v-for="handout in graphQlStore?.state.sessionDataList.filter(
-      sd => sd.type === 'shinobigami-handout' && sd.id !== dataObj.id
-    )"
-    :key="handout.id"
-    class="d-flex flex-column flex-0-0"
-    style="height: auto"
-    variant="text"
-  >
-    <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ getHandoutName(handout) }}</v-card-subtitle>
+  <v-card class="d-flex flex-column flex-0-0" style="height: auto" variant="text">
+    <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ title }}</v-card-subtitle>
     <v-card-item class="py-0 d-inline-flex pr-0">
       <v-sheet class="d-flex flex-row" style="gap: 0.3rem" v-if="mode === 'view'">
         <v-chip
           text="居所"
           color="primary"
           density="comfortable"
-          :variant="hasType(handout.id, 'location') ? 'flat' : 'outlined'"
-          :disabled="!hasType(handout.id, 'location')"
+          :variant="locationValue ? 'flat' : 'outlined'"
+          :disabled="!locationValue"
         />
         <v-chip
           text="秘密"
           color="primary"
           density="comfortable"
-          :variant="hasType(handout.id, 'secret') ? 'flat' : 'outlined'"
-          :disabled="!hasType(handout.id, 'secret')"
+          :variant="secretValue ? 'flat' : 'outlined'"
+          :disabled="!secretValue"
         />
         <v-chip
-          :text="getEmotion(handout.id) ? emotionList.find(e => e.value === getEmotion(handout.id))?.label : '感情なし'"
+          :text="emotionValue ? emotionList.find(e => e.value === emotionValue)?.label : '感情なし'"
           color="primary"
           density="comfortable"
-          :disabled="!getEmotion(handout.id)"
-          :variant="getEmotion(handout.id) ? 'flat' : 'outlined'"
+          :disabled="!emotionValue"
+          :variant="emotionValue ? 'flat' : 'outlined'"
         />
       </v-sheet>
       <v-card class="d-flex flex-row ma-0 border" :flat="true" rounded="lg" v-if="mode === 'edit'">
@@ -51,35 +43,48 @@
           <v-card-item>
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
-              :model-value="hasType(handout.id, 'location')"
-              @update:model-value="onUpdateShinobigamiHandoutRelation(handout.id, 'location')"
+              :model-value="locationValue"
+              @update:model-value="onUpdateRelation('location')"
             >
               <template v-slot:label>
                 <span class="text-body-2 pt-2 w-100 text-center">居所</span>
               </template>
             </v-checkbox-btn>
           </v-card-item>
-          <v-divider :vertical="true" />
-          <v-card-item>
-            <v-checkbox-btn
-              class="flex-column-reverse align-stretch"
-              :model-value="hasType(handout.id, 'secret')"
-              @update:model-value="onUpdateShinobigamiHandoutRelation(handout.id, 'secret')"
-            >
-              <template v-slot:label>
-                <span class="text-body-2 pt-2 w-100 text-center">秘密</span>
-              </template>
-            </v-checkbox-btn>
-          </v-card-item>
-          <v-divider :vertical="true" />
+          <template v-if="!perspective">
+            <v-divider :vertical="true" />
+            <v-card-item>
+              <v-checkbox-btn
+                class="flex-column-reverse align-stretch"
+                :model-value="secretValue"
+                @update:model-value="onUpdateRelation('secret')"
+              >
+                <template v-slot:label>
+                  <span class="text-body-2 pt-2 w-100 text-center">秘密</span>
+                </template>
+              </v-checkbox-btn>
+            </v-card-item>
+            <v-divider :vertical="true" />
+          </template>
+          <template v-else>
+            <v-card-item>
+              <v-chip
+                text="秘密"
+                color="primary"
+                density="comfortable"
+                :variant="secretValue ? 'flat' : 'outlined'"
+                :disabled="!secretValue"
+              />
+            </v-card-item>
+          </template>
           <v-card-item class="flex-0-1-100">
             <v-select
               class="emotion-select"
               :items="emotionList"
               item-title="label"
               item-value="value"
-              :model-value="getEmotion(handout.id)"
-              @update:model-value="v => onUpdateShinobigamiHandoutRelation(handout.id, v)"
+              :model-value="emotionValue"
+              @update:model-value="v => onUpdateRelation(v)"
             >
               <template v-slot:label>
                 <span class="text-body-2" style="margin-top: 1px">感情</span>
@@ -91,15 +96,18 @@
     </v-card-item>
     <template v-if="mode === 'edit'">
       <v-card-item
-        v-for="(arts, idx) in graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.data.person)?.data
-          .character.specialArtsList || []"
+        v-for="(arts, idx) in targetCharacter?.data.character.specialArtsList || []"
         :key="idx"
         class="py-0 pr-0"
       >
-        <v-sheet class="bg-transparent d-flex flex-row align-center justify-start">
-          <v-checkbox-btn :readonly="mode === 'view'" class="mr-0 flex-0-0">
+        <v-sheet class="bg-transparent d-flex flex-row align-center justify-start mt-1" style="gap: 0.3rem">
+          <v-checkbox-btn
+            class="card-item-check mr-0 flex-0-0"
+            :class="mode === 'view' || Boolean(perspective) ? 'readonly' : ''"
+            :readonly="mode === 'view' || Boolean(perspective)"
+          >
             <template v-slot:label>
-                <span>奥義情報</span>
+              <span>奥義情報</span>
             </template>
           </v-checkbox-btn>
           <v-menu
@@ -109,7 +117,12 @@
             location-strategy="connected"
           >
             <template v-slot:activator="{ props }">
-              <v-btn variant="text" class="text-decoration-underline px-2" v-bind="props">
+              <v-btn
+                variant="text"
+                max-width="13em"
+                class="text-decoration-underline px-2 overflow-x-hidden justify-start"
+                v-bind="props"
+              >
                 <template v-slot:default>
                   <div style="max-width: 13em; white-space: nowrap; overflow-x: hidden; text-overflow: ellipsis">
                     {{ arts.name }}
@@ -176,12 +189,22 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  handoutId: string
+  ownerId: string
+  targetId: string
   mode: 'edit' | 'view'
+  perspective: string
 }>()
 
-const dataObj = computed(() => {
-  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.handoutId)
+const ownerHandout = computed(() => {
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.ownerId)
+})
+
+const targetHandout = computed(() => {
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.targetId)
+})
+
+const targetCharacter = computed(() => {
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === targetHandout.value.data.person)
 })
 
 const emotionList = [
@@ -200,49 +223,58 @@ const emotionList = [
   { value: 6, label: '狂信(6)' }
 ]
 
-function getHandoutName(handout: { data: { name: string; person: string } }): string {
-  const character = graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.data.person)
-  if (!character) return handout.data.name
-  const player = graphQlStore?.state.players.find(p => p.id === character.data.player)
-  const afterName = player
-    ? `${character.data.character.characterName}(${player.name})`
-    : character.data.character.characterName
-  return `${handout.data.name} : ${afterName}`
-}
+const title = computed(() => {
+  if (!targetCharacter.value) return targetHandout.value?.data.name || ''
+  const player = graphQlStore?.state.players.find(p => p.id === targetCharacter.value.data.player)
+  const characterName = targetCharacter.value.data.character.characterName
+  const afterName = player ? `${characterName}(${player.name})` : characterName
+  return `${targetHandout.value.data.name} : ${afterName}`
+})
 
 function isFixType(type: 'location' | 'secret' | ShinobigamiEmotion) {
   return ['location', 'secret'].some(t => t === type)
 }
 
-function hasType(handoutId: string, type: 'location' | 'secret') {
-  return graphQlStore?.state.sessionDataList.some(
-    sd =>
-      sd.type === 'shinobigami-handout-relation' &&
-      sd.data.ownerId === dataObj.value.id &&
-      sd.data.targetId === handoutId &&
-      sd.data.type === type
-  )
-}
-
-function getEmotion(handoutId: string) {
+const locationValue = computed(() => {
   return (
-    graphQlStore?.state.sessionDataList.find(
-      sd =>
-        sd.type === 'shinobigami-handout-relation' &&
-        sd.data.ownerId === dataObj.value.id &&
-        sd.data.targetId === handoutId &&
-        !isFixType(sd.data.type)
-    )?.data.type || ''
+    graphQlStore?.state.sessionDataList.some(sd => {
+      if (sd.type !== 'shinobigami-handout-relation') return false
+      if (sd.data.ownerId !== ownerHandout.value.id) return false
+      if (sd.data.targetId !== targetHandout.value.id) return false
+      return sd.data.type === 'location'
+    }) || false
   )
-}
+})
 
-async function onUpdateShinobigamiHandoutRelation(targetId: string, type: 'location' | 'secret' | ShinobigamiEmotion) {
-  const ownerId = dataObj.value.id
+const secretValue = computed(() => {
+  return (
+    graphQlStore?.state.sessionDataList.some(sd => {
+      if (sd.type !== 'shinobigami-handout-relation') return false
+      if (sd.data.ownerId !== ownerHandout.value.id) return false
+      if (sd.data.targetId !== targetHandout.value.id) return false
+      return sd.data.type === 'secret'
+    }) || false
+  )
+})
+
+const emotionValue = computed(() => {
+  return (
+    (graphQlStore?.state.sessionDataList.find(sd => {
+      if (sd.type !== 'shinobigami-handout-relation') return false
+      if (sd.data.ownerId !== ownerHandout.value.id) return false
+      return sd.data.targetId === targetHandout.value.id && !isFixType(sd.data.type)
+    })?.data.type as number) || ''
+  )
+})
+
+async function onUpdateRelation(type: 'location' | 'secret' | ShinobigamiEmotion) {
+  const ownerId = ownerHandout.value.id
+  const targetId = targetHandout.value.id
   const findStr = JSON.stringify({ ownerId, targetId, type })
 
   if (isFixType(type)) {
     const relation = graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'shinobigami-handout-relation') return
+      if (sd.type !== 'shinobigami-handout-relation') return false
       return JSON.stringify(omit(sd.data, ['id'])) === findStr
     })
     if (relation) {
@@ -251,13 +283,11 @@ async function onUpdateShinobigamiHandoutRelation(targetId: string, type: 'locat
       await graphQlStore?.addShinobigamiHandoutRelation(ownerId, targetId, type)
     }
   } else {
-    const relation = graphQlStore?.state.sessionDataList.find(
-      sd =>
-        sd.type === 'shinobigami-handout-relation' &&
-        sd.data.ownerId === ownerId &&
-        sd.data.targetId === targetId &&
-        !isFixType(sd.data.type)
-    )
+    const relation = graphQlStore?.state.sessionDataList.find(sd => {
+      if (sd.type !== 'shinobigami-handout-relation') return false
+      if (sd.data.ownerId !== ownerId) return false
+      return sd.data.targetId === targetId && !isFixType(sd.data.type)
+    })
     if (relation) {
       await graphQlStore?.updateShinobigamiHandoutRelation(relation.id, ownerId, targetId, type)
     } else {
@@ -276,6 +306,12 @@ async function onUpdateShinobigamiHandoutRelation(targetId: string, type: 'locat
   grid-template-rows: auto;
   :deep(.v-field__input) {
     padding-top: 33px !important;
+  }
+}
+
+:deep(button) {
+  .v-btn__content {
+    overflow-x: hidden;
   }
 }
 </style>

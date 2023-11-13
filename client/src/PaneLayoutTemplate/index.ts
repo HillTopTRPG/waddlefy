@@ -37,7 +37,7 @@ export async function addDashboards(graphQlStore: GraphQlStore, sessionType: str
   }
   if (sessionType === 'Shinobigami') {
     await graphQlStore.addDashboard('シナリオデータ管理', ScenarioDataManagePaneLayout, Scope.OWNER)
-    await graphQlStore.addDashboard('キャラクターシート管理', CharacterSheetManagePaneLayout, Scope.OWNER)
+    await graphQlStore.addDashboard('キャラクターシート管理', CharacterSheetManagePaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('データ閲覧', DataViewPaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('特技比較', SpecialityTableDiffPaneLayout, Scope.ALL)
     await waitDashboardNum(4)

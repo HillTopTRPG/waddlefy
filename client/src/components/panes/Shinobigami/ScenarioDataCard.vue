@@ -188,7 +188,14 @@
               {{ label }}
             </template>
           </v-select>
-          <correlations-card mode="edit" :handout-id="dataId" />
+          <template v-for="otherHandout in otherHandouts" :key="otherHandout.id">
+            <correlations-card
+              mode="edit"
+              :owner-id="dataObj.id"
+              :target-id="otherHandout.id"
+              :perspective="perspective"
+            />
+          </template>
         </template>
         <template v-if="dataObj.type === 'shinobigami-enigma'">
           <menu-edit-text-field
@@ -348,7 +355,7 @@
             item-value="id"
             item-title="name"
             :variant="perspective ? 'outlined' : 'solo'"
-            :class="perspective ? 'mt-3' :  ''"
+            :class="perspective ? 'mt-3' : ''"
             :flat="true"
             :readonly="Boolean(perspective)"
             label="所有されるハンドアウト"
@@ -489,6 +496,12 @@ const dataObj = computed(() => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.dataId)
 })
 
+const otherHandouts = computed(() => {
+  return graphQlStore?.state.sessionDataList.filter(
+    sd => sd.type === 'shinobigami-handout' && sd.id !== dataObj.value.id && (!props.perspective || sd.data.published)
+  )
+})
+
 const typeList = [
   { value: 'shinobigami-character', label: 'キャラクター', color: 'light-blue-accent-1', icon: () => 'mdi-human' },
   {
@@ -609,12 +622,12 @@ async function onUpdateSpecialArtsDirection(index: number, direction: string) {
 
 const hasEmptyPlayers = computed(() => {
   if (!props.perspective) {
-    return [{ id: '', name: '割当なし' }, { id: 'user', name: '主催者' }, ...graphQlStore.state.players] || []
+    return [{ id: '', name: '割当なし' }, { id: 'user', name: '主催者' }, ...(graphQlStore?.state.players || [])]
   }
   const player = graphQlStore?.state.players.find(p => p.id === props.perspective)
   return [
     { id: '', name: '割当なし' },
-    { id: player?.id || '', name: player?.name || '' }
+    { id: player?.id || '', name: 'あなた' }
   ]
 })
 
@@ -625,7 +638,7 @@ const hasEmptyCharacterList = computed(() => {
     if (c.data.player) {
       const player = graphQlStore?.state.players.find(p => p.id === c.data.player)
       if (player) {
-        nameList.push(`(${player.name})`)
+        nameList.push(`(${player.id === props.perspective ? 'あなた' : player.name})`)
       }
     }
     return {
@@ -1020,20 +1033,20 @@ async function onDeleteSessionData() {
   }
 }
 
-.card-item-check.v-checkbox-btn {
+:deep(.card-item-check) {
   align-items: stretch !important;
 
   &:not(.readonly) {
     align-self: flex-start;
     background-color: white;
-    border-radius: .3rem;
+    border-radius: 0.3rem;
   }
 
-  :deep(.v-label) {
+  .v-label {
     height: auto !important;
   }
 
-  &:not(.flex-column-reverse) :deep(.v-label) {
+  &:not(.flex-column-reverse) .v-label {
     padding-right: 12px;
   }
 }
