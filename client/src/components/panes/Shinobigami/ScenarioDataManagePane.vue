@@ -29,7 +29,7 @@
       </v-menu>
     </template>
     <template v-slot:layout>
-      <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
+      <v-sheet class="d-flex flex-row flex-wrap w-100 px-2 pa-2" style="gap: 0.1rem" v-if="!perspective">
         <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
           <v-btn class="text-decoration-underline" @click="onAddData('handout')">ハンドアウト追加</v-btn>
           <v-btn class="text-decoration-underline" @click="onAddData('enigma')">エニグマ追加</v-btn>
@@ -39,7 +39,7 @@
       </v-sheet>
     </template>
     <template v-slot:default>
-      <v-sheet class="w-100 d-flex flex-row flex-wrap align-start">
+      <v-sheet class="w-100 d-flex flex-row flex-wrap align-start" :class="perspective ? 'pt-3' : ''">
         <template v-for="handout in handoutList" :key="handout.id">
           <scenario-data-card :data-id="handout.id" :text-rows="textRows" :perspective="perspective" />
         </template>

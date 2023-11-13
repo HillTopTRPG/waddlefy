@@ -99,9 +99,7 @@
         <v-sheet class="bg-transparent d-flex flex-row align-center justify-start">
           <v-checkbox-btn :readonly="mode === 'view'" class="mr-0 flex-0-0">
             <template v-slot:label>
-              <div>
                 <span>奥義情報</span>
-              </div>
             </template>
           </v-checkbox-btn>
           <v-menu

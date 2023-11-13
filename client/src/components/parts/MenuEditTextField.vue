@@ -9,14 +9,14 @@
   >
     <template v-slot:activator="{ props }">
       <v-text-field
-        variant="solo"
+        :variant="variant || 'solo'"
         :placeholder="placeholder"
         :readonly="true"
         :flat="true"
         :style="`width: ${width}rem; max-width: ${width}rem`"
         :persistent-placeholder="true"
         :hide-details="true"
-        :class="classText || ''"
+        :class="`${classText || ''} ${editable ? 'editable' : ''}`"
         :model-value="text"
         v-bind="props"
       >
@@ -65,6 +65,7 @@ const props = defineProps<{
   text: string
   icon: string
   placeholder: string
+  variant?: string
   width: number
   editable: boolean
   classText?: string
@@ -103,7 +104,7 @@ function onSave() {
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
-:deep(input[readonly]) {
+.v-text-field.editable:deep(input[readonly]) {
   cursor: pointer;
 }
 </style>

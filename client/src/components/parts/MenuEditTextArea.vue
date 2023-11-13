@@ -10,7 +10,7 @@
   >
     <template v-slot:activator="{ props }">
       <v-textarea
-        :class="textareaClass"
+        :class="`${textareaClass} ${editable ? 'editable' : ''}`"
         :rows="textRows"
         :readonly="true"
         :no-resize="true"
@@ -20,7 +20,6 @@
         :persistent-hint="true"
         :hint="hint || ''"
         :style="`width: ${width || 20}rem; max-width: ${width || 20}rem;`"
-        style="cursor: pointer"
         :flat="true"
         :variant="variant || 'solo'"
         :model-value="text || ''"
@@ -108,7 +107,7 @@ function onSave() {
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
-.v-textarea {
+.v-textarea.editable:deep(textarea) {
   cursor: pointer;
 }
 </style>

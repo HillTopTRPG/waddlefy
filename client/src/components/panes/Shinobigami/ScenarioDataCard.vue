@@ -117,6 +117,8 @@
         <template v-if="dataObj.type === 'shinobigami-handout'">
           <v-checkbox-btn
             label="存在の公開"
+            class="card-item-check"
+            v-if="!perspective"
             :model-value="dataObj.data.published"
             @update:model-value="v => onUpdateShinobigamiHandoutPublished(v)"
           />
@@ -125,18 +127,21 @@
             label="名前"
             icon="mdi-tag-outline"
             placeholder="未設定"
+            :variant="perspective ? 'outlined' : 'solo'"
+            :class-text="perspective ? 'mt-2' : ''"
             :width="20"
             :text="dataObj.data.name"
-            :editable="true"
+            :editable="!perspective"
             @update="onUpdateShinobigamiHandoutName"
           />
           <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の使命の編集`"
             label="使命"
             placeholder="未設定"
-            :editable="true"
+            :editable="!perspective"
             icon="mdi-bullseye"
-            variant="solo"
+            :variant="perspective ? 'outlined' : 'solo'"
+            :textarea-class="perspective ? 'mt-2' : ''"
             :text-rows="textRows"
             :text="dataObj.data.objective"
             :offset="-textRows * 24 + 18"
@@ -146,9 +151,10 @@
             :title="`${dataObj.data.name || 'ななし'}の秘密の編集`"
             label="秘密"
             placeholder="未設定"
-            :editable="true"
+            :editable="!perspective"
             icon="mdi-lock-outline"
-            variant="solo"
+            :variant="perspective ? 'outlined' : 'solo'"
+            :textarea-class="perspective ? 'mt-2' : ''"
             :text-rows="textRows"
             :text="dataObj.data.secret"
             :offset="-textRows * 24 + 18"
@@ -156,6 +162,9 @@
           />
           <v-checkbox-btn
             label="自身の秘密を知っている"
+            class="card-item-check"
+            :class="perspective ? 'readonly' : ''"
+            :readonly="Boolean(perspective)"
             :model-value="dataObj.data.knowSelfSecret"
             @update:model-value="v => onUpdateShinobigamiHandoutKnowSelfSecret(v)"
           />
@@ -163,10 +172,11 @@
             :items="hasEmptyCharacterList"
             item-value="id"
             item-title="name"
-            variant="solo"
+            :variant="perspective ? 'outlined' : 'solo'"
             :flat="true"
             label="担当キャラ"
             class="align-self-start"
+            :readonly="Boolean(perspective)"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
@@ -188,14 +198,18 @@
             placeholder="未設定"
             :width="20"
             :text="dataObj.data.name"
-            :editable="true"
+            :editable="!perspective"
+            :variant="perspective ? 'outlined' : 'solo'"
+            :class-text="perspective ? 'mt-2' : ''"
             @update="onUpdateShinobigamiEnigmaName"
           />
           <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の偽装の編集`"
             label="偽装"
             placeholder="未設定"
-            :editable="true"
+            :editable="!perspective"
+            :variant="perspective ? 'outlined' : 'solo'"
+            :textarea-class="perspective ? 'mt-2' : ''"
             icon="mdi-emoticon-cool-outline"
             variant="solo"
             :text-rows="textRows"
@@ -203,116 +217,140 @@
             :offset="-textRows * 24 + 18"
             @update="onUpdateShinobigamiEnigmaCamouflage"
           />
-          <menu-edit-text-field
-            :title="`${dataObj.data.name || 'ななし'}の戦力の名称の編集`"
-            label="戦力の名称"
-            icon="mdi-skull-crossbones-outline"
-            placeholder="未設定"
-            :width="20"
-            :text="dataObj.data.entityName"
-            :editable="true"
-            @update="onUpdateShinobigamiEnigmaEntityName"
-          />
-          <v-sheet class="d-flex flex-row flex-wrap bg-transparent" style="gap: 0.5rem">
+          <template v-if="!perspective || dataObj.data.used">
+            <menu-edit-text-field
+              :title="`${dataObj.data.name || 'ななし'}の戦力の名称の編集`"
+              label="戦力の名称"
+              icon="mdi-skull-crossbones-outline"
+              placeholder="未設定"
+              :width="20"
+              :text="dataObj.data.entityName"
+              :editable="!perspective"
+              :variant="perspective ? 'outlined' : 'solo'"
+              :class-text="perspective ? 'mt-2' : ''"
+              @update="onUpdateShinobigamiEnigmaEntityName"
+            />
+            <v-sheet class="d-flex flex-row flex-wrap bg-transparent" style="gap: 0.5rem">
+              <v-select
+                :items="[1, 2, 3, 4, 5]"
+                label="脅威度"
+                :readonly="Boolean(perspective)"
+                :variant="perspective ? 'outlined' : 'solo'"
+                :class="perspective ? 'mt-2' : ''"
+                :flat="true"
+                class="align-self-start"
+                :hide-details="true"
+                :persistent-placeholder="true"
+                style="min-width: 6.5em; max-width: 6.5em; gap: 0"
+                :model-value="dataObj.data.threat"
+                @update:model-value="v => onUpdateShinobigamiEnigmaThreat(v)"
+              >
+                <template v-slot:label="{ label }">
+                  <v-icon icon="mdi-altimeter" class="mr-1" />
+                  {{ label }}
+                </template>
+              </v-select>
+              <menu-edit-text-field
+                :title="`${dataObj.data.name || 'ななし'}の解除条件の編集`"
+                label="解除条件"
+                icon="mdi-hammer"
+                placeholder="未設定"
+                :width="13"
+                :editable="!perspective"
+                :variant="perspective ? 'outlined' : 'solo'"
+                :class-text="perspective ? 'mt-2' : ''"
+                :text="dataObj.data.disableJudgement"
+                @update="onUpdateShinobigamiEnigmaDisableJudgement"
+              />
+            </v-sheet>
+            <menu-edit-text-area
+              :title="`${dataObj.data.name || 'ななし'}の効果の編集`"
+              label="効果"
+              placeholder="未設定"
+              :editable="!perspective"
+              :variant="perspective ? 'outlined' : 'solo'"
+              :textarea-class="perspective ? 'mt-2' : ''"
+              icon="mdi-bomb"
+              :text-rows="textRows"
+              :text="dataObj.data.effect"
+              :offset="-textRows * 24 + 18"
+              @update="onUpdateShinobigamiEnigmaEffect"
+            />
             <v-select
-              :items="[1, 2, 3, 4, 5]"
-              label="脅威度"
-              variant="solo"
+              :items="hasEmptyHandoutList"
+              item-value="id"
+              item-title="name"
               :flat="true"
+              label="バインド"
               class="align-self-start"
               :hide-details="true"
+              :readonly="Boolean(perspective)"
+              :variant="perspective ? 'outlined' : 'solo'"
+              :class="perspective ? 'mt-2' : ''"
+              style="width: 20rem; max-width: 20rem"
               :persistent-placeholder="true"
-              style="min-width: 6.5em; max-width: 6.5em; gap: 0"
-              :model-value="dataObj.data.threat"
-              @update:model-value="v => onUpdateShinobigamiEnigmaThreat(v)"
+              :model-value="dataObj.data.bind"
+              @update:model-value="v => onUpdateShinobigamiEnigmaBind(v)"
             >
               <template v-slot:label="{ label }">
-                <v-icon icon="mdi-altimeter" class="mr-1" />
+                <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
                 {{ label }}
               </template>
             </v-select>
-            <menu-edit-text-field
-              :title="`${dataObj.data.name || 'ななし'}の解除条件の編集`"
-              label="解除条件"
-              icon="mdi-hammer"
-              placeholder="未設定"
-              :width="13"
-              :editable="true"
-              :text="dataObj.data.disableJudgement"
-              @update="onUpdateShinobigamiEnigmaDisableJudgement"
-            />
-          </v-sheet>
-          <menu-edit-text-area
-            :title="`${dataObj.data.name || 'ななし'}の効果の編集`"
-            label="効果"
-            placeholder="未設定"
-            :editable="true"
-            icon="mdi-bomb"
-            variant="solo"
-            :text-rows="textRows"
-            :text="dataObj.data.effect"
-            :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiEnigmaEffect"
-          />
-          <v-select
-            :items="hasEmptyHandoutList"
-            item-value="id"
-            item-title="name"
-            variant="solo"
-            :flat="true"
-            label="バインド"
-            class="align-self-start"
-            :hide-details="true"
-            style="width: 20rem; max-width: 20rem"
-            :persistent-placeholder="true"
-            :model-value="dataObj.data.bind"
-            @update:model-value="v => onUpdateShinobigamiEnigmaBind(v)"
-          >
-            <template v-slot:label="{ label }">
-              <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
-              {{ label }}
-            </template>
-          </v-select>
+          </template>
           <v-checkbox-btn
             label="戦力の公開"
+            class="card-item-check"
+            :class="perspective ? 'readonly' : ''"
+            :readonly="Boolean(perspective)"
             :model-value="dataObj.data.used"
             @update:model-value="v => onUpdateShinobigamiEnigmaUsed(v)"
           />
           <v-checkbox-btn
             label="解除"
+            class="card-item-check"
+            :class="perspective ? 'readonly' : ''"
+            :readonly="Boolean(perspective)"
             :model-value="dataObj.data.disabled"
             @update:model-value="v => onUpdateShinobigamiEnigmaDisabled(v)"
           />
         </template>
         <template v-if="dataObj.type === 'shinobigami-persona'">
-          <menu-edit-text-field
-            :title="`${dataObj.data.name || 'ななし'}の真実名の編集`"
-            label="真実名"
-            icon="mdi-badge-account-outline"
-            placeholder="未設定"
-            :width="20"
-            :text="dataObj.data.name"
-            :editable="true"
-            @update="onUpdateShinobigamiPersonaName"
-          />
-          <menu-edit-text-area
-            :title="`${dataObj.data.name || 'ななし'}の効果の編集`"
-            label="効果"
-            placeholder="未設定"
-            :editable="true"
-            icon="mdi-script-text-outline"
-            variant="solo"
-            :text-rows="textRows"
-            :text="dataObj.data.effect"
-            :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiPersonaEffect"
-          />
+          <template v-if="!perspective || dataObj.data.leaked">
+            <menu-edit-text-field
+              :title="`${dataObj.data.name || 'ななし'}の真実名の編集`"
+              label="真実名"
+              icon="mdi-badge-account-outline"
+              placeholder="未設定"
+              :width="20"
+              :text="dataObj.data.name"
+              :editable="!perspective"
+              :variant="perspective ? 'outlined' : 'solo'"
+              :class-text="perspective ? 'mt-2' : ''"
+              @update="onUpdateShinobigamiPersonaName"
+            />
+            <menu-edit-text-area
+              :title="`${dataObj.data.name || 'ななし'}の効果の編集`"
+              label="効果"
+              placeholder="未設定"
+              :editable="!perspective"
+              :variant="perspective ? 'outlined' : 'solo'"
+              :textarea-class="perspective ? 'mt-2' : ''"
+              icon="mdi-script-text-outline"
+              :text-rows="textRows"
+              :text="dataObj.data.effect"
+              :offset="-textRows * 24 + 18"
+              @update="onUpdateShinobigamiPersonaEffect"
+            />
+          </template>
           <v-select
             :items="hasEmptyHandoutList"
             item-value="id"
             item-title="name"
-            variant="solo"
+            :variant="perspective ? 'outlined' : 'solo'"
+            :class="perspective ? 'mt-3' :  ''"
             :flat="true"
+            :readonly="Boolean(perspective)"
             label="所有されるハンドアウト"
             class="align-self-start"
             :hide-details="true"
@@ -328,6 +366,9 @@
           </v-select>
           <v-checkbox-btn
             label="真実の公開"
+            class="card-item-check"
+            :class="perspective ? 'readonly' : ''"
+            :readonly="Boolean(perspective)"
             :model-value="dataObj.data.leaked"
             @update:model-value="v => onUpdateShinobigamiPersonaLeaked(v)"
           />
@@ -976,6 +1017,24 @@ async function onDeleteSessionData() {
   grid-template-rows: auto;
   :deep(.v-field__input) {
     padding-top: 33px !important;
+  }
+}
+
+.card-item-check.v-checkbox-btn {
+  align-items: stretch !important;
+
+  &:not(.readonly) {
+    align-self: flex-start;
+    background-color: white;
+    border-radius: .3rem;
+  }
+
+  :deep(.v-label) {
+    height: auto !important;
+  }
+
+  &:not(.flex-column-reverse) :deep(.v-label) {
+    padding-right: 12px;
   }
 }
 </style>
