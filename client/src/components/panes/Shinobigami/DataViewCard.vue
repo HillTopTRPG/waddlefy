@@ -58,7 +58,7 @@
         </template>
       </template>
       <template v-for="prize in prizeList" :key="prize.id">
-        <v-menu>
+        <v-menu :close-on-content-click="false">
           <template v-slot:activator="{ props }">
             <v-defaults-provider :defaults="{ VChip: { label: true, border: true, elevation: 3 } }">
               <v-chip variant="flat" size="small" color="lime-lighten-2" v-bind="props">
@@ -96,10 +96,19 @@
             :editable="true"
           />
         </v-sheet>
-        <v-sheet v-if="ninpouView && characterSheet">
+        <v-sheet v-if="characterSheet && (ninpouView || specialArtsView)">
           <ninpou-table
+            v-if="ninpouView"
             class="mb-2"
             :list="characterSheet.ninjaArtsList"
+            :perspective="perspective"
+            @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
+          />
+          <special-arts-table
+            v-if="specialArtsView"
+            class="mb-2"
+            :owner-id="handoutId"
+            :list="characterSheet.specialArtsList"
             :perspective="perspective"
             @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
           />
@@ -126,9 +135,11 @@ import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 
-import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCardTabContainer.vue'
+import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
+
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -137,6 +148,7 @@ const props = defineProps<{
   selectSkill: string
   backgroundView: boolean
   ninpouView: boolean
+  specialArtsView: boolean
   tokugiView: boolean
   textView: boolean
   textRows: number
@@ -167,9 +179,9 @@ const prizeList = computed(() => {
           const readableHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === r)
           if (!readableHandout) return false
           const readableCharacter = graphQlStore?.state.sessionDataList.find(
-            sdc => sdc.id === readableHandout?.data.person
+            sdc => sdc.id === readableHandout.data.person
           )
-          return readableCharacter.data.player === props.perspective
+          return readableCharacter?.data.player === props.perspective
         })
       }) || []
     )

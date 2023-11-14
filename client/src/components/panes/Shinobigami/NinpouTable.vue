@@ -13,34 +13,23 @@
       <tr v-for="(arts, idx) in list" :key="idx">
         <v-menu :close-on-content-click="false" :z-index="10000000">
           <template v-slot:activator="{ props }">
-            <td class="name text-decoration-underline" v-bind="props">
+            <td class="name" v-bind="props">
               <v-icon :icon="getArtsIcon(arts)" style="width: 1.5rem" />
               {{ arts.name }}
             </td>
           </template>
           <v-container class="arts-detail px-2 pt-2 pb-1 border">
-            <v-defaults-provider
-              :defaults="{
-                VCol: { class: 'py-0' },
-                VRow: { class: 'py-0 my-0' },
-                VChip: {
-                  class: 'px-3 mr-1',
-                  size: 'small',
-                  variant: 'outlined',
-                  style: 'border-color: #666'
-                }
-              }"
-            >
-              <v-row class="mb-1">
-                <v-col>
+            <v-defaults-provider :defaults="{ VChip: { variant: 'outlined', style: 'border-color: #666' } }">
+              <v-row class="py-0 mt-0 mb-1">
+                <v-col class="py-0">
                   <p class="overflow-auto pa-1" style="white-space: pre; font-size: 0.7em">
                     {{ arts.effect || '効果記載なし' }}
                   </p>
                 </v-col>
               </v-row>
-              <v-row class="mb-1">
-                <v-col>
-                  <v-chip>参照p: {{ arts.page }}</v-chip>
+              <v-row class="py-0 mt-0 mb-1">
+                <v-col class="py-0">
+                  <v-chip class="px-3 mr-1" size="small">参照p: {{ arts.page }}</v-chip>
                 </v-col>
               </v-row>
             </v-defaults-provider>
@@ -118,6 +107,13 @@ function getArtsIcon(arts: NinjaArts) {
 
     &.name {
       padding: 0 5px 0 2px !important;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    &.target {
+      text-decoration: underline;
+      cursor: pointer;
     }
   }
 }

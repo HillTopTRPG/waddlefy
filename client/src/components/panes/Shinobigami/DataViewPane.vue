@@ -25,6 +25,7 @@
             <v-switch label="背景" color="primary" true-icon="mdi-check" v-model="viewBackground" />
             <v-switch label="特技表" color="primary" true-icon="mdi-check" v-model="viewTokugi" />
             <v-switch label="忍法一覧" color="primary" true-icon="mdi-check" v-model="viewNinpou" />
+            <v-switch label="奥義一覧" color="primary" true-icon="mdi-check" v-model="viewSpecialArts" />
             <v-divider class="my-1 ml-2" />
             <v-switch label="タブ欄" color="primary" true-icon="mdi-check" v-model="viewText" />
             <v-label class="text-body-2 ml-4">タブ欄高さ</v-label>
@@ -44,6 +45,7 @@
           :scenario-data-id="cw.scenarioDataId"
           :background-view="viewBackground"
           :ninpou-view="viewNinpou"
+          :special-arts-view="viewSpecialArts"
           :tokugi-view="viewTokugi"
           :text-view="viewText"
           :text-rows="textRows"
@@ -109,6 +111,7 @@ watch(navigationDrawer, v => {
 
 const viewBackground = ref(true)
 const viewNinpou = ref(true)
+const viewSpecialArts = ref(true)
 const viewTokugi = ref(true)
 const viewText = ref(true)
 const textRows = ref(10)
