@@ -41,16 +41,16 @@
     <template v-slot:default>
       <v-sheet class="w-100 d-flex flex-row flex-wrap align-start" :class="perspective ? 'pt-3' : ''">
         <template v-for="handout in handoutList" :key="handout.id">
-          <scenario-data-card :data-id="handout.id" :text-rows="textRows" :perspective="perspective" />
+          <scenario-data-card mode="edit" :data-id="handout.id" :text-rows="textRows" :perspective="perspective" />
         </template>
         <template v-for="enigma in enigmaList" :key="enigma.id">
-          <scenario-data-card :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
+          <scenario-data-card mode="edit" :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
         </template>
         <template v-for="persona in personaList" :key="persona.id">
-          <scenario-data-card :data-id="persona.id" :text-rows="textRows" :perspective="perspective" />
+          <scenario-data-card mode="edit" :data-id="persona.id" :text-rows="textRows" :perspective="perspective" />
         </template>
         <template v-for="prize in prizeList" :key="prize.id">
-          <scenario-data-card :data-id="prize.id" :text-rows="textRows" :perspective="perspective" />
+          <scenario-data-card mode="edit" :data-id="prize.id" :text-rows="textRows" :perspective="perspective" />
         </template>
       </v-sheet>
     </template>

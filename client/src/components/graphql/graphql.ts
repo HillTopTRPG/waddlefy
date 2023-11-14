@@ -269,7 +269,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     players: Player[]
     dashboards: AbstractDashboard[]
     dashboard: Dashboard | null
-    sessionDataList: SessionData[]
+    sessionDataList: SessionData<any>[]
     notifications: Notification[]
     dashboardCache: Map<string, Dashboard>
   }>({
@@ -479,24 +479,24 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     )
   }
 
-  async function updateShinobigamiCharacterSessionMemo(sessionMemoId: string, characterId: string, text: string) {
+  async function updateShinobigamiHandoutSessionMemo(sessionMemoId: string, handoutId: string, text: string) {
     await updateSessionDataHelper(
       sessionMemoId,
       JSON.stringify({
-        characterId,
+        handoutId,
         text
       })
     )
   }
 
-  async function updateShinobigamiCharacterPrivateMemo(privateMemoId: string, characterId: string, text: string) {
+  async function updateShinobigamiHandoutPrivateMemo(privateMemoId: string, handoutId: string, text: string) {
     const isUserControl = Boolean(state.user?.token)
     await updateSessionDataHelper(
       privateMemoId,
       JSON.stringify({
         ownerType: isUserControl ? 'user' : 'player',
         ownerId: isUserControl ? null : state.player?.id,
-        characterId,
+        handoutId,
         text
       })
     )
@@ -926,25 +926,25 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addShinobigamiCharacterSessionMemo(characterId: string, text: string): Promise<void> {
+  async function addShinobigamiHandoutSessionMemo(handoutId: string, text: string): Promise<void> {
     await addSessionDataHelper(
-      'shinobigami-character-session-memo',
+      'shinobigami-handout-session-memo',
       JSON.stringify({
-        characterId,
+        handoutId,
         text
       })
     )
     // Subscriptionによってstateに登録される
   }
 
-  async function addShinobigamiCharacterPrivateMemo(characterId: string, text: string): Promise<void> {
+  async function addShinobigamiHandoutPrivateMemo(handoutId: string, text: string): Promise<void> {
     const isUserControl = Boolean(state.user?.token)
     await addSessionDataHelper(
-      'shinobigami-character-private-memo',
+      'shinobigami-handout-private-memo',
       JSON.stringify({
         ownerType: isUserControl ? 'user' : 'player',
         ownerId: isUserControl ? null : state.player?.id,
-        characterId,
+        handoutId,
         text
       })
     )
@@ -971,7 +971,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function addShinobigamiHandoutRelation(
     ownerId: string,
     targetId: string,
-    type: 'location' | 'secret' | ShinobigamiEmotion
+    type: 'location' | 'secret' | ShinobigamiEmotion | string
   ): Promise<void> {
     await addSessionDataHelper(
       'shinobigami-handout-relation',
@@ -1116,10 +1116,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             }
           })
           const dataType = data.type
-          if (dataType === 'shinobigami-character-session-memo') {
-            const character = state.sessionDataList.find(sd => sd.id === raw.characterId)
-            const characterName = character?.data.character.characterName || ''
-            addNotification(`${characterName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
+          if (dataType === 'shinobigami-handout-session-memo') {
+            const handout = state.sessionDataList.find(sd => sd.id === raw.handoutId)
+            const handoutName = handout?.data.name || ''
+            addNotification(`${handoutName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
           }
         }
       },
@@ -1257,12 +1257,11 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
                   addNotification(text, icon, color)
                 )
               }
-              if (dataType === 'shinobigami-character-session-memo') {
+              if (dataType === 'shinobigami-handout-session-memo') {
                 console.log(JSON.stringify(next, 0, 2))
-                const characterName = state.sessionDataList.find(c => c.id === next.characterId)?.data.character
-                  .characterName
+                const handoutName = state.sessionDataList.find(c => c.id === next.handoutId)?.data.name
                 addNotification(
-                  `${characterName}の共有メモが更新されました`,
+                  `${handoutName}の共有メモが更新されました`,
                   'mdi-pencil-circle-outline',
                   'lime-lighten-4'
                 )
@@ -1435,16 +1434,16 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     closeNotification,
     closeNotificationAll,
     addShinobigamiCharacter,
-    addShinobigamiCharacterSessionMemo,
-    addShinobigamiCharacterPrivateMemo,
+    addShinobigamiHandoutSessionMemo,
+    addShinobigamiHandoutPrivateMemo,
     addShinobigamiHandout,
     addShinobigamiHandoutRelation,
     addShinobigamiEnigma,
     addShinobigamiPersona,
     addShinobigamiPrize,
     updateShinobigamiCharacter,
-    updateShinobigamiCharacterSessionMemo,
-    updateShinobigamiCharacterPrivateMemo,
+    updateShinobigamiHandoutSessionMemo,
+    updateShinobigamiHandoutPrivateMemo,
     updateShinobigamiHandout,
     updateShinobigamiHandoutRelation,
     updateShinobigamiEnigma,

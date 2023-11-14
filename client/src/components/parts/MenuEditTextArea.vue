@@ -11,7 +11,9 @@
     <template v-slot:activator="{ props }">
       <v-textarea
         :class="`${textareaClass} ${editable ? 'editable' : ''}`"
-        :rows="textRows"
+        :rows="editable || autoGrow ? textRows : 1"
+        :max-rows="editable || autoGrow ? undefined : textRows"
+        :auto-grow="!editable || autoGrow"
         :readonly="true"
         :no-resize="true"
         :placeholder="placeholder || ''"
@@ -79,6 +81,7 @@ const props = defineProps<{
   variant: string
   editable: boolean
   textareaClass?: string
+  autoGrow?: boolean
 }>()
 
 const emits = defineEmits<{

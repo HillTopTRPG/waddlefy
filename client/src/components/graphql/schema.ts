@@ -769,11 +769,11 @@ export type SessionDataResult = {
   data: string
 }
 
-export type SessionData = {
+export type SessionData<T> = {
   id: string
   type: string
   sessionId: string
-  data: any
+  data: T
 }
 
 export type Session = {

@@ -21,7 +21,7 @@
     <template v-slot:default>
       <v-sheet class="w-100 d-flex flex-row align-start justify-start flex-wrap px-0">
         <template v-for="cw in characterWraps" :key="cw.id">
-          <scenario-data-card :data-id="cw.id" :text-rows="textRows" :perspective="perspective" />
+          <scenario-data-card mode="edit" :data-id="cw.id" :text-rows="textRows" :perspective="perspective" />
         </template>
       </v-sheet>
     </template>

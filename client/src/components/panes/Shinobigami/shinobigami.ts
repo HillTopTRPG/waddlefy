@@ -572,8 +572,18 @@ export type ShinobigamiEmotion =
   | 4 // 忠誠
   | 5 // 憧憬
   | 6 // 狂信
+
 export type HandoutRelation = {
   ownerId: string
   targetId: string
   type: 'location' | 'secret' | ShinobigamiEmotion
+}
+
+export type ShinobigamiHandout = {
+  name: string
+  objective: string
+  secret: string
+  person: string
+  published: boolean
+  knowSelfSecret: boolean
 }

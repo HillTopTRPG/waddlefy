@@ -37,13 +37,11 @@
     </template>
     <template v-slot:layout></template>
     <template v-slot:default>
-      <template v-for="(cw, idx) in characterWraps" :key="cw.id">
+      <template v-for="(cw, idx) in handoutDataList" :key="cw.id">
         <v-divider v-if="idx" />
         <data-view-card
-          :character-id="cw.data.id"
-          :player-id="cw.data.player"
-          :view-pass="cw.data.viewPass"
-          :character-sheet="cw.data.character"
+          :character-id="cw.characterId"
+          :scenario-data-id="cw.scenarioDataId"
           :background-view="viewBackground"
           :ninpou-view="viewNinpou"
           :tokugi-view="viewTokugi"
@@ -53,10 +51,19 @@
           v-model:select-skill="selectSkill"
         />
       </template>
-      <span v-if="!characterWraps.length" class="ma-3">
+      <span v-if="!handoutDataList.length" class="ma-3">
         0件<br />
-        キャラクターシートを登録してください。
+        ハンドアウトを登録してください。
       </span>
+      <v-sheet class="d-flex flex-row flex-wrap justify-start align-start w-100" style="gap: 0">
+        <v-divider class="mb-2" />
+        <template v-for="enigma in enigmaList" :key="enigma.id">
+          <scenario-data-card mode="view" :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
+        <template v-for="prize in prizeList" :key="prize.id">
+          <scenario-data-card mode="view" :data-id="prize.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
+      </v-sheet>
     </template>
   </pane-frame>
 </template>
@@ -79,6 +86,8 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import DataViewCard from '@/components/panes/Shinobigami/DataViewCard.vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
+import { SessionData } from '@/components/graphql/schema'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -113,17 +122,38 @@ const perspectiveList = computed(() => [
 
 const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
-const characterWraps = computed<CharacterWrap[]>(() => {
-  if (!graphQlStore) return []
+const handoutDataList = computed<{ characterId?: string; scenarioDataId?: string }[]>(() => {
+  if (!graphQlStore) return [] as SessionData<CharacterWrap>[]
   if (!perspective.value)
     return graphQlStore.state.sessionDataList
       .filter(sd => sd.type === 'shinobigami-handout')
-      .map(sd => graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person))
-      .filter(sd => Boolean(sd))
+      .map(sd => {
+        const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+        return {
+          characterId: character?.id,
+          scenarioDataId: character ? undefined : sd.id
+        }
+      })
   return graphQlStore.state.sessionDataList
     .filter(sd => sd.type === 'shinobigami-handout' && sd.data.published)
-    .map(sd => graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person))
-    .filter(sd => Boolean(sd))
+    .map(sd => {
+      const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+      return {
+        characterId: character?.id,
+        scenarioDataId: character ? undefined : sd.id
+      }
+    })
+})
+
+const enigmaList = computed(() => {
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-enigma')
+})
+
+const prizeList = computed(() => {
+  if (!perspective.value) {
+    return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize')
+  }
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize')
 })
 
 const selectSkill = ref('')

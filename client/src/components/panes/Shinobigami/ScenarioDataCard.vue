@@ -21,7 +21,7 @@
             :width="20"
             :text="dataObj.data.character.characterName"
             :editable="true"
-            @update="onUpdateShinobigamiCharacterName"
+            @update="onUpdateCharacterName"
           />
           <v-select
             :items="hasEmptyPlayers"
@@ -35,7 +35,7 @@
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
             :model-value="dataObj.data.player"
-            @update:model-value="v => onUpdateShinobigamiCharacterPlayer(v)"
+            @update:model-value="v => onUpdateCharacterPlayer(v)"
           >
             <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
@@ -118,70 +118,71 @@
           <v-checkbox-btn
             label="存在の公開"
             class="card-item-check"
-            v-if="!perspective"
+            v-if="editable"
             :model-value="dataObj.data.published"
-            @update:model-value="v => onUpdateShinobigamiHandoutPublished(v)"
+            @update:model-value="v => onUpdateHandoutPublished(v)"
           />
           <menu-edit-text-field
             :title="`${dataObj.data.name || 'ななし'}の名前編集`"
             label="名前"
             icon="mdi-tag-outline"
             placeholder="未設定"
-            :variant="perspective ? 'outlined' : 'solo'"
-            :class-text="perspective ? 'mt-2' : ''"
+            :variant="editable ? 'solo' : 'outlined'"
+            :class-text="editable ? '' : 'mt-2'"
             :width="20"
             :text="dataObj.data.name"
-            :editable="!perspective"
-            @update="onUpdateShinobigamiHandoutName"
+            :editable="editable"
+            @update="onUpdateHandoutName"
           />
           <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の使命の編集`"
             label="使命"
             placeholder="未設定"
-            :editable="!perspective"
+            :editable="editable"
             icon="mdi-bullseye"
-            :variant="perspective ? 'outlined' : 'solo'"
-            :textarea-class="perspective ? 'mt-2' : ''"
+            :variant="editable ? 'solo' : 'outlined'"
+            :textarea-class="editable ? '' : 'mt-2'"
             :text-rows="textRows"
             :text="dataObj.data.objective"
             :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiHandoutObjective"
+            @update="onUpdateHandoutObjective"
           />
           <menu-edit-text-area
+            v-if="handoutSecretOpen"
             :title="`${dataObj.data.name || 'ななし'}の秘密の編集`"
             label="秘密"
             placeholder="未設定"
-            :editable="!perspective"
+            :editable="editable"
             icon="mdi-lock-outline"
-            :variant="perspective ? 'outlined' : 'solo'"
-            :textarea-class="perspective ? 'mt-2' : ''"
+            :variant="editable ? 'solo' : 'outlined'"
+            :textarea-class="editable ? '' : 'mt-2'"
             :text-rows="textRows"
             :text="dataObj.data.secret"
             :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiHandoutSecret"
+            @update="onUpdateHandoutSecret"
           />
           <v-checkbox-btn
             label="自身の秘密を知っている"
             class="card-item-check"
-            :class="perspective ? 'readonly' : ''"
-            :readonly="Boolean(perspective)"
+            :class="editable ? '' : 'readonly'"
+            :readonly="!editable"
             :model-value="dataObj.data.knowSelfSecret"
-            @update:model-value="v => onUpdateShinobigamiHandoutKnowSelfSecret(v)"
+            @update:model-value="v => onUpdateHandoutKnowSelfSecret(v)"
           />
           <v-select
             :items="hasEmptyCharacterList"
             item-value="id"
             item-title="name"
-            :variant="perspective ? 'outlined' : 'solo'"
+            :variant="editable ? 'solo' : 'outlined'"
             :flat="true"
             label="担当キャラ"
             class="align-self-start"
-            :readonly="Boolean(perspective)"
+            :readonly="!editable"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
             :model-value="dataObj.data.person"
-            @update:model-value="v => onUpdateShinobigamiHandoutPerson(v)"
+            @update:model-value="v => onUpdateHandoutPerson(v)"
           >
             <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
@@ -190,7 +191,7 @@
           </v-select>
           <template v-for="otherHandout in otherHandouts" :key="otherHandout.id">
             <correlations-card
-              mode="edit"
+              :mode="mode"
               :owner-id="dataObj.id"
               :target-id="otherHandout.id"
               :perspective="perspective"
@@ -205,26 +206,25 @@
             placeholder="未設定"
             :width="20"
             :text="dataObj.data.name"
-            :editable="!perspective"
-            :variant="perspective ? 'outlined' : 'solo'"
-            :class-text="perspective ? 'mt-2' : ''"
-            @update="onUpdateShinobigamiEnigmaName"
+            :editable="editable"
+            :variant="editable ? 'solo' : 'outlined'"
+            :class-text="editable ? '' : 'mt-2'"
+            @update="onUpdateEnigmaName"
           />
           <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の偽装の編集`"
             label="偽装"
             placeholder="未設定"
-            :editable="!perspective"
-            :variant="perspective ? 'outlined' : 'solo'"
-            :textarea-class="perspective ? 'mt-2' : ''"
+            :editable="editable"
+            :variant="editable ? 'solo' : 'outlined'"
+            :textarea-class="editable ? '' : 'mt-2'"
             icon="mdi-emoticon-cool-outline"
-            variant="solo"
             :text-rows="textRows"
             :text="dataObj.data.camouflage"
             :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiEnigmaCamouflage"
+            @update="onUpdateEnigmaCamouflage"
           />
-          <template v-if="!perspective || dataObj.data.used">
+          <template v-if="editable || dataObj.data.used">
             <menu-edit-text-field
               :title="`${dataObj.data.name || 'ななし'}の戦力の名称の編集`"
               label="戦力の名称"
@@ -232,25 +232,25 @@
               placeholder="未設定"
               :width="20"
               :text="dataObj.data.entityName"
-              :editable="!perspective"
-              :variant="perspective ? 'outlined' : 'solo'"
-              :class-text="perspective ? 'mt-2' : ''"
-              @update="onUpdateShinobigamiEnigmaEntityName"
+              :editable="editable"
+              :variant="editable ? 'solo' : 'outlined'"
+              :class-text="editable ? '' : 'mt-2'"
+              @update="onUpdateEnigmaEntityName"
             />
             <v-sheet class="d-flex flex-row flex-wrap bg-transparent" style="gap: 0.5rem">
               <v-select
                 :items="[1, 2, 3, 4, 5]"
                 label="脅威度"
-                :readonly="Boolean(perspective)"
-                :variant="perspective ? 'outlined' : 'solo'"
-                :class="perspective ? 'mt-2' : ''"
+                :readonly="!editable"
+                :variant="editable ? 'solo' : 'outlined'"
+                :class="editable ? '' : 'mt-2'"
                 :flat="true"
                 class="align-self-start"
                 :hide-details="true"
                 :persistent-placeholder="true"
                 style="min-width: 6.5em; max-width: 6.5em; gap: 0"
                 :model-value="dataObj.data.threat"
-                @update:model-value="v => onUpdateShinobigamiEnigmaThreat(v)"
+                @update:model-value="v => onUpdateEnigmaThreat(v)"
               >
                 <template v-slot:label="{ label }">
                   <v-icon icon="mdi-altimeter" class="mr-1" />
@@ -263,25 +263,25 @@
                 icon="mdi-hammer"
                 placeholder="未設定"
                 :width="13"
-                :editable="!perspective"
-                :variant="perspective ? 'outlined' : 'solo'"
-                :class-text="perspective ? 'mt-2' : ''"
+                :editable="editable"
+                :variant="editable ? 'solo' : 'outlined'"
+                :class-text="editable ? '' : 'mt-2'"
                 :text="dataObj.data.disableJudgement"
-                @update="onUpdateShinobigamiEnigmaDisableJudgement"
+                @update="onUpdateEnigmaDisableJudgement"
               />
             </v-sheet>
             <menu-edit-text-area
               :title="`${dataObj.data.name || 'ななし'}の効果の編集`"
               label="効果"
               placeholder="未設定"
-              :editable="!perspective"
-              :variant="perspective ? 'outlined' : 'solo'"
-              :textarea-class="perspective ? 'mt-2' : ''"
+              :editable="editable"
+              :variant="editable ? 'solo' : 'outlined'"
+              :textarea-class="editable ? '' : 'mt-2'"
               icon="mdi-bomb"
               :text-rows="textRows"
               :text="dataObj.data.effect"
               :offset="-textRows * 24 + 18"
-              @update="onUpdateShinobigamiEnigmaEffect"
+              @update="onUpdateEnigmaEffect"
             />
             <v-select
               :items="hasEmptyHandoutList"
@@ -291,13 +291,13 @@
               label="バインド"
               class="align-self-start"
               :hide-details="true"
-              :readonly="Boolean(perspective)"
-              :variant="perspective ? 'outlined' : 'solo'"
-              :class="perspective ? 'mt-2' : ''"
+              :readonly="!editable"
+              :variant="editable ? 'solo' : 'outlined'"
+              :class="editable ? '' : 'mt-2'"
               style="width: 20rem; max-width: 20rem"
               :persistent-placeholder="true"
               :model-value="dataObj.data.bind"
-              @update:model-value="v => onUpdateShinobigamiEnigmaBind(v)"
+              @update:model-value="v => onUpdateEnigmaBind(v)"
             >
               <template v-slot:label="{ label }">
                 <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
@@ -308,22 +308,22 @@
           <v-checkbox-btn
             label="戦力の公開"
             class="card-item-check"
-            :class="perspective ? 'readonly' : ''"
-            :readonly="Boolean(perspective)"
+            :class="editable ? '' : 'readonly'"
+            :readonly="!editable"
             :model-value="dataObj.data.used"
-            @update:model-value="v => onUpdateShinobigamiEnigmaUsed(v)"
+            @update:model-value="v => onUpdateEnigmaUsed(v)"
           />
           <v-checkbox-btn
             label="解除"
             class="card-item-check"
-            :class="perspective ? 'readonly' : ''"
-            :readonly="Boolean(perspective)"
+            :class="editable ? '' : 'readonly'"
+            :readonly="!editable"
             :model-value="dataObj.data.disabled"
-            @update:model-value="v => onUpdateShinobigamiEnigmaDisabled(v)"
+            @update:model-value="v => onUpdateEnigmaDisabled(v)"
           />
         </template>
         <template v-if="dataObj.type === 'shinobigami-persona'">
-          <template v-if="!perspective || dataObj.data.leaked">
+          <template v-if="editable || dataObj.data.leaked">
             <menu-edit-text-field
               :title="`${dataObj.data.name || 'ななし'}の真実名の編集`"
               label="真実名"
@@ -331,40 +331,40 @@
               placeholder="未設定"
               :width="20"
               :text="dataObj.data.name"
-              :editable="!perspective"
-              :variant="perspective ? 'outlined' : 'solo'"
-              :class-text="perspective ? 'mt-2' : ''"
-              @update="onUpdateShinobigamiPersonaName"
+              :editable="editable"
+              :variant="editable ? 'solo' : 'outlined'"
+              :class-text="editable ? '' : 'mt-2'"
+              @update="onUpdatePersonaName"
             />
             <menu-edit-text-area
               :title="`${dataObj.data.name || 'ななし'}の効果の編集`"
               label="効果"
               placeholder="未設定"
-              :editable="!perspective"
-              :variant="perspective ? 'outlined' : 'solo'"
-              :textarea-class="perspective ? 'mt-2' : ''"
+              :editable="editable"
+              :variant="editable ? 'solo' : 'outlined'"
+              :textarea-class="editable ? '' : 'mt-2'"
               icon="mdi-script-text-outline"
               :text-rows="textRows"
               :text="dataObj.data.effect"
               :offset="-textRows * 24 + 18"
-              @update="onUpdateShinobigamiPersonaEffect"
+              @update="onUpdatePersonaEffect"
             />
           </template>
           <v-select
             :items="hasEmptyHandoutList"
             item-value="id"
             item-title="name"
-            :variant="perspective ? 'outlined' : 'solo'"
-            :class="perspective ? 'mt-3' : ''"
+            :variant="editable ? 'solo' : 'outlined'"
+            :class="editable ? '' : 'mt-3'"
             :flat="true"
-            :readonly="Boolean(perspective)"
+            :readonly="!editable"
             label="所有されるハンドアウト"
             class="align-self-start"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
             :model-value="dataObj.data.bind"
-            @update:model-value="v => onUpdateShinobigamiPersonaBind(v)"
+            @update:model-value="v => onUpdatePersonaBind(v)"
           >
             <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
@@ -374,10 +374,10 @@
           <v-checkbox-btn
             label="真実の公開"
             class="card-item-check"
-            :class="perspective ? 'readonly' : ''"
-            :readonly="Boolean(perspective)"
+            :class="editable ? '' : 'readonly'"
+            :readonly="!editable"
             :model-value="dataObj.data.leaked"
-            @update:model-value="v => onUpdateShinobigamiPersonaLeaked(v)"
+            @update:model-value="v => onUpdatePersonaLeaked(v)"
           />
         </template>
         <template v-if="dataObj.type === 'shinobigami-prize'">
@@ -389,7 +389,7 @@
             :width="20"
             :editable="true"
             :text="dataObj.data.name"
-            @update="onUpdateShinobigamiPrizeName"
+            @update="onUpdatePrizeName"
           />
           <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の説明の編集`"
@@ -401,7 +401,7 @@
             :text-rows="textRows"
             :text="dataObj.data.description"
             :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiPrizeDescription"
+            @update="onUpdatePrizeDescription"
           />
           <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の秘密の編集`"
@@ -413,7 +413,7 @@
             :text-rows="textRows"
             :text="dataObj.data.secret"
             :offset="-textRows * 24 + 18"
-            @update="onUpdateShinobigamiPrizeSecret"
+            @update="onUpdatePrizeSecret"
           />
           <v-select
             :items="hasEmptyHandoutList"
@@ -428,7 +428,7 @@
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
             :model-value="dataObj.data.owner"
-            @update:model-value="v => onUpdateShinobigamiPrizeOwner(v)"
+            @update:model-value="v => onUpdatePrizeOwner(v)"
           >
             <template v-slot:label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
@@ -438,21 +438,18 @@
           <v-card variant="text" class="bg-white pa-3">
             <v-card-subtitle class="text-body-2">このプライズの存在を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
-              <handout-multi-checkbox
-                :list="dataObj.data.readableList"
-                @update="onUpdateShinobigamiPrizeReadableList"
-              />
+              <handout-multi-checkbox :list="dataObj.data.readableList" @update="onUpdatePrizeReadableList" />
             </v-sheet>
           </v-card>
           <v-card variant="text" class="bg-white pa-3">
             <v-card-subtitle class="text-body-2">このプライズの秘密を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
-              <handout-multi-checkbox :list="dataObj.data.leakedList" @update="onUpdateShinobigamiPrizeLeakedList" />
+              <handout-multi-checkbox :list="dataObj.data.leakedList" @update="onUpdatePrizeLeakedList" />
             </v-sheet>
           </v-card>
         </template>
       </v-sheet>
-      <v-card-actions class="pt-0" v-if="!perspective">
+      <v-card-actions class="pt-0" v-if="editable">
         <v-spacer />
         <delete-menu-btn
           :target-name="
@@ -490,15 +487,44 @@ const props = defineProps<{
   dataId: string
   textRows: number
   perspective: string
+  mode: 'view' | 'edit'
 }>()
+
+const editable = computed(() => !props.perspective && props.mode === 'edit')
 
 const dataObj = computed(() => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.dataId)
 })
 
 const otherHandouts = computed(() => {
-  return graphQlStore?.state.sessionDataList.filter(
-    sd => sd.type === 'shinobigami-handout' && sd.id !== dataObj.value.id && (!props.perspective || sd.data.published)
+  return graphQlStore?.state.sessionDataList.filter(sd => {
+    if (sd.type !== 'shinobigami-handout') return false
+    if (sd.id === dataObj.value.id) return false
+    return !props.perspective || sd.data.published
+  })
+})
+
+const handoutSecretOpen = computed((): boolean => {
+  if (!props.perspective) return true
+  if (dataObj.value.type !== 'shinobigami-handout') return false
+
+  // キャラクターのオーナーの場合
+  if (dataObj.value.data.knowSelfSecret) {
+    const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === dataObj.value.data.person)
+    if (props.perspective === handoutCharacter?.data.player) return true
+  }
+
+  const secretRelations = graphQlStore?.state.sessionDataList.filter(
+    sd =>
+      sd.type === 'shinobigami-handout-relation' && sd.data.type === 'secret' && sd.data.targetId === dataObj.value?.id
+  )
+
+  return (
+    secretRelations.some(sd => {
+      const targetHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
+      const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === targetHandout?.data.person)
+      return props.perspective === character?.data.player
+    }) || false
   )
 })
 
@@ -650,7 +676,7 @@ const hasEmptyCharacterList = computed(() => {
   return resultList
 })
 
-async function onUpdateShinobigamiCharacterName(characterName: string) {
+async function onUpdateCharacterName(characterName: string) {
   if (dataObj.value.data.character.characterName === characterName) return
   const character = clone(dataObj.value.data.character)
   character.characterName = characterName
@@ -662,7 +688,7 @@ async function onUpdateShinobigamiCharacterName(characterName: string) {
   )
 }
 
-async function onUpdateShinobigamiCharacterPlayer(playerId: string) {
+async function onUpdateCharacterPlayer(playerId: string) {
   if (dataObj.value.data.playerId === playerId) return
   await graphQlStore?.updateShinobigamiCharacter(
     dataObj.value.id,
@@ -672,7 +698,7 @@ async function onUpdateShinobigamiCharacterPlayer(playerId: string) {
   )
 }
 
-async function onUpdateShinobigamiHandoutName(name: string) {
+async function onUpdateHandoutName(name: string) {
   if (dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
@@ -685,7 +711,7 @@ async function onUpdateShinobigamiHandoutName(name: string) {
   )
 }
 
-async function onUpdateShinobigamiHandoutObjective(objective: string) {
+async function onUpdateHandoutObjective(objective: string) {
   if (dataObj.value.data.objective === objective) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
@@ -698,7 +724,7 @@ async function onUpdateShinobigamiHandoutObjective(objective: string) {
   )
 }
 
-async function onUpdateShinobigamiHandoutSecret(secret: string) {
+async function onUpdateHandoutSecret(secret: string) {
   if (dataObj.value.data.secret === secret) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
@@ -711,7 +737,7 @@ async function onUpdateShinobigamiHandoutSecret(secret: string) {
   )
 }
 
-async function onUpdateShinobigamiHandoutPerson(person: string) {
+async function onUpdateHandoutPerson(person: string) {
   if (dataObj.value.data.person === person) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
@@ -724,7 +750,7 @@ async function onUpdateShinobigamiHandoutPerson(person: string) {
   )
 }
 
-async function onUpdateShinobigamiHandoutPublished(published: boolean) {
+async function onUpdateHandoutPublished(published: boolean) {
   if (dataObj.value.data.published === published) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
@@ -737,7 +763,7 @@ async function onUpdateShinobigamiHandoutPublished(published: boolean) {
   )
 }
 
-async function onUpdateShinobigamiHandoutKnowSelfSecret(knowSelfSecret: boolean) {
+async function onUpdateHandoutKnowSelfSecret(knowSelfSecret: boolean) {
   if (dataObj.value.data.knowSelfSecret === knowSelfSecret) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
@@ -750,7 +776,7 @@ async function onUpdateShinobigamiHandoutKnowSelfSecret(knowSelfSecret: boolean)
   )
 }
 
-async function onUpdateShinobigamiEnigmaName(name: string) {
+async function onUpdateEnigmaName(name: string) {
   if (dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -766,7 +792,7 @@ async function onUpdateShinobigamiEnigmaName(name: string) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaThreat(threat: number) {
+async function onUpdateEnigmaThreat(threat: number) {
   if (dataObj.value.data.threat === threat) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -782,7 +808,7 @@ async function onUpdateShinobigamiEnigmaThreat(threat: number) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaDisableJudgement(disableJudgement: string) {
+async function onUpdateEnigmaDisableJudgement(disableJudgement: string) {
   if (dataObj.value.data.disableJudgement === disableJudgement) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -798,7 +824,7 @@ async function onUpdateShinobigamiEnigmaDisableJudgement(disableJudgement: strin
   )
 }
 
-async function onUpdateShinobigamiEnigmaCamouflage(camouflage: string) {
+async function onUpdateEnigmaCamouflage(camouflage: string) {
   if (dataObj.value.data.camouflage === camouflage) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -814,7 +840,7 @@ async function onUpdateShinobigamiEnigmaCamouflage(camouflage: string) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaEntityName(entityName: string) {
+async function onUpdateEnigmaEntityName(entityName: string) {
   if (dataObj.value.data.entityName === entityName) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -830,7 +856,7 @@ async function onUpdateShinobigamiEnigmaEntityName(entityName: string) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaEffect(effect: string) {
+async function onUpdateEnigmaEffect(effect: string) {
   if (dataObj.value.data.effect === effect) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -846,7 +872,7 @@ async function onUpdateShinobigamiEnigmaEffect(effect: string) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaBind(bind: string) {
+async function onUpdateEnigmaBind(bind: string) {
   if (dataObj.value.data.bind === bind) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -862,7 +888,7 @@ async function onUpdateShinobigamiEnigmaBind(bind: string) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaUsed(used: boolean) {
+async function onUpdateEnigmaUsed(used: boolean) {
   if (dataObj.value.data.used === used) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -878,7 +904,7 @@ async function onUpdateShinobigamiEnigmaUsed(used: boolean) {
   )
 }
 
-async function onUpdateShinobigamiEnigmaDisabled(disabled: boolean) {
+async function onUpdateEnigmaDisabled(disabled: boolean) {
   if (dataObj.value.data.disabled === disabled) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
@@ -894,7 +920,7 @@ async function onUpdateShinobigamiEnigmaDisabled(disabled: boolean) {
   )
 }
 
-async function onUpdateShinobigamiPersonaName(name: string) {
+async function onUpdatePersonaName(name: string) {
   if (dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
@@ -905,7 +931,7 @@ async function onUpdateShinobigamiPersonaName(name: string) {
   )
 }
 
-async function onUpdateShinobigamiPersonaEffect(effect: string) {
+async function onUpdatePersonaEffect(effect: string) {
   if (dataObj.value.data.effect === effect) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
@@ -916,7 +942,7 @@ async function onUpdateShinobigamiPersonaEffect(effect: string) {
   )
 }
 
-async function onUpdateShinobigamiPersonaBind(bind: string) {
+async function onUpdatePersonaBind(bind: string) {
   if (dataObj.value.data.bind === bind) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
@@ -927,7 +953,7 @@ async function onUpdateShinobigamiPersonaBind(bind: string) {
   )
 }
 
-async function onUpdateShinobigamiPersonaLeaked(leaked: boolean) {
+async function onUpdatePersonaLeaked(leaked: boolean) {
   if (dataObj.value.data.leaked === leaked) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
@@ -938,7 +964,7 @@ async function onUpdateShinobigamiPersonaLeaked(leaked: boolean) {
   )
 }
 
-async function onUpdateShinobigamiPrizeName(name: string) {
+async function onUpdatePrizeName(name: string) {
   if (dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
@@ -951,7 +977,7 @@ async function onUpdateShinobigamiPrizeName(name: string) {
   )
 }
 
-async function onUpdateShinobigamiPrizeDescription(description: string) {
+async function onUpdatePrizeDescription(description: string) {
   if (dataObj.value.data.description === description) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
@@ -964,7 +990,7 @@ async function onUpdateShinobigamiPrizeDescription(description: string) {
   )
 }
 
-async function onUpdateShinobigamiPrizeSecret(secret: string) {
+async function onUpdatePrizeSecret(secret: string) {
   if (dataObj.value.data.secret === secret) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
@@ -977,7 +1003,7 @@ async function onUpdateShinobigamiPrizeSecret(secret: string) {
   )
 }
 
-async function onUpdateShinobigamiPrizeOwner(owner: string) {
+async function onUpdatePrizeOwner(owner: string) {
   if (dataObj.value.data.owner === owner) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
@@ -990,7 +1016,7 @@ async function onUpdateShinobigamiPrizeOwner(owner: string) {
   )
 }
 
-async function onUpdateShinobigamiPrizeReadableList(readableList: string[]) {
+async function onUpdatePrizeReadableList(readableList: string[]) {
   if (JSON.stringify(dataObj.value.data.readableList) === JSON.stringify(readableList)) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
@@ -1003,7 +1029,7 @@ async function onUpdateShinobigamiPrizeReadableList(readableList: string[]) {
   )
 }
 
-async function onUpdateShinobigamiPrizeLeakedList(leakedList: string[]) {
+async function onUpdatePrizeLeakedList(leakedList: string[]) {
   if (JSON.stringify(dataObj.value.data.leakedList) === JSON.stringify(leakedList)) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,

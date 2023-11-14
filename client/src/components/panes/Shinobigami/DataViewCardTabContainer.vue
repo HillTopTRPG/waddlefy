@@ -25,7 +25,12 @@
             :disabled="!secretOpen"
             :prepend-icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
           />
-          <v-tab text="人物欄" :disabled="!otherHandouts.length" value="correlations" prepend-icon="mdi-account-heart-outline" />
+          <v-tab
+            text="人物欄"
+            :disabled="!otherHandouts.length"
+            value="correlations"
+            prepend-icon="mdi-account-heart-outline"
+          />
         </template>
 
         <!-- エニグマ -->
@@ -91,9 +96,7 @@
               :perspective="perspective"
             />
           </template>
-          <template v-if="!otherHandouts.length">
-            独り
-          </template>
+          <template v-if="!otherHandouts.length"> 独り </template>
         </v-sheet>
         <v-divider />
         <div class="text-caption py-1 pl-4" style="opacity: 0.5">編集不可</div>
@@ -107,6 +110,7 @@
           variant="solo-filled"
           :editable="false"
           textareaClass="ma-2"
+          :auto-grow="true"
           :text-rows="textRows"
         />
       </v-window-item>
@@ -119,6 +123,7 @@
           variant="solo-filled"
           :editable="false"
           textareaClass="ma-2"
+          :auto-grow="true"
           :text-rows="textRows"
         />
       </v-window-item>
@@ -131,6 +136,7 @@
           variant="solo-filled"
           :editable="false"
           textareaClass="ma-2"
+          :auto-grow="true"
           :text-rows="textRows"
         />
       </v-window-item>
@@ -147,6 +153,7 @@
           variant="solo-filled"
           :editable="false"
           textareaClass="ma-2"
+          :auto-grow="true"
           :text-rows="textRows"
         />
       </v-window-item>
@@ -163,7 +170,7 @@ import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vu
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
-  characterId: string
+  handoutId: string
   textRows: number
   perspective: string
 }>()
@@ -182,8 +189,8 @@ const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 const privateMemo = computed(
   () =>
     graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'shinobigami-character-private-memo') return false
-      if (sd.data.characterId !== props.characterId) return false
+      if (sd.type !== 'shinobigami-handout-private-memo') return false
+      if (sd.data.handoutId !== props.handoutId) return false
       if (isUserControl.value) {
         if (sd.data.ownerType === 'user') return true
       } else {
@@ -195,52 +202,40 @@ const privateMemo = computed(
 const sessionMemo = computed(
   () =>
     graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'shinobigami-character-session-memo') return false
-      return sd.data.characterId === props.characterId
+      if (sd.type !== 'shinobigami-handout-session-memo') return false
+      return sd.data.handoutId === props.handoutId
     })
 )
 
 async function updateSessionMemo(text: string) {
   if (sessionMemo.value) {
-    await graphQlStore?.updateShinobigamiCharacterSessionMemo(sessionMemo.value.id, props.characterId, text)
+    await graphQlStore?.updateShinobigamiHandoutSessionMemo(sessionMemo.value.id, props.handoutId, text)
   } else {
-    await graphQlStore?.addShinobigamiCharacterSessionMemo(props.characterId, text)
+    await graphQlStore?.addShinobigamiHandoutSessionMemo(props.handoutId, text)
   }
 }
 
 async function updatePrivateMemo(text: string) {
   if (privateMemo.value) {
-    await graphQlStore?.updateShinobigamiCharacterPrivateMemo(privateMemo.value.id, props.characterId, text)
+    await graphQlStore?.updateShinobigamiHandoutPrivateMemo(privateMemo.value.id, props.handoutId, text)
   } else {
-    await graphQlStore?.addShinobigamiCharacterPrivateMemo(props.characterId, text)
+    await graphQlStore?.addShinobigamiHandoutPrivateMemo(props.handoutId, text)
   }
 }
 
 const handout = computed(() => {
-  return graphQlStore?.state.sessionDataList.find(
-    sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
-  )
+  return graphQlStore?.state.sessionDataList.find(sd => sd.type === 'shinobigami-handout' && sd.id === props.handoutId)
 })
 
 const boundEnigmaList = computed(() => {
-  const handout = graphQlStore?.state.sessionDataList.find(
-    sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
-  )
-  if (!handout) return null
-
   return graphQlStore?.state.sessionDataList.filter(
-    enigma => enigma.type === 'shinobigami-enigma' && enigma.data.bind === handout.id
+    enigma => enigma.type === 'shinobigami-enigma' && enigma.data.bind === props.handoutId
   )
 })
 
 const boundPersonaList = computed(() => {
-  const handout = graphQlStore?.state.sessionDataList.find(
-    sd => sd.type === 'shinobigami-handout' && sd.data.person === props.characterId
-  )
-  if (!handout) return null
-
   return graphQlStore?.state.sessionDataList.filter(
-    enigma => enigma.type === 'shinobigami-persona' && enigma.data.bind === handout.id
+    persona => persona.type === 'shinobigami-persona' && persona.data.bind === props.handoutId
   )
 })
 
