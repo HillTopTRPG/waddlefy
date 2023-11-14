@@ -1,6 +1,6 @@
 <template>
   <v-card
-    v-if="dataObj"
+    v-if="dataObj && (dataObj.type !== 'shinobigami-prize' || !perspective || prizeKnow)"
     :color="typeList.find(t => t.value === dataObj.type)?.color || ''"
     class="ml-3 mb-3 border elevation-4"
     rounded="lg"
@@ -354,10 +354,10 @@
             :items="hasEmptyHandoutList"
             item-value="id"
             item-title="name"
+            :readonly="!editable"
             :variant="editable ? 'solo' : 'outlined'"
             :class="editable ? '' : 'mt-3'"
             :flat="true"
-            :readonly="!editable"
             label="所有されるハンドアウト"
             class="align-self-start"
             :hide-details="true"
@@ -387,7 +387,9 @@
             icon="mdi-tag-outline"
             placeholder="未設定"
             :width="20"
-            :editable="true"
+            :editable="editable"
+            :variant="editable ? 'solo' : 'outlined'"
+            :class-text="editable ? '' : 'mt-2'"
             :text="dataObj.data.name"
             @update="onUpdatePrizeName"
           />
@@ -395,9 +397,10 @@
             :title="`${dataObj.data.name || 'ななし'}の説明の編集`"
             label="説明"
             placeholder="未設定"
-            :editable="true"
+            :editable="editable"
+            :variant="editable ? 'solo' : 'outlined'"
+            :textarea-class="editable ? '' : 'mt-2'"
             icon="mdi-script-text-outline"
-            variant="solo"
             :text-rows="textRows"
             :text="dataObj.data.description"
             :offset="-textRows * 24 + 18"
@@ -407,19 +410,23 @@
             :title="`${dataObj.data.name || 'ななし'}の秘密の編集`"
             label="秘密"
             placeholder="未設定"
-            :editable="true"
+            :editable="editable"
+            :variant="editable ? 'solo' : 'outlined'"
+            :textarea-class="editable ? '' : 'mt-2'"
             icon="mdi-lock-outline"
-            variant="solo"
             :text-rows="textRows"
             :text="dataObj.data.secret"
             :offset="-textRows * 24 + 18"
+            v-if="!perspective || prizeSecret"
             @update="onUpdatePrizeSecret"
           />
           <v-select
             :items="hasEmptyHandoutList"
             item-value="id"
             item-title="name"
-            variant="solo"
+            :readonly="!editable"
+            :variant="editable ? 'solo' : 'outlined'"
+            :class="editable ? '' : 'mt-3'"
             :flat="true"
             label="所有者"
             class="align-self-start"
@@ -435,16 +442,24 @@
               {{ label }}
             </template>
           </v-select>
-          <v-card variant="text" class="bg-white pa-3">
-            <v-card-subtitle class="text-body-2">このプライズの存在を知るハンドアウト</v-card-subtitle>
+          <v-card :variant="editable ? 'text' : 'outlined'" class="pa-3" :class="editable ? 'bg-white' : ''">
+            <v-card-subtitle class="text-subtitle-2">このプライズの存在を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
-              <handout-multi-checkbox :list="dataObj.data.readableList" @update="onUpdatePrizeReadableList" />
+              <handout-multi-checkbox
+                :list="dataObj.data.readableList"
+                :editable="editable"
+                @update="onUpdatePrizeReadableList"
+              />
             </v-sheet>
           </v-card>
-          <v-card variant="text" class="bg-white pa-3">
-            <v-card-subtitle class="text-body-2">このプライズの秘密を知るハンドアウト</v-card-subtitle>
+          <v-card :variant="editable ? 'text' : 'outlined'" class="pa-3" :class="editable ? 'bg-white' : ''">
+            <v-card-subtitle class="text-subtitle-2">このプライズの秘密を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
-              <handout-multi-checkbox :list="dataObj.data.leakedList" @update="onUpdatePrizeLeakedList" />
+              <handout-multi-checkbox
+                :list="dataObj.data.leakedList"
+                :editable="editable"
+                @update="onUpdatePrizeLeakedList"
+              />
             </v-sheet>
           </v-card>
         </template>
@@ -502,6 +517,26 @@ const otherHandouts = computed(() => {
     if (sd.id === dataObj.value.id) return false
     return !props.perspective || sd.data.published
   })
+})
+
+const prizeKnow = computed(() => {
+  if (dataObj.value.type !== 'shinobigami-prize') return false
+  const knowHandouts =
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value.data.readableList.some(r => r === sd.id)) || []
+  const characters = knowHandouts
+    .map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
+    .filter(sd => Boolean(sd))
+  return characters.some(c => c.data.player === props.perspective)
+})
+
+const prizeSecret = computed(() => {
+  if (dataObj.value.type !== 'shinobigami-prize') return false
+  const knowHandouts =
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value.data.leakedList.some(r => r === sd.id)) || []
+  const characters = knowHandouts
+    .map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
+    .filter(sd => Boolean(sd))
+  return characters.some(c => c.data.player === props.perspective)
 })
 
 const handoutSecretOpen = computed((): boolean => {

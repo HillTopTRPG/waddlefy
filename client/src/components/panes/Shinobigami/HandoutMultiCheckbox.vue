@@ -4,6 +4,7 @@
     :key="data.id"
     :value="data.id"
     :label="data.name"
+    :readonly="!editable"
     density="compact"
     :hide-details="true"
     :model-value="list"
@@ -27,6 +28,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   list: string[]
   exclude?: string
+  editable: boolean
 }>()
 
 const emits = defineEmits<{

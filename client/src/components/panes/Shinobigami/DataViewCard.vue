@@ -51,9 +51,35 @@
         <span class="ml-4 text-h5">{{ scenarioData.data.name }}</span>
       </template>
     </v-card-title>
-    <v-card-title v-if="backgroundView && characterSheet" class="pt-0 d-flex flex-wrap" style="gap: 5px">
-      <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
-        <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
+    <v-card-title class="pt-0 d-flex flex-wrap" style="gap: 5px">
+      <template v-if="backgroundView && characterSheet">
+        <template v-for="(back, idx) in characterSheet.backgroundList" :key="idx">
+          <background-chip :text="back.name" :chip="back.effect" :type="back.type" :point="back.point" />
+        </template>
+      </template>
+      <template v-for="prize in prizeList" :key="prize.id">
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-defaults-provider :defaults="{ VChip: { label: true, border: true, elevation: 3 } }">
+              <v-chip variant="flat" size="small" color="lime-lighten-2" v-bind="props">
+                <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />
+                <span>{{ prize.data.name }}</span>
+              </v-chip>
+            </v-defaults-provider>
+          </template>
+          <v-card class="pb-3">
+            <v-defaults-provider :defaults="{ VTextarea: { noResize: true, hideDetails: true } }">
+              <v-defaults-provider :defaults="{ VTextarea: { readonly: true, autoGrow: true, rows: 1 } }">
+                <v-card-item class="py-0">
+                  <v-textarea :model-value="prize.data.description" variant="outlined" class="mt-3" label="説明" />
+                </v-card-item>
+                <v-card-item class="py-0" v-if="isPrizeSecret(prize.data.leakedList)">
+                  <v-textarea :model-value="prize.data.secret" variant="outlined" class="mt-3" label="秘密" />
+                </v-card-item>
+              </v-defaults-provider>
+            </v-defaults-provider>
+          </v-card>
+        </v-menu>
       </template>
     </v-card-title>
     <v-card-text class="py-0">
@@ -78,12 +104,10 @@
             @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
           />
         </v-sheet>
-        <v-sheet
-          v-if="textView && (scenarioData?.type === 'shinobigami-handout' ? scenarioDataId : characterHandout?.id)"
-        >
+        <v-sheet v-if="textView && handoutId">
           <data-view-card-tab-container
             class="mb-2"
-            :handout-id="scenarioData?.type === 'shinobigami-handout' ? scenarioDataId : characterHandout?.id"
+            :handout-id="handoutId"
             :perspective="perspective"
             :text-rows="textRows"
           />
@@ -132,6 +156,42 @@ const character = computed(() => {
   return undefined
 })
 
+const prizeList = computed(() => {
+  function judgeWrap(ownerId: string) {
+    return (
+      graphQlStore?.state.sessionDataList.filter(sd => {
+        if (sd.type !== 'shinobigami-prize') return false
+        if (sd.data.owner !== ownerId) return false
+        if (!props.perspective) return true
+        return sd.data.readableList.some(r => {
+          const readableHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === r)
+          if (!readableHandout) return false
+          const readableCharacter = graphQlStore?.state.sessionDataList.find(
+            sdc => sdc.id === readableHandout?.data.person
+          )
+          return readableCharacter.data.player === props.perspective
+        })
+      }) || []
+    )
+  }
+  if (props.characterId) {
+    return judgeWrap(characterHandout.value?.id)
+  } else if (props.scenarioDataId && scenarioData.value?.type === 'shinobigami-handout') {
+    return judgeWrap(props.scenarioDataId)
+  }
+  return []
+})
+
+function isPrizeSecret(prizeLeakedList: string[]) {
+  return prizeLeakedList.some(l => {
+    const leakedHandout = graphQlStore?.state.sessionDataList.find(sd => sd.id === l)
+    if (!leakedHandout) return false
+    const leakedCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === leakedHandout.data.person)
+    if (!leakedCharacter) return false
+    return leakedCharacter.data.player === props.perspective
+  })
+}
+
 const characterSheet = computed(() => character.value?.data.character as ShinobiGami | undefined)
 const computedSkills = computed(() => clone(characterSheet.value?.skill))
 
@@ -141,6 +201,11 @@ const characterHandout = computed(
       sd => sd.type === 'shinobigami-handout' && sd.data?.person === props.characterId
     )
 )
+
+const handoutId = computed(() => {
+  return scenarioData.value?.type === 'shinobigami-handout' ? props.scenarioDataId : characterHandout.value?.id
+})
+
 const player = computed(() => graphQlStore?.state.players.find(p => p.id === character.value.data.player))
 
 const emits = defineEmits<{
