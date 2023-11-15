@@ -1,6 +1,5 @@
 <template>
   <table class="special-arts-table bg-white">
-    <v-defaults-provider :defaults="{ VIcon: {} }"></v-defaults-provider>
     <thead class="bg-grey-darken-4">
       <tr>
         <th>奥義名</th>
@@ -10,26 +9,11 @@
     <tbody v-if="list">
       <tr v-for="(arts, idx) in list" :key="idx">
         <template v-if="isOpen(arts._id)">
-          <v-menu :close-on-content-click="false" :z-index="10000000">
+          <v-menu :close-on-content-click="false" scroll-strategy="close" :z-index="10000000">
             <template v-slot:activator="{ props }">
               <td class="name" style="min-width: 14em; max-width: 14em" v-bind="props">{{ arts.name }}</td>
             </template>
-            <v-container class="arts-detail px-2 pt-2 pb-1 border">
-              <v-row class="py-0 mt-0 mb-1">
-                <v-col class="py-0">
-                  <p class="overflow-auto pa-1" style="white-space: pre; font-size: 0.7em">
-                    {{ arts.effect || '効果記載なし' }}
-                  </p>
-                </v-col>
-              </v-row>
-              <v-row class="py-0 mt-0 mb-1">
-                <v-col class="py-0">
-                  <p class="overflow-auto pa-1" style="white-space: pre; font-size: 0.7em">
-                    {{ arts.direction || '効果記載なし' }}
-                  </p>
-                </v-col>
-              </v-row>
-            </v-container>
+            <special-arts-card :arts="arts" />
           </v-menu>
           <td class="target" @click="emits('click-skill', arts.skill)">{{ arts.skill }}</td>
         </template>
@@ -47,6 +31,7 @@ import { inject } from 'vue'
 import { SpecialArts } from '@/components/panes/Shinobigami/shinobigami'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import SpecialArtsCard from '@/components/panes/Shinobigami/SpecialArtsCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -122,9 +107,5 @@ function isOpen(artsId: string) {
       cursor: pointer;
     }
   }
-}
-
-.arts-detail {
-  background-image: url('/paint_00001.jpg');
 }
 </style>

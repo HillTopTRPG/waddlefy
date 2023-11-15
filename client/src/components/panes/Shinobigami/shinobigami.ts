@@ -587,3 +587,12 @@ export type ShinobigamiHandout = {
   published: boolean
   knowSelfSecret: boolean
 }
+
+export type ShinobigamiPrize = {
+  name: string
+  description: string
+  secret: string
+  owner: string
+  readableList: string[]
+  leakedList: string[]
+}

@@ -1,17 +1,17 @@
-kground
 <template>
-  <v-menu :open-on-click="true" location="bottom center" :z-index="10000000">
+  <v-menu :open-on-click="true" location="bottom left" :z-index="10000000">
     <template v-slot:activator="{ props }">
       <v-chip :color="color" :label="true" :border="true" :elevation="3" variant="flat" size="small" v-bind="props">
         <v-icon :icon="icon" class="mr-1" />
         <span>{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</span>
       </v-chip>
     </template>
-    <div class="mt-2 border pa-2 rounded text-body-2" :class="chipClass">
-      <p class="overflow-auto" style="white-space: pre; font-size: 0.8em !important">
-        {{ chip }}
-      </p>
-    </div>
+    <v-card class="border" :class="chipClass" style="max-width: 20rem">
+      <v-card-title class="text-pre-wrap">{{ text }}</v-card-title>
+      <v-card-text class="pb-2">
+        <v-sheet class="text-pre-wrap text-body-2 bg-transparent">{{ chip }}</v-sheet>
+      </v-card-text>
+    </v-card>
   </v-menu>
 </template>
 

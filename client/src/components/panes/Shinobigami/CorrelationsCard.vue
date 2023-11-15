@@ -1,29 +1,35 @@
 <template>
   <v-card class="d-flex flex-column flex-0-0" style="height: auto" variant="text">
-    <v-card-subtitle class="mx-0 pb-0 font-weight-bold">対{{ title }}</v-card-subtitle>
+    <v-card-subtitle class="mx-0 pb-0 pl-0 font-weight-bold">対{{ title }}</v-card-subtitle>
     <v-card-item class="py-0 d-inline-flex pr-0">
       <v-sheet class="d-flex flex-row bg-transparent" style="gap: 0.3rem" v-if="mode === 'view'">
-        <v-chip
-          text="居所"
-          color="primary"
-          density="comfortable"
-          :variant="locationValue ? 'flat' : 'outlined'"
-          :disabled="!locationValue"
-        />
-        <v-chip
-          text="秘密"
-          color="primary"
-          density="comfortable"
-          :variant="secretValue ? 'flat' : 'outlined'"
-          :disabled="!secretValue"
-        />
-        <v-chip
-          :text="emotionValue ? emotionList.find(e => e.value === emotionValue)?.label : '感情なし'"
-          color="primary"
-          density="comfortable"
-          :disabled="!emotionValue"
-          :variant="emotionValue ? 'flat' : 'outlined'"
-        />
+        <v-defaults-provider :defaults="{ VChip: { color: 'primary', density: 'comfortable' } }">
+          <v-chip text="居所" :variant="locationValue ? 'flat' : 'outlined'" :disabled="!locationValue" />
+          <v-menu :disabled="!isPerspectiveSecret" :close-on-content-click="false" scroll-strategy="close">
+            <template v-slot:activator="{ props }">
+              <v-chip
+                text="秘密"
+                :variant="secretValue ? 'flat' : 'outlined'"
+                :disabled="!secretValue"
+                :class="secretValue && isPerspectiveSecret ? 'text-decoration-underline' : ''"
+                :ripple="secretValue && isPerspectiveSecret"
+                :style="{ cursor: secretValue && isPerspectiveSecret ? 'cursor' : 'default' }"
+                v-bind="props"
+              />
+            </template>
+            <v-card class="border" style="max-width: 20rem">
+              <v-card-title class="text-pre-wrap">{{ title }}の秘密</v-card-title>
+              <v-card-text class="pb-2">
+                <v-sheet class="text-pre-wrap text-body-2">{{ targetHandout?.data.secret }}</v-sheet>
+              </v-card-text>
+            </v-card>
+          </v-menu>
+          <v-chip
+            :text="emotionValue ? emotionList.find(e => e.value === emotionValue)?.label : '感情なし'"
+            :disabled="!emotionValue"
+            :variant="emotionValue ? 'flat' : 'outlined'"
+          />
+        </v-defaults-provider>
       </v-sheet>
       <v-card class="d-flex flex-row ma-0 border" variant="text" :flat="true" rounded="lg" v-if="mode === 'edit'">
         <v-defaults-provider
@@ -82,10 +88,36 @@
         </v-defaults-provider>
       </v-card>
     </v-card-item>
-    <template v-if="mode === 'edit'">
+    <template v-if="mode === 'view' && targetCharacter?.data.character.specialArtsList.length">
+      <v-sheet class="d-flex flex-row flex-wrap mt-1 pl-4" style="gap: 0.5rem">
+        <template v-for="(arts, idx) in targetCharacter?.data.character.specialArtsList || []" :key="arts._id">
+          <v-menu
+            :disabled="!isPerspectiveSpecialArts(arts._id)"
+            :close-on-content-click="false"
+            scroll-strategy="close"
+          >
+            <template v-slot:activator="{ props }">
+              <v-chip
+                :text="`奥義${idx + 1}`"
+                color="primary"
+                density="comfortable"
+                :variant="isOpenSpecialArts(arts._id) ? 'flat' : 'outlined'"
+                :disabled="!isOpenSpecialArts(arts._id)"
+                :class="isOpenPerspectiveSA(arts._id) ? 'text-decoration-underline' : ''"
+                :ripple="isOpenPerspectiveSA(arts._id)"
+                :style="{ cursor: isOpenPerspectiveSA(arts._id) ? 'pointer' : 'default' }"
+                v-bind="props"
+              />
+            </template>
+            <special-arts-card :arts="arts" />
+          </v-menu>
+        </template>
+      </v-sheet>
+    </template>
+    <template v-else>
       <v-card-item
-        v-for="(arts, idx) in targetCharacter?.data.character.specialArtsList || []"
-        :key="idx"
+        v-for="arts in targetCharacter?.data.character.specialArtsList || []"
+        :key="arts._id"
         class="py-0 pr-0"
       >
         <v-sheet class="bg-transparent d-flex flex-row align-center justify-start mt-1" style="gap: 0.3rem">
@@ -125,43 +157,7 @@
                 </template>
               </v-btn>
             </template>
-            <v-card max-width="20em">
-              <v-defaults-provider
-                :defaults="{
-                  VTextField: {
-                    readonly: true,
-                    variant: 'solo-filled',
-                    hideDetails: true,
-                    noResize: true,
-                    flat: true
-                  },
-                  VTextarea: {
-                    readonly: true,
-                    variant: 'solo-filled',
-                    hideDetails: true,
-                    noResize: true,
-                    flat: true
-                  }
-                }"
-              >
-                <v-card-title class="overflow-x-auto text-wrap text-break" style="line-height: 1.3em">{{
-                  arts.name
-                }}</v-card-title>
-                <v-card-item>
-                  <v-sheet class="d-flex flex-column" style="gap: 0.5rem">
-                    <v-text-field label="指定特技" :model-value="arts.skill" />
-                    <v-textarea
-                      label="効果／強み／弱み"
-                      :auto-grow="true"
-                      :rows="1"
-                      :max-rows="10"
-                      :model-value="arts.effect"
-                    />
-                    <v-textarea label="演出" :auto-grow="true" :rows="1" :max-rows="5" :model-value="arts.direction" />
-                  </v-sheet>
-                </v-card-item>
-              </v-defaults-provider>
-            </v-card>
+            <special-arts-card :arts="arts" />
           </v-menu>
         </v-sheet>
       </v-card-item>
@@ -177,6 +173,7 @@ import { omit } from 'lodash'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { SessionData } from '@/components/graphql/schema'
+import SpecialArtsCard from '@/components/panes/Shinobigami/SpecialArtsCard.vue'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -244,6 +241,22 @@ const locationValue = computed(() => Boolean(matchRelationType(sd => sd.data.typ
 const secretValue = computed(() => Boolean(matchRelationType(sd => sd.data.type === 'secret')))
 const emotionValue = computed(() => matchRelationType(sd => typeof sd.data.type === 'number'))
 
+const isPerspectiveSecret = computed(() => {
+  if (!props.perspective) return true
+  return (
+    graphQlStore?.state.sessionDataList.some(sd => {
+      if (sd.type !== 'shinobigami-handout-relation') return false
+      if (sd.data.targetId !== targetHandout.value.id) return false
+      if (sd.data.type !== 'secret') return false
+      const handout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
+      if (!handout) return false
+      const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === handout.data.person)
+      if (!character) return false
+      return character.data.player === props.perspective
+    }) || false
+  )
+})
+
 function isOpenSpecialArts(artsId: string) {
   return (
     graphQlStore?.state.sessionDataList.some(sd => {
@@ -253,6 +266,26 @@ function isOpenSpecialArts(artsId: string) {
       return sd.data.type === artsId
     }) || false
   )
+}
+
+function isPerspectiveSpecialArts(artsId: string) {
+  if (!props.perspective) return true
+  return (
+    graphQlStore?.state.sessionDataList.some(sd => {
+      if (sd.type !== 'shinobigami-handout-relation') return false
+      if (sd.data.targetId !== targetHandout.value.id) return false
+      if (sd.data.type !== artsId) return false
+      const handout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
+      if (!handout) return false
+      const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === handout.data.person)
+      if (!character) return false
+      return character.data.player === props.perspective
+    }) || false
+  )
+}
+
+function isOpenPerspectiveSA(artsId: string) {
+  return isOpenSpecialArts(artsId) && isPerspectiveSpecialArts(artsId)
 }
 
 async function onUpdateRelationFlag(type: 'location' | 'secret' | string) {

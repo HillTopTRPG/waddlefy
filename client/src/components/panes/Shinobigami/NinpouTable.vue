@@ -18,22 +18,18 @@
               {{ arts.name }}
             </td>
           </template>
-          <v-container class="arts-detail px-2 pt-2 pb-1 border">
-            <v-defaults-provider :defaults="{ VChip: { variant: 'outlined', style: 'border-color: #666' } }">
-              <v-row class="py-0 mt-0 mb-1">
-                <v-col class="py-0">
-                  <p class="overflow-auto pa-1" style="white-space: pre; font-size: 0.7em">
-                    {{ arts.effect || '効果記載なし' }}
-                  </p>
-                </v-col>
-              </v-row>
-              <v-row class="py-0 mt-0 mb-1">
-                <v-col class="py-0">
-                  <v-chip class="px-3 mr-1" size="small">参照p: {{ arts.page }}</v-chip>
-                </v-col>
-              </v-row>
-            </v-defaults-provider>
-          </v-container>
+          <v-card class="border" style="max-width: 20rem">
+            <v-card-title class="text-pre-wrap">{{ arts.name }}</v-card-title>
+            <v-card-text class="pb-2">
+              <v-label class="text-caption">効果</v-label>
+              <v-sheet class="text-pre-wrap text-body-2">{{ arts.effect || '未記入' }}</v-sheet>
+            </v-card-text>
+            <v-card-text class="pt-0">
+              <v-defaults-provider :defaults="{ VChip: { variant: 'outlined', style: 'border-color: #666' } }">
+                <v-chip class="px-3 mr-1" size="small">参照頁: {{ arts.page }}</v-chip>
+              </v-defaults-provider>
+            </v-card-text>
+          </v-card>
         </v-menu>
         <td class="target" @click="emits('click-skill', arts.targetSkill)">
           {{ arts.targetSkill }}

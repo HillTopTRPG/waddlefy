@@ -61,24 +61,13 @@
         <v-menu :close-on-content-click="false">
           <template v-slot:activator="{ props }">
             <v-defaults-provider :defaults="{ VChip: { label: true, border: true, elevation: 3 } }">
-              <v-chip variant="flat" size="small" color="lime-lighten-2" v-bind="props">
+              <v-chip variant="flat" size="small" color="lime" v-bind="props">
                 <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />
                 <span>{{ prize.data.name }}</span>
               </v-chip>
             </v-defaults-provider>
           </template>
-          <v-card class="pb-3">
-            <v-defaults-provider :defaults="{ VTextarea: { noResize: true, hideDetails: true } }">
-              <v-defaults-provider :defaults="{ VTextarea: { readonly: true, autoGrow: true, rows: 1 } }">
-                <v-card-item class="py-0">
-                  <v-textarea :model-value="prize.data.description" variant="outlined" class="mt-3" label="説明" />
-                </v-card-item>
-                <v-card-item class="py-0" v-if="isPrizeSecret(prize.data.leakedList)">
-                  <v-textarea :model-value="prize.data.secret" variant="outlined" class="mt-3" label="秘密" />
-                </v-card-item>
-              </v-defaults-provider>
-            </v-defaults-provider>
-          </v-card>
+          <prize-chip :prize="prize.data" />
         </v-menu>
       </template>
     </v-card-title>
@@ -140,6 +129,7 @@ import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCar
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import PrizeChip from '@/components/panes/Shinobigami/PrizeChip.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -194,16 +184,6 @@ const prizeList = computed(() => {
   return []
 })
 
-function isPrizeSecret(prizeLeakedList: string[]) {
-  return prizeLeakedList.some(l => {
-    const leakedHandout = graphQlStore?.state.sessionDataList.find(sd => sd.id === l)
-    if (!leakedHandout) return false
-    const leakedCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === leakedHandout.data.person)
-    if (!leakedCharacter) return false
-    return leakedCharacter.data.player === props.perspective
-  })
-}
-
 const characterSheet = computed(() => character.value?.data.character as ShinobiGami | undefined)
 const computedSkills = computed(() => clone(characterSheet.value?.skill))
 
@@ -214,9 +194,9 @@ const characterHandout = computed(
     )
 )
 
-const handoutId = computed(() => {
-  return scenarioData.value?.type === 'shinobigami-handout' ? props.scenarioDataId : characterHandout.value?.id
-})
+const handoutId = computed(() =>
+  scenarioData.value?.type === 'shinobigami-handout' ? props.scenarioDataId : characterHandout.value?.id
+)
 
 const player = computed(() => graphQlStore?.state.players.find(p => p.id === character.value.data.player))
 
