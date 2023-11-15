@@ -3,44 +3,13 @@
     <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row">
       <template v-if="characterSheet">
         <span class="ml-4 text-h5">{{ characterHandout.data.name }}</span>
-        <v-menu :close-on-content-click="false">
+        <v-menu :close-on-content-click="false" scroll-strategy="close">
           <template v-slot:activator="{ props }">
             <v-btn variant="text" v-bind="props" class="text-h5 px-1 text-decoration-underline">
               {{ characterSheet.characterName }}
             </v-btn>
           </template>
-          <v-container class="base-info px-2 pt-2 pb-1">
-            <v-defaults-provider :defaults="{ VChip: { class: 'px-3 mr-1', size: 'small', variant: 'outlined' } }">
-              <v-defaults-provider :defaults="{ VCol: { class: 'py-0' }, VRow: { class: 'py-0 my-0' } }">
-                <v-row class="mb-1">
-                  <v-col>
-                    <v-chip :text="characterSheet.level" v-if="characterSheet.level" style="border-color: #666" />
-                    <v-chip :text="characterSheet.age" v-if="characterSheet.age" style="border-color: #666" />
-                    <v-chip :text="characterSheet.sex" v-if="characterSheet.sex" style="border-color: #666" />
-                    <v-chip :text="characterSheet.cover" v-if="characterSheet.cover" style="border-color: #666" />
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-chip size="large" style="border-color: #666">
-                      {{ characterSheet.upperStyle
-                      }}{{ characterSheet.subStyle ? ` - ${characterSheet.subStyle}` : '' }}
-                    </v-chip>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <div class="tree">
-                      <ul>
-                        <li v-if="characterSheet.stylerule">{{ characterSheet.stylerule }}</li>
-                        <li v-if="characterSheet.foe">仇敵：{{ characterSheet.foe }}</li>
-                      </ul>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-defaults-provider>
-            </v-defaults-provider>
-          </v-container>
+          <basic-info-card :character-sheet="characterSheet" />
         </v-menu>
         <v-defaults-provider :defaults="{ VBtn: { size: 'small', variant: 'flat' } }">
           <v-btn icon="mdi-open-in-new" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
@@ -129,6 +98,7 @@ import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import BasicInfoCard from '@/components/panes/Shinobigami/BasicInfoCard.vue'
 import PrizeChip from '@/components/panes/Shinobigami/PrizeChip.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -229,58 +199,4 @@ async function updateInfo(info: SaikoroFictionTokugi) {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped>
-.abs-menu {
-  right: 0;
-}
-.ninja-style-ex-panel:deep(button) {
-  padding: 0;
-}
-
-.tree {
-  /*親要素*/
-  position: relative;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin-left: 1em;
-}
-
-.tree ul {
-  padding-left: 5px;
-  list-style: none;
-}
-.tree ul li {
-  position: relative;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 15px;
-  box-sizing: border-box;
-}
-.tree ul li:before {
-  position: absolute;
-  top: 15px;
-  left: 0;
-  width: 10px;
-  height: 1px;
-  margin: auto;
-  content: '';
-  background-color: #666;
-}
-.tree ul li:after {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  height: 100%;
-  content: '';
-  background-color: #666;
-}
-.tree ul li:last-child:after {
-  height: 15px;
-}
-
-.base-info {
-  background-image: url('/paint_00001.jpg');
-}
-</style>
+<style lang="scss" scoped></style>

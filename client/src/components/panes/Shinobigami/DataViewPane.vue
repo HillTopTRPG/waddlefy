@@ -1,17 +1,13 @@
 <template>
   <pane-frame title="データ閲覧ツール">
     <template v-slot:title-action>
-      <v-menu :close-on-content-click="false" v-if="isUserControl">
-        <template v-slot:activator="{ props }">
-          <v-btn variant="text" v-bind="props" class="pl1 pr-2">
+      <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+        <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
+          <template v-slot:prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
-            {{ perspectiveList.find(p => p.value === perspective)?.name || '' }}視点
-          </v-btn>
-        </template>
-        <v-defaults-provider :defaults="{ VSelect: { density: 'compact', variant: 'solo' } }">
-          <v-select label="視点" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective" />
-        </v-defaults-provider>
-      </v-menu>
+          </template>
+        </v-select>
+      </v-defaults-provider>
 
       <v-menu :close-on-content-click="false">
         <template v-slot:activator="{ props }">
@@ -177,10 +173,25 @@ watch(tokugiTableEditing, v => console.log(v))
 }
 
 .menu-select {
-  :deep(.v-field__append-inner),
+  flex-grow: 0;
+
+  :deep(.v-field__append-inner) {
+    display: none;
+  }
+  :deep(.v-field__prepend-inner) .v-icon {
+    opacity: 1 !important;
+    text-align: right;
+    font-size: 18px;
+    margin-top: 4px;
+  }
+  :deep(.v-field__prepend-inner),
   :deep(.v-text-field__prefix),
   :deep(.v-field__input) {
     padding-top: 0;
+    padding-left: 0;
+    margin-top: 2px;
+    color: black;
+    font-size: 14px;
     min-height: auto;
   }
 }

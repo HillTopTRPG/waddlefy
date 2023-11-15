@@ -18,7 +18,7 @@
               variant="text"
               :icon="rail ? 'mdi-menu' : 'mdi-backburger'"
               @click="onClickExtend()"
-              class="mr-2"
+              class="mr-2 ml-1"
             />
           </template>
           <template v-slot:title>

@@ -1,17 +1,13 @@
 <template>
   <pane-frame title="キャラクターシート管理ツール">
     <template v-slot:title-action>
-      <v-menu :close-on-content-click="false" v-if="isUserControl">
-        <template v-slot:activator="{ props }">
-          <v-btn variant="text" v-bind="props" class="pl1 pr-2">
+      <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+        <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
+          <template v-slot:prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
-            {{ perspectiveList.find(p => p.value === perspective)?.name || '' }}視点
-          </v-btn>
-        </template>
-        <v-defaults-provider :defaults="{ VSelect: { density: 'compact', variant: 'solo' } }">
-          <v-select label="視点" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective" />
-        </v-defaults-provider>
-      </v-menu>
+          </template>
+        </v-select>
+      </v-defaults-provider>
     </template>
     <template v-slot:layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
@@ -86,4 +82,28 @@ const textRows = ref(3)
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.menu-select {
+  flex-grow: 0;
+
+  :deep(.v-field__append-inner) {
+    display: none;
+  }
+  :deep(.v-field__prepend-inner) .v-icon {
+    opacity: 1 !important;
+    text-align: right;
+    font-size: 18px;
+    margin-top: 4px;
+  }
+  :deep(.v-field__prepend-inner),
+  :deep(.v-text-field__prefix),
+  :deep(.v-field__input) {
+    padding-top: 0;
+    padding-left: 0;
+    margin-top: 2px;
+    color: black;
+    font-size: 14px;
+    min-height: auto;
+  }
+}
+</style>

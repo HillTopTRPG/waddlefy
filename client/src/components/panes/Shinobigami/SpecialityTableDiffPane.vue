@@ -1,18 +1,16 @@
 <template>
   <pane-frame title="特技比較ツール">
     <template v-slot:title-action>
-      <v-defaults-provider
-        :defaults="{
-          VSelect: {
-            variant: 'plain',
-            density: 'compact',
-            hideDetails: true,
-            class: 'menu-select ml-5'
-          }
-        }"
-      >
-        <v-select prefix="比較数: " :items="[2, 3, 4, 5, 6]" style="max-width: 6.5em" v-model="nums" />
+      <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+        <v-select prefix="比較数: " :items="[2, 3, 4, 5, 6]" style="max-width: 6.5em" v-model="nums">
+          <template v-slot:prepend-inner>
+            <v-icon icon="mdi-triangle-small-down" />
+          </template>
+        </v-select>
         <v-select prefix="忍法表示: " :items="['なし', 'あり']" style="max-width: 8em" v-model="viewNinpou">
+          <template v-slot:prepend-inner>
+            <v-icon icon="mdi-triangle-small-down" />
+          </template>
           <template #selection="{ item }">
             <span style="white-space: nowrap">{{ item.value }}</span>
           </template>
@@ -144,10 +142,25 @@ async function updateInfo(id: string, info: SaikoroFictionTokugi) {
   }
 }
 .menu-select {
-  :deep(.v-field__append-inner),
+  flex-grow: 0;
+
+  :deep(.v-field__append-inner) {
+    display: none;
+  }
+  :deep(.v-field__prepend-inner) .v-icon {
+    opacity: 1 !important;
+    text-align: right;
+    font-size: 18px;
+    margin-top: 4px;
+  }
+  :deep(.v-field__prepend-inner),
   :deep(.v-text-field__prefix),
   :deep(.v-field__input) {
     padding-top: 0;
+    padding-left: 0;
+    margin-top: 2px;
+    color: black;
+    font-size: 14px;
     min-height: auto;
   }
 }

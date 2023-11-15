@@ -18,7 +18,7 @@
                   variant="text"
                   :icon="rail ? 'mdi-menu' : 'mdi-backburger'"
                   @click="onClickExpand()"
-                  class="my-3 mr-2"
+                  class="my-3 mr-2 ml-1"
                 />
               </template>
               <v-fade-transition>
