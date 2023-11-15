@@ -63,9 +63,9 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, ref, computed, watch } from 'vue'
 import PlayMainNavigationDrawer from '@/components/PlayMainNavigationDrawer.vue'
 import SessionView from '@/components/view/SessionView.vue'
+import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

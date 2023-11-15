@@ -1,5 +1,5 @@
-import { uuid } from 'vue-uuid'
 import { Layout } from '@/components/panes'
+import { uuid } from 'vue-uuid'
 
 const object: Layout = {
   type: 'vertical',

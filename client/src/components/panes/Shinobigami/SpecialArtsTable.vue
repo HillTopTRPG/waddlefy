@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
 import { SpecialArts } from '@/components/panes/Shinobigami/shinobigami'
+import { inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import SpecialArtsCard from '@/components/panes/Shinobigami/SpecialArtsCard.vue'

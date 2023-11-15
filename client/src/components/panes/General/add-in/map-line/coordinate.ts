@@ -1,7 +1,7 @@
 import { Location, MoveInfo } from '~/components/panes/PlayBoard/GeneralBoard.vue'
-import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
-import { LineLoc, LineParams } from '~/components/panes/PlayBoard/add-in/map-line/index'
 import { drawLineImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
+import { LineLoc, LineParams } from '~/components/panes/PlayBoard/add-in/map-line/index'
+import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
 
 function getCellPoints(p1: Location, gridSize: number) {
   const p2 = new Location(p1.x + gridSize / 2, p1.y)

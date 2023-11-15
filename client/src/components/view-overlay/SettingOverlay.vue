@@ -74,12 +74,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue'
-import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 import NaturalTextField from '@/components/NaturalTextField.vue'
+import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
+import { computed, inject } from 'vue'
 
-import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { DashboardOption } from '@/components/graphql/schema'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

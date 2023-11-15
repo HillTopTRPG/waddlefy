@@ -126,10 +126,10 @@
 </template>
 
 <script lang="ts" setup>
-import LogoComponent from '@/components/parts/LogoComponent.vue'
-import { ref } from 'vue'
 import { fetchGraphQlConnectionInfo, makeGraphQlClient, userSignIn } from '@/components/graphql/graphql'
+import LogoComponent from '@/components/parts/LogoComponent.vue'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import { ref } from 'vue'
 
 import { useRouter } from 'vue-router'
 const router = useRouter()

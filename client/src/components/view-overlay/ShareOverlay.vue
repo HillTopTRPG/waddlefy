@@ -65,10 +65,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue'
-import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
-import ListItemClipboard from '@/components/parts/ListItemClipboard.vue'
 import { Player } from '@/components/graphql/schema'
+import ListItemClipboard from '@/components/parts/ListItemClipboard.vue'
+import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
+import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

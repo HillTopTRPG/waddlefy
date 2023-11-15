@@ -286,26 +286,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, watch } from 'vue'
-import ProgressCircularOverlay from '@/components/view-overlay/ProgressCircularOverlay.vue'
+import NavDialog from '@/components/NavDialog.vue'
 import SplitPanesLayer from '@/components/parts/SplitPanesLayer.vue'
-import 'splitpanes/dist/splitpanes.css'
-import ShareOverlay from '@/components/view-overlay/ShareOverlay.vue'
 import OwnerOverlay from '@/components/view-overlay/OwnerOverlay.vue'
 import PlayerOverlay from '@/components/view-overlay/PlayerOverlay.vue'
+import ProgressCircularOverlay from '@/components/view-overlay/ProgressCircularOverlay.vue'
 import SettingOverlay from '@/components/view-overlay/SettingOverlay.vue'
+import ShareOverlay from '@/components/view-overlay/ShareOverlay.vue'
 import InitSession from '@/components/view/InitSession.vue'
-import NavDialog from '@/components/NavDialog.vue'
+import 'splitpanes/dist/splitpanes.css'
+import { computed, inject, onMounted, ref, watch } from 'vue'
 
 import { DEFAULT_DASHBOARD_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-import { Layout } from '@/components/panes'
-import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
-import UserNavItem from '@/components/parts/UserNavItem.vue'
-import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { addDashboards } from '@/PaneLayoutTemplate'
+import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
+import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { DashboardOption } from '@/components/graphql/schema'
+import { Layout } from '@/components/panes'
+import UserNavItem from '@/components/parts/UserNavItem.vue'
 
 const props = defineProps<{
   rail: boolean

@@ -1,28 +1,28 @@
-import { InjectionKey, reactive, watch } from 'vue'
-import { Router } from 'vue-router'
-import { Observable } from '@apollo/client'
+import {
+  AbstractDashboard,
+  Dashboard,
+  DashboardOption,
+  MutationResult,
+  Mutations,
+  Player,
+  Queries,
+  QueryResult,
+  Session,
+  SessionData,
+  SubscriptionResult,
+  Subscriptions,
+  User
+} from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
+import { Observable } from '@apollo/client'
 import { ApolloClient, ApolloLink, FetchResult, InMemoryCache, NormalizedCacheObject } from '@apollo/client/core'
 import { AuthOptions, createAuthLink } from 'aws-appsync-auth-link'
 import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link'
-import {
-  Mutations,
-  MutationResult,
-  Queries,
-  QueryResult,
-  Subscriptions,
-  SubscriptionResult,
-  User,
-  Session,
-  Dashboard,
-  AbstractDashboard,
-  Player,
-  SessionData,
-  DashboardOption
-} from '@/components/graphql/schema'
-import { getCharacterDiffMessages, ShinobiGami, ShinobigamiEmotion } from '@/components/panes/Shinobigami/shinobigami'
+import { InjectionKey, reactive, watch } from 'vue'
+import { Router } from 'vue-router'
 import { uuid } from 'vue-uuid'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
 const DEFAULT_URL = 'https://r6dvpxfwunaazhhdtfi2wb7vly.appsync-api.ap-northeast-1.amazonaws.com/graphql'

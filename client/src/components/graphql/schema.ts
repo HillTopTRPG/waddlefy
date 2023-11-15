@@ -1,5 +1,5 @@
-import gql from 'graphql-tag'
 import { Layout } from '@/components/panes'
+import gql from 'graphql-tag'
 
 const userSignUp = gql(`
 mutation UserSignUp($userId: String!, $userName: String!, $userPassword: String!, $sessionName: String!, $sessionType: String!) {

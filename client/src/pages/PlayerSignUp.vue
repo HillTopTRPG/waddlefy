@@ -70,9 +70,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import LogoComponent from '@/components/parts/LogoComponent.vue'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import {
   fetchGraphQlConnectionInfo,
   makeGraphQlClient,
@@ -81,7 +78,10 @@ import {
   playerSignUp,
   resetPlayerPassword
 } from '@/components/graphql/graphql'
-import { Queries, QueryResult, AbstractPlayer } from '@/components/graphql/schema'
+import { AbstractPlayer, Queries, QueryResult } from '@/components/graphql/schema'
+import LogoComponent from '@/components/parts/LogoComponent.vue'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import { ref } from 'vue'
 
 import { useRouter } from 'vue-router'
 const router = useRouter()

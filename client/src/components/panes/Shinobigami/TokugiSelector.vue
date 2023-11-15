@@ -59,8 +59,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { SkillKind, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
+import { ref, watch } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{

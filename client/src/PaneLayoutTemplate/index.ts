@@ -1,10 +1,10 @@
-import { GraphQlStore } from '@/components/graphql/graphql'
 import DefaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import CharacterSheetManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/CharacterSheetManagePaneLayout'
 import DataViewPaneLayout from '@/PaneLayoutTemplate/Shinobigami/DataViewPaneLayout'
-import SpecialityTableDiffPaneLayout from '@/PaneLayoutTemplate/Shinobigami/SpecialityTableDiffPaneLayout'
-import { DashboardOption } from '@/components/graphql/schema'
 import ScenarioDataManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/ScenarioDataManagePaneLayout'
+import SpecialityTableDiffPaneLayout from '@/PaneLayoutTemplate/Shinobigami/SpecialityTableDiffPaneLayout'
+import { GraphQlStore } from '@/components/graphql/graphql'
+import { DashboardOption } from '@/components/graphql/schema'
 
 export default [
   {

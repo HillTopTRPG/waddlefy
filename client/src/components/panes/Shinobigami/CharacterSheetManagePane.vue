@@ -40,13 +40,13 @@ export const componentInfo = {
 </script>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
+import { computed, inject, ref } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 import AddShinobigamiCharacterSheetMenu from '@/components/panes/Shinobigami/AddShinobigamiCharacterSheetMenu.vue'
+import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))

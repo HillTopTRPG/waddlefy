@@ -1,10 +1,10 @@
 // noinspection TypeScriptCheckImport
-import SpecialityTableDiffPane, { componentInfo as SpecialityTableDiffPaneInfo } from './SpecialityTableDiffPane.vue'
-import DataViewPane, { componentInfo as DataViewPaneInfo } from './DataViewPane.vue'
 import CharacterSheetManagePane, {
   componentInfo as CharacterSheetManagePaneInfo
 } from '@/components/panes/Shinobigami/CharacterSheetManagePane.vue'
+import DataViewPane, { componentInfo as DataViewPaneInfo } from './DataViewPane.vue'
 import ScenarioDataManagePane, { componentInfo as ScenarioDataManagePaneInfo } from './ScenarioDataManagePane.vue'
+import SpecialityTableDiffPane, { componentInfo as SpecialityTableDiffPaneInfo } from './SpecialityTableDiffPane.vue'
 
 const group = 'シノビガミ'
 

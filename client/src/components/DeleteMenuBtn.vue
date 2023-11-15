@@ -38,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import 'splitpanes/dist/splitpanes.css'
+import { ref, watch } from 'vue'
 
 const props = defineProps<{
   type: string

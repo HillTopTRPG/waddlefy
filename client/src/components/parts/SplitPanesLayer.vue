@@ -3,7 +3,7 @@ import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
 import { ref, watch } from 'vue'
 import { uuid } from 'vue-uuid'
-import { componentMap, Layout } from '../panes'
+import { Layout, componentMap } from '../panes'
 
 interface Props {
   layout: Layout
@@ -241,8 +241,8 @@ function setPaneComponent(pane: Layout, n: { [key: string]: string }, g: { group
               pane.panes.length <= 1
                 ? 'flex-row w-100 px-5'
                 : pane.type === 'vertical'
-                ? 'flex-row w-100'
-                : 'flex-column h-100'
+                  ? 'flex-row w-100'
+                  : 'flex-column h-100'
             "
             style="gap: 1em; top: 0; left: 0"
           >

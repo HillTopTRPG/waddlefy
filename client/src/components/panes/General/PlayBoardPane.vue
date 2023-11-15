@@ -39,10 +39,10 @@ export type MoveInfo = {
 </script>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, watch } from 'vue'
+import { Layout } from '@/components/panes'
 import { AddIn } from '@/components/panes/General/add-in'
 import { merge } from 'lodash'
-import { Layout } from '@/components/panes'
+import { computed, inject, onMounted, ref, watch } from 'vue'
 
 const store = inject(roomCollectionsKey) as RoomCollectionStore
 const addIn = new AddIn()
@@ -522,8 +522,8 @@ const boardTypeSelection = [
               moveInfo.toolType === 'grid'
                 ? 'mdi-rectangle'
                 : moveInfo.toolType === 'line'
-                ? 'mdi-vector-line'
-                : 'mdi-vector-polygon'
+                  ? 'mdi-vector-line'
+                  : 'mdi-vector-polygon'
             "
             v-bind="props"
             @click="toolTypeSelect = !toolTypeSelect"

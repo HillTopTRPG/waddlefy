@@ -61,15 +61,15 @@ export const componentInfo = {
 </script>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
-import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
+import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
+import { computed, inject, ref, watch } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const characterWraps = computed<CharacterWrap[]>(() => {

@@ -116,16 +116,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
-import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
-import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
-import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
+import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
+import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
+import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
+import { computed, inject, ref, watch } from 'vue'
 
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCardTabContainer.vue'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'

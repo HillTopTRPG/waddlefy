@@ -69,9 +69,9 @@ export const componentInfo = {
 </script>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
+import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'

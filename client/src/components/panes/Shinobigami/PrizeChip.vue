@@ -13,8 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
 import { ShinobigamiPrize } from '@/components/panes/Shinobigami/shinobigami'
+import { inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

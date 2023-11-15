@@ -89,8 +89,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onMounted, ref, watch } from 'vue'
 import { ShinobigamiHelper } from '@/components/panes/Shinobigami/shinobigami'
+import { inject, onMounted, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ShinobigamiCharacterSheetLoadForm from '@/components/panes/Shinobigami/ShinobigamiCharacterSheetLoadForm.vue'

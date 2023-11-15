@@ -162,8 +162,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
+import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vue'

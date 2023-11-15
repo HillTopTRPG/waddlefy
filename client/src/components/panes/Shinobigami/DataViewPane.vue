@@ -82,14 +82,14 @@ export const componentInfo = {
 </script>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
 import DataViewCard from '@/components/panes/Shinobigami/DataViewCard.vue'
+import { computed, inject, ref, watch } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 import { SessionData } from '@/components/graphql/schema'
+import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars

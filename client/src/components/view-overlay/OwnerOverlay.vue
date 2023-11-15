@@ -33,11 +33,11 @@
 </template>
 
 <script lang="ts" setup>
-import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 import NaturalTextField from '@/components/NaturalTextField.vue'
+import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
-import { inject, ref, watch } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{

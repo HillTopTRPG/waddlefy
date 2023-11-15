@@ -482,16 +482,16 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 
-import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
-import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
-import HandoutMultiCheckbox from '@/components/panes/Shinobigami/HandoutMultiCheckbox.vue'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
-import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import AddSpecialArtsButton from '@/components/panes/Shinobigami/AddSpecialArtsButton.vue'
+import HandoutMultiCheckbox from '@/components/panes/Shinobigami/HandoutMultiCheckbox.vue'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import TokugiSelector from '@/components/panes/Shinobigami/TokugiSelector.vue'
-import { uuid } from 'vue-uuid'
 import ReloadCharacterSheetButton from '@/components/panes/Shinobigami/ReloadCharacterSheetButton.vue'
+import TokugiSelector from '@/components/panes/Shinobigami/TokugiSelector.vue'
+import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
+import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
+import { uuid } from 'vue-uuid'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vue'

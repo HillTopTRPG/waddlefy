@@ -26,8 +26,8 @@
 <script lang="ts" setup>
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
-import { computed, inject, ref, watch } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { computed, inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{

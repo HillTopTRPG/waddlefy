@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Main from '@/pages/Main.vue'
 import Home from '@/pages/Home.vue'
-import SignUp from '@/pages/SignUp.vue'
+import Main from '@/pages/Main.vue'
 import PlayerSignUp from '@/pages/PlayerSignUp.vue'
+import SignUp from '@/pages/SignUp.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {

@@ -160,16 +160,16 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, inject, ref, computed, onMounted } from 'vue'
-import UserNavItem from '@/components/parts/UserNavItem.vue'
-import UserAvatar from '@/components/parts/UserAvatar.vue'
 import NavDialog from '@/components/NavDialog.vue'
+import UserAvatar from '@/components/parts/UserAvatar.vue'
+import UserNavItem from '@/components/parts/UserNavItem.vue'
+import { computed, inject, onMounted, ref, watch } from 'vue'
 
 import { DEFAULT_SESSION_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-import { useRouter } from 'vue-router'
 import NaturalTextField from '@/components/NaturalTextField.vue'
+import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps<{

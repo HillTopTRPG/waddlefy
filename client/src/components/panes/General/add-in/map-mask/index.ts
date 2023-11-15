@@ -1,9 +1,9 @@
-import { Location, MoveInfo } from '~/components/panes/PlayBoard/GeneralBoard.vue'
-import { MapMask, sendParams as maskParams } from '~/data/RoomCollections/MapMask'
-import { merge, pick } from 'lodash'
 import axios from 'axios'
-import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
+import { merge, pick } from 'lodash'
+import { Location, MoveInfo } from '~/components/panes/PlayBoard/GeneralBoard.vue'
 import { changeColor, fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
+import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
+import { MapMask, sendParams as maskParams } from '~/data/RoomCollections/MapMask'
 
 const getAlphaColor = (c: string) =>
   c.replace(/^(#.{6})$/, '$1FF').replace(/.{2}$/, s => Math.max(parseInt(s, 16) * 0.6, 20).toString(16))

@@ -78,14 +78,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import {
-  calcTargetValue,
   SkillKind,
   SkillTable,
-  TargetValueCalcResult
+  TargetValueCalcResult,
+  calcTargetValue
 } from '@/components/panes/Shinobigami/shinobigami'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
+import { ref, watch } from 'vue'
 
 const props = defineProps<{
   editable: boolean

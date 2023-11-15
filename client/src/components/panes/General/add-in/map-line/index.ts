@@ -1,14 +1,14 @@
-import { MapLine, sendParams as lineParams } from '~/data/RoomCollections/MapLine'
-import { MoveInfo } from '~/components/panes/PlayBoard/GeneralBoard.vue'
-import { merge } from 'lodash'
 import axios from 'axios'
-import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
+import { merge } from 'lodash'
+import { MoveInfo } from '~/components/panes/PlayBoard/GeneralBoard.vue'
+import { fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
 import {
   drawMapLineImageData,
-  getNearestMapLineUuid,
-  getNearPoint
+  getNearPoint,
+  getNearestMapLineUuid
 } from '~/components/panes/PlayBoard/add-in/map-line/coordinate'
-import { fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
+import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
+import { MapLine, sendParams as lineParams } from '~/data/RoomCollections/MapLine'
 
 const lineLocParams = ['x1', 'y1', 'x2', 'y2', 'play_board_uuid'] as const
 export type LineParams = Pick<MapLine, (typeof lineParams)[number]>

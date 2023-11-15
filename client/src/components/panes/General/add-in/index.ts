@@ -1,9 +1,9 @@
-import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
 import { MoveInfo } from '~/components/panes/PlayBoard/GeneralBoard.vue'
-import MapMaskAddIn from '~/components/panes/PlayBoard/add-in/map-mask'
-import MapLineAddIn from '~/components/panes/PlayBoard/add-in/map-line'
-import { changeColor, fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
 import BucketFillAddIn from '~/components/panes/PlayBoard/add-in/bucket-fill'
+import { changeColor, fillRectImageData } from '~/components/panes/PlayBoard/add-in/coordinate'
+import MapLineAddIn from '~/components/panes/PlayBoard/add-in/map-line'
+import MapMaskAddIn from '~/components/panes/PlayBoard/add-in/map-mask'
+import { StoreType as RoomCollectionStore } from '~/data/RoomCollections'
 
 function drawHexs(
   context: CanvasRenderingContext2D,
