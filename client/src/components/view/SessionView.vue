@@ -9,10 +9,10 @@
   />
 
   <v-navigation-drawer :permanent="true" location="left" :rail="rail" :elevation="0" id="session-nav">
-    <template v-slot:prepend>
+    <template #prepend>
       <v-list :nav="true" density="compact" class="pa-0 mb-1">
         <v-list-item class="ma-0 sub-nav d-flex">
-          <template v-slot:prepend>
+          <template #prepend>
             <v-btn
               density="comfortable"
               variant="text"
@@ -21,7 +21,7 @@
               class="mr-2 ml-1"
             />
           </template>
-          <template v-slot:title>
+          <template #title>
             <p class="text-h6">{{ graphQlStore?.state.session?.name || '' }}</p>
           </template>
         </v-list-item>
@@ -56,7 +56,7 @@
         v-model="addDashboardMenu"
         :close-on-content-click="false"
       >
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <user-nav-item
             v-bind="props"
             title="画面追加"
@@ -158,7 +158,7 @@
             @keydown.enter="$event.keyCode === 13 && updateSessionName()"
             @click:append-inner.stop
           >
-            <template v-slot:append-inner v-if="isUserControl">
+            <template #append-inner v-if="isUserControl">
               <v-divider :vertical="true" />
               <v-defaults-provider
                 :defaults="{
@@ -199,7 +199,7 @@
       </v-list>
     </nav-dialog>
 
-    <template v-slot:append>
+    <template #append>
       <v-list :nav="true" density="compact" class="pa-0 mb-1">
         <v-divider />
 

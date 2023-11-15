@@ -8,7 +8,7 @@
     location="bottom center"
     :offset="offset || 0"
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-textarea
         :class="`${textareaClass} ${editable ? 'editable' : ''}`"
         :rows="editable || autoGrow ? textRows : 1"
@@ -27,7 +27,7 @@
         :model-value="text || ''"
         v-bind="props"
       >
-        <template v-slot:label>
+        <template #label>
           <v-icon v-if="icon" :icon="icon" class="mr-1" />
           {{ label }}
         </template>
@@ -50,7 +50,7 @@
           v-model="editingText"
           ref="editElm"
         >
-          <template v-slot:label>
+          <template #label>
             <v-icon v-if="icon" :icon="icon" class="mr-1" />
             {{ label }}
           </template>

@@ -12,7 +12,7 @@
     }"
   >
     <v-text-field placeholder="必須" v-model="inputUrl" ref="urlElm">
-      <template v-slot:label>
+      <template #label>
         <v-icon icon="mdi-link-variant" class="mr-1" />
         キャラクターシート倉庫のURL
       </template>
@@ -24,7 +24,7 @@
       @click:append="isPasswordType = !isPasswordType"
       v-model="inputViewPass"
     >
-      <template v-slot:label>
+      <template #label>
         <v-icon icon="mdi-key-outline" class="mr-1" />
         秘匿情報閲覧パス
       </template>

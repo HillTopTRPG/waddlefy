@@ -7,7 +7,7 @@
     scroll-strategy="close"
     :close-on-content-click="false"
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn variant="text" :class="classText" v-bind="props">
         <v-icon v-if="buttonIcon" :icon="buttonIcon" class="mr-1" />
         <span class="text-decoration-underline">{{ buttonText }}</span>

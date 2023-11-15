@@ -1,6 +1,6 @@
 <template>
   <v-menu :open-on-click="true" location="bottom left" :z-index="10000000">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-chip :color="color" :label="true" :border="true" :elevation="3" variant="flat" size="small" v-bind="props">
         <v-icon :icon="icon" class="mr-1" />
         <span>{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</span>

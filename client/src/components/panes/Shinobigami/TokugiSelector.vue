@@ -7,7 +7,7 @@
     scroll-strategy="close"
     :close-on-content-click="false"
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-text-field
         :model-value="value"
         :hide-details="true"
@@ -19,7 +19,7 @@
         :class="classText || ''"
         v-bind="props"
       >
-        <template v-slot:label>
+        <template #label>
           <v-icon v-if="icon" :icon="icon" class="mr-1" />
           {{ label }}
         </template>
@@ -40,11 +40,11 @@
           item-value="label"
           ref="editElm"
         >
-          <template v-slot:label>
+          <template #label>
             <v-icon v-if="icon" :icon="icon" class="mr-1" />
             {{ label }}
           </template>
-          <template v-slot:item="{ props, item }">
+          <template #item="{ props, item }">
             <v-list-item v-bind="props" :title="item?.raw?.label" :subtitle="item?.raw?.group" />
           </template>
         </v-autocomplete>

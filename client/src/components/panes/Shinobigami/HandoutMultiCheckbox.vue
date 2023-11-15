@@ -10,7 +10,7 @@
     :model-value="list"
     @update:model-value="v => emits('update', v)"
   >
-    <template v-slot:label="{ label }">
+    <template #label="{ label }">
       <span style="text-overflow: ellipsis; max-width: 16.5rem; overflow: hidden; white-space: nowrap">{{
         label
       }}</span>

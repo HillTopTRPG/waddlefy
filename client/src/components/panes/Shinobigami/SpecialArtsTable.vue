@@ -10,7 +10,7 @@
       <tr v-for="(arts, idx) in list" :key="idx">
         <template v-if="isOpen(arts._id)">
           <v-menu :close-on-content-click="false" scroll-strategy="close" :z-index="10000000">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <td class="name" style="min-width: 14em; max-width: 14em" v-bind="props">{{ arts.name }}</td>
             </template>
             <special-arts-card :arts="arts" />

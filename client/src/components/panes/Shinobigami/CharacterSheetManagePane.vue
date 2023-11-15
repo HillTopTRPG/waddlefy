@@ -1,20 +1,20 @@
 <template>
   <pane-frame title="キャラクターシート管理ツール">
-    <template v-slot:title-action>
+    <template #title-action>
       <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
         <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-          <template v-slot:prepend-inner>
+          <template #prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
           </template>
         </v-select>
       </v-defaults-provider>
     </template>
-    <template v-slot:layout>
+    <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
         <add-shinobigami-character-sheet-menu />
       </v-sheet>
     </template>
-    <template v-slot:default>
+    <template #default>
       <v-sheet class="w-100 d-flex flex-row align-start justify-start flex-wrap px-0">
         <template v-for="cw in characterWraps" :key="cw.id">
           <scenario-data-card mode="edit" :data-id="cw.id" :text-rows="textRows" :perspective="perspective" />

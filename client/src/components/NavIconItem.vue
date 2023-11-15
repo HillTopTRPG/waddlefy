@@ -1,6 +1,6 @@
 <template>
   <v-list-item :style="toggle ? 'border-radius: 10px 0 0 10px;' : ''">
-    <template v-slot:prepend>
+    <template #prepend>
       <v-icon :icon="`mdi-${icon}`" class="mr-6" />
     </template>
     <v-list-item-title v-if="!rail">{{ title }}</v-list-item-title>

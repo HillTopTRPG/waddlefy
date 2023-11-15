@@ -15,7 +15,7 @@
     @click:control.stop
     @click:append-inner.stop
   >
-    <template v-slot:append-inner>
+    <template #append-inner>
       <v-divider :vertical="true" />
       <v-defaults-provider
         :defaults="{

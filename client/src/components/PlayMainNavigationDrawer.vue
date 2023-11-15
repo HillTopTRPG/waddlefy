@@ -8,11 +8,11 @@
         :permanent="true"
         :elevation="0"
       >
-        <template v-slot:prepend>
+        <template #prepend>
           <!-- メインナビゲーションドロワー ヘッダー -->
           <v-list :nav="true" density="compact" class="pb-0 pt-0 mb-1">
             <v-list-item density="default" class="pa-0 pt-0 mb-0">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-btn
                   density="comfortable"
                   variant="text"
@@ -59,7 +59,7 @@
             v-model="addSessionMenu"
             :close-on-content-click="false"
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <user-nav-item
                 v-bind="props"
                 id="addSessionNavItem"
@@ -117,12 +117,12 @@
           </v-list>
         </nav-dialog>
 
-        <template v-slot:append>
+        <template #append>
           <!-- メインナビゲーションドロワー フッター -->
           <v-list :nav="true" class="pt-1 pb-0">
             <v-divider />
             <v-list-item class="pa-0 mb-0" v-if="graphQlStore?.state.user">
-              <template v-slot:prepend>
+              <template #prepend>
                 <user-avatar
                   :token="graphQlStore?.state.user?.iconToken || ''"
                   id="user-icon"
@@ -139,7 +139,7 @@
                   v-text="graphQlStore?.state.user?.name || ''"
                 />
               </v-fade-transition>
-              <template v-slot:append>
+              <template #append>
                 <v-btn
                   prepend-icon="mdi-logout"
                   variant="text"

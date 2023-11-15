@@ -12,7 +12,7 @@
     <tbody v-if="list">
       <tr v-for="(arts, idx) in list" :key="idx">
         <v-menu :close-on-content-click="false" :z-index="10000000">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <td class="name" v-bind="props">
               <v-icon :icon="getArtsIcon(arts)" style="width: 1.5rem" />
               {{ arts.name }}

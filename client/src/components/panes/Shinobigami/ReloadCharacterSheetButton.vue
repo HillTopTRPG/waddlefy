@@ -1,6 +1,6 @@
 <template>
   <v-menu :close-on-content-click="false" width="auto" location="bottom left" v-model="opened">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn
         variant="text"
         class="text-decoration-underline align-self-start"

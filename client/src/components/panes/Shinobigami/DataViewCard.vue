@@ -4,7 +4,7 @@
       <template v-if="characterSheet">
         <span class="ml-4 text-h5">{{ characterHandout.data.name }}</span>
         <v-menu :close-on-content-click="false" scroll-strategy="close">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn variant="text" v-bind="props" class="text-h5 px-1 text-decoration-underline">
               {{ characterSheet.characterName }}
             </v-btn>
@@ -28,7 +28,7 @@
       </template>
       <template v-for="prize in prizeList" :key="prize.id">
         <v-menu :close-on-content-click="false">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-defaults-provider :defaults="{ VChip: { label: true, border: true, elevation: 3 } }">
               <v-chip variant="flat" size="small" color="lime" v-bind="props">
                 <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />

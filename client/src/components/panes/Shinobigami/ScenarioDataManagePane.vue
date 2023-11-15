@@ -1,16 +1,16 @@
 <template>
   <pane-frame title="シナリオデータ管理ツール">
-    <template v-slot:title-action>
+    <template #title-action>
       <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
         <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-          <template v-slot:prepend-inner>
+          <template #prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
           </template>
         </v-select>
       </v-defaults-provider>
 
       <v-menu :close-on-content-click="false">
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
             <v-icon icon="mdi-triangle-small-down" />
             表示制御
@@ -24,7 +24,7 @@
         </div>
       </v-menu>
     </template>
-    <template v-slot:layout>
+    <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 px-2 pa-2" style="gap: 0.1rem" v-if="!perspective">
         <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
           <v-btn class="text-decoration-underline" @click="onAddData('handout')">ハンドアウト追加</v-btn>
@@ -34,7 +34,7 @@
         </v-defaults-provider>
       </v-sheet>
     </template>
-    <template v-slot:default>
+    <template #default>
       <v-sheet class="w-100 d-flex flex-row flex-wrap align-start" :class="perspective ? 'pt-3' : ''">
         <template v-for="handout in handoutList" :key="handout.id">
           <scenario-data-card mode="edit" :data-id="handout.id" :text-rows="textRows" :perspective="perspective" />

@@ -15,7 +15,7 @@
           density="compact"
           variant="plain"
         >
-          <template v-slot:label><span class="px-3">セッションタイプを選んでください</span></template>
+          <template #label><span class="px-3">セッションタイプを選んでください</span></template>
         </v-select>
       </v-card-title>
       <v-card-text>

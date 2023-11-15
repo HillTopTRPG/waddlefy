@@ -1,6 +1,6 @@
 <template>
   <v-menu width="auto" v-model="opened" :close-on-content-click="false">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn color="error" variant="text" class="text-decoration-underline" :class="classText || ''" v-bind="props"
         >この{{ type }}を削除</v-btn
       >

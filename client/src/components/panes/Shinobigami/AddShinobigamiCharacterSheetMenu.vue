@@ -10,7 +10,7 @@
     }"
   >
     <v-menu v-model="opened" location="bottom left" :close-on-content-click="false" scroll-strategy="close">
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-btn v-bind="props">キャラクターシート読込</v-btn>
       </template>
       <v-card>

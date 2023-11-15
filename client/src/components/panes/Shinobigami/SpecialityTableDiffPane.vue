@@ -1,14 +1,14 @@
 <template>
   <pane-frame title="特技比較ツール">
-    <template v-slot:title-action>
+    <template #title-action>
       <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
         <v-select prefix="比較数: " :items="[2, 3, 4, 5, 6]" style="max-width: 6.5em" v-model="nums">
-          <template v-slot:prepend-inner>
+          <template #prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
           </template>
         </v-select>
         <v-select prefix="忍法表示: " :items="['なし', 'あり']" style="max-width: 8em" v-model="viewNinpou">
-          <template v-slot:prepend-inner>
+          <template #prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
           </template>
           <template #selection="{ item }">
@@ -17,7 +17,7 @@
         </v-select>
       </v-defaults-provider>
     </template>
-    <template v-slot:default>
+    <template #default>
       <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
         <template v-for="i in [...Array(nums)].map((_, j) => j)" :key="i">
           <v-sheet class="pa-1 overflow-auto align-start">

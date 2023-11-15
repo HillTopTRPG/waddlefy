@@ -37,7 +37,7 @@
             :model-value="dataObj.data.player"
             @update:model-value="v => onUpdateCharacterPlayer(v)"
           >
-            <template v-slot:label="{ label }">
+            <template #label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -184,7 +184,7 @@
             :model-value="dataObj.data.person"
             @update:model-value="v => onUpdateHandoutPerson(v)"
           >
-            <template v-slot:label="{ label }">
+            <template #label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -252,7 +252,7 @@
                 :model-value="dataObj.data.threat"
                 @update:model-value="v => onUpdateEnigmaThreat(v)"
               >
-                <template v-slot:label="{ label }">
+                <template #label="{ label }">
                   <v-icon icon="mdi-altimeter" class="mr-1" />
                   {{ label }}
                 </template>
@@ -299,7 +299,7 @@
               :model-value="dataObj.data.bind"
               @update:model-value="v => onUpdateEnigmaBind(v)"
             >
-              <template v-slot:label="{ label }">
+              <template #label="{ label }">
                 <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
                 {{ label }}
               </template>
@@ -366,7 +366,7 @@
             :model-value="dataObj.data.bind"
             @update:model-value="v => onUpdatePersonaBind(v)"
           >
-            <template v-slot:label="{ label }">
+            <template #label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>
@@ -437,7 +437,7 @@
             :model-value="dataObj.data.owner"
             @update:model-value="v => onUpdatePrizeOwner(v)"
           >
-            <template v-slot:label="{ label }">
+            <template #label="{ label }">
               <v-icon icon="mdi-relation-one-to-one" class="mr-1" />
               {{ label }}
             </template>

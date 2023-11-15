@@ -8,7 +8,7 @@
     :rounded="true"
     @click="writeUrlClipboard()"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <v-icon icon="mdi-content-copy" class="mx-3" v-if="!copied" />
       <v-icon icon="mdi-check" color="primary" class="mx-3 check-icon" v-else />
       <user-avatar :token="userAvatarToken" class="mr-3" v-if="userAvatarToken" />

@@ -1,16 +1,16 @@
 <template>
   <pane-frame title="データ閲覧ツール">
-    <template v-slot:title-action>
+    <template #title-action>
       <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
         <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-          <template v-slot:prepend-inner>
+          <template #prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
           </template>
         </v-select>
       </v-defaults-provider>
 
       <v-menu :close-on-content-click="false">
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn variant="text" v-bind="props" class="pl-1 pr-2">
             <v-icon icon="mdi-triangle-small-down" />
             表示制御
@@ -32,8 +32,8 @@
         </div>
       </v-menu>
     </template>
-    <template v-slot:layout></template>
-    <template v-slot:default>
+    <template #layout></template>
+    <template #default>
       <template v-for="(cw, idx) in handoutDataList" :key="cw.id">
         <v-divider v-if="idx" />
         <data-view-card

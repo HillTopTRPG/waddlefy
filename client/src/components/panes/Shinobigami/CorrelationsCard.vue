@@ -6,7 +6,7 @@
         <v-defaults-provider :defaults="{ VChip: { color: 'primary', density: 'comfortable' } }">
           <v-chip text="居所" :variant="locationValue ? 'flat' : 'outlined'" :disabled="!locationValue" />
           <v-menu :disabled="!isPerspectiveSecret" :close-on-content-click="false" scroll-strategy="close">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-chip
                 text="秘密"
                 :variant="secretValue ? 'flat' : 'outlined'"
@@ -52,7 +52,7 @@
               :model-value="locationValue"
               @update:model-value="onUpdateRelationFlag('location')"
             >
-              <template v-slot:label>
+              <template #label>
                 <span class="text-body-2 pt-2 w-100 text-center">居所</span>
               </template>
             </v-checkbox-btn>
@@ -65,7 +65,7 @@
               :model-value="secretValue"
               @update:model-value="onUpdateRelationFlag('secret')"
             >
-              <template v-slot:label>
+              <template #label>
                 <span class="text-body-2 pt-2 w-100 text-center">秘密</span>
               </template>
             </v-checkbox-btn>
@@ -80,7 +80,7 @@
               :model-value="emotionValue || ''"
               @update:model-value="v => onUpdateRelationEmotion(v)"
             >
-              <template v-slot:label>
+              <template #label>
                 <span class="text-body-2" style="margin-top: 1px">感情</span>
               </template>
             </v-select>
@@ -96,7 +96,7 @@
             :close-on-content-click="false"
             scroll-strategy="close"
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-chip
                 :text="`奥義${idx + 1}`"
                 color="primary"
@@ -128,7 +128,7 @@
             :model-value="isOpenSpecialArts(arts._id)"
             @update:model-value="onUpdateRelationFlag(arts._id)"
           >
-            <template v-slot:label>
+            <template #label>
               <span>奥義情報</span>
             </template>
           </v-checkbox-btn>
@@ -143,14 +143,14 @@
               (isOpenSpecialArts(arts.id) && ownerCharacter.data.player === perspective)
             "
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-btn
                 variant="text"
                 max-width="13em"
                 class="text-decoration-underline px-2 overflow-x-hidden justify-start"
                 v-bind="props"
               >
-                <template v-slot:default>
+                <template #default>
                   <div style="max-width: 13em; white-space: nowrap; overflow-x: hidden; text-overflow: ellipsis">
                     {{ arts.name }}
                   </div>

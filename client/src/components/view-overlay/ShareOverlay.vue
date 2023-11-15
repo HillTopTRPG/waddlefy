@@ -24,7 +24,7 @@
             @keydown.enter="$event.keyCode === 13 && callAddPlayer()"
             @click:append-inner.stop
           >
-            <template v-slot:append-inner>
+            <template #append-inner>
               <v-divider :vertical="true" />
               <v-btn
                 :disabled="Boolean(addPlayerErrorMessage) || !addPlayerName"

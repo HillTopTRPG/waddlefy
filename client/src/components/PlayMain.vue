@@ -38,7 +38,7 @@
             min-height="30px"
             :model-value="graphQlStore.state.notifications.filter(n => n.view).length > 1"
           >
-            <template v-slot:default>通知を全て閉じる</template>
+            <template #default>通知を全て閉じる</template>
           </v-snackbar>
           <template v-for="notification in graphQlStore.state.notifications" :key="notification.id">
             <v-snackbar
