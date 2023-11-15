@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 
-const props = defineProps<{
+defineProps<{
   characterSheet: ShinobiGami
 }>()
 </script>
