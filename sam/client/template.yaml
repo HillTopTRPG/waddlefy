@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy client
 
 Parameters:
+  ProjectName:
+    Type: String
   GraphQLUrl:
     Type: String
 
@@ -59,6 +61,7 @@ Resources:
     Properties:
       Location: app-sync-connect-info.template.yaml
       Parameters:
+        ProjectName: !Ref ProjectName
         GraphQLUrl: !Ref GraphQLUrl
 
 Outputs:

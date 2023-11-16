@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy ServiceRole
 
 Parameters:
+  ProjectName:
+    Type: String
   UserTableArn:
     Type: String
   SessionTableArn:
@@ -19,7 +21,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       Path: /
-      RoleName: waddlefy-role
+      RoleName: !Sub ${ProjectName}-role
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs
       AssumeRolePolicyDocument:
@@ -32,7 +34,7 @@ Resources:
               Service:
                 - appsync.amazonaws.com
       Policies:
-        - PolicyName: waddlefy-role-ddb-policy
+        - PolicyName: !Sub ${ProjectName}-role-ddb-policy
           PolicyDocument:
             Version: 2012-10-17
             Statement:

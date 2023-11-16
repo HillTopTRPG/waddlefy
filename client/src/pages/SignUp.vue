@@ -11,22 +11,22 @@
             style="background-color: rgba(255, 255, 255, 0.5)"
           >
             <p class="text-h5">
-              <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby
-              >の利用方法
+              <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
+              <span>の利用方法</span>
             </p>
             <ol class="ml-4 mt-5" style="line-height: 2em">
               <li>ログイン</li>
               <li>
-                画面を作る
+                セッションを用意する
                 <ul class="ml-5" style="line-height: 2em">
                   <li>用途に合わせた画面セットを選ぶ</li>
-                  <li>パーツを選んで画面をカスタム</li>
+                  <li>ツールを選んで画面をカスタム</li>
                   <li>画面にデータを入力</li>
                 </ul>
               </li>
               <li>共有URLを参加者達に伝える</li>
-              <li>参加者達は共有URLで合流</li>
-              <li>皆で同じ画面を操作する</li>
+              <li>参加者は共有URLで合流</li>
+              <li>皆で同じデータを見る・操作する</li>
             </ol>
           </v-sheet>
         </v-col>
@@ -40,6 +40,8 @@
             <v-card-item class="ma-0 pa-0">
               <v-text-field
                 label="ユーザID*"
+                name="user-id"
+                autocomplete="on"
                 :rules="[x => !!x || '必須項目']"
                 variant="solo-filled"
                 :autofocus="true"
@@ -50,6 +52,8 @@
               />
               <v-text-field
                 label="ユーザ名*"
+                name="username"
+                autocomplete="username"
                 :rules="[x => !!x || '必須項目']"
                 variant="solo-filled"
                 v-model="userName"
@@ -58,7 +62,9 @@
               />
               <v-text-field
                 label="パスワード"
+                name="password"
                 type="password"
+                autocomplete="new-password"
                 :hide-details="true"
                 class="mb-1"
                 variant="solo-filled"
@@ -79,9 +85,8 @@
                 :loading="!ready"
                 @click="callSignUp()"
               />
-              <v-btn variant="flat" rounded href="/"
-                >または<v-chip variant="text" color="primary">ログイン</v-chip></v-btn
-              >
+              <span class="ml-1 text-body-2">または</span>
+              <v-btn text="ログイン" variant="text" color="primary" class="ml-0 text-decoration-underline" href="/" />
             </v-card-actions>
             <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
               新規登録に失敗しました

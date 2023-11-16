@@ -2,6 +2,11 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy root
 
+Parameters:
+  ProjectName:
+    Type: String
+    Default: waddlefy
+
 Resources:
 #  # Client
 #  ClientStack:
@@ -9,6 +14,7 @@ Resources:
 #    Properties:
 #      Location: client/template.yaml
 #      Parameters:
+#        ProjectName: !Ref ProjectName
 #        GraphQLUrl: !GetAtt AppSyncStack.Outputs.GraphQLUrl
 
   # AppSync
@@ -16,6 +22,8 @@ Resources:
     Type: AWS::Serverless::Application
     Properties:
       Location: app-sync/template.yaml
+      Parameters:
+        ProjectName: !Ref ProjectName
 
 Outputs:
   GraphQLUrl:

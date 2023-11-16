@@ -3,27 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy AppSync
 
 Parameters:
-  UserTableName:
+  ProjectName:
     Type: String
-    Default: waddlefy-user-table
-  SessionTableName:
-    Type: String
-    Default: waddlefy-session-table
-  PlayerTableName:
-    Type: String
-    Default: waddlefy-player-table
-  DashboardTableName:
-    Type: String
-    Default: waddlefy-dashboard-table
-  SessionDataTableName:
-    Type: String
-    Default: waddlefy-session-data-table
 
 Resources:
   AppSync:
     Type: AWS::AppSync::GraphQLApi
     Properties:
-      Name: waddlefy
+      Name: !Ref ProjectName
       AuthenticationType: AWS_LAMBDA
       LambdaAuthorizerConfig:
         AuthorizerUri: !GetAtt AuthorizerStack.Outputs.Arn
@@ -42,9 +29,10 @@ Resources:
     Properties:
       Location: authorizer.template.yaml
       Parameters:
-        UserTableName: !Ref UserTableName
-        SessionTableName: !Ref SessionTableName
-        PlayerTableName: !Ref PlayerTableName
+        ProjectName: !Ref ProjectName
+        UserTableName: !Sub ${ProjectName}-user-table
+        SessionTableName: !Sub ${ProjectName}-session-table
+        PlayerTableName: !Sub ${ProjectName}-player-table
 
   AppsyncPermission:
     Type: AWS::Lambda::Permission
@@ -61,6 +49,7 @@ Resources:
     Properties:
       Location: service-role.template.yaml
       Parameters:
+        ProjectName: !Ref ProjectName
         UserTableArn: !GetAtt TablesStack.Outputs.UserTableArn
         SessionTableArn: !GetAtt TablesStack.Outputs.SessionTableArn
         PlayerTableArn: !GetAtt TablesStack.Outputs.PlayerTableArn
@@ -73,24 +62,25 @@ Resources:
     Properties:
       Location: tables.template.yaml
       Parameters:
-        UserTableName: !Ref UserTableName
-        SessionTableName: !Ref SessionTableName
-        PlayerTableName: !Ref PlayerTableName
-        DashboardTableName: !Ref DashboardTableName
-        SessionDataTableName: !Ref SessionDataTableName
+        UserTableName: !Sub ${ProjectName}-user-table
+        SessionTableName: !Sub ${ProjectName}-session-table
+        PlayerTableName: !Sub ${ProjectName}-player-table
+        DashboardTableName: !Sub ${ProjectName}-dashboard-table
+        SessionDataTableName: !Sub ${ProjectName}-session-data-table
 
   SchemaStack:
     Type: AWS::Serverless::Application
     Properties:
       Location: schema/template.yaml
       Parameters:
+        ProjectName: !Ref ProjectName
         ApiId: !GetAtt AppSync.ApiId
         ServiceRoleArn: !GetAtt ServiceRoleStack.Outputs.ServiceRoleArn
-        UserTableName: !Ref UserTableName
-        SessionTableName: !Ref SessionTableName
-        PlayerTableName: !Ref PlayerTableName
-        DashboardTableName: !Ref DashboardTableName
-        SessionDataTableName: !Ref SessionDataTableName
+        UserTableName: !Sub ${ProjectName}-user-table
+        SessionTableName: !Sub ${ProjectName}-session-table
+        PlayerTableName: !Sub ${ProjectName}-player-table
+        DashboardTableName: !Sub ${ProjectName}-dashboard-table
+        SessionDataTableName: !Sub ${ProjectName}-session-data-table
     DependsOn:
       - AppSyncSchema
 

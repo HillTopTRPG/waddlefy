@@ -1,3 +1,4 @@
+.env
 .env.sam
 .aws-sam
 node_modules

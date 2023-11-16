@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy Schema
 
 Parameters:
+  ProjectName:
+    Type: String
   ServiceRoleArn:
     Type: String
   ApiId:
@@ -269,6 +271,7 @@ Resources:
     Properties:
       Location: mutation/generate-player-reset-code.template.yaml
       Parameters:
+        ProjectName: !Ref ProjectName
         ApiId: !Ref ApiId
         PlayerTableName: !Ref PlayerTableName
 

@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy Lambda appsync-connect-info
 
 Parameters:
+  ProjectName:
+    Type: String
   GraphQLUrl:
     Type: String
 
@@ -12,7 +14,7 @@ Resources:
     Properties:
       CodeUri: ../lambda/nodejs
       Handler: app-sync-connect-info.handler
-      FunctionName: appsync-connect-info
+      FunctionName: !Sub ${ProjectName}-appsync-connect-info
       Description: Waddlefy REST API
       Tracing: Active
       Runtime: nodejs18.x

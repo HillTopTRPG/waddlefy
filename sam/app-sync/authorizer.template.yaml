@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy Lambda Authorizer
 
 Parameters:
+  ProjectName:
+    Type: String
   UserTableName:
     Type: String
   SessionTableName:
@@ -22,7 +24,7 @@ Resources:
         - x86_64
       MemorySize: 128
       Timeout: 100
-      FunctionName: appsync-authorizer
+      FunctionName: !Sub ${ProjectName}-appsync-authorizer
       Description: Waddlefy AppSync Authorizer
       Policies:
         - DynamoDBCrudPolicy:

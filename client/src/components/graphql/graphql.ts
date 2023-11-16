@@ -25,7 +25,7 @@ import { Router } from 'vue-router'
 import { uuid } from 'vue-uuid'
 
 // ローカル開発時のみ有効な値であり、流出しても問題ない情報
-const DEFAULT_URL = 'https://r6dvpxfwunaazhhdtfi2wb7vly.appsync-api.ap-northeast-1.amazonaws.com/graphql'
+const DEFAULT_URL = import.meta.env.VITE_GRAPHQL_URL
 const DEFAULT_REGION = 'ap-northeast-1'
 
 export const DEFAULT_SESSION_NAME = 'No title session'

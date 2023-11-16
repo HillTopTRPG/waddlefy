@@ -15,7 +15,7 @@
         </p>
 
         <v-sheet
-          class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10"
+          class="rounded-xl pa-5 font-style-top mt-5 mt-sm-10 border"
           style="background-color: rgba(255, 255, 255, 0.6); white-space: nowrap"
         >
           <p>多くのデータ、特殊なルール……<br />大変じゃないですか？<br />楽しさに集中したいそんなあなたに</p>
@@ -31,6 +31,8 @@
           <v-card-item class="ma-0 pa-0">
             <v-text-field
               label="ユーザID*"
+              name="user-id"
+              autocomplete="on"
               :rules="[x => !!x || '必須項目']"
               variant="solo-filled"
               :autofocus="!Boolean(defaultUserId)"
@@ -40,7 +42,9 @@
             />
             <v-text-field
               label="パスワード"
+              name="password"
               type="password"
+              autocomplete="password"
               :hide-details="true"
               class="mb-1"
               variant="solo-filled"
@@ -62,9 +66,8 @@
               :loading="!ready"
               @click="callSignIn()"
             />
-            <v-btn variant="flat" rounded href="/sign-up" @click="toSignUp()"
-              >または<v-chip variant="text" color="primary">新規登録</v-chip></v-btn
-            >
+            <span class="ml-1 text-body-2">または</span>
+            <v-btn text="新規登録" variant="text" color="primary" class="ml-0" href="/sign-up" @click="toSignUp()" />
           </v-card-actions>
           <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="loginFailure">
             ログインに失敗しました
@@ -92,28 +95,36 @@
               </ul>
             </li>
             -->
-            <li>
+            <li class="ml-6">
               忍術バトルRPG シノビガミ
               <ul>
                 <li>
-                  キャラシ登録
+                  キャラクターシート登録
                   <ul>
                     <li>キャラクターシート倉庫のURLを使って登録</li>
                   </ul>
                 </li>
                 <li>
-                  キャラクターシート覧表示
+                  セッションデータ管理
                   <ul>
-                    <li>公開情報のみを１画面に集約</li>
+                    <li>ハンドアウト、エニグマ、ペルソナ、プライズに対応</li>
+                    <li>秘匿情報とその公開範囲の入力を強力にサポート</li>
+                  </ul>
+                </li>
+                <li>
+                  セッションデータ一覧表示
+                  <ul>
+                    <li>秘匿情報を参加者それぞれに対して適切に表示</li>
                     <li>ダメージの簡易入力・記録</li>
                     <li>特技表の判定値計算ツール</li>
+                    <li>ハンドアウト毎に共有メモと個人メモが書き込める</li>
                   </ul>
                 </li>
                 <li>
                   特技比較
                   <ul>
                     <li>2〜6キャラ分のキャラクターシートの特技表を簡易表示</li>
-                    <li>選んだ特技について複数のキャラクターの目標値をまとめて見る</li>
+                    <li>選んだ特技について複数のキャラクターの目標値を一発で確認</li>
                   </ul>
                 </li>
               </ul>

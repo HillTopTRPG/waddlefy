@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy AppSync Mutation generatePlayerResetCode
 
 Parameters:
+  ProjectName:
+    Type: String
   ApiId:
     Type: String
   PlayerTableName:
@@ -45,7 +47,7 @@ Resources:
         - x86_64
       MemorySize: 128
       Timeout: 100
-      FunctionName: request-reset-player-password
+      FunctionName: !Sub ${ProjectName}-request-reset-player-password
       Description: Waddlefy AppSync Scheme
       Policies:
         - DynamoDBCrudPolicy:

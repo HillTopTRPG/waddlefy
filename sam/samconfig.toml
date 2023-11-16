@@ -3,17 +3,21 @@
 version = 0.1
 
 [default]
-[default.global.parameters]
-stack_name = "waddlefy"
-
 [default.build.parameters]
 cached = true
 parallel = true
-
 [default.validate.parameters]
 lint = true
-
+[default.package.parameters]
+resolve_s3 = true
+[default.sync.parameters]
+watch = true
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+[default.local_start_lambda.parameters]
+warm_containers = "EAGER"
 [default.deploy.parameters]
+stack_name = "waddlefy"
 capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
 confirm_changeset = true
 resolve_s3 = true
@@ -22,16 +26,28 @@ region = "ap-northeast-1"
 disable_rollback = true
 parameter_overrides = "ProjectName=\"waddlefy\""
 image_repositories = []
-stack_name = "waddlefy"
 
-[default.package.parameters]
+[dev]
+[dev.build.parameters]
+cached = true
+parallel = true
+[dev.validate.parameters]
+lint = true
+[dev.package.parameters]
 resolve_s3 = true
-
-[default.sync.parameters]
+[dev.sync.parameters]
 watch = true
-
-[default.local_start_api.parameters]
+[dev.local_start_api.parameters]
 warm_containers = "EAGER"
-
-[default.local_start_lambda.parameters]
+[dev.local_start_lambda.parameters]
 warm_containers = "EAGER"
+[dev.deploy.parameters]
+stack_name = "dev-waddlefy"
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+confirm_changeset = true
+resolve_s3 = true
+s3_prefix = "dev-waddlefy"
+region = "ap-northeast-1"
+disable_rollback = true
+parameter_overrides = "ProjectName=\"dev-waddlefy\""
+image_repositories = []
