@@ -105,9 +105,6 @@ import LogoComponent from '@/components/parts/LogoComponent.vue'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { ref, watch } from 'vue'
 
-import { useRouter } from 'vue-router'
-const router = useRouter()
-
 const userId = ref('')
 const userName = ref('')
 const password = ref('')
@@ -152,7 +149,7 @@ watch(userId, () => {
 async function callSignUp() {
   signUpFailure.value = false
   try {
-    await userSignUp(appSyncClient!, userId.value, userName.value, password.value, router)
+    await userSignUp(appSyncClient!, userId.value, userName.value, password.value)
   } catch (err) {
     console.error('新規登録に失敗しました。')
     console.error(err)

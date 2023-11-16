@@ -45,8 +45,11 @@ Resources:
           $util.error($ctx.result.error)
         #end
         #set($flg = $ctx.result.items.size() > 0)
-        $util.validate($flg, "No such Session")
-        $util.qr($ctx.stash.put("sessionId", $ctx.result.items[0].id))
+        #if($flg)
+          $util.qr($ctx.stash.put("sessionId", $ctx.result.items[0].id))
+        #else
+          $util.qr($ctx.stash.put("sessionId", null))
+        #end
         {}
 
   GetSessionStashFunction:
@@ -59,9 +62,10 @@ Resources:
       RequestMappingTemplateS3Location: vtl/get-item-where-id-stash-session-id.vm
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
-          $util.error($ctx.result.error)
+          $util.qr($ctx.stash.put("session", null))
+        #else
+          $util.qr($ctx.stash.put("session", $ctx.result))
         #end
-        $util.qr($ctx.stash.put("session", $ctx.result))
         {}
 
   # UserForUser.sessions

@@ -38,7 +38,7 @@ Resources:
           $util.error($ctx.result.error)
         #end
         #set($flg = !$util.isNull($ctx.result))
-        $util.validate($flg, "No such player")
+        $util.validate($flg, "No such player at player sign in")
         #set($flg = $ctx.result.status == "normal")
         $util.validate($flg, "Invalid operation")
         #set($flg = $ctx.result.password == $ctx.args.input.password)

@@ -16,6 +16,7 @@ import {
 import { Layout } from '@/components/panes'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
+import router from '@/router'
 import { Observable } from '@apollo/client'
 import { ApolloClient, ApolloLink, FetchResult, InMemoryCache, NormalizedCacheObject } from '@apollo/client/core'
 import { AuthOptions, createAuthLink } from 'aws-appsync-auth-link'
@@ -73,11 +74,20 @@ function sortId(d: { id: string }, e: { id: string }): number {
   return d.id > e.id ? 1 : 0
 }
 
+async function addDefaultSessionForSignIn(appSyncClient: ApolloClient<NormalizedCacheObject>): Promise<string> {
+  return new Promise(resolve => {
+    callAddSession(appSyncClient, DEFAULT_SESSION_NAME, DEFAULT_SESSION_TYPE, session => {
+      resolve(session)
+    })
+  })
+}
+
 export async function userSignIn(
   appSyncClient: ApolloClient<NormalizedCacheObject>,
   userId: string,
   userPassword: string,
-  router: Router
+  graphql: string,
+  region: string
 ): Promise<void> {
   const result = await appSyncClient.mutate<MutationResult.UserSignIn>({
     mutation: Mutations.userSignIn,
@@ -85,22 +95,21 @@ export async function userSignIn(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.userSignIn
-  if (data) {
-    const { token, secret, firstSession } = data
-    localStorage.setItem(token, JSON.stringify({ secret }))
-    localStorage.setItem('userId', userId)
-    const sessionId = firstSession.id
-    const dashboardId = firstSession.defaultDashboardId
-    if (dashboardId) {
-      router
-        .push({
-          name: 'UserMain2',
-          params: { userToken: token, sessionId, dashboardId }
-        })
-        .then()
-    } else {
-      router.push({ name: 'UserMain1', params: { userToken: token, sessionId } }).then()
-    }
+  if (!data) return
+  const { token, secret } = data
+  let { firstSession } = data
+  localStorage.setItem(token, JSON.stringify({ secret }))
+  localStorage.setItem('userId', userId)
+  if (!firstSession) {
+    const appSyncClientForCreateSession = makeGraphQlClient(graphql, region, () => `u/${token}/${secret || ''}`)
+    firstSession = await addDefaultSessionForSignIn(appSyncClientForCreateSession, DEFAULT_SESSION_NAME)
+  }
+  const sessionId = firstSession.id
+  const dashboardId = firstSession.defaultDashboardId
+  if (dashboardId) {
+    router.push({ name: 'UserMain2', params: { userToken: token, sessionId, dashboardId } }).then()
+  } else {
+    router.push({ name: 'UserMain1', params: { userToken: token, sessionId } }).then()
   }
 }
 
@@ -108,8 +117,7 @@ export async function userSignUp(
   appSyncClient: ApolloClient<NormalizedCacheObject>,
   userId: string,
   userName: string,
-  userPassword: string,
-  router: Router
+  userPassword: string
 ): Promise<void> {
   const result = await appSyncClient.mutate<MutationResult.UserSignUp>({
     mutation: Mutations.userSignUp,
@@ -123,17 +131,11 @@ export async function userSignUp(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.userSignUp
-  if (data) {
-    const { token, secret, firstSession } = data
-    localStorage.setItem(token, JSON.stringify({ secret }))
-    localStorage.setItem('userId', userId)
-    router
-      .push({
-        name: 'UserMain1',
-        params: { userToken: token, sessionId: firstSession.id }
-      })
-      .then()
-  }
+  if (!data) return
+  const { token, secret, firstSession } = data
+  localStorage.setItem(token, JSON.stringify({ secret }))
+  localStorage.setItem('userId', userId)
+  router.push({ name: 'UserMain1', params: { userToken: token, sessionId: firstSession.id } }).then()
 }
 
 export async function playerSignUp(
@@ -148,9 +150,8 @@ export async function playerSignUp(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.addPlayerByPlayer
-  if (data) {
-    await playerSignIn(appSyncClient, data.id, playerPassword, router)
-  }
+  if (!data) return
+  await playerSignIn(appSyncClient, data.id, playerPassword, router)
 }
 
 export async function playerFirstSignIn(
@@ -165,11 +166,10 @@ export async function playerFirstSignIn(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.playerFirstSignIn
-  if (data) {
-    const { token, secret } = data
-    localStorage.setItem(token, JSON.stringify({ secret }))
-    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
-  }
+  if (!data) return
+  const { token, secret } = data
+  localStorage.setItem(token, JSON.stringify({ secret }))
+  router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
 }
 
 export async function playerSignIn(
@@ -184,11 +184,10 @@ export async function playerSignIn(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.playerSignIn
-  if (data) {
-    const { token, secret } = data
-    localStorage.setItem(token, JSON.stringify({ secret }))
-    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
-  }
+  if (!data) return
+  const { token, secret } = data
+  localStorage.setItem(token, JSON.stringify({ secret }))
+  router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
 }
 
 export async function resetPlayerPassword(
@@ -204,11 +203,10 @@ export async function resetPlayerPassword(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.resetPlayerPassword
-  if (data) {
-    const { token, secret } = data
-    localStorage.setItem(token, JSON.stringify({ secret }))
-    router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
-  }
+  if (!data) return
+  const { token, secret } = data
+  localStorage.setItem(token, JSON.stringify({ secret }))
+  router.push({ name: 'PlayerMain0', params: { playerToken: token } }).then()
 }
 
 async function callAddSession(
@@ -224,15 +222,14 @@ async function callAddSession(
   })
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.addSession
-  if (data) {
-    callback({
-      id: data.id,
-      token: data.token,
-      name: data.name,
-      sessionType: data.sessionType,
-      createdAt: data.createdAt
-    })
-  }
+  if (!data) return
+  callback({
+    id: data.id,
+    token: data.token,
+    name: data.name,
+    sessionType: data.sessionType,
+    createdAt: data.createdAt
+  })
 }
 
 export async function fetchGraphQlConnectionInfo() {
@@ -244,6 +241,7 @@ export async function fetchGraphQlConnectionInfo() {
     console.warn('/apiで情報が取得できませんでした')
     console.warn('ローカル開発中ですね？')
   }
+  console.log(DEFAULT_URL)
   return {
     graphql: DEFAULT_URL,
     region: DEFAULT_REGION
@@ -665,27 +663,23 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     if (!appSyncClient) return
     if (state.sessions.length === 1) return
     operation = 'mutation deleteSession'
-    console.log(sessionId)
     const result = await appSyncClient.mutate<MutationResult.DeleteSession>({
       mutation: Mutations.deleteSession,
       variables: { sessionId }
     })
     console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.deleteSession
-    if (data) {
-      const idx = state.sessions.findIndex(d => d.id === data.id)
-      state.sessions.splice(idx, 1)
-      const nextSession = state.sessions[idx === state.sessions.length ? idx - 1 : idx]
-      await directSessionAccess(nextSession.id)
-    }
+    if (!data) return
+    const idx = state.sessions.findIndex(d => d.id === data.id)
+    state.sessions.splice(idx, 1)
+    const nextSession = state.sessions[idx === state.sessions.length ? idx - 1 : idx]
+    await directSessionAccess(nextSession.id)
   }
 
   async function deleteDashboard(sessionId: string, dashboardId: string) {
     if (!appSyncClient) return
     if (state.dashboards.length === 1) return
     operation = 'mutation deleteDashboard'
-    console.log(sessionId)
-    console.log(dashboardId)
     const result = await appSyncClient.mutate<MutationResult.DeleteDashboard>({
       mutation: Mutations.deleteDashboard,
       variables: { sessionId, dashboardId }
@@ -718,63 +712,67 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     if (!appSyncClient) return
     state.players = []
     operation = 'query directSessionAccess'
+    console.log("directSessionAccess")
     const result = await appSyncClient.mutate<QueryResult.DirectSessionAccess>({
       mutation: Queries.directSessionAccess,
       variables: { sessionId }
     })
-    // console.log(JSON.stringify(result.data, null, 2))
+    console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.directSessionAccess
-    if (data) {
-      state.user = {
-        id: data.user.id,
-        token: data.user.token,
-        name: data.user.name,
-        iconToken: data.user.iconToken
-      }
-      state.sessions = data.user.sessions.sort(sortId)
-      state.session = {
-        id: data.id,
-        token: data.token,
-        name: data.name,
-        sessionType: data.sessionType,
-        createdAt: data.createdAt,
-        defaultDashboardId: data.defaultDashboardId
-      }
-      state.players = data.players.sort(sortId)
-      state.dashboards = data.dashboards
-        .map(d => {
-          d.option = JSON.parse(d.option) as DashboardOption
-          return d
-        })
-        .sort(sortId)
-      if (data.defaultDashboard) {
-        if (data.defaultDashboard.id === dashboardId) {
-          state.dashboard = {
-            id: data.defaultDashboard.id,
-            name: data.defaultDashboard.name,
-            layout: JSON.parse(data.defaultDashboard.layout) as Layout,
-            option: JSON.parse(data.defaultDashboard.option) as DashboardOption
-          }
-          state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
-        } else {
-          await directDashboardAccess(dashboardId)
-        }
-      } else {
-        state.dashboard = null
-      }
-      state.sessionDataList = data.sessionDataList.sort(sortId).map(d => {
-        const raw = JSON.parse(d.data)
-        return {
-          id: d.id,
-          type: d.type,
-          sessionId: d.sessionId,
-          data: {
-            id: d.id,
-            ...raw
-          }
-        }
-      })
+    if (!data) {
+      await router.replace({ name: 'Home' })
+      return
     }
+
+    state.user = {
+      id: data.user.id,
+      token: data.user.token,
+      name: data.user.name,
+      iconToken: data.user.iconToken
+    }
+    state.sessions = data.user.sessions.sort(sortId)
+    state.session = {
+      id: data.id,
+      token: data.token,
+      name: data.name,
+      sessionType: data.sessionType,
+      createdAt: data.createdAt,
+      defaultDashboardId: data.defaultDashboardId
+    }
+    state.players = data.players.sort(sortId)
+    state.dashboards = data.dashboards
+      .map(d => {
+        d.option = JSON.parse(d.option) as DashboardOption
+        return d
+      })
+      .sort(sortId)
+    if (data.defaultDashboard) {
+      if (data.defaultDashboard.id === dashboardId) {
+        state.dashboard = {
+          id: data.defaultDashboard.id,
+          name: data.defaultDashboard.name,
+          layout: JSON.parse(data.defaultDashboard.layout) as Layout,
+          option: JSON.parse(data.defaultDashboard.option) as DashboardOption
+        }
+        state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
+      } else {
+        await directDashboardAccess(dashboardId)
+      }
+    } else {
+      state.dashboard = null
+    }
+    state.sessionDataList = data.sessionDataList.sort(sortId).map(d => {
+      const raw = JSON.parse(d.data)
+      return {
+        id: d.id,
+        type: d.type,
+        sessionId: d.sessionId,
+        data: {
+          id: d.id,
+          ...raw
+        }
+      }
+    })
   }
 
   async function changeDashboard(dashboardId: string) {
@@ -803,18 +801,17 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.directDashboardAccess
-    if (data) {
-      state.dashboard = null
-      setTimeout(() => {
-        state.dashboard = {
-          id: data.id,
-          name: data.name,
-          layout: JSON.parse(data.layout) as Layout,
-          option: JSON.parse(data.option) as DashboardOption
-        }
-        state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
-      }, 0)
-    }
+    if (!data) return
+    state.dashboard = null
+    setTimeout(() => {
+      state.dashboard = {
+        id: data.id,
+        name: data.name,
+        layout: JSON.parse(data.layout) as Layout,
+        option: JSON.parse(data.option) as DashboardOption
+      }
+      state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
+    }, 0)
   }
 
   async function directPlayerAccess() {
@@ -823,57 +820,56 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     const result = await appSyncClient.mutate<QueryResult.DirectPlayerAccess>({
       mutation: Queries.directPlayerAccess
     })
-    // console.log(JSON.stringify(result.data, null, 2))
+    console.log(JSON.stringify(result.data, null, 2))
     const data = result.data?.directPlayerAccess
-    if (data) {
-      const { id, token, iconToken, name, session } = data
-      state.user = {
-        id: session.user.id,
-        name: session.user.name,
-        iconToken: session.user.iconToken
-      } as User
-      state.sessions = []
-      state.session = {
-        id: session.id,
-        token: session.token,
-        name: session.name,
-        sessionType: session.sessionType,
-        createdAt: session.createdAt,
-        defaultDashboardId: session.defaultDashboardId
-      }
-      state.players = session.players.sort(sortId)
-      state.player = {
-        id,
-        token,
-        iconToken,
-        name
-      }
-      state.dashboards = session.dashboards
-        .map(d => {
-          d.option = JSON.parse(d.option) as DashboardOption
-          return d
-        })
-        .sort(sortId)
-      state.dashboard = {
-        id: session.defaultDashboard.id,
-        name: session.defaultDashboard.name,
-        layout: JSON.parse(session.defaultDashboard.layout) as Layout,
-        option: JSON.parse(session.defaultDashboard.option) as DashboardOption
-      }
-      state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
-      state.sessionDataList = session.sessionDataList.sort(sortId).map(d => {
-        const raw = JSON.parse(d.data)
-        return {
-          id: d.id,
-          type: d.type,
-          sessionId: d.sessionId,
-          data: {
-            id: d.id,
-            ...raw
-          }
-        }
-      })
+    if (!data) return
+    const { id, token, iconToken, name, session } = data
+    state.user = {
+      id: session.user.id,
+      name: session.user.name,
+      iconToken: session.user.iconToken
+    } as User
+    state.sessions = []
+    state.session = {
+      id: session.id,
+      token: session.token,
+      name: session.name,
+      sessionType: session.sessionType,
+      createdAt: session.createdAt,
+      defaultDashboardId: session.defaultDashboardId
     }
+    state.players = session.players.sort(sortId)
+    state.player = {
+      id,
+      token,
+      iconToken,
+      name
+    }
+    state.dashboards = session.dashboards
+      .map(d => {
+        d.option = JSON.parse(d.option) as DashboardOption
+        return d
+      })
+      .sort(sortId)
+    state.dashboard = {
+      id: session.defaultDashboard.id,
+      name: session.defaultDashboard.name,
+      layout: JSON.parse(session.defaultDashboard.layout) as Layout,
+      option: JSON.parse(session.defaultDashboard.option) as DashboardOption
+    }
+    state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
+    state.sessionDataList = session.sessionDataList.sort(sortId).map(d => {
+      const raw = JSON.parse(d.data)
+      return {
+        id: d.id,
+        type: d.type,
+        sessionId: d.sessionId,
+        data: {
+          id: d.id,
+          ...raw
+        }
+      }
+    })
   }
 
   async function generatePlayerResetCode(playerId: string): Promise<string | null> {
@@ -1141,10 +1137,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       next(value: FetchResult<SubscriptionResult.OnUpdateUser>) {
         console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateUser
-        if (data) {
-          state.user.name = data.name
-          state.user.iconToken = data.iconToken
-        }
+        if (!data) return
+        state.user.name = data.name
+        state.user.iconToken = data.iconToken
       },
       error(errorValue: any) {
         console.error(errorValue)
@@ -1164,16 +1159,15 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       next(value: FetchResult<SubscriptionResult.OnUpdateSession>) {
         console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateSession
-        if (data) {
-          if (state.session && state.session.id === sessionId) {
-            state.session.name = data.name
-            state.session.sessionType = data.sessionType
-            state.session.defaultDashboardId = data.defaultDashboardId
-          }
-          const session = state.sessions.find(s => s.id === data.id)
-          if (session) {
-            session.name = data.name
-          }
+        if (!data) return
+        if (state.session && state.session.id === sessionId) {
+          state.session.name = data.name
+          state.session.sessionType = data.sessionType
+          state.session.defaultDashboardId = data.defaultDashboardId
+        }
+        const session = state.sessions.find(s => s.id === data.id)
+        if (session) {
+          session.name = data.name
         }
       },
       error(errorValue: any) {
@@ -1240,32 +1234,27 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       next(value: FetchResult<SubscriptionResult.OnUpdateSessionData>) {
         console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateSessionData
-        if (data) {
-          if (state.session && state.session.id === sessionId) {
-            const idx = state.sessionDataList.findIndex(sd => sd.id === data.id)
-            if (idx >= 0) {
-              const old = clone(state.sessionDataList[idx].data)
-              state.sessionDataList[idx].data = {
-                id: data.id,
-                ...JSON.parse(data.data)
-              }
-              const next = state.sessionDataList[idx].data
-              const dataType = state.sessionDataList[idx].type
-              if (dataType === 'shinobigami-character') {
-                const characterName = old.character.characterName
-                getCharacterDiffMessages(old, next, state.players, characterName).forEach(({ text, icon, color }) =>
-                  addNotification(text, icon, color)
-                )
-              }
-              if (dataType === 'shinobigami-handout-session-memo') {
-                console.log(JSON.stringify(next, 0, 2))
-                const handoutName = state.sessionDataList.find(c => c.id === next.handoutId)?.data.name
-                addNotification(
-                  `${handoutName}の共有メモが更新されました`,
-                  'mdi-pencil-circle-outline',
-                  'lime-lighten-4'
-                )
-              }
+        if (!data) return
+        if (state.session && state.session.id === sessionId) {
+          const idx = state.sessionDataList.findIndex(sd => sd.id === data.id)
+          if (idx >= 0) {
+            const old = clone(state.sessionDataList[idx].data)
+            state.sessionDataList[idx].data = {
+              id: data.id,
+              ...JSON.parse(data.data)
+            }
+            const next = state.sessionDataList[idx].data
+            const dataType = state.sessionDataList[idx].type
+            if (dataType === 'shinobigami-character') {
+              const characterName = old.character.characterName
+              getCharacterDiffMessages(old, next, state.players, characterName).forEach(({ text, icon, color }) =>
+                addNotification(text, icon, color)
+              )
+            }
+            if (dataType === 'shinobigami-handout-session-memo') {
+              console.log(JSON.stringify(next, 0, 2))
+              const handoutName = state.sessionDataList.find(c => c.id === next.handoutId)?.data.name
+              addNotification(`${handoutName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
             }
           }
         }

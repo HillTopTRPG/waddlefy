@@ -155,8 +155,13 @@ let appSyncClient: ApolloClient<NormalizedCacheObject> | null = null
 const ready = ref(false)
 const loginFailure = ref(false)
 
+const graphqlRef = ref('')
+const regionRef = ref('')
+
 async function init() {
   const { graphql, region } = await fetchGraphQlConnectionInfo()
+  graphqlRef.value = graphql
+  regionRef.value = region
   appSyncClient = makeGraphQlClient(graphql, region, () => 'waddlefy')
   ready.value = true
 }
@@ -165,7 +170,7 @@ init().then()
 async function callSignIn() {
   loginFailure.value = false
   try {
-    await userSignIn(appSyncClient!, userId.value, password.value, router)
+    await userSignIn(appSyncClient!, userId.value, password.value, graphqlRef.value, regionRef.value)
   } catch (err) {
     console.error(err)
     console.error('ログインに失敗しました。')

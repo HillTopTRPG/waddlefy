@@ -38,7 +38,7 @@ Resources:
           $util.error($ctx.result.error)
         #end
         #set($flg = !$util.isNull($ctx.result))
-        $util.validate($flg, "No such player")
+        $util.validate($flg, "No such player at player first sign in")
         #set($flg = $ctx.result.status == "init")
         $util.validate($flg, "Invalid operation")
         $util.qr($ctx.stash.put("id", $ctx.result.id))
