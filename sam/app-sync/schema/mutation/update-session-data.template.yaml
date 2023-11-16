@@ -24,12 +24,14 @@ Resources:
             "id" : $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
           },
           "update" : {
-            "expression" : "SET #data = :data",
+            "expression" : "SET #data = :data, #updatedAt = :updatedAt",
             "expressionNames" : {
               "#data" : "data",
+              "#updatedAt" : "updatedAt",
             },
             "expressionValues" : {
               ":data" : $util.dynamodb.toDynamoDBJson($ctx.args.input.data)
+              ":updatedAt" : $util.dynamodb.toDynamoDBJson($util.time.nowEpochSeconds())
             }
           }
         }
