@@ -48,7 +48,7 @@
               :rail="rail"
               :active="sessionId === session.id"
               :toggle="true"
-              @click="graphQlStore?.directSessionAccess(session.id)"
+              @click="onClickSession(session.id)"
             />
           </template>
 
@@ -181,6 +181,7 @@ const sessionId = computed(() => graphQlStore?.state.session?.id)
 
 const emits = defineEmits<{
   (e: 'update:rail', value: boolean): void
+  (e: 'update:session-selectable', value: boolean): void
 }>()
 
 const dialogInNav = ref('')
@@ -233,6 +234,13 @@ watch(addSessionMenu, () => {
     }, 100)
   }
 })
+
+async function onClickSession(clickSessionId: string) {
+  if (sessionId.value !== clickSessionId) {
+    await graphQlStore?.directSessionAccess(clickSessionId)
+  }
+  emits('update:session-selectable', false)
+}
 </script>
 
 <style lang="scss" scoped>

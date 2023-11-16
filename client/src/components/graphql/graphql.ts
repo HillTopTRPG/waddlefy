@@ -712,16 +712,25 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     if (!appSyncClient) return
     state.players = []
     operation = 'query directSessionAccess'
-    console.log("directSessionAccess")
-    const result = await appSyncClient.mutate<QueryResult.DirectSessionAccess>({
-      mutation: Queries.directSessionAccess,
-      variables: { sessionId }
-    })
-    console.log(JSON.stringify(result.data, null, 2))
-    const data = result.data?.directSessionAccess
-    if (!data) {
+    let data: SessionForUser | undefined = undefined
+
+    async function requestDirectSessionAccess(useSessionId: string) {
+      const result = await appSyncClient.mutate<QueryResult.DirectSessionAccess>({
+        mutation: Queries.directSessionAccess,
+        variables: { sessionId: useSessionId }
+      })
+      console.log(JSON.stringify(result.data, null, 2))
+      data = result.data?.directSessionAccess
+    }
+    try {
+      await requestDirectSessionAccess(sessionId)
+    } catch (err) {
       await router.replace({ name: 'Home' })
       return
+    }
+    if (!data) {
+      const { id } = await addDefaultSessionForSignIn(appSyncClient)
+      await requestDirectSessionAccess(id)
     }
 
     state.user = {

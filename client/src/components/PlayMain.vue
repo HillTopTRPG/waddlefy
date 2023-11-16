@@ -2,7 +2,7 @@
   <template v-if="graphQlStore?.state.ready">
     <play-main-navigation-drawer
       v-model:rail="firstRail"
-      :sessionSelectable="sessionSelectable"
+      v-model:session-selectable="sessionSelectable"
       v-if="graphQlStore?.state.user?.token"
     />
 
