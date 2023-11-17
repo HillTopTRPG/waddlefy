@@ -31,7 +31,7 @@
     <v-defaults-provider :defaults="{ VAlert: { ...vAlertDefault, type: 'warning' } }">
       <v-alert
         title="セッションの自動削除"
-        text="10日間使われなかったセッションは毎週月曜日のAM6:00に削除されます。"
+        text="10日間使われなかったセッションは毎週火曜日のAM6:00に削除されます。"
       />
     </v-defaults-provider>
     <v-btn color="primary" class="align-self-start" @click="emits('submit', sessionType)">決定</v-btn>

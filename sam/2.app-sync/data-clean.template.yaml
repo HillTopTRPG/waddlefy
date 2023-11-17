@@ -53,7 +53,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: !Sub ${ProjectName}-data-clean-schedule
-            Schedule: cron(0 21 ? * 1 *)
+            Schedule: cron(0 21 ? * 2 *)
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
