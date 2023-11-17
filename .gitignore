@@ -1,8 +1,15 @@
-.env
-.env.sam
-.aws-sam
-node_modules
-.idea
 __work
-dist
+
+client/dist
+client/node_modules
+client/.env
+
+sam/**/.aws-sam
+sam/**/samconfig.toml
+# 1.dynamo-dbの作成には秘匿情報を使わないため除外
+!sam/1.dynamo-db/samconfig.toml
+sam/.env
+sam/lambda/nodejs/node_modules
+
+.idea
 .DS_Store

@@ -28,6 +28,14 @@
     <v-defaults-provider :defaults="{ VAlert: vAlertDefault }">
       <v-alert type="warning" text="一度決定するとセッションのタイプは後から変更できません" />
     </v-defaults-provider>
+    <v-defaults-provider :defaults="{ VAlert: vAlertDefault }">
+      <v-alert type="warning">
+        <template v-slot:text>
+          <div>古いセッションは毎週月曜日AM6:00に自動的に削除されます。</div>
+          <div>削除の対象となるのは1週間操作されていないセッションです。</div>
+        </template>
+      </v-alert>
+    </v-defaults-provider>
     <v-btn color="primary" class="align-self-start" @click="emits('submit', sessionType)">決定</v-btn>
   </v-sheet>
 </template>

@@ -25,9 +25,9 @@ import { InjectionKey, reactive, watch } from 'vue'
 import { Router } from 'vue-router'
 import { uuid } from 'vue-uuid'
 
-// ローカル開発時のみ有効な値であり、流出しても問題ない情報
+// ローカル開発時のみ有効な値
 const DEFAULT_URL = import.meta.env.VITE_GRAPHQL_URL
-const DEFAULT_REGION = 'ap-northeast-1'
+const DEFAULT_REGION = import.meta.env.VITE_GRAPHQL_REGION
 
 export const DEFAULT_SESSION_NAME = 'No title session'
 export const DEFAULT_DASHBOARD_NAME = 'No title page'
@@ -233,19 +233,25 @@ async function callAddSession(
 }
 
 export async function fetchGraphQlConnectionInfo() {
-  const apiInfoResult = await fetch('/api')
+  let apiInfoJson: { graphql: string; region: string } | null = null
+
   try {
-    const apiInfoJson: { graphql: string; region: string } = await apiInfoResult.json()
-    return apiInfoJson
+    const apiInfoResult = await fetch('/api')
+    apiInfoJson = await apiInfoResult.json()
   } catch (error) {
     console.warn('/apiで情報が取得できませんでした')
     console.warn('ローカル開発中ですね？')
   }
-  console.log(DEFAULT_URL)
-  return {
-    graphql: DEFAULT_URL,
-    region: DEFAULT_REGION
+
+  if (!apiInfoJson) {
+    apiInfoJson = {
+      graphql: DEFAULT_URL,
+      region: DEFAULT_REGION
+    }
   }
+
+  console.log(JSON.stringify(apiInfoJson, null, 2))
+  return apiInfoJson
 }
 
 export type Notification = {
@@ -1261,7 +1267,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
               )
             }
             if (dataType === 'shinobigami-handout-session-memo') {
-              console.log(JSON.stringify(next, 0, 2))
+              console.log(JSON.stringify(next, null, 2))
               const handoutName = state.sessionDataList.find(c => c.id === next.handoutId)?.data.name
               addNotification(`${handoutName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
             }

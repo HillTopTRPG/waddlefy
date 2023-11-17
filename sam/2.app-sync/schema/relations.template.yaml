@@ -62,7 +62,7 @@ Resources:
       RequestMappingTemplateS3Location: vtl/get-item-where-id-stash-session-id.vm
       ResponseMappingTemplate: |
         #if($ctx.result && $ctx.result.error)
-          $util.qr($ctx.stash.put("session", null))
+          $util.error($ctx.result.error)
         #else
           $util.qr($ctx.stash.put("session", $ctx.result))
         #end

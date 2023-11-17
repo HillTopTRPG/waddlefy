@@ -9,7 +9,7 @@ services:
     volumes:
       - './sam:/sam/waddlefy'
     env_file:
-      - .env.sam
+      - sam/.env
     command:
       - bash
       - -c

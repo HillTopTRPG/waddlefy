@@ -5,6 +5,8 @@ Description: Waddlefy AppSync
 Parameters:
   ProjectName:
     Type: String
+  ServiceRoleArn:
+    Type: String
 
 Resources:
   AppSync:
@@ -34,6 +36,18 @@ Resources:
         SessionTableName: !Sub ${ProjectName}-session-table
         PlayerTableName: !Sub ${ProjectName}-player-table
 
+  # データクリーンロジック
+  DataCleanStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: data-clean.template.yaml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        SessionTableName: !Sub ${ProjectName}-session-table
+        SessionDataTableName: !Sub ${ProjectName}-session-data-table
+        PlayerTableName: !Sub ${ProjectName}-player-table
+        DashboardTableName: !Sub ${ProjectName}-dashboard-table
+
   AppsyncPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -43,31 +57,6 @@ Resources:
       SourceAccount: !Ref AWS::AccountId
       SourceArn: !Ref AppSync
 
-  # ServiceRole
-  ServiceRoleStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: service-role.template.yaml
-      Parameters:
-        ProjectName: !Ref ProjectName
-        UserTableArn: !GetAtt TablesStack.Outputs.UserTableArn
-        SessionTableArn: !GetAtt TablesStack.Outputs.SessionTableArn
-        PlayerTableArn: !GetAtt TablesStack.Outputs.PlayerTableArn
-        DashboardTableArn: !GetAtt TablesStack.Outputs.DashboardTableArn
-        SessionDataTableArn: !GetAtt TablesStack.Outputs.SessionDataTableArn
-
-  # DynamoDB
-  TablesStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: tables.template.yaml
-      Parameters:
-        UserTableName: !Sub ${ProjectName}-user-table
-        SessionTableName: !Sub ${ProjectName}-session-table
-        PlayerTableName: !Sub ${ProjectName}-player-table
-        DashboardTableName: !Sub ${ProjectName}-dashboard-table
-        SessionDataTableName: !Sub ${ProjectName}-session-data-table
-
   SchemaStack:
     Type: AWS::Serverless::Application
     Properties:
@@ -75,7 +64,7 @@ Resources:
       Parameters:
         ProjectName: !Ref ProjectName
         ApiId: !GetAtt AppSync.ApiId
-        ServiceRoleArn: !GetAtt ServiceRoleStack.Outputs.ServiceRoleArn
+        ServiceRoleArn: !Ref ServiceRoleArn
         UserTableName: !Sub ${ProjectName}-user-table
         SessionTableName: !Sub ${ProjectName}-session-table
         PlayerTableName: !Sub ${ProjectName}-player-table
@@ -86,5 +75,5 @@ Resources:
 
 Outputs:
   GraphQLUrl:
-    Description: AppSync Endpoint
+    Description: Write this value in samconfig.toml of 3.client and start the stack
     Value: !GetAtt AppSync.GraphQLUrl
