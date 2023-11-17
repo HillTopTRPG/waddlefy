@@ -151,7 +151,10 @@ export async function playerSignUp(
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.addPlayerByPlayer
   if (!data) return
-  await playerSignIn(appSyncClient, data.id, playerPassword, router)
+  const { token, secret } = data
+  localStorage.setItem(token, JSON.stringify({ secret }))
+
+  router.push({ name: 'PlayerMain0', params: { playerToken: data.token } }).then()
 }
 
 export async function playerFirstSignIn(
@@ -748,6 +751,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     state.sessions = data.user.sessions.sort(sortId)
     state.session = {
       id: data.id,
+      signUpToken: data.signUpToken,
       token: data.token,
       name: data.name,
       sessionType: data.sessionType,

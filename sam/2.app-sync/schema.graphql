@@ -19,7 +19,7 @@ type Mutation {
   addDashboard(input: AddDashboardInput): Dashboard
   # 参加者作成
   addPlayerByUser(input: AddPlayerByUserInput): AbstractPlayer
-  addPlayerByPlayer(input: AddPlayerByPlayerInput): AbstractPlayer
+  addPlayerByPlayer(input: AddPlayerByPlayerInput): PlayerForPlayer
   # 参加者サインイン（初回）
   playerFirstSignIn(input: PlayerSignInInput): PlayerForPlayer
   # 参加者サインイン
@@ -61,7 +61,7 @@ type Mutation {
 type Subscription {
   # 追加系
   onAddPlayer(sessionId: String!): AbstractPlayer
-  @aws_subscribe(mutations: ["addPlayerByUser", "addPlayerByPlayer"])
+  @aws_subscribe(mutations: ["addPlayerByUser"])
   onAddDashboard(sessionId: String!): Dashboard
   @aws_subscribe(mutations: ["addDashboard"])
   onAddSessionData(sessionId: String!): SessionData

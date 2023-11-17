@@ -1,13 +1,15 @@
 <template>
   <pane-frame title="データ閲覧ツール">
     <template #title-action>
-      <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
-        <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-          <template #prepend-inner>
-            <v-icon icon="mdi-triangle-small-down" />
-          </template>
-        </v-select>
-      </v-defaults-provider>
+      <template v-if="isUserControl">
+        <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+          <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
+            <template #prepend-inner>
+              <v-icon icon="mdi-triangle-small-down" />
+            </template>
+          </v-select>
+        </v-defaults-provider>
+      </template>
 
       <v-menu :close-on-content-click="false">
         <template #activator="{ props }">

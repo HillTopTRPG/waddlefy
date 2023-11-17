@@ -169,7 +169,8 @@ mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
     sessionId
     name
     iconToken
-    status
+    token
+    secret
   }
 }
 `)
@@ -475,7 +476,7 @@ export namespace MutationResult {
     addPlayerByUser: AbstractPlayer
   }
   export type AddPlayerByPlayer = {
-    addPlayerByPlayer: AbstractPlayer
+    addPlayerByPlayer: PlayerForPlayer
   }
   export type PlayerFirstSignIn = {
     playerFirstSignIn: PlayerForPlayer

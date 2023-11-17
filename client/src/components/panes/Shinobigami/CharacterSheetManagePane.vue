@@ -1,13 +1,15 @@
 <template>
   <pane-frame title="キャラクターシート管理ツール">
     <template #title-action>
-      <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
-        <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-          <template #prepend-inner>
-            <v-icon icon="mdi-triangle-small-down" />
-          </template>
-        </v-select>
-      </v-defaults-provider>
+      <template v-if="isUserControl">
+        <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+          <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
+            <template #prepend-inner>
+              <v-icon icon="mdi-triangle-small-down" />
+            </template>
+          </v-select>
+        </v-defaults-provider>
+      </template>
     </template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">

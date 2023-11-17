@@ -7,10 +7,10 @@
       <v-row class="pt-0 pt-md-16 align-md-end">
         <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-end position-relative">
           <v-list>
+            <v-list-subheader v-if="players.length">他のプレイヤー</v-list-subheader>
             <template v-for="p in players" :key="p.id">
               <v-list-item>
                 <v-list-item-title>{{ p.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ p.id }}</v-list-item-subtitle>
               </v-list-item>
             </template>
           </v-list>
@@ -119,9 +119,15 @@ const player = ref<AbstractPlayer | null>(null)
 const errorMessage = ref('')
 
 function getAuthToken() {
-  if (props.sessionToken) return `s/${props.sessionToken}`
-  if (props.signUpToken) return `si/${props.signUpToken}`
-  return ''
+  let result = ''
+  if (props.sessionToken) {
+    result = `s/${props.sessionToken}`
+  }
+  if (props.signUpToken) {
+    result = `si/${props.signUpToken}`
+  }
+  console.log(result)
+  return result
 }
 
 async function init() {

@@ -150,6 +150,7 @@ export const handler = async event => {
         if (sessionData) {
           isAuthorized = true
           id = sessionData.id
+          admitFields.push('Mutation.addPlayerByPlayer')
           admitFields.push('Query.getSessionPlayers')
         }
       }

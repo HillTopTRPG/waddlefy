@@ -98,10 +98,7 @@
         <v-col cols="2" md="2" />
         <v-col cols="8" md="8">
           <v-defaults-provider :defaults="{ VAlert: { ...vAlertDefault, type: 'warning' } }">
-            <v-alert
-              title="ユーザの自動削除"
-              text="30日間使われなかったユーザは毎週火曜日AM6:00に削除されます。"
-            />
+            <v-alert title="ユーザの自動削除" text="30日間使われなかったユーザは毎週火曜日AM6:00に削除されます。" />
           </v-defaults-provider>
         </v-col>
         <v-col cols="2" md="2" />
