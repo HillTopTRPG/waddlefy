@@ -43,6 +43,7 @@ Resources:
       Location: data-clean.template.yaml
       Parameters:
         ProjectName: !Ref ProjectName
+        UserTableName: !Sub ${ProjectName}-user-table
         SessionTableName: !Sub ${ProjectName}-session-table
         SessionDataTableName: !Sub ${ProjectName}-session-data-table
         PlayerTableName: !Sub ${ProjectName}-player-table

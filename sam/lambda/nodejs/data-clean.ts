@@ -1,20 +1,14 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import {
-  DynamoDBDocumentClient,
-  ScanCommand,
-  QueryCommand,
-  BatchWriteCommand,
-  QueryCommandOutput,
-  DeleteCommand,
-  ScanCommandOutput
-} from '@aws-sdk/lib-dynamodb'
-export const ddbDocClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
+import { DynamoDBDocumentClient, ScanCommand, QueryCommandOutput, DeleteCommand, ScanCommandOutput } from '@aws-sdk/lib-dynamodb'
+import { deleteSessionData } from './delete-session-data'
 
-// const period = 60 * 60 * 24 * 7 // 7日間
-const period = 60 * 60 * 24 // 1日
+const ddbDocClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
+
+const sessionPeriod = 60 * 60 * 24 // 1日
+const userPeriod = 60 * 60 * 24 // 1日
 
 async function judgeSessionExpired(sessionId: string): Promise<boolean> {
-  const expiredSecond = Date.now() / 1000 - period
+  const expiredSecond = Date.now() / 1000 - sessionPeriod
   try {
     const data: ScanCommandOutput = await ddbDocClient.send(new ScanCommand({
       TableName : process.env.SESSION_DATA_TABLE_NAME,
@@ -37,6 +31,27 @@ async function judgeSessionExpired(sessionId: string): Promise<boolean> {
   return true
 }
 
+async function getExpiredUserIdList(): Promise<string[]> {
+  const expiredSecond = Date.now() / 1000 - userPeriod
+  try {
+    const data: ScanCommandOutput = await ddbDocClient.send(new ScanCommand({
+      TableName : process.env.USER_DATA_TABLE_NAME,
+      ProjectionExpression: 'id',
+      FilterExpression: '#lastLoggedIn < :lastLoggedIn',
+      ExpressionAttributeNames: {
+        '#lastLoggedIn' : 'lastLoggedIn'
+      },
+      ExpressionAttributeValues: {
+        ':lastLoggedIn': expiredSecond
+      }
+    }))
+    return data.Items.map(item => item.id)
+  } catch (err) {
+    // do nothing
+  }
+  return []
+}
+
 async function getSessionIdList(): Promise<string[]> {
   try {
     const data: QueryCommandOutput = await ddbDocClient.send(new ScanCommand({
@@ -50,51 +65,18 @@ async function getSessionIdList(): Promise<string[]> {
   return []
 }
 
-async function deleteSessionData(tableName: string, sessionId: string) {
-  const idList = []
-
-  try {
-    const data: QueryCommandOutput = await ddbDocClient.send(new QueryCommand({
-      TableName : tableName,
-      IndexName: `sessionId-index`,
-      KeyConditionExpression: '#sessionId = :sessionId',
-      ExpressionAttributeNames: {
-        '#sessionId' : 'sessionId'
-      },
-      ExpressionAttributeValues: {
-        ':sessionId': sessionId
-      }
-    }))
-    idList.push(...data.Items.map(item => item.id))
-  } catch (err) {
-    // do nothing
-  }
-
-  if (!idList.length) return
-
-  return await ddbDocClient.send(new BatchWriteCommand({
-    RequestItems: {
-      [tableName]: idList.map(id => ({
-        DeleteRequest: {
-          Key: {
-            id
-          }
-        }
-      }))
-    },
-  }))
-}
-
 export const handler = async event => {
   console.log(`event >`, JSON.stringify(event, null, 2))
 
   // 古いセッションデータを削除する
+  let deleteSessionCount = 0
   const sessionIdList = await getSessionIdList()
   for (const sessionId of sessionIdList) {
     if (await judgeSessionExpired(sessionId)) {
-      await deleteSessionData(process.env.SESSION_DATA_TABLE_NAME, sessionId)
-      await deleteSessionData(process.env.PLAYER_TABLE_NAME, sessionId)
-      await deleteSessionData(process.env.DASHBOARD_TABLE_NAME, sessionId)
+      deleteSessionCount++
+      await deleteSessionData(ddbDocClient, process.env.SESSION_DATA_TABLE_NAME, sessionId)
+      await deleteSessionData(ddbDocClient, process.env.PLAYER_TABLE_NAME, sessionId)
+      await deleteSessionData(ddbDocClient, process.env.DASHBOARD_TABLE_NAME, sessionId)
       await ddbDocClient.send(new DeleteCommand({
         TableName : process.env.SESSION_TABLE_NAME,
         Key: { 'id': sessionId }
@@ -102,7 +84,17 @@ export const handler = async event => {
     }
   }
 
-  const response = { ok: true }
+  // 古いユーザーを削除する
+  const userIdList = await getExpiredUserIdList()
+  const deleteUserCount = userIdList.length
+  for (const userId of userIdList) {
+    await ddbDocClient.send(new DeleteCommand({
+      TableName : process.env.USER_TABLE_NAME,
+      Key: { 'id': userId }
+    }))
+  }
+
+  const response = { deleteSessionCount, deleteUserCount }
   console.log(`response >`, JSON.stringify(response, null, 2))
   return response
 }

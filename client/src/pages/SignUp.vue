@@ -94,6 +94,18 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="2" md="2" />
+        <v-col cols="8" md="8">
+          <v-defaults-provider :defaults="{ VAlert: { ...vAlertDefault, type: 'warning' } }">
+            <v-alert
+              title="ユーザの自動削除"
+              text="30日間使われなかったユーザは毎週月曜日AM6:00に削除されます。"
+            />
+          </v-defaults-provider>
+        </v-col>
+        <v-col cols="2" md="2" />
+      </v-row>
     </v-container>
   </v-main>
 </template>
@@ -156,6 +168,13 @@ async function callSignUp() {
     signUpFailure.value = true
     userIdElm.value.focus()
   }
+}
+const vAlertDefault = {
+  border: 'start',
+  density: 'compact',
+  elevation: '2',
+  class: 'mb-3',
+  variant: 'tonal'
 }
 </script>
 

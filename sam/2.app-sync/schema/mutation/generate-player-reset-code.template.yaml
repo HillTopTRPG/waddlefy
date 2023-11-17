@@ -34,7 +34,7 @@ Resources:
       Type: AWS_LAMBDA
       LambdaConfig:
         LambdaFunctionArn: !GetAtt GeneratePlayerResetCodeFunction.Arn
-      ServiceRoleArn: !GetAtt AppSyncLambdaInvokeRole.Arn
+      ServiceRoleArn: !GetAtt GeneratePlayerResetCodeFunctionInvokeRole.Arn
 
   GeneratePlayerResetCodeFunction:
     Type: AWS::Serverless::Function
@@ -48,7 +48,7 @@ Resources:
       MemorySize: 128
       Timeout: 100
       FunctionName: !Sub ${ProjectName}-request-reset-player-password
-      Description: Waddlefy AppSync Scheme
+      Description: Waddlefy Lambda Generate Player Reset Code
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref PlayerTableName
@@ -75,7 +75,7 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${GeneratePlayerResetCodeFunction}
       RetentionInDays: 3
 
-  AppSyncLambdaInvokeRole:
+  GeneratePlayerResetCodeFunctionInvokeRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:

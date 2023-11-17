@@ -5,6 +5,8 @@ Description: Waddlefy Lambda DataClean
 Parameters:
   ProjectName:
     Type: String
+  UserTableName:
+    Type: String
   SessionTableName:
     Type: String
   SessionDataTableName:
@@ -30,6 +32,8 @@ Resources:
       Description: Waddlefy Data Clean
       Policies:
         - DynamoDBCrudPolicy:
+            TableName: !Ref UserTableName
+        - DynamoDBCrudPolicy:
             TableName: !Ref SessionTableName
         - DynamoDBCrudPolicy:
             TableName: !Ref SessionDataTableName
@@ -39,6 +43,7 @@ Resources:
             TableName: !Ref DashboardTableName
       Environment:
         Variables:
+          USER_TABLE_NAME: !Ref UserTableName
           SESSION_TABLE_NAME: !Ref SessionTableName
           SESSION_DATA_TABLE_NAME: !Ref SessionDataTableName
           PLAYER_TABLE_NAME: !Ref PlayerTableName
