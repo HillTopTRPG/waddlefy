@@ -116,21 +116,6 @@
           @click="selectPlayer(player.id)"
         />
       </template>
-
-      <v-divider class="mt-1" />
-      <user-nav-item
-        title="セッションの選択"
-        subtitle="主催者専用"
-        v-if="isUserControl"
-        :rail="rail"
-        icon="home-switch"
-        :toggle="false"
-        class="mx-1 mt-1 my-0"
-        style=""
-        color="primary"
-        :active="firstRail"
-        @click="emits('update:first-rail', !firstRail)"
-      />
     </v-list>
 
     <nav-dialog
@@ -217,6 +202,20 @@
           :active="dialog === 'share'"
           @click="dialog = dialog === 'share' ? '' : 'share'"
           v-if="isUserControl && graphQlStore?.state.session?.sessionType !== 'init'"
+        />
+
+        <user-nav-item
+          title="セッションの選択"
+          subtitle="主催者専用"
+          v-if="isUserControl"
+          :rail="rail"
+          icon="home-switch"
+          :toggle="false"
+          class="mx-1 mt-1 my-0"
+          style=""
+          color="primary"
+          :active="firstRail"
+          @click="emits('update:first-rail', !firstRail)"
         />
 
         <user-nav-item
