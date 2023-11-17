@@ -48,7 +48,7 @@ Resources:
     Type: AWS::AppSync::FunctionConfiguration
     Properties:
       ApiId: !Ref ApiId
-      Name: update_player_by_sign_in_function
+      Name: update_player_by_first_sign_in_function
       DataSourceName: !Ref PlayerTableDataSourceName
       FunctionVersion: 2018-05-29
       RequestMappingTemplate: |
