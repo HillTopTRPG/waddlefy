@@ -104,6 +104,7 @@ export const handler = async event => {
         if (userData) {
           isAuthorized = true
           id = userData.id
+          admitFields.push('Query.directSessionAccess')
           admitFields.push('Mutation.addSession')
           admitFields.push('Mutation.addDashboard')
           admitFields.push('Mutation.addPlayerByUser')
@@ -115,7 +116,8 @@ export const handler = async event => {
           admitFields.push('Mutation.deleteSession')
           admitFields.push('Mutation.deletePlayer')
           admitFields.push('Mutation.deleteSessionData')
-          admitFields.push('Query.directSessionAccess')
+          admitFields.push('Mutation.updatePlayerName')
+          admitFields.push('Mutation.updatePlayerIcon')
         }
       } else if (split[0] === 'p') {
         // Player

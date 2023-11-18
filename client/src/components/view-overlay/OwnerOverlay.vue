@@ -13,6 +13,7 @@
         <v-list-item>
           <natural-text-field
             label="あなたの名前"
+            :editable="Boolean(graphQlStore?.state.user?.token)"
             :value="graphQlStore?.state.user?.name || ''"
             @submit="v => graphQlStore?.updateUserName(v)"
           />

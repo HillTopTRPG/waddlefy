@@ -91,7 +91,7 @@
       <!-- 主催者 -->
       <v-list-subheader class="pa-0 ma-0">主催者</v-list-subheader>
       <user-nav-item
-        :title="graphQlStore?.state.user?.name || ''"
+        :title="`${graphQlStore?.state.user?.name || ''}${graphQlStore?.state.user?.token ? ' (あなた)' : ''}`"
         :rail="rail"
         :icon-token="graphQlStore?.state.user!.iconToken"
         :toggle="true"
@@ -102,12 +102,12 @@
       <v-divider class="mt-1" />
 
       <!-- 参加者 -->
-      <v-list-subheader class="pa-0 ma-0"
-        >参加者{{ rail ? '' : `: ${graphQlStore?.state.players.length || 0}人` }}</v-list-subheader
-      >
+      <v-list-subheader class="pa-0 ma-0">{{
+        rail ? '参加者' : `参加者: ${graphQlStore?.state.players.length || 0}人`
+      }}</v-list-subheader>
       <template v-for="player in graphQlStore?.state.players" :key="player.id">
         <user-nav-item
-          :title="player.name || ''"
+          :title="`${player.name || ''}${graphQlStore?.state.player?.id === player.id ? ' (あなた)' : ''}`"
           :rail="rail"
           :icon-token="player.iconToken"
           :toggle="true"
