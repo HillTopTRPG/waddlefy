@@ -66,6 +66,7 @@ const ALL_OPERATIONS = [
   'Mutation.deleteSession',
   'Mutation.deletePlayer',
   'Mutation.deleteSessionData',
+  'Mutation.notify',
   'Query.checkDuplicateUserId',
   'Query.directSessionAccess',
   'Query.getSessionPlayer',
@@ -135,13 +136,14 @@ export const handler = async event => {
           isAuthorized = true
           id = sessionData.id
           admitFields.push('Mutation.addPlayerByPlayer')
+          admitFields.push('Mutation.notify')
           admitFields.push('Mutation.playerFirstSignIn')
           admitFields.push('Mutation.playerSignIn')
           admitFields.push('Mutation.resetPlayerPassword')
-          admitFields.push('Query.getSessionPlayer')
-          admitFields.push('Query.directDashboardAccess')
           admitFields.push('Mutation.addSessionData')
           admitFields.push('Mutation.updateSessionData')
+          admitFields.push('Query.getSessionPlayer')
+          admitFields.push('Query.directDashboardAccess')
         }
       }
       if (split[0] === 'si') {
@@ -151,6 +153,7 @@ export const handler = async event => {
           isAuthorized = true
           id = sessionData.id
           admitFields.push('Mutation.addPlayerByPlayer')
+          admitFields.push('Mutation.notify')
           admitFields.push('Query.getSessionPlayers')
         }
       }

@@ -56,6 +56,10 @@ type Mutation {
   deletePlayer(input: DeletePlayerInput): DeletedId
   # セッションデータ削除
   deleteSessionData(input: DeleteSessionDataInput): DeletedId
+
+  # 通知
+
+  notify(input: NotifyInput): NotifyOutput
 }
 
 type Subscription {
@@ -86,6 +90,10 @@ type Subscription {
   @aws_subscribe(mutations: ["deletePlayer"])
   onDeleteSessionData(sessionId: String!): DeletedId
   @aws_subscribe(mutations: ["deleteSessionData"])
+
+  #通知
+  onNotify(sessionId: String!): NotifyOutput
+  @aws_subscribe(mutations: ["notify"])
 }
 
 type Query {
@@ -243,6 +251,7 @@ type PlayerForPlayer {
   id: ID!
   sessionId: String!
   name: String!
+  status: String!
   iconToken: String!
   token: String!
   secret: String!
@@ -285,6 +294,20 @@ type UpdatedDashboard {
 type DeletedId {
   id: ID!
   sessionId: String!
+}
+
+input NotifyInput {
+  sessionId: String!
+  from: String!
+  type: String!
+  data: String! #json
+}
+
+type NotifyOutput {
+  sessionId: String!
+  from: String!
+  type: String!
+  data: String! #json
 }
 
 type CheckResult {

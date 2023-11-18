@@ -315,6 +315,15 @@ Resources:
         ApiId: !Ref ApiId
         PlayerTableDataSourceName: !GetAtt PlayerTableDataSource.Name
 
+  # mutation notify
+  MutationNotifyStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: mutation/notify.template.yaml
+      Parameters:
+        ApiId: !Ref ApiId
+        UserTableDataSourceName: !GetAtt UserTableDataSource.Name
+
   # query directPlayerAccess
   QueryDirectPlayerAccess:
     Type: AWS::Serverless::Application

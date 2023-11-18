@@ -21,6 +21,7 @@ import { Observable } from '@apollo/client'
 import { ApolloClient, ApolloLink, FetchResult, InMemoryCache, NormalizedCacheObject } from '@apollo/client/core'
 import { AuthOptions, createAuthLink } from 'aws-appsync-auth-link'
 import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link'
+import { omit } from 'lodash'
 import { InjectionKey, reactive, watch } from 'vue'
 import { Router } from 'vue-router'
 import { uuid } from 'vue-uuid'
@@ -144,6 +145,7 @@ export async function playerSignUp(
   playerPassword: string,
   router: Router
 ): Promise<void> {
+  console.log('send Mutations.addPlayerByPlayer')
   const result = await appSyncClient.mutate<MutationResult.AddPlayerByPlayer>({
     mutation: Mutations.addPlayerByPlayer,
     variables: { playerName, playerPassword }
@@ -151,8 +153,15 @@ export async function playerSignUp(
   console.log(JSON.stringify(result.data, null, 2))
   const data = result.data?.addPlayerByPlayer
   if (!data) return
-  const { token, secret } = data
+  const { id, token, secret, sessionId } = data
+  const player = JSON.stringify(omit(data, 'token', 'secret', 'session'))
   localStorage.setItem(token, JSON.stringify({ secret }))
+
+  console.log('send Mutations.notify')
+  await appSyncClient.mutate<MutationResult.Notify>({
+    mutation: Mutations.notify,
+    variables: { sessionId, from: id, type: 'add-player', data: player }
+  })
 
   router.push({ name: 'PlayerMain0', params: { playerToken: data.token } }).then()
 }
@@ -325,6 +334,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       }
       case 'mutation addSessionData':
       case 'mutation updateSessionData':
+      case 'mutation notify':
       case 'query directDashboardAccess':
         authorize = `s/${state.session?.token || ''}`
         break
@@ -379,6 +389,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         onDeletePlayerSubscription(sessionId)
         onDeleteSessionDataSubscription(sessionId)
         onDeleteDashboardSubscription(sessionId)
+        onNotifySubscription(sessionId)
       },
       { immediate: true }
     )
@@ -921,6 +932,20 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
+  async function sendNotify(type: string, data: any) {
+    if (!appSyncClient) return
+
+    const from = state.user?.token ? 'user' : state.player?.id || ''
+
+    // TODO
+
+    operation = 'mutation notify'
+    await appSyncClient.mutate<MutationResult.Notify>({
+      mutation: Mutations.notify,
+      variables: { sessionId: state.session?.id || '', from, type, data: JSON.stringify(data) }
+    })
+  }
+
   async function addSessionDataHelper(type: string, data: string) {
     if (!appSyncClient) return
 
@@ -1389,6 +1414,38 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
+  function onNotifySubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnDeleteDashboard>> {
+    if (!appSyncClient) return
+    const subscriber = appSyncClient.subscribe<SubscriptionResult.OnNotify>({
+      query: Subscriptions.onNotify,
+      variables: { sessionId },
+      fetchPolicy: 'network-only'
+    })
+    subscriber.subscribe({
+      next(value: FetchResult<SubscriptionResult.OnNotify>) {
+        console.log(JSON.stringify(value.data, null, 2))
+        const data = value.data?.onNotify
+        if (!data || state.session?.id !== sessionId) return
+        if (data.from === 'user' && state.user?.token) return
+        if (data.from === state.player?.id) return
+        const type = data.type
+        const contents = JSON.parse(data.data)
+        if (type === 'notification') {
+          const { text, icon, color } = contents
+          addNotification(text, icon, color)
+        } else if (type === 'add-player') {
+          console.log(JSON.stringify(contents, null, 2))
+          state.players.push(contents)
+          addNotification(`${contents.name}が参加しました。`, 'mdi-account', 'lime-lighten-4')
+        }
+      },
+      error(errorValue: any) {
+        console.error(errorValue)
+      }
+    })
+    return subscriber
+  }
+
   function addNotification(text: string, icon: string, color: string) {
     state.notifications.unshift({
       id: uuid.v4(),
@@ -1425,6 +1482,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     changeDashboard,
     directDashboardAccess,
     addPlayerByUser,
+    sendNotify,
     generatePlayerResetCode,
     updateUserName,
     updateUserIcon,

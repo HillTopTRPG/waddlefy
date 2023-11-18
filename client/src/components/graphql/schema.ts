@@ -150,6 +150,17 @@ mutation AddSessionData($sessionId: String!, $type: String!, $data: String!) {
 }
 `)
 
+const notify = gql(`
+mutation Notify($sessionId: String!, $from: String!, $type: String!, $data: String!) {
+  notify(input: {sessionId: $sessionId, from: $from, type: $type, data: $data}) {
+    sessionId
+    from
+    type
+    data
+  }
+}
+`)
+
 const addPlayerByUser = gql(`
 mutation AddPlayerByUser($sessionId: String!, $playerName: String!) {
   addPlayerByUser(input: {sessionId: $sessionId, name: $playerName}) {
@@ -168,6 +179,7 @@ mutation AddPlayerByPlayer($playerName: String!, $playerPassword: String!) {
     id
     sessionId
     name
+    status
     iconToken
     token
     secret
@@ -472,6 +484,9 @@ export namespace MutationResult {
   export type AddSessionData = {
     addSessionData: SessionData
   }
+  export type Notify = {
+    notify: NotifyData
+  }
   export type AddPlayerByUser = {
     addPlayerByUser: AbstractPlayer
   }
@@ -718,7 +733,9 @@ export type User = {
 
 type PlayerForPlayer = {
   id: string
+  sessionId: string
   name: string
+  status: string
   iconToken: string
   token: string
   secret: string
@@ -775,6 +792,13 @@ export type SessionData<T> = {
   type: string
   sessionId: string
   data: T
+}
+
+export type NotifyData = {
+  sessionId: string
+  from: 'user' | string
+  type: string
+  data: any
 }
 
 export type Session = {
@@ -923,6 +947,17 @@ subscription OnDeleteDashboard($sessionId: String!) {
 }
 `)
 
+const onNotify = gql(`
+subscription OnNotify($sessionId: String!) {
+  onNotify(sessionId: $sessionId) {
+    sessionId
+    from
+    type
+    data
+  }
+}
+`)
+
 const onDeletePlayer = gql(`
 subscription OnDeletePlayer($sessionId: String!) {
   onDeletePlayer(sessionId: $sessionId) {
@@ -967,6 +1002,9 @@ export namespace SubscriptionResult {
   export type OnDeleteDashboard = {
     onDeleteDashboard: { id: string }
   }
+  export type OnNotify = {
+    onNotify: NotifyData
+  }
   export type OnDeletePlayer = {
     onDeletePlayer: { id: string }
   }
@@ -981,6 +1019,7 @@ export const Mutations = {
   addSession,
   addDashboard,
   addSessionData,
+  notify,
   addPlayerByUser,
   addPlayerByPlayer,
   playerFirstSignIn,
@@ -1016,6 +1055,7 @@ export const Subscriptions = {
   onDeletePlayer,
   onDeleteSessionData,
   onDeleteDashboard,
+  onNotify,
   onUpdateUser,
   onUpdateSession,
   onUpdateDashboard,
