@@ -111,19 +111,26 @@ const targetValues = ref<TargetValueCalcResult[] | null>(null)
 
 function changeHandler(notifyParent: boolean = false) {
   if (!tokugi.value) return
-  targetValues.value = calcTargetValue(props.selectSkill, tokugi.value)
   if (notifyParent) emits('update:info', tokugi.value)
+}
+
+function updateTargetValue() {
+  targetValues.value = calcTargetValue(props.selectSkill, tokugi.value)
 }
 
 watch(
   () => props.selectSkill,
-  () => changeHandler()
+  () => {
+    changeHandler()
+    updateTargetValue()
+  }
 )
 
 watch(
   () => props.info,
   () => {
     tokugi.value = clone(props.info)
+    updateTargetValue()
   },
   { deep: true }
 )
