@@ -119,7 +119,12 @@
           :text-rows="textRows"
         />
       </v-window-item>
-      <v-window-item value="correlations" class="h-100 pa-2" :style="`height: ${(textRows + 2) * 24 + 20}px`" v-if="handout">
+      <v-window-item
+        value="correlations"
+        class="h-100 pa-2"
+        :style="`height: ${(textRows + 2) * 24 + 20}px`"
+        v-if="handout"
+      >
         <v-sheet
           class="d-flex flex-column overflow-y-auto mb-2"
           style="gap: 0.3rem"

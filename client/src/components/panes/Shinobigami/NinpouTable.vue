@@ -31,11 +31,7 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <td
-          class="target"
-          :class="arts.targetSkill === selectSkill ? 'selected' : ''"
-          @click="emits('click-skill', arts.targetSkill)"
-        >
+        <td class="target" :class="targetClass(arts.targetSkill)" @click="onClickSkill(arts.targetSkill)">
           {{ arts.targetSkill }}
         </td>
         <td class="range">{{ arts.range }}</td>
@@ -46,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { NinjaArts } from '@/components/panes/Shinobigami/shinobigami'
+import { NinjaArts, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
@@ -69,6 +65,26 @@ function getArtsIcon(arts: NinjaArts) {
       return 'mdi-meditation'
   }
   return ''
+}
+
+function targetClass(skill: string): string {
+  const classes: string[] = []
+  if (skill === props.selectSkill) {
+    classes.push('selected')
+  }
+  if (isIncludeSkills(skill)) {
+    classes.push('enable')
+  }
+  return classes.join(' ')
+}
+
+function onClickSkill(skill: string): void {
+  if (!isIncludeSkills(skill)) return
+  emits('click-skill', skill)
+}
+
+function isIncludeSkills(skill: string): boolean {
+  return SkillTable.some(t => t.some(s => s === skill))
 }
 </script>
 
@@ -112,7 +128,7 @@ function getArtsIcon(arts: NinjaArts) {
       cursor: pointer;
     }
 
-    &.target {
+    &.target.enable {
       text-decoration: underline;
       cursor: pointer;
     }

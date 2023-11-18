@@ -15,11 +15,7 @@
             </template>
             <special-arts-card :arts="arts" />
           </v-menu>
-          <td
-            class="target"
-            @click="emits('click-skill', arts.skill)"
-            :class="arts.skill === selectSkill ? 'selected' : ''"
-          >
+          <td class="target" :class="targetClass(arts.skill)" @click="onClickSkill(arts.skill)">
             {{ arts.skill }}
           </td>
         </template>
@@ -33,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { SpecialArts } from '@/components/panes/Shinobigami/shinobigami'
+import { SkillTable, SpecialArts } from '@/components/panes/Shinobigami/shinobigami'
 import { inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -69,6 +65,26 @@ function isOpen(artsId: string) {
     if (!character) return false
     return character.data.player === props.perspective
   })
+}
+
+function targetClass(skill: string): string {
+  const classes: string[] = []
+  if (skill === props.selectSkill) {
+    classes.push('selected')
+  }
+  if (isIncludeSkills(skill)) {
+    classes.push('enable')
+  }
+  return classes.join(' ')
+}
+
+function onClickSkill(skill: string): void {
+  if (!isIncludeSkills(skill)) return
+  emits('click-skill', skill)
+}
+
+function isIncludeSkills(skill: string) {
+  return SkillTable.some(t => t.some(s => s === skill))
 }
 </script>
 
