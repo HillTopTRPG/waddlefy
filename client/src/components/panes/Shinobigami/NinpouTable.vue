@@ -31,7 +31,11 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <td class="target" @click="emits('click-skill', arts.targetSkill)">
+        <td
+          class="target"
+          :class="arts.targetSkill === selectSkill ? 'selected' : ''"
+          @click="emits('click-skill', arts.targetSkill)"
+        >
           {{ arts.targetSkill }}
         </td>
         <td class="range">{{ arts.range }}</td>
@@ -47,6 +51,7 @@ import { NinjaArts } from '@/components/panes/Shinobigami/shinobigami'
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list?: NinjaArts[]
+  selectSkill: string
   perspective: string
 }>()
 
@@ -110,6 +115,11 @@ function getArtsIcon(arts: NinjaArts) {
     &.target {
       text-decoration: underline;
       cursor: pointer;
+    }
+
+    &.selected {
+      outline: red 3px solid;
+      outline-offset: -1px;
     }
   }
 }

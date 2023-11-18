@@ -25,6 +25,14 @@
             :disabled="isLoading"
           />
         </v-list-item>
+        <v-list-item class="mt-2" v-if="isUserControl && player">
+          <delete-menu-btn
+            :target-name="player.name || ''"
+            type="プレイヤー"
+            :sessionId="graphQlStore?.state.session?.id"
+            @execute="onDeletePlayer()"
+          />
+        </v-list-item>
       </v-list>
     </v-card-text>
   </contents-overlay>
@@ -33,6 +41,7 @@
 <script lang="ts" setup>
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
+import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import NaturalTextField from '@/components/NaturalTextField.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { computed, inject, ref, watch } from 'vue'
@@ -66,5 +75,10 @@ watch(
 function onChangeIcon() {
   isLoading.value = true
   graphQlStore?.updatePlayerIcon(props.modalValue)
+}
+
+async function onDeletePlayer() {
+  await graphQlStore?.deletePlayer(player.value?.id || '')
+  emits('close')
 }
 </script>

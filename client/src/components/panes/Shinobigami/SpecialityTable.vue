@@ -1,24 +1,26 @@
 <template>
   <v-sheet class="overflow-auto">
-    <table class="speciality-table bg-white" :class="info ? '' : 'disabled'">
+    <table class="speciality-table bg-white" :class="`${info ? '' : 'disabled'} ${editing ? 'editing' : ''}`">
       <thead>
         <tr class="bg-grey-darken-4">
           <template v-for="(kind, idx) in SkillKind" :key="idx">
             <th class="blank">
-              <input
+              <v-checkbox
+                density="compact"
+                :hide-details="true"
                 v-if="editing"
-                type="checkbox"
-                :checked="tokugi?.spaceList.some(s => s === idx)"
-                @change="onChangeBlank(idx, $event.target.checked)"
+                :model-value="info?.spaceList.some(s => s === idx)"
+                @update:model-value="v => onChangeBlank(idx, v)"
               />
             </th>
             <th>
               <span class="d-flex flex-row align-center justify-space-around">
-                {{ kind }}
-                <input
-                  type="checkbox"
-                  :checked="tokugi?.damagedColList.some(c => c === idx)"
-                  @change="onChangeDamaged(idx, $event.target.checked)"
+                <span>{{ kind }}</span>
+                <v-checkbox
+                  density="compact"
+                  :hide-details="true"
+                  :model-value="info?.damagedColList.some(c => c === idx)"
+                  @update:model-value="v => onChangeDamaged(idx, v)"
                 />
               </span>
             </th>
@@ -49,14 +51,15 @@
           <td
             colspan="13"
             class="text-left"
-            :class="tokugi?.outRow ? 'bg-black' : 'bg-white'"
+            :class="info?.outRow ? 'bg-black' : 'bg-white'"
             style="height: 1em !important"
           >
-            <input
+            <v-checkbox
               v-if="editing"
-              type="checkbox"
-              :checked="tokugi?.outRow"
-              @change="onChangeOutRow($event.target.checked)"
+              density="compact"
+              :hide-details="true"
+              :model-value="info?.outRow"
+              @update:model-value="onChangeOutRow"
             />
           </td>
         </tr>
@@ -78,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import {
   SkillKind,
@@ -102,7 +106,7 @@ const emits = defineEmits<{
   (e: 'update:editing', editing: boolean)
 }>()
 
-const tokugi = ref<SaikoroFictionTokugi>(props.info)
+const tokugi = ref<SaikoroFictionTokugi>(clone(props.info))
 const targetValues = ref<TargetValueCalcResult[] | null>(null)
 
 function changeHandler(notifyParent: boolean = false) {
@@ -119,7 +123,7 @@ watch(
 watch(
   () => props.info,
   () => {
-    tokugi.value = props.info
+    tokugi.value = clone(props.info)
   },
   { deep: true }
 )
@@ -152,13 +156,13 @@ function cellClass(skill: string): string {
   const result: string[] = []
   if (skill.length > 4) result.push('font-small')
   if (skill === props.selectSkill) result.push('selected')
-  if (tokugi.value?.learnedList.some(lt => lt.name === skill)) result.push('learned')
+  if (props.info?.learnedList.some(lt => lt.name === skill)) result.push('learned')
   return result.join(' ')
 }
 
 function spaceClass(idx: number): string {
   const result: string[] = ['blank']
-  if (tokugi.value?.spaceList.some(s => s === idx)) result.push('filled')
+  if (props.info?.spaceList.some(s => s === idx)) result.push('filled')
   return result.join(' ')
 }
 
@@ -254,6 +258,16 @@ function onChangeOutRow(outRow: boolean) {
     }
   }
 
+  &.editing {
+    th,
+    td {
+      &.blank {
+        min-width: 3.2em;
+        width: 3.2em;
+      }
+    }
+  }
+
   tr:first-child td.filled {
     border-top-color: #666;
   }
@@ -295,5 +309,9 @@ function onChangeOutRow(outRow: boolean) {
       background-color: #fbd045;
     }
   }
+}
+
+:deep(.v-selection-control) {
+  min-height: auto !important;
 }
 </style>

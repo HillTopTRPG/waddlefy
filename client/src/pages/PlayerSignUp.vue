@@ -135,6 +135,7 @@ async function init() {
   appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
 
   if (props.playerId) {
+    console.log('Queries.getSessionPlayer')
     const result = await appSyncClient.mutate<QueryResult.GetSessionPlayer>({
       mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
@@ -145,6 +146,7 @@ async function init() {
       player.value = getSessionPlayer
     }
   } else {
+    console.log('Queries.getSessionPlayers')
     const result = await appSyncClient.mutate<QueryResult.GetSessionPlayers>({
       mutation: Queries.getSessionPlayers
     })

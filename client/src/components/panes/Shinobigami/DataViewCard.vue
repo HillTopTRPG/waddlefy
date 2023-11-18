@@ -58,6 +58,7 @@
           <ninpou-table
             v-if="ninpouView"
             class="mb-2"
+            :select-skill="selectSkill"
             :list="characterSheet.ninjaArtsList"
             :perspective="perspective"
             @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
@@ -65,6 +66,7 @@
           <special-arts-table
             v-if="specialArtsView"
             class="mb-2"
+            :select-skill="selectSkill"
             :owner-id="handoutId"
             :list="characterSheet.specialArtsList"
             :perspective="perspective"

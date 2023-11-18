@@ -90,6 +90,7 @@ export async function userSignIn(
   graphql: string,
   region: string
 ): Promise<void> {
+  console.log('Mutations.userSignIn')
   const result = await appSyncClient.mutate<MutationResult.UserSignIn>({
     mutation: Mutations.userSignIn,
     variables: { userId, userPassword }
@@ -120,6 +121,7 @@ export async function userSignUp(
   userName: string,
   userPassword: string
 ): Promise<void> {
+  console.log('Mutations.userSignUp')
   const result = await appSyncClient.mutate<MutationResult.UserSignUp>({
     mutation: Mutations.userSignUp,
     variables: {
@@ -145,7 +147,7 @@ export async function playerSignUp(
   playerPassword: string,
   router: Router
 ): Promise<void> {
-  console.log('send Mutations.addPlayerByPlayer')
+  console.log('Mutations.addPlayerByPlayer')
   const result = await appSyncClient.mutate<MutationResult.AddPlayerByPlayer>({
     mutation: Mutations.addPlayerByPlayer,
     variables: { playerName, playerPassword }
@@ -157,7 +159,7 @@ export async function playerSignUp(
   const player = JSON.stringify(omit(data, 'token', 'secret', 'session'))
   localStorage.setItem(token, JSON.stringify({ secret }))
 
-  console.log('send Mutations.notify')
+  console.log('Mutations.notify')
   await appSyncClient.mutate<MutationResult.Notify>({
     mutation: Mutations.notify,
     variables: { sessionId, from: id, type: 'add-player', data: player }
@@ -172,6 +174,7 @@ export async function playerFirstSignIn(
   playerPassword: string,
   router: Router
 ): Promise<void> {
+  console.log('Mutations.playerFirstSignIn')
   const result = await appSyncClient.mutate<MutationResult.PlayerFirstSignIn>({
     mutation: Mutations.playerFirstSignIn,
     variables: { playerId, playerPassword }
@@ -190,6 +193,7 @@ export async function playerSignIn(
   playerPassword: string,
   router: Router
 ): Promise<void> {
+  console.log('Mutations.playerSignIn')
   const result = await appSyncClient.mutate<MutationResult.PlayerSignIn>({
     mutation: Mutations.playerSignIn,
     variables: { playerId, playerPassword }
@@ -209,6 +213,7 @@ export async function resetPlayerPassword(
   playerPassword: string,
   router: Router
 ): Promise<void> {
+  console.log('Mutations.resetPlayerPassword')
   const result = await appSyncClient.mutate<MutationResult.ResetPlayerPassword>({
     mutation: Mutations.resetPlayerPassword,
     variables: { playerId, resetCode, playerPassword }
@@ -228,6 +233,7 @@ async function callAddSession(
   callback: (data: Session) => void
 ): Promise<void> {
   if (!appSyncClient) return
+  console.log('Mutations.addSession')
   const result = await appSyncClient.mutate<MutationResult.AddSession>({
     mutation: Mutations.addSession,
     variables: { name, sessionType }
@@ -421,6 +427,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function addDashboard(dashboardName: string, layout: Layout, option: DashboardOption): Promise<void> {
     if (!appSyncClient) return
+    console.log('Mutations.addDashboard')
     operation = 'mutation addDashboard'
     const result = await appSyncClient.mutate<MutationResult.AddDashboard>({
       mutation: Mutations.addDashboard,
@@ -438,6 +445,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateUserName(userName: string) {
     if (!appSyncClient) return
     if (!state.user?.token) return
+    console.log('Mutations.updateUserName')
     operation = 'mutation updateUserName'
     const result = await appSyncClient.mutate<MutationResult.UpdateUserName>({
       mutation: Mutations.updateUserName,
@@ -450,6 +458,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateUserIcon() {
     if (!appSyncClient) return
     if (!state.user?.token) return
+    console.log('Mutations.updateUserIcon')
     operation = 'mutation updateUserIcon'
     const result = await appSyncClient.mutate<MutationResult.UpdateUserIcon>({
       mutation: Mutations.updateUserIcon,
@@ -462,6 +471,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateSession(name: string, sessionType: string, defaultDashboardId: string) {
     if (!appSyncClient) return
     if (!state.user?.token) return
+    console.log('Mutations.updateSession')
     operation = 'mutation updateSession'
     const result = await appSyncClient.mutate<MutationResult.UpdateSession>({
       mutation: Mutations.updateSession,
@@ -478,6 +488,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function updateSessionDataHelper(id: string, data: string) {
     if (!appSyncClient) return
+    console.log('Mutations.updateSessionData')
     operation = 'mutation updateSessionData'
     const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
       mutation: Mutations.updateSessionData,
@@ -639,6 +650,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateDashboardHelper(name?: string, layout?: Layout, option?: DashboardOption) {
     if (!appSyncClient) return
     if (!state.user?.token) return
+    console.log('Mutations.updateDashboard')
     operation = 'mutation updateDashboard'
     const result = await appSyncClient.mutate<MutationResult.UpdateDashboard>({
       mutation: Mutations.updateDashboard,
@@ -668,6 +680,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function updatePlayerName(playerId: string, playerName: string) {
     if (!appSyncClient) return
+    console.log('Mutations.updatePlayerName')
     operation = 'mutation updatePlayerName'
     const result = await appSyncClient.mutate<MutationResult.UpdatePlayerName>({
       mutation: Mutations.updatePlayerName,
@@ -679,6 +692,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function updatePlayerIcon(playerId: string) {
     if (!appSyncClient) return
+    console.log('Mutations.updatePlayerIcon')
     operation = 'mutation updatePlayerIcon'
     console.log('Mutations.updatePlayerIcon')
     const result = await appSyncClient.mutate<MutationResult.UpdatePlayerIcon>({
@@ -692,6 +706,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function deleteSession(sessionId: string) {
     if (!appSyncClient) return
     if (state.sessions.length === 1) return
+    console.log('Mutations.deleteSession')
     operation = 'mutation deleteSession'
     const result = await appSyncClient.mutate<MutationResult.DeleteSession>({
       mutation: Mutations.deleteSession,
@@ -709,6 +724,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function deleteDashboard(sessionId: string, dashboardId: string) {
     if (!appSyncClient) return
     if (state.dashboards.length === 1) return
+    console.log('Mutations.deleteDashboard')
     operation = 'mutation deleteDashboard'
     const result = await appSyncClient.mutate<MutationResult.DeleteDashboard>({
       mutation: Mutations.deleteDashboard,
@@ -720,6 +736,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function deletePlayer(playerId: string) {
     if (!appSyncClient) return
+    console.log('Mutations.deletePlayer')
     operation = 'mutation deletePlayer'
     await appSyncClient.mutate<MutationResult.DeletePlayer>({
       mutation: Mutations.deletePlayer,
@@ -730,6 +747,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function deleteSessionData(sessionDataId: string) {
     if (!appSyncClient) return
+    console.log('Mutations.deleteSessionData')
     operation = 'mutation deleteSessionData'
     await appSyncClient.mutate<MutationResult.DeleteSessionData>({
       mutation: Mutations.deleteSessionData,
@@ -744,6 +762,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     operation = 'query directSessionAccess'
     let data: SessionForUser | undefined = undefined
 
+    console.log('Queries.directSessionAccess')
     async function requestDirectSessionAccess(useSessionId: string) {
       const result = await appSyncClient.mutate<QueryResult.DirectSessionAccess>({
         mutation: Queries.directSessionAccess,
@@ -834,6 +853,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function directDashboardAccess(dashboardId: string) {
     if (!appSyncClient) return
+    console.log('Queries.directDashboardAccess')
     operation = 'query directDashboardAccess'
     const result = await appSyncClient.mutate<QueryResult.DirectDashboardAccess>({
       mutation: Queries.directDashboardAccess,
@@ -856,13 +876,22 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function directPlayerAccess() {
     if (!appSyncClient) return
+    console.log('Queries.directPlayerAccess')
     operation = 'query directPlayerAccess'
-    const result = await appSyncClient.mutate<QueryResult.DirectPlayerAccess>({
-      mutation: Queries.directPlayerAccess
-    })
-    console.log(JSON.stringify(result.data, null, 2))
-    const data = result.data?.directPlayerAccess
+    let data: PlayerForPlayer | undefined = undefined
+
+    try {
+      const result = await appSyncClient.mutate<QueryResult.DirectPlayerAccess>({
+        mutation: Queries.directPlayerAccess
+      })
+      console.log(JSON.stringify(result.data, null, 2))
+      data = result.data?.directPlayerAccess
+    } catch (err) {
+      await router.replace({ name: 'Home' })
+    }
+
     if (!data) return
+
     const { id, token, iconToken, name, session } = data
     state.user = {
       id: session.user.id,
@@ -915,6 +944,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function generatePlayerResetCode(playerId: string): Promise<string | null> {
     if (!appSyncClient) return null
     try {
+      console.log('Mutations.generatePlayerResetCode')
       operation = 'mutation generatePlayerResetCode'
       const result = await appSyncClient.mutate<MutationResult.GeneratePlayerResetCode>({
         mutation: Mutations.generatePlayerResetCode,
@@ -934,6 +964,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     const sessionId = state.session?.id || ''
 
+    console.log('Mutations.addPlayerByUser')
     operation = 'mutation addPlayerByUser'
     await appSyncClient.mutate<MutationResult.AddPlayerByUser>({
       mutation: Mutations.addPlayerByUser,
@@ -949,6 +980,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     // TODO
 
+    console.log('Mutations.notify')
     operation = 'mutation notify'
     await appSyncClient.mutate<MutationResult.Notify>({
       mutation: Mutations.notify,
@@ -959,6 +991,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function addSessionDataHelper(type: string, data: string) {
     if (!appSyncClient) return
 
+    console.log('Mutations.addSessionData')
     operation = 'mutation addSessionData'
     await appSyncClient.mutate<MutationResult.AddSessionData>({
       mutation: Mutations.addSessionData,

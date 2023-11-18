@@ -15,7 +15,13 @@
             </template>
             <special-arts-card :arts="arts" />
           </v-menu>
-          <td class="target" @click="emits('click-skill', arts.skill)">{{ arts.skill }}</td>
+          <td
+            class="target"
+            @click="emits('click-skill', arts.skill)"
+            :class="arts.skill === selectSkill ? 'selected' : ''"
+          >
+            {{ arts.skill }}
+          </td>
         </template>
         <template v-else>
           <td style="padding-right: 5px !important">情報なし</td>
@@ -38,6 +44,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   ownerId: string
   list?: SpecialArts[]
+  selectSkill: string
   perspective: string
 }>()
 
@@ -105,6 +112,11 @@ function isOpen(artsId: string) {
     &.target {
       text-decoration: underline;
       cursor: pointer;
+    }
+
+    &.selected {
+      outline: red 3px solid;
+      outline-offset: -1px;
     }
   }
 }

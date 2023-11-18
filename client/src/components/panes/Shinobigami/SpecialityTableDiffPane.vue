@@ -7,7 +7,7 @@
             <v-icon icon="mdi-triangle-small-down" />
           </template>
         </v-select>
-        <v-select prefix="忍法表示: " :items="['なし', 'あり']" style="max-width: 8em" v-model="viewNinpou">
+        <v-select prefix="忍法・奥義表示: " :items="['なし', 'あり']" style="max-width: 10em" v-model="viewNinpou">
           <template #prepend-inner>
             <v-icon icon="mdi-triangle-small-down" />
           </template>
@@ -21,9 +21,9 @@
       <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
         <template v-for="i in [...Array(nums)].map((_, j) => j)" :key="i">
           <v-sheet class="pa-1 overflow-auto align-start">
-            <v-select :prefix="`キャラクター${i + 1}: `" v-model="selectCharacters[i]" />
+            <v-select :prefix="`ハンドアウト: `" v-model="selectCharacters[i]" />
             <speciality-table
-              :info="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.skill || undefined"
+              :info="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.skill || undefined"
               :perspective="perspective"
               v-model:select-skill="selectSkill"
               @update:info="v => updateInfo(selectCharacters[i], v)"
@@ -32,13 +32,20 @@
             />
             <ninpou-table
               v-if="viewNinpou === 'あり'"
+              class="mt-1"
               :perspective="perspective"
-              :list="characterWraps.find(cw => cw.id === selectCharacters[i])?.character.ninjaArtsList"
-              @click-skill="
-                v => {
-                  selectSkill = v === selectSkill ? '' : v
-                }
-              "
+              :select-skill="selectSkill"
+              :list="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.ninjaArtsList"
+              @click-skill="onClickSkill"
+            />
+            <special-arts-table
+              v-if="viewNinpou === 'あり'"
+              class="mt-1"
+              :owner-id="''"
+              :select-skill="selectSkill"
+              :list="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.specialArtsList"
+              :perspective="perspective"
+              @click-skill="onClickSkill"
             />
           </v-sheet>
         </template>
@@ -68,6 +75,8 @@ import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/gr
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
+import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
+import { ShinobigamiHandout } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const characterWraps = computed<CharacterWrap[]>(() => {
@@ -83,25 +92,58 @@ const props = defineProps<{
   rootLayout: Layout
 }>()
 
+const perspective = ref(graphQlStore?.state.user?.token ? '' : graphQlStore?.state.player?.id || '')
+
 // eslint-disable-next-line unused-imports/no-unused-vars
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
-const perspective = ref('')
+type Info = {
+  handoutId: string
+  handout: ShinobigamiHandout
+  characterId: string
+  character: CharacterWrap
+  name: string
+}
+
+const list = computed((): Info[] => {
+  if (!graphQlStore) return [] as Info[]
+  return graphQlStore.state.sessionDataList
+    .map(sd => {
+      if (sd.type !== 'shinobigami-handout') return null
+      const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+      if (character && (graphQlStore.state.user?.token || sd.data.published)) {
+        const characterName = character?.data.character.characterName
+        const player = graphQlStore.state.players.find(p => p.id === character.data.player)
+        const playerName = player ? `(${player.name})` : ''
+        const name = `${sd.data.name}:${characterName}${playerName}`
+
+        return {
+          handoutId: sd.id,
+          handout: sd.data,
+          characterId: character.id,
+          character: character.data,
+          name
+        }
+      }
+      return null
+    })
+    .filter((info): info is Info => Boolean(info))
+})
 
 const vSelectDefaults = {
   density: 'compact',
   variant: 'plain',
   hideDetails: true,
-  itemValue: 'id',
-  itemTitle: 'character.characterName',
+  itemValue: 'handoutId',
+  itemTitle: 'name',
   singleLine: true,
   active: true,
   class: 'character-select',
   placeholder: '未選択',
-  items: characterWraps.value
+  items: list.value
 }
 
 const selectCharacters = ref<(string | null)[]>([null, null])
@@ -115,17 +157,23 @@ const viewNinpou = ref('なし')
 
 const selectSkill = ref('')
 
-async function updateInfo(id: string, info: SaikoroFictionTokugi) {
+async function updateInfo(id: string, tokugi: SaikoroFictionTokugi) {
   if (!graphQlStore) return
-  const characterSheet = clone(characterWraps.value.find(cw => cw.id === id))
+  const info = list.value.find(cw => cw.handoutId === id)
+  if (!info) return
+  const characterSheet = clone(info.character)
   if (!characterSheet) return
-  characterSheet.skill = info
+  characterSheet.character.skill = tokugi
   await graphQlStore.updateShinobigamiCharacter(
-    id,
+    info.characterId,
     characterSheet.player,
     characterSheet.viewPass,
     characterSheet.character
   )
+}
+
+function onClickSkill(skill: string) {
+  selectSkill.value = skill === selectSkill.value ? '' : skill
 }
 </script>
 
