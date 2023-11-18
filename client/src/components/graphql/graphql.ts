@@ -325,11 +325,20 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         authorize = `u/${userToken}/${userSecret || ''}`
         break
       }
-      case 'query directPlayerAccess':
-      case 'mutation updatePlayerName':
-      case 'mutation updatePlayerIcon': {
+      case 'query directPlayerAccess': {
         const playerSecret = JSON.parse(localStorage.getItem(playerToken) || '{}')?.secret
         authorize = `p/${playerToken}/${playerSecret || ''}`
+        break
+      }
+      case 'mutation updatePlayerName':
+      case 'mutation updatePlayerIcon': {
+        if (state.user?.token) {
+          const userSecret = JSON.parse(localStorage.getItem(userToken) || '{}')?.secret
+          authorize = `u/${userToken}/${userSecret || ''}`
+        } else {
+          const playerSecret = JSON.parse(localStorage.getItem(playerToken) || '{}')?.secret
+          authorize = `p/${playerToken}/${playerSecret || ''}`
+        }
         break
       }
       case 'mutation addSessionData':
@@ -432,7 +441,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     operation = 'mutation updateUserName'
     const result = await appSyncClient.mutate<MutationResult.UpdateUserName>({
       mutation: Mutations.updateUserName,
-      variables: { userName }
+      variables: { userId: state.user.id, userName }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
@@ -443,7 +452,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     if (!state.user?.token) return
     operation = 'mutation updateUserIcon'
     const result = await appSyncClient.mutate<MutationResult.UpdateUserIcon>({
-      mutation: Mutations.updateUserIcon
+      mutation: Mutations.updateUserIcon,
+      variables: { userId: state.user.id }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
@@ -656,24 +666,24 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     await updateDashboardHelper(null, null, option)
   }
 
-  async function updatePlayerName(playerName: string) {
+  async function updatePlayerName(playerId: string, playerName: string) {
     if (!appSyncClient) return
-    if (!state.player?.token) return
     operation = 'mutation updatePlayerName'
     const result = await appSyncClient.mutate<MutationResult.UpdatePlayerName>({
       mutation: Mutations.updatePlayerName,
-      variables: { playerName }
+      variables: { playerId, playerName }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
-  async function updatePlayerIcon() {
+  async function updatePlayerIcon(playerId: string) {
     if (!appSyncClient) return
-    if (!state.player?.token) return
     operation = 'mutation updatePlayerIcon'
+    console.log('Mutations.updatePlayerIcon')
     const result = await appSyncClient.mutate<MutationResult.UpdatePlayerIcon>({
-      mutation: Mutations.updatePlayerIcon
+      mutation: Mutations.updatePlayerIcon,
+      variables: { playerId }
     })
     console.log(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される

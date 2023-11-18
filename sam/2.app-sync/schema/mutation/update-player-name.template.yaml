@@ -16,5 +16,5 @@ Resources:
       TypeName: Mutation
       FieldName: updatePlayerName
       DataSourceName: !Ref PlayerTableDataSourceName
-      RequestMappingTemplateS3Location: ../vtl/update-item-name-input-name-where-id-identity-id.vm
+      RequestMappingTemplateS3Location: ../vtl/update-item-name-input-name-where-id-input-id.vm
       ResponseMappingTemplateS3Location: ../vtl/return-result.vm

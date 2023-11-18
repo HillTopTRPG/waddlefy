@@ -35,14 +35,14 @@ type Mutation {
 
   # ユーザー情報更新
   updateUserName(input: NameInput): AbstractUser
-  updateUserIcon: AbstractUser
+  updateUserIcon(input: IdInput): AbstractUser
   # セッション情報更新
   updateSession(input: UpdateSessionInput): UpdatedSession
   # ダッシュボード情報更新
   updateDashboard(input: UpdateDashboardInput): UpdatedDashboard
   # 参加者情報更新
   updatePlayerName(input: NameInput): AbstractPlayer
-  updatePlayerIcon: AbstractPlayer
+  updatePlayerIcon(input: IdInput): AbstractPlayer
   # セッションデータ更新
   updateSessionData(input: UpdateSessionDataInput): SessionData
 
@@ -169,7 +169,12 @@ input AddSessionDataInput {
   data: String!
 }
 
+input IdInput {
+  id: String!
+}
+
 input NameInput {
+  id: String!
   name: String!
 }
 

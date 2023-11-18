@@ -10,7 +10,12 @@
       <v-list class="ma-0 pa-0 bg-transparent">
         <v-list-item>
           <v-card-subtitle class="pa-0">画面名</v-card-subtitle>
-          <natural-text-field label="画面名" :value="dashboard?.name || ''" @submit="v => updateDashboardName(v)" />
+          <natural-text-field
+            label="画面名"
+            :editable="true"
+            :value="dashboard?.name || ''"
+            @submit="v => updateDashboardName(v)"
+          />
         </v-list-item>
         <v-list-item>
           <v-card-subtitle class="pa-0">使える人（主催者はどの画面も必ず使えます）</v-card-subtitle>

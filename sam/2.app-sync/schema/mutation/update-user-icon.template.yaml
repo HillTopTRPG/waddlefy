@@ -16,5 +16,5 @@ Resources:
       TypeName: Mutation
       FieldName: updateUserIcon
       DataSourceName: !Ref UserTableDataSourceName
-      RequestMappingTemplateS3Location: ../vtl/update-item-icon-token-auto-id-where-id-identity-id.vm
+      RequestMappingTemplateS3Location: ../vtl/update-item-icon-token-auto-id-where-id-input-id.vm
       ResponseMappingTemplateS3Location: ../vtl/return-result.vm

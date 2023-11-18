@@ -2,7 +2,7 @@
   "version": "2018-05-29",
   "operation": "UpdateItem",
   "key": {
-    "id" : $util.dynamodb.toDynamoDBJson($ctx.identity.resolverContext.id)
+    "id" : $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
   },
   "update" : {
     "expression" : "SET #iconToken = :iconToken",

@@ -8,10 +8,17 @@
   >
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
-        <v-list-item>
+        <v-list-item v-if="isUserControl || player?.token">
+          <natural-text-field
+            label="名前"
+            :editable="true"
+            :value="player?.name || ''"
+            @submit="v => graphQlStore?.updatePlayerName(player?.id, v)"
+          />
+        </v-list-item>
+        <v-list-item v-if="isUserControl || player?.token">
           <v-btn
             @click="onChangeIcon()"
-            v-if="player?.token"
             variant="outlined"
             text="アイコンを変更する"
             :loading="isLoading"
@@ -26,6 +33,7 @@
 <script lang="ts" setup>
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
+import NaturalTextField from '@/components/NaturalTextField.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { computed, inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -38,6 +46,8 @@ const emits = defineEmits<{
   (e: 'close'): void
 }>()
 
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+
 const player = computed(() => {
   if (!graphQlStore) return null
   if (graphQlStore.state.player?.id === props.modalValue) return graphQlStore.state.player
@@ -46,7 +56,7 @@ const player = computed(() => {
 
 const isLoading = ref(false)
 watch(
-  () => graphQlStore.state.player?.iconToken,
+  () => player.value?.iconToken,
   v => {
     if (!v) return
     isLoading.value = false
@@ -55,6 +65,6 @@ watch(
 
 function onChangeIcon() {
   isLoading.value = true
-  graphQlStore?.updatePlayerIcon()
+  graphQlStore?.updatePlayerIcon(props.modalValue)
 }
 </script>

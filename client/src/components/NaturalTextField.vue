@@ -16,43 +16,49 @@
     @click:append-inner.stop
   >
     <template #append-inner>
-      <v-divider :vertical="true" />
-      <v-defaults-provider
-        :defaults="{
-          VBtn: { stacked: true, variant: 'text', size: 'x-small' }
-        }"
-      >
-        <v-btn
-          v-if="editing"
-          :disabled="!inputValue"
-          prepend-icon="mdi-check-bold"
-          text="決定"
-          class="bg-transparent h-100 px-1"
-          @click.prevent.stop="submit()"
-          @mousedown.prevent.stop
-          @mouseup.prevent.stop
-        />
-        <v-btn
-          v-else
-          prepend-icon="mdi-pencil"
-          text="編集"
-          class="bg-transparent h-100 px-1"
-          @click.prevent.stop="editStart()"
-          @mousedown.prevent.stop
-          @mouseup.prevent.stop
-        />
-      </v-defaults-provider>
+      <template v-if="editable">
+        <v-divider :vertical="true" />
+        <v-defaults-provider :defaults="{ VBtn: { stacked: true, variant: 'text', size: 'x-small' } }">
+          <v-btn
+            v-if="editing"
+            :disabled="!inputValue"
+            prepend-icon="mdi-check-bold"
+            text="決定"
+            class="bg-transparent h-100 px-1"
+            @click.prevent.stop="submit()"
+            @mousedown.prevent.stop
+            @mouseup.prevent.stop
+          />
+          <v-btn
+            v-else
+            prepend-icon="mdi-pencil"
+            text="編集"
+            class="bg-transparent h-100 px-1"
+            @click.prevent.stop="editStart()"
+            @mousedown.prevent.stop
+            @mouseup.prevent.stop
+          />
+        </v-defaults-provider>
+      </template>
     </template>
   </v-text-field>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps<{
   value: string
   label: string
+  editable: boolean
 }>()
+
+watch(
+  () => props.value,
+  v => {
+    inputValue.value = v
+  }
+)
 
 const emits = defineEmits<{
   (e: 'submit', value: string): Promise<void>
@@ -62,6 +68,7 @@ const editing = ref(false)
 const textFieldElm = ref()
 const inputValue = ref(props.value)
 async function submit() {
+  if (inputValue.value === props.value) return
   await emits('submit', inputValue.value)
   editing.value = false
 }

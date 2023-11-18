@@ -340,8 +340,8 @@ mutation ResetPlayerPassword($playerId: String!, $resetCode: String!, $playerPas
 `)
 
 const updateUserName = gql(`
-mutation UpdateUserName($userName: String!) {
-  updateUserName(input: {name: $userName}) {
+mutation UpdateUserName($userId: String!, $userName: String!) {
+  updateUserName(input: {id: $userId, name: $userName}) {
     id
     name
     iconToken
@@ -350,8 +350,8 @@ mutation UpdateUserName($userName: String!) {
 `)
 
 const updateUserIcon = gql(`
-mutation UpdateUserIcon {
-  updateUserIcon {
+mutation UpdateUserIcon($userId: String!) {
+  updateUserIcon(input: { id: $userId }) {
     id
     name
     iconToken
@@ -409,8 +409,8 @@ mutation UpdateSessionData($id: String!, $sessionId: String!, $data: String!) {
 `)
 
 const updatePlayerName = gql(`
-mutation UpdatePlayerName($playerName: String!) {
-  updatePlayerName(input: {name: $playerName}) {
+mutation UpdatePlayerName($playerId: String!, $playerName: String!) {
+  updatePlayerName(input: {id: $playerId, name: $playerName}) {
     id
     sessionId
     name
@@ -421,8 +421,8 @@ mutation UpdatePlayerName($playerName: String!) {
 `)
 
 const updatePlayerIcon = gql(`
-mutation UpdatePlayerIcon {
-  updatePlayerIcon {
+mutation UpdatePlayerIcon($playerId: String!) {
+  updatePlayerIcon(input: { id: $playerId }) {
     id
     sessionId
     name
