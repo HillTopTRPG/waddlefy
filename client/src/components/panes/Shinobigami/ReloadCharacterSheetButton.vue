@@ -10,7 +10,7 @@
     </template>
     <v-card>
       <v-card-text class="d-flex flex-column px-2 pt-2 pb-0" style="gap: 0.5rem">
-        <shinobigami-character-sheet-load-form v-model:url="url" v-model:view-pass="viewPass" ref="form" />
+        <shinobigami-url-form v-model:url="url" v-model:view-pass="viewPass" pass-placeholder="オプション" ref="form" />
         <v-divider />
       </v-card-text>
       <v-defaults-provider
@@ -77,7 +77,7 @@ import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import ShinobigamiCharacterSheetLoadForm from '@/components/panes/Shinobigami/ShinobigamiCharacterSheetLoadForm.vue'
+import ShinobigamiUrlForm from '@/components/panes/Shinobigami/ShinobigamiUrlForm.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{

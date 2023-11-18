@@ -18,6 +18,7 @@
 
         <!-- ハンドアウト -->
         <template v-if="handout">
+          <v-tab text="導入" value="intro" prepend-icon="mdi-message-text-outline" />
           <v-tab text="使命" value="objective" prepend-icon="mdi-bullseye" />
           <v-tab
             text="秘密"
@@ -100,6 +101,19 @@
         </v-sheet>
         <v-divider />
         <div class="text-caption py-1 pl-4" style="opacity: 0.5">編集不可</div>
+      </v-window-item>
+      <v-window-item value="intro">
+        <menu-edit-text-area
+          label="導入"
+          hint="編集不可"
+          :text="handout?.data.intro"
+          icon="mdi-message-text-outline"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="ma-2"
+          :auto-grow="true"
+          :text-rows="textRows"
+        />
       </v-window-item>
       <v-window-item value="objective">
         <menu-edit-text-area

@@ -68,12 +68,6 @@ export type ShinobiGami = {
   skill: SaikoroFictionTokugi // 特技
 }
 
-export type CharacterSecret = {
-  characterId: string
-  text: string
-  shareCharacterIdList: string[]
-}
-
 export type DiffType = {
   op: 'replace' | 'add' | 'delete'
   path: string
@@ -572,12 +566,6 @@ export type ShinobigamiEmotion =
   | 4 // 忠誠
   | 5 // 憧憬
   | 6 // 狂信
-
-export type HandoutRelation = {
-  ownerId: string
-  targetId: string
-  type: 'location' | 'secret' | ShinobigamiEmotion
-}
 
 export type ShinobigamiHandout = {
   name: string

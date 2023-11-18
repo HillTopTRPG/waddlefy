@@ -13,7 +13,17 @@
     </template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
-        <add-shinobigami-character-sheet-menu />
+        <shinobigami-url-form-menu
+          text="キャラクターシート読込"
+          pass-placeholder="オプション"
+          @execute="onLoadCharacterSheet"
+          :tips="[
+            '$b$人物欄$b$は読み込みません。\n後で手動で入力してください。',
+            '$b$忍具$b$は読み込みません。\nメモ欄などを使って管理してください。',
+            '$b$シナリオ情報$b$は読み込みません。\nハンドアウトの追加と紐付けで表現します。',
+            '秘匿情報閲覧パスは$b$奥義$b$の読込に使います。\n$b$忍具$b$は秘匿情報ですが読み込みません。'
+          ]"
+        />
       </v-sheet>
     </template>
     <template #default>
@@ -43,8 +53,9 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { computed, inject, ref } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import AddShinobigamiCharacterSheetMenu from '@/components/panes/Shinobigami/AddShinobigamiCharacterSheetMenu.vue'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
+import ShinobigamiUrlFormMenu from '@/components/panes/Shinobigami/ShinobigamiUrlFormMenu.vue'
+import { ShinobigamiHelper } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
@@ -81,6 +92,14 @@ const emits = defineEmits<{
 }>()
 
 const textRows = ref(3)
+
+async function onLoadCharacterSheet(url: string, password: string) {
+  const helper = new ShinobigamiHelper(url, password)
+  if (helper.isThis()) {
+    const { data } = await helper.getData()
+    await graphQlStore?.addShinobigamiCharacter(data, password)
+  }
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

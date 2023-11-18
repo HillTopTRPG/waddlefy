@@ -18,7 +18,7 @@
       </template>
     </v-text-field>
     <v-text-field
-      placeholder="オプション"
+      :placeholder="passPlaceholder"
       :append-icon="isPasswordType ? 'mdi-eye' : 'mdi-eye-off'"
       :type="isPasswordType ? 'text' : 'password'"
       @click:append="isPasswordType = !isPasswordType"
@@ -38,6 +38,7 @@ import { ref, watch } from 'vue'
 const props = defineProps<{
   url: string
   viewPass: string
+  passPlaceholder: string
 }>()
 
 const emits = defineEmits<{

@@ -135,6 +135,19 @@
             @update="onUpdateHandoutName"
           />
           <menu-edit-text-area
+            :title="`${dataObj.data.name || 'ななし'}の導入の編集`"
+            label="導入"
+            placeholder="未設定"
+            :editable="editable"
+            icon="mdi-message-text-outline"
+            :variant="editable ? 'solo' : 'outlined'"
+            :textarea-class="editable ? '' : 'mt-2'"
+            :text-rows="textRows"
+            :text="dataObj.data.intro"
+            :offset="-textRows * 24 + 18"
+            @update="onUpdateHandoutIntro"
+          />
+          <menu-edit-text-area
             :title="`${dataObj.data.name || 'ななし'}の使命の編集`"
             label="使命"
             placeholder="未設定"
@@ -738,6 +751,21 @@ async function onUpdateHandoutName(name: string) {
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     name,
+    dataObj.value.data.intro,
+    dataObj.value.data.objective,
+    dataObj.value.data.secret,
+    dataObj.value.data.person,
+    dataObj.value.data.published,
+    dataObj.value.data.knowSelfSecret
+  )
+}
+
+async function onUpdateHandoutIntro(intro: string) {
+  if (dataObj.value.data.intro === intro) return
+  await graphQlStore?.updateShinobigamiHandout(
+    dataObj.value.id,
+    dataObj.value.data.name,
+    intro,
     dataObj.value.data.objective,
     dataObj.value.data.secret,
     dataObj.value.data.person,
@@ -751,6 +779,7 @@ async function onUpdateHandoutObjective(objective: string) {
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
+    dataObj.value.data.intro,
     objective,
     dataObj.value.data.secret,
     dataObj.value.data.person,
@@ -764,6 +793,7 @@ async function onUpdateHandoutSecret(secret: string) {
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
+    dataObj.value.data.intro,
     dataObj.value.data.objective,
     secret,
     dataObj.value.data.person,
@@ -777,6 +807,7 @@ async function onUpdateHandoutPerson(person: string) {
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
+    dataObj.value.data.intro,
     dataObj.value.data.objective,
     dataObj.value.data.secret,
     person,
@@ -790,6 +821,7 @@ async function onUpdateHandoutPublished(published: boolean) {
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
+    dataObj.value.data.intro,
     dataObj.value.data.objective,
     dataObj.value.data.secret,
     dataObj.value.data.person,
@@ -803,6 +835,7 @@ async function onUpdateHandoutKnowSelfSecret(knowSelfSecret: boolean) {
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
+    dataObj.value.data.intro,
     dataObj.value.data.objective,
     dataObj.value.data.secret,
     dataObj.value.data.person,

@@ -79,13 +79,6 @@ import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vu
 import { ShinobigamiHandout } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-const characterWraps = computed<CharacterWrap[]>(() => {
-  if (!graphQlStore) return []
-  return graphQlStore.state.sessionDataList
-    .filter(sd => sd.type === 'shinobigami-character' && sd.data?.character)
-    .map(sd => sd.data as CharacterWrap)
-})
-
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   layout: Layout

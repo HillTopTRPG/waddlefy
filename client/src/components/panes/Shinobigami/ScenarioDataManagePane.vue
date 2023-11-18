@@ -28,11 +28,24 @@
     </template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 px-2 pa-2" style="gap: 0.1rem" v-if="!perspective">
+        <shinobigami-url-form-menu
+          text="シナリオシート読込"
+          pass-placeholder="必須"
+          @execute="onLoadScenarioSheet"
+          :tips="[
+            '公開中のシナリオシートを使う場合、閲覧することで秘匿情報閲覧パスがわかります。',
+            '$b$PC$b$と$b$NPC$b$と$b$腹心$b$はWaddlefy上ではハンドアウトの一種として扱います。',
+            '$b$PC$b$の推奨と$b$NPC$b$の概要は読み込みません。\n必要な場合は共有メモを使ってください。',
+            '読み込み後は、$b$エニグマ$b$の偽装と解除条件の追記をお忘れなく！',
+            '$b$プライズ$b$は名前だけ使って読み込みます。\n読込直後は非公開状態です。'
+          ]"
+        />
+        <v-divider :vertical="true" />
         <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
           <v-btn class="text-decoration-underline" @click="onAddData('handout')">ハンドアウト追加</v-btn>
           <v-btn class="text-decoration-underline" @click="onAddData('enigma')">エニグマ追加</v-btn>
-          <v-btn class="text-decoration-underline" @click="onAddData('persona')">ペルソナ追加</v-btn>
           <v-btn class="text-decoration-underline" @click="onAddData('prize')">プライズ追加</v-btn>
+          <v-btn class="text-decoration-underline" @click="onAddData('persona')">ペルソナ追加</v-btn>
         </v-defaults-provider>
       </v-sheet>
     </template>
@@ -44,11 +57,11 @@
         <template v-for="enigma in enigmaList" :key="enigma.id">
           <scenario-data-card mode="edit" :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
         </template>
-        <template v-for="persona in personaList" :key="persona.id">
-          <scenario-data-card mode="edit" :data-id="persona.id" :text-rows="textRows" :perspective="perspective" />
-        </template>
         <template v-for="prize in prizeList" :key="prize.id">
           <scenario-data-card mode="edit" :data-id="prize.id" :text-rows="textRows" :perspective="perspective" />
+        </template>
+        <template v-for="persona in personaList" :key="persona.id">
+          <scenario-data-card mode="edit" :data-id="persona.id" :text-rows="textRows" :perspective="perspective" />
         </template>
       </v-sheet>
     </template>
@@ -73,6 +86,8 @@ import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
+import ShinobigamiUrlFormMenu from '@/components/panes/Shinobigami/ShinobigamiUrlFormMenu.vue'
+import { ShinobigamiScenarioHelper } from '@/components/panes/Shinobigami/shinobigami-scenario'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
@@ -121,6 +136,29 @@ async function onAddData(type: 'handout' | 'enigma' | 'persona' | 'prize'): Prom
   if (type === 'enigma') return graphQlStore?.addShinobigamiEnigma()
   if (type === 'persona') return graphQlStore?.addShinobigamiPersona()
   if (type === 'prize') return graphQlStore?.addShinobigamiPrize()
+}
+
+async function onLoadScenarioSheet(url: string, password: string) {
+  const helper = new ShinobigamiScenarioHelper(url, password)
+  if (helper.isThis()) {
+    const { data } = await helper.getData()
+    if (!data) {
+      graphQlStore?.addNotification('シナリオデータの読込に失敗しました。', 'mdi-alert-circle-outline', 'error')
+      return
+    }
+    for (const pc of data.pc) {
+      await graphQlStore?.addShinobigamiHandout(pc.name, pc.intro, pc.mission, pc.secret, true)
+    }
+    for (const npc of data.npc) {
+      await graphQlStore?.addShinobigamiHandout(npc.name, npc.intro, npc.mission, npc.secret, false)
+    }
+    for (const enigma of data.enigma) {
+      await graphQlStore?.addShinobigamiEnigma(enigma.name, enigma.power, enigma.menace, enigma.notes)
+    }
+    for (const prize of data.prize) {
+      await graphQlStore?.addShinobigamiPrize(prize.name)
+    }
+  }
 }
 </script>
 

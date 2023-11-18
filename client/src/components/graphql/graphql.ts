@@ -544,6 +544,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateShinobigamiHandout(
     handoutId: string,
     name: string,
+    intro: string,
     objective: string,
     secret: string,
     person: string,
@@ -554,6 +555,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       handoutId,
       JSON.stringify({
         name,
+        intro,
         objective,
         secret,
         person,
@@ -978,8 +980,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     const from = state.user?.token ? 'user' : state.player?.id || ''
 
-    // TODO
-
     console.log('Mutations.notify')
     operation = 'mutation notify'
     await appSyncClient.mutate<MutationResult.Notify>({
@@ -1034,17 +1034,24 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addShinobigamiHandout(): Promise<void> {
+  async function addShinobigamiHandout(
+    name?: string,
+    intro?: string,
+    objective?: string,
+    secret?: string,
+    published?: boolean
+  ): Promise<void> {
     const type = 'shinobigami-handout'
     const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
     await addSessionDataHelper(
       type,
       JSON.stringify({
-        name: `PC${next}`,
-        objective: '',
-        secret: '',
+        name: name || `PC${next}`,
+        intro: intro || '',
+        objective: objective || '',
+        secret: secret || '',
         person: '',
-        published: false,
+        published: published || false,
         knowSelfSecret: true
       })
     )
@@ -1067,18 +1074,25 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addShinobigamiEnigma(): Promise<void> {
+  async function addShinobigamiEnigma(name?: string, power?: string, menace?: string, notes?: string): Promise<void> {
     const type = 'shinobigami-enigma'
     const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
+    let threat: number = 1
+    if (menace) {
+      const menaceNum = parseInt(menace, 10)
+      if (!isNaN(menaceNum)) {
+        threat = menaceNum
+      }
+    }
     await addSessionDataHelper(
       type,
       JSON.stringify({
-        name: `エニグマ${next}`,
-        threat: 1,
+        name: name || `エニグマ${next}`,
+        threat,
         disableJudgement: '',
         camouflage: '',
-        entityName: '',
-        effect: '',
+        entityName: power || '',
+        effect: notes || '',
         bind: '',
         used: false,
         disabled: false
@@ -1102,13 +1116,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addShinobigamiPrize(): Promise<void> {
+  async function addShinobigamiPrize(name?: string): Promise<void> {
     const type = 'shinobigami-prize'
     const next = state.sessionDataList.filter(sd => sd.type === type).length + 1
     await addSessionDataHelper(
       type,
       JSON.stringify({
-        name: `プライズ${next}`,
+        name: name || `プライズ${next}`,
         description: '',
         secret: '',
         owner: '',
