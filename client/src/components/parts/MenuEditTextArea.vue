@@ -11,9 +11,9 @@
     <template #activator="{ props }">
       <v-textarea
         :class="`${textareaClass} ${editable ? 'editable' : ''}`"
-        :rows="editable || autoGrow ? textRows : 1"
-        :max-rows="editable || autoGrow ? undefined : textRows"
-        :auto-grow="!editable || autoGrow"
+        :rows="editable ? textRows : 1"
+        :max-rows="editable ? undefined : textRows"
+        :auto-grow="!editable"
         :readonly="true"
         :no-resize="true"
         :placeholder="placeholder || ''"
@@ -81,7 +81,6 @@ const props = defineProps<{
   variant: string
   editable: boolean
   textareaClass?: string
-  autoGrow?: boolean
 }>()
 
 const emits = defineEmits<{
@@ -110,7 +109,11 @@ function onSave() {
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
-.v-textarea.editable:deep(textarea) {
-  cursor: pointer;
+.v-textarea {
+  grid-template-rows: 1fr auto;
+
+  &.editable:deep(textarea) {
+    cursor: pointer;
+  }
 }
 </style>

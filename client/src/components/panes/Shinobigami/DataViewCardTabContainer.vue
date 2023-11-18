@@ -54,8 +54,8 @@
       </v-defaults-provider>
     </v-tabs>
     <v-divider :vertical="true" />
-    <v-window v-model="tab">
-      <v-window-item value="session-memo">
+    <v-window v-model="tab" class="d-flex flex-row">
+      <v-window-item value="session-memo" class="h-100">
         <menu-edit-text-area
           label="共有メモ"
           hint="全員で閲覧・編集できます"
@@ -63,13 +63,13 @@
           icon="mdi-antenna"
           variant="solo-filled"
           :editable="true"
-          textareaClass="ma-2"
+          textareaClass="h-100 pa-2"
           :text-rows="textRows"
           :offset="-textRows * 24"
           @update="updateSessionMemo"
         />
       </v-window-item>
-      <v-window-item value="private-memo">
+      <v-window-item value="private-memo" class="h-100">
         <menu-edit-text-area
           label="個人メモ"
           hint="あなた専用のメモです"
@@ -77,13 +77,49 @@
           icon="mdi-account-outline"
           variant="solo-filled"
           :editable="true"
-          textareaClass="ma-2"
+          textareaClass="h-100 pa-2"
           :text-rows="textRows"
           :offset="-textRows * 24"
           @update="updatePrivateMemo"
         />
       </v-window-item>
-      <v-window-item value="correlations" class="pa-2" :style="`height: ${(textRows + 2) * 24 + 20}px`" v-if="handout">
+      <v-window-item value="intro" class="h-100">
+        <menu-edit-text-area
+          label="導入"
+          hint="編集不可"
+          :text="handout?.data.intro"
+          icon="mdi-message-text-outline"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="h-100 pa-2"
+          :text-rows="textRows"
+        />
+      </v-window-item>
+      <v-window-item value="objective" class="h-100">
+        <menu-edit-text-area
+          label="使命"
+          hint="編集不可"
+          :text="handout?.data.objective"
+          icon="mdi-bullseye"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="h-100 pa-2"
+          :text-rows="textRows"
+        />
+      </v-window-item>
+      <v-window-item value="secret" class="h-100">
+        <menu-edit-text-area
+          label="秘密"
+          hint="編集不可"
+          :text="secretText"
+          :icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
+          variant="solo-filled"
+          :editable="false"
+          textareaClass="h-100 pa-2"
+          :text-rows="textRows"
+        />
+      </v-window-item>
+      <v-window-item value="correlations" class="h-100 pa-2" :style="`height: ${(textRows + 2) * 24 + 20}px`" v-if="handout">
         <v-sheet
           class="d-flex flex-column overflow-y-auto mb-2"
           style="gap: 0.3rem"
@@ -102,46 +138,7 @@
         <v-divider />
         <div class="text-caption py-1 pl-4" style="opacity: 0.5">編集不可</div>
       </v-window-item>
-      <v-window-item value="intro">
-        <menu-edit-text-area
-          label="導入"
-          hint="編集不可"
-          :text="handout?.data.intro"
-          icon="mdi-message-text-outline"
-          variant="solo-filled"
-          :editable="false"
-          textareaClass="ma-2"
-          :auto-grow="true"
-          :text-rows="textRows"
-        />
-      </v-window-item>
-      <v-window-item value="objective">
-        <menu-edit-text-area
-          label="使命"
-          hint="編集不可"
-          :text="handout?.data.objective"
-          icon="mdi-bullseye"
-          variant="solo-filled"
-          :editable="false"
-          textareaClass="ma-2"
-          :auto-grow="true"
-          :text-rows="textRows"
-        />
-      </v-window-item>
-      <v-window-item value="secret">
-        <menu-edit-text-area
-          label="秘密"
-          hint="編集不可"
-          :text="secretText"
-          :icon="secretOpen ? 'mdi-lock-open-outline' : 'mdi-lock-outline'"
-          variant="solo-filled"
-          :editable="false"
-          textareaClass="ma-2"
-          :auto-grow="true"
-          :text-rows="textRows"
-        />
-      </v-window-item>
-      <v-window-item v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id">
+      <v-window-item class="h-100" v-for="(enigma, idx) in boundEnigmaList" :key="enigma.id" :value="enigma.id">
         <menu-edit-text-area
           :label="`エニグマ${idx + 1}`"
           hint="編集不可"
@@ -149,12 +146,11 @@
           :icon="enigma.data.disabled ? 'mdi-bomb-off' : 'mdi-bomb'"
           variant="solo-filled"
           :editable="false"
-          textareaClass="ma-2"
-          :auto-grow="true"
+          textareaClass="h-100 pa-2"
           :text-rows="textRows"
         />
       </v-window-item>
-      <v-window-item v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id">
+      <v-window-item class="h-100" v-for="(persona, idx) in boundPersonaList" :key="persona.id" :value="persona.id">
         <menu-edit-text-area
           :label="`ペルソナ${idx + 1}`"
           hint="編集不可"
@@ -166,8 +162,7 @@
           :icon="persona.data.leaked ? 'mdi-email-open-outline' : 'mdi-email-outline'"
           variant="solo-filled"
           :editable="false"
-          textareaClass="ma-2"
-          :auto-grow="true"
+          textareaClass="h-100 pa-2"
           :text-rows="textRows"
         />
       </v-window-item>
