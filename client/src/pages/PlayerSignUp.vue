@@ -7,7 +7,7 @@
       <v-row class="pt-0 pt-md-16 align-md-end">
         <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-end position-relative">
           <v-list>
-            <v-list-subheader v-if="players.length">他のプレイヤー</v-list-subheader>
+            <v-list-subheader v-if="players.length">他の参加者</v-list-subheader>
             <template v-for="p in players" :key="p.id">
               <v-list-item>
                 <v-list-item-title>{{ p.name }}</v-list-item-title>

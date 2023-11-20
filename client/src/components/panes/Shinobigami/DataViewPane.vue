@@ -36,7 +36,7 @@
     </template>
     <template #layout></template>
     <template #default>
-      <template v-for="(cw, idx) in handoutDataList" :key="cw.id">
+      <template v-for="(cw, idx) in handoutDataList" :key="cw.scenarioDataId">
         <v-divider v-if="idx" />
         <data-view-card
           :character-id="cw.characterId"
@@ -51,12 +51,11 @@
           v-model:select-skill="selectSkill"
         />
       </template>
-      <span v-if="!handoutDataList.length" class="ma-3">
-        0件<br />
-        ハンドアウトを登録してください。
+      <span v-if="handoutDataList.length + enigmaList.length + prizeList.length === 0" class="ma-3">
+        <data-view-pane-help />
       </span>
       <v-sheet class="d-flex flex-row flex-wrap justify-start align-start w-100" style="gap: 0">
-        <v-divider class="mb-2" />
+        <v-divider v-if="handoutDataList.length" class="mb-2" />
         <template v-for="enigma in enigmaList" :key="enigma.id">
           <scenario-data-card mode="view" :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
         </template>
@@ -87,6 +86,7 @@ import { computed, inject, ref, watch } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { SessionData } from '@/components/graphql/schema'
+import DataViewPaneHelp from '@/components/panes/Shinobigami/DataViewPaneHelp.vue'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -129,10 +129,10 @@ const handoutDataList = computed<{ characterId?: string; scenarioDataId?: string
     return graphQlStore.state.sessionDataList
       .filter(sd => sd.type === 'shinobigami-handout')
       .map(sd => {
-        const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+        // const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
         return {
-          characterId: character?.id,
-          scenarioDataId: character ? undefined : sd.id
+          characterId: '',
+          scenarioDataId: sd.id
         }
       })
   return graphQlStore.state.sessionDataList

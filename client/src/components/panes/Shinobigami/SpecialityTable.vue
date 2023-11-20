@@ -115,6 +115,7 @@ function changeHandler(notifyParent: boolean = false) {
 }
 
 function updateTargetValue() {
+  if (!tokugi.value) return
   targetValues.value = calcTargetValue(props.selectSkill, tokugi.value)
 }
 

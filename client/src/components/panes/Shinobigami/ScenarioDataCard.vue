@@ -14,7 +14,6 @@
         <template v-if="dataObj.type === 'shinobigami-character'">
           <reload-character-sheet-button :character-id="dataObj.id" />
           <menu-edit-text-field
-            :title="`${dataObj.data.character.characterName || 'ななし'}の名前編集`"
             label="名前"
             icon="mdi-tag-outline"
             placeholder="未設定"
@@ -29,12 +28,12 @@
             item-title="name"
             variant="solo"
             :flat="true"
-            label="プレイヤー"
+            label="参加者"
             class="align-self-start"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
-            :model-value="dataObj.data.player"
+            :model-value="dataObjPlayerId"
             @update:model-value="v => onUpdateCharacterPlayer(v)"
           >
             <template #label="{ label }">
@@ -62,13 +61,11 @@
             <v-card-item class="pa-0">
               <v-sheet class="d-flex flex-column align-self-start pl-4 pr-0 bg-transparent" style="gap: 0.5rem">
                 <menu-edit-text-field
-                  title="奥義名"
                   :editable="true"
                   icon="mdi-khanda"
                   :width="19"
                   label="奥義名"
                   :text="arts.name || ''"
-                  placeholder=""
                   @update="v => onUpdateSpecialArtsName(idx, v)"
                 />
                 <tokugi-selector
@@ -123,7 +120,6 @@
             @update:model-value="v => onUpdateHandoutPublished(v)"
           />
           <menu-edit-text-field
-            :title="`${dataObj.data.name || 'ななし'}の名前編集`"
             label="名前"
             icon="mdi-tag-outline"
             placeholder="未設定"
@@ -194,7 +190,7 @@
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
-            :model-value="dataObj.data.person"
+            :model-value="dataObjPerson"
             @update:model-value="v => onUpdateHandoutPerson(v)"
           >
             <template #label="{ label }">
@@ -213,7 +209,6 @@
         </template>
         <template v-if="dataObj.type === 'shinobigami-enigma'">
           <menu-edit-text-field
-            :title="`${dataObj.data.name || 'ななし'}の名前編集`"
             label="名前"
             icon="mdi-tag-outline"
             placeholder="未設定"
@@ -239,7 +234,6 @@
           />
           <template v-if="editable || dataObj.data.used">
             <menu-edit-text-field
-              :title="`${dataObj.data.name || 'ななし'}の戦力の名称の編集`"
               label="戦力の名称"
               icon="mdi-skull-crossbones-outline"
               placeholder="未設定"
@@ -271,7 +265,6 @@
                 </template>
               </v-select>
               <menu-edit-text-field
-                :title="`${dataObj.data.name || 'ななし'}の解除条件の編集`"
                 label="解除条件"
                 icon="mdi-hammer"
                 placeholder="未設定"
@@ -338,7 +331,6 @@
         <template v-if="dataObj.type === 'shinobigami-persona'">
           <template v-if="editable || dataObj.data.leaked">
             <menu-edit-text-field
-              :title="`${dataObj.data.name || 'ななし'}の真実名の編集`"
               label="真実名"
               icon="mdi-badge-account-outline"
               placeholder="未設定"
@@ -395,7 +387,6 @@
         </template>
         <template v-if="dataObj.type === 'shinobigami-prize'">
           <menu-edit-text-field
-            :title="`${dataObj.data.name || 'ななし'}の名前編集`"
             label="名前"
             icon="mdi-tag-outline"
             placeholder="未設定"
@@ -704,6 +695,10 @@ const hasEmptyPlayers = computed(() => {
     { id: player?.id || '', name: 'あなた' }
   ]
 })
+const dataObjPlayerId = computed(() => {
+  const playerId = dataObj.value.data.player
+  return hasEmptyPlayers.value.some(p => p.id === playerId) ? playerId : ''
+})
 
 const hasEmptyCharacterList = computed(() => {
   const characterList = graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-character') || []
@@ -722,6 +717,10 @@ const hasEmptyCharacterList = computed(() => {
   })
   resultList.unshift({ id: '', name: '割当なし' })
   return resultList
+})
+const dataObjPerson = computed(() => {
+  const person = dataObj.value.data.person
+  return hasEmptyCharacterList.value.some(p => p.id === person) ? person : ''
 })
 
 async function onUpdateCharacterName(characterName: string) {

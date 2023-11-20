@@ -9,13 +9,13 @@
   >
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
-        <v-list-subheader style="min-height: auto; background: none">名前</v-list-subheader>
         <v-list-item>
-          <natural-text-field
+          <menu-edit-text-field
             label="あなたの名前"
+            :text="graphQlStore?.state.user?.name || ''"
             :editable="Boolean(graphQlStore?.state.user?.token)"
-            :value="graphQlStore?.state.user?.name || ''"
-            @submit="v => graphQlStore?.updateUserName(v)"
+            :width="22"
+            @update="graphQlStore?.updateUserName"
           />
         </v-list-item>
         <v-list-item>
@@ -34,10 +34,10 @@
 </template>
 
 <script lang="ts" setup>
-import NaturalTextField from '@/components/NaturalTextField.vue'
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import { inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

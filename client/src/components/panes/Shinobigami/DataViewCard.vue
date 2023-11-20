@@ -1,8 +1,8 @@
 <template>
   <v-card variant="flat" class="overflow-x-auto">
     <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row">
+      <span class="ml-4 text-h5">{{ scenarioData.data.name }}</span>
       <template v-if="characterSheet">
-        <span class="ml-4 text-h5">{{ characterHandout.data.name }}</span>
         <v-menu :close-on-content-click="false" scroll-strategy="close">
           <template #activator="{ props }">
             <v-btn variant="text" v-bind="props" class="text-h5 px-1 text-decoration-underline">
@@ -14,10 +14,7 @@
         <v-defaults-provider :defaults="{ VBtn: { size: 'small', variant: 'flat' } }">
           <v-btn icon="mdi-open-in-new" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
         </v-defaults-provider>
-        <span class="text-body-2">({{ player?.id === perspective ? 'あなた' : player?.name || 'PL割当なし' }})</span>
-      </template>
-      <template v-else>
-        <span class="ml-4 text-h5">{{ scenarioData.data.name }}</span>
+        <span class="text-body-2">({{ handoutCharacterPlayerName }})</span>
       </template>
     </v-card-title>
     <v-card-title class="pt-0 d-flex flex-wrap" style="gap: 5px">
@@ -119,6 +116,12 @@ const props = defineProps<{
 
 const scenarioData = computed(() => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.scenarioDataId)
+})
+
+const handoutCharacterPlayerName = computed(() => {
+  if (character.value?.data.player === 'user') return '主催者'
+  if (player.value?.id === props.perspective) return 'あなた'
+  return player.value?.name || 'PL割当なし'
 })
 
 const character = computed(() => {

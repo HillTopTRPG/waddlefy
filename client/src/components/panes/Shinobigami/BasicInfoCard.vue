@@ -60,7 +60,7 @@ defineProps<{
 
       &:before {
         position: absolute;
-        top: 15px;
+        top: 50%;
         left: 0;
         width: 10px;
         height: 1px;
@@ -81,7 +81,7 @@ defineProps<{
       }
 
       &:last-child:after {
-        height: 15px;
+        height: 50%;
       }
     }
   }

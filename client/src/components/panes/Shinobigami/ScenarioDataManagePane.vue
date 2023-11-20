@@ -66,6 +66,22 @@
       </v-sheet>
     </template>
   </pane-frame>
+  <v-overlay
+    :model-value="progress < 100"
+    :persistent="true"
+    :contained="true"
+    class="d-flex justify-center align-center"
+    style="backdrop-filter: blur(2px)"
+  >
+    <v-card rounded="xl">
+      <v-card-title> シナリオシートの読み込み中 </v-card-title>
+      <v-card-text class="text-center">
+        <v-progress-circular size="150" color="primary" width="15" class="" :model-value="progress">
+          <span class="text-h4">{{ progress }}%</span>
+        </v-progress-circular>
+      </v-card-text>
+    </v-card>
+  </v-overlay>
 </template>
 
 <script lang="ts">
@@ -138,6 +154,11 @@ async function onAddData(type: 'handout' | 'enigma' | 'persona' | 'prize'): Prom
   if (type === 'prize') return graphQlStore?.addShinobigamiPrize()
 }
 
+const progress = ref(100)
+function updateProgress(total: number, current: number) {
+  progress.value = Math.round((current * 100) / total)
+}
+
 async function onLoadScenarioSheet(url: string, password: string) {
   const helper = new ShinobigamiScenarioHelper(url, password)
   if (helper.isThis()) {
@@ -146,18 +167,36 @@ async function onLoadScenarioSheet(url: string, password: string) {
       graphQlStore?.addNotification('シナリオデータの読込に失敗しました。', 'mdi-alert-circle-outline', 'error')
       return
     }
-    for (const pc of data.pc) {
-      await graphQlStore?.addShinobigamiHandout(pc.name, pc.intro, pc.mission, pc.secret, true)
+    const { pc, npc, righthand, enigma, prize } = data
+    const total = pc.length + npc.length + righthand.length + enigma.length + prize.length
+    let count = 0
+    for (const d of pc) {
+      updateProgress(total, count)
+      count++
+      await graphQlStore?.addShinobigamiHandout(d.name, d.intro, d.mission, d.secret, true)
     }
-    for (const npc of data.npc) {
-      await graphQlStore?.addShinobigamiHandout(npc.name, npc.intro, npc.mission, npc.secret, false)
+    for (const d of npc) {
+      updateProgress(total, count)
+      count++
+      await graphQlStore?.addShinobigamiHandout(d.name, d.intro, d.mission, d.secret, false)
     }
-    for (const enigma of data.enigma) {
-      await graphQlStore?.addShinobigamiEnigma(enigma.name, enigma.power, enigma.menace, enigma.notes)
+    for (const d of righthand) {
+      updateProgress(total, count)
+      count++
+      const intro = `脅威度: ${d.menace}\n${d.notes}`
+      await graphQlStore?.addShinobigamiHandout(d.name, intro, '', '', false)
     }
-    for (const prize of data.prize) {
-      await graphQlStore?.addShinobigamiPrize(prize.name)
+    for (const d of enigma) {
+      updateProgress(total, count)
+      count++
+      await graphQlStore?.addShinobigamiEnigma(d.name, d.power, d.menace, d.notes)
     }
+    for (const d of prize) {
+      updateProgress(total, count)
+      count++
+      await graphQlStore?.addShinobigamiPrize(d.name)
+    }
+    updateProgress(total, count)
   }
 }
 </script>

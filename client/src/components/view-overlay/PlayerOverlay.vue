@@ -9,11 +9,12 @@
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
         <v-list-item v-if="isUserControl || player?.token">
-          <natural-text-field
+          <menu-edit-text-field
             label="名前"
+            :text="player?.name || ''"
             :editable="true"
-            :value="player?.name || ''"
-            @submit="v => graphQlStore?.updatePlayerName(player?.id, v)"
+            :width="22"
+            @update="v => graphQlStore?.updatePlayerName(player?.id, v)"
           />
         </v-list-item>
         <v-list-item v-if="isUserControl || player?.token">
@@ -28,7 +29,7 @@
         <v-list-item class="mt-2" v-if="isUserControl && player">
           <delete-menu-btn
             :target-name="player.name || ''"
-            type="プレイヤー"
+            type="参加者"
             :sessionId="graphQlStore?.state.session?.id"
             @execute="onDeletePlayer()"
           />
@@ -42,8 +43,8 @@
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
-import NaturalTextField from '@/components/NaturalTextField.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import { computed, inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

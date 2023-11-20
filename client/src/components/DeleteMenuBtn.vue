@@ -65,8 +65,8 @@ const inputTargetName = ref('')
 const inputElm = ref()
 
 async function deleteExecute() {
-  await emits('execute')
   opened.value = false
+  await emits('execute')
   inputTargetName.value = ''
 }
 

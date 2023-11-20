@@ -9,20 +9,23 @@
     <v-card-text class="pa-2 overflow-auto h-100">
       <v-list class="ma-0 pa-0 bg-transparent">
         <v-list-item>
-          <v-card-subtitle class="pa-0">画面名</v-card-subtitle>
-          <natural-text-field
+          <menu-edit-text-field
             label="画面名"
+            :text="dashboard?.name || ''"
             :editable="true"
-            :value="dashboard?.name || ''"
-            @submit="v => updateDashboardName(v)"
+            :width="22"
+            @update="updateDashboardName"
           />
         </v-list-item>
         <v-list-item>
-          <v-card-subtitle class="pa-0">使える人（主催者はどの画面も必ず使えます）</v-card-subtitle>
           <v-select
             :items="scopeSelector"
+            label="使える人"
             item-title="label"
             item-value="value"
+            :persistent-placeholder="true"
+            :persistent-hint="true"
+            hint="主催者は常に全ての画面が使えます"
             :multiple="true"
             :model-value="dashboard?.option.scope || ''"
           >
@@ -79,13 +82,13 @@
 </template>
 
 <script lang="ts" setup>
-import NaturalTextField from '@/components/NaturalTextField.vue'
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
 import { computed, inject } from 'vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import { DashboardOption } from '@/components/graphql/schema'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{

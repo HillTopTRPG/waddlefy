@@ -2,16 +2,13 @@
   <v-overlay
     :model-value="modalValue"
     @update:model-value="emits('close')"
-    :persistent="true"
     :contained="true"
     transition="slide-x-transition"
-    :scrim="false"
     :close-on-back="true"
     :no-click-animation="true"
     class="contents-overlay ma-0"
-    style="max-width: 400px"
-    :style="`border-left: ${color} 2px solid; --img:url('/${image}')`"
-    content-class="w-100 h-100 bg-white"
+    :style="`border-left: ${color} 2px solid; --img:url('/${image}'); backdrop-filter: blur(2px)`"
+    :content-props="{ class: 'w-100 h-100 bg-white', style: 'max-width: 400px' }"
   >
     <v-layout class="w-100 h-100">
       <v-card class="w-100 ma-0 d-flex flex-column" style="border-radius: 0">

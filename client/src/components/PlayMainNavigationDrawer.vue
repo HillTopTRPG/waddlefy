@@ -98,13 +98,13 @@
           v-if="isReady"
         >
           <v-list class="h-100">
-            <v-list-subheader style="min-height: auto; background: none">名前</v-list-subheader>
             <v-list-item>
-              <natural-text-field
+              <menu-edit-text-field
                 label="あなたの名前"
+                :text="graphQlStore?.state.user?.name || ''"
                 :editable="true"
-                :value="graphQlStore?.state.user?.name || ''"
-                @submit="v => graphQlStore?.updateUserName(v)"
+                :width="22"
+                @update="graphQlStore?.updateUserName"
               />
             </v-list-item>
             <v-list-item>
@@ -169,7 +169,7 @@ import { computed, inject, onMounted, ref, watch } from 'vue'
 import { DEFAULT_SESSION_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-import NaturalTextField from '@/components/NaturalTextField.vue'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 

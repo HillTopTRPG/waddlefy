@@ -16,10 +16,11 @@
             label="参加者名"
             color="primary"
             class="name-text-field overflow-visible"
-            persistent-hint
+            :hide-details="true"
+            :persistent-hint="true"
+            :persistent-placeholder="true"
+            placeholder="必須項目"
             variant="outlined"
-            hint="ログイン後に編集できます。名前の重複はできません。"
-            :error-messages="addPlayerErrorMessage"
             v-model="addPlayerName"
             @keydown.enter="$event.keyCode === 13 && callAddPlayer()"
             @click:append-inner.stop
@@ -27,7 +28,7 @@
             <template #append-inner>
               <v-divider :vertical="true" />
               <v-btn
-                :disabled="Boolean(addPlayerErrorMessage) || !addPlayerName"
+                :disabled="!addPlayerName"
                 text="作成"
                 variant="text"
                 class="bg-transparent h-100"
@@ -68,7 +69,7 @@
 import { Player } from '@/components/graphql/schema'
 import ListItemClipboard from '@/components/parts/ListItemClipboard.vue'
 import ContentsOverlay from '@/components/view-overlay/ContentsOverlay.vue'
-import { computed, inject, ref } from 'vue'
+import { inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -82,16 +83,6 @@ const emits = defineEmits<{
 }>()
 
 const addPlayerName = ref('')
-
-const addPlayerErrorMessage = computed<string>(() => {
-  if (!graphQlStore) {
-    return ''
-  }
-  if (graphQlStore.state.players.some(p => p.name === addPlayerName.value)) {
-    return '他の参加者の名前と重複しています。'
-  }
-  return ''
-})
 
 let lastAddName = ''
 

@@ -10,7 +10,7 @@
     <template #activator="{ props }">
       <v-text-field
         :variant="variant || 'solo'"
-        :placeholder="placeholder"
+        :placeholder="placeholder || ''"
         :readonly="true"
         :flat="true"
         :style="`width: ${width}rem; max-width: ${width}rem`"
@@ -31,7 +31,7 @@
         <v-text-field
           :label="label"
           variant="solo-filled"
-          :placeholder="placeholder"
+          :placeholder="placeholder || ''"
           :flat="true"
           :style="`width: ${width}rem; max-width: ${width}rem`"
           :persistent-placeholder="true"
@@ -60,11 +60,10 @@ import { ref, watch } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  title: string
   label: string
   text: string
-  icon: string
-  placeholder: string
+  icon?: string
+  placeholder?: string
   variant?: string
   width: number
   editable: boolean

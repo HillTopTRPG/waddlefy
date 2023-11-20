@@ -99,7 +99,7 @@ const basicParams: {
   label: string
 }[] = [
   { path: 'url', label: 'URL' },
-  { path: 'playerName', label: 'プレイヤー名' },
+  { path: 'playerName', label: '参加者名' },
   { path: 'characterName', label: 'キャラクター名' },
   { path: 'characterNameKana', label: 'キャラクター名(カナ)' },
   { path: 'regulation', label: 'レギュレーション' },
@@ -150,6 +150,12 @@ export function getCharacterDiffMessages(
   const diffs: DiffType[] = []
   const cOne = wrapOne.character
   const cTwo = wrapTwo.character
+
+  function getName(player: string) {
+    if (player === 'user') return '主催者'
+    if (!player) return 'なし'
+    return players.find(p => p.id === player)?.name || '不明'
+  }
 
   basicParams.forEach(p => {
     if (cOne[p.path] === cTwo[p.path]) return
@@ -241,9 +247,9 @@ export function getCharacterDiffMessages(
     diffs.push({
       op: 'replace',
       path: 'player',
-      label: 'プレイヤー名',
-      before: players.find(p => p.id === wrapOne.player)?.name || 'なし',
-      after: players.find(p => p.id === wrapTwo.player)?.name || 'なし'
+      label: '参加者名',
+      before: getName(wrapOne.player),
+      after: getName(wrapTwo.player)
     })
   }
 
@@ -299,7 +305,7 @@ export function getCharacterDiffMessages(
     } else {
       if (diff.path === 'player') {
         return {
-          text: `${characterName}のプレイヤー変更: ${diff.before} → ${diff.after}`,
+          text: `${characterName}の参加者変更: ${diff.before} → ${diff.after}`,
           icon: 'mdi-check',
           color: 'white'
         }
