@@ -41,6 +41,13 @@
               {{ label }}
             </template>
           </v-select>
+          <ninpou-table
+            mode="secret"
+            :perspective="perspective"
+            :list="ninpouListWrap"
+            select-skill="''"
+            @update-secret="onUpdateSecret"
+          />
           <add-special-arts-button
             button-text="奥義を追加"
             classText="align-self-start"
@@ -499,6 +506,7 @@ import { uuid } from 'vue-uuid'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vue'
+import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -514,6 +522,8 @@ const editable = computed(() => !props.perspective && props.mode === 'edit')
 const dataObj = computed(() => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.dataId)
 })
+
+const ninpouListWrap = computed(() => clone(dataObj.value?.data.character?.ninjaArtsList))
 
 const otherHandouts = computed(() => {
   return graphQlStore?.state.sessionDataList.filter(sd => {
@@ -722,6 +732,17 @@ const dataObjPerson = computed(() => {
   const person = dataObj.value.data.person
   return hasEmptyCharacterList.value.some(p => p.id === person) ? person : ''
 })
+
+async function onUpdateSecret(index: number, value: boolean) {
+  const character = clone(dataObj.value.data.character)
+  character.ninjaArtsList[index].secret = value
+  await graphQlStore?.updateShinobigamiCharacter(
+    dataObj.value.id,
+    dataObj.value.data.player,
+    dataObj.value.data.viewPass,
+    character
+  )
+}
 
 async function onUpdateCharacterName(characterName: string) {
   if (dataObj.value.data.character.characterName === characterName) return

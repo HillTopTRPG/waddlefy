@@ -140,8 +140,8 @@ const handoutDataList = computed<{ characterId?: string; scenarioDataId?: string
     .map(sd => {
       const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
       return {
-        characterId: character?.id,
-        scenarioDataId: character ? undefined : sd.id
+        characterId: '',
+        scenarioDataId: sd.id
       }
     })
 })

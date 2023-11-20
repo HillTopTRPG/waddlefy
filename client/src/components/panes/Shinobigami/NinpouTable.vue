@@ -3,14 +3,29 @@
     <v-defaults-provider :defaults="{ VIcon: {} }"></v-defaults-provider>
     <thead class="bg-grey-darken-4">
       <tr>
+        <template v-if="mode === 'secret'">
+          <th class="secret">秘</th>
+        </template>
         <th>忍法名</th>
-        <th>指定特技</th>
-        <th>間</th>
-        <th>ｺｽﾄ</th>
+        <template v-if="mode !== 'secret'">
+          <th>指定特技</th>
+          <th>間</th>
+          <th>ｺｽﾄ</th>
+        </template>
       </tr>
     </thead>
     <tbody v-if="list">
-      <tr v-for="(arts, idx) in list" :key="idx">
+      <tr v-for="(arts, idx) in useList" :key="idx">
+        <template v-if="mode === 'secret'">
+          <td class="secret">
+            <v-checkbox
+              :model-value="arts.secret"
+              @update:model-value="v => onChangeSecret(idx, v)"
+              density="compact"
+              :hide-details="true"
+            />
+          </td>
+        </template>
         <v-menu :close-on-content-click="false" :z-index="10000000">
           <template #activator="{ props }">
             <td class="name" v-bind="props">
@@ -31,11 +46,13 @@
             </v-card-text>
           </v-card>
         </v-menu>
-        <td class="target" :class="targetClass(arts.targetSkill)" @click="onClickSkill(arts.targetSkill)">
-          {{ arts.targetSkill }}
-        </td>
-        <td class="range">{{ arts.range }}</td>
-        <td class="cost">{{ arts.cost }}</td>
+        <template v-if="mode !== 'secret'">
+          <td class="target" :class="targetClass(arts.targetSkill)" @click="onClickSkill(arts.targetSkill)">
+            {{ arts.targetSkill }}
+          </td>
+          <td class="range">{{ arts.range }}</td>
+          <td class="cost">{{ arts.cost }}</td>
+        </template>
       </tr>
     </tbody>
   </table>
@@ -43,17 +60,28 @@
 
 <script setup lang="ts">
 import { NinjaArts, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
+import { computed } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  list?: NinjaArts[]
+  list: NinjaArts[] | undefined
+  mode?: 'secret'
   selectSkill: string
   perspective: string
 }>()
 
 const emits = defineEmits<{
   (e: 'click-skill', arts: string): void
+  (e: 'update-secret', index: number, value: boolean): void
 }>()
+
+const useList = computed(() => {
+  if (props.mode === 'secret' || !props.perspective) {
+    return props.list
+  } else {
+    return props.list.filter(n => !n.secret)
+  }
+})
 
 function getArtsIcon(arts: NinjaArts) {
   switch (arts.type) {
@@ -85,6 +113,10 @@ function onClickSkill(skill: string): void {
 
 function isIncludeSkills(skill: string): boolean {
   return SkillTable.some(t => t.some(s => s === skill))
+}
+
+function onChangeSecret(idx: number, secret: boolean) {
+  emits('update-secret', idx, secret)
 }
 </script>
 
@@ -121,6 +153,11 @@ function isIncludeSkills(skill: string): boolean {
     border-top: 1px solid #aaa;
     white-space: nowrap;
     user-select: none;
+
+    &.secret {
+      width: 2.8em;
+      max-width: 2.8em;
+    }
 
     &.name {
       padding: 0 5px 0 2px !important;

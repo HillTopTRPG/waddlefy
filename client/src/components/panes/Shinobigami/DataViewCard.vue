@@ -103,7 +103,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
   characterId?: string
-  scenarioDataId?: string
+  scenarioDataId: string
   selectSkill: string
   backgroundView: boolean
   ninpouView: boolean
@@ -169,9 +169,7 @@ const characterHandout = computed(
     )
 )
 
-const handoutId = computed(() =>
-  scenarioData.value?.type === 'shinobigami-handout' ? props.scenarioDataId : characterHandout.value?.id
-)
+const handoutId = computed(() => props.scenarioDataId || characterHandout.value?.id)
 
 const player = computed(() => graphQlStore?.state.players.find(p => p.id === character.value.data.player))
 
