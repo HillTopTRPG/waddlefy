@@ -21,6 +21,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
   prize: ShinobigamiPrize
+  perspective: string
 }>()
 
 function isPrizeSecret(prizeLeakedList: string[]) {

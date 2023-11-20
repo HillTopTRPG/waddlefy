@@ -482,7 +482,7 @@ export namespace MutationResult {
     addDashboard: DashboardResult
   }
   export type AddSessionData = {
-    addSessionData: SessionData
+    addSessionData: SessionData<any>
   }
   export type Notify = {
     notify: NotifyData
@@ -517,7 +517,7 @@ export namespace MutationResult {
     updateSession: UpdatedSession
   }
   export type UpdateSessionData = {
-    updateSessionData: SessionData
+    updateSessionData: SessionData<any>
   }
   export type UpdateDashboard = {
     updateDashboard: UpdatedDashboard
@@ -731,7 +731,7 @@ export type User = {
   token?: string
 }
 
-type PlayerForPlayer = {
+export type PlayerForPlayer = {
   id: string
   sessionId: string
   name: string
@@ -751,7 +751,7 @@ export type Player = {
   resetCode?: string
 }
 
-type SessionForUser = {
+export type SessionForUser = {
   id: string
   token: string
   signUpToken: string
@@ -847,7 +847,7 @@ export type DashboardOption = {
 export type Dashboard = {
   id: string
   name: string
-  layout: Layout
+  layout: Layout | null
   option: DashboardOption
 }
 
@@ -994,7 +994,7 @@ export namespace SubscriptionResult {
     onUpdateDashboard: UpdatedDashboard
   }
   export type OnUpdateSessionData = {
-    onUpdateSessionData: SessionData
+    onUpdateSessionData: SessionData<any>
   }
   export type OnUpdatePlayer = {
     onUpdatePlayer: AbstractPlayer

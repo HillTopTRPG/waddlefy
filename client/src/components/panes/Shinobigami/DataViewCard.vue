@@ -1,7 +1,7 @@
 <template>
   <v-card variant="flat" class="overflow-x-auto">
     <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row">
-      <span class="ml-4 text-h5">{{ scenarioData.data.name }}</span>
+      <span class="ml-4 text-h5">{{ scenarioData?.data.name || '' }}</span>
       <template v-if="characterSheet">
         <v-menu :close-on-content-click="false" scroll-strategy="close">
           <template #activator="{ props }">
@@ -33,7 +33,7 @@
               </v-chip>
             </v-defaults-provider>
           </template>
-          <prize-chip :prize="prize.data" />
+          <prize-chip :prize="prize.data" :perspective="perspective" />
         </v-menu>
       </template>
     </v-card-title>
@@ -64,7 +64,7 @@
             v-if="specialArtsView"
             class="mb-2"
             :select-skill="selectSkill"
-            :owner-id="handoutId"
+            :owner-id="handoutId || ''"
             :list="characterSheet.specialArtsList"
             :perspective="perspective"
             @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
@@ -140,7 +140,7 @@ const prizeList = computed(() => {
         if (sd.type !== 'shinobigami-prize') return false
         if (sd.data.owner !== ownerId) return false
         if (!props.perspective) return true
-        return sd.data.readableList.some(r => {
+        return sd.data.readableList.some((r: string) => {
           const readableHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === r)
           if (!readableHandout) return false
           const readableCharacter = graphQlStore?.state.sessionDataList.find(
@@ -152,7 +152,7 @@ const prizeList = computed(() => {
     )
   }
   if (props.characterId) {
-    return judgeWrap(characterHandout.value?.id)
+    return judgeWrap(characterHandout.value?.id || '')
   } else if (props.scenarioDataId && scenarioData.value?.type === 'shinobigami-handout') {
     return judgeWrap(props.scenarioDataId)
   }
@@ -160,7 +160,7 @@ const prizeList = computed(() => {
 })
 
 const characterSheet = computed(() => character.value?.data.character as ShinobiGami | undefined)
-const computedSkills = computed(() => clone(characterSheet.value?.skill))
+const computedSkills = computed(() => clone(characterSheet.value?.skill) || undefined)
 
 const characterHandout = computed(
   () =>
@@ -171,7 +171,7 @@ const characterHandout = computed(
 
 const handoutId = computed(() => props.scenarioDataId || characterHandout.value?.id)
 
-const player = computed(() => graphQlStore?.state.players.find(p => p.id === character.value.data.player))
+const player = computed(() => graphQlStore?.state.players.find(p => p.id === character.value?.data.player))
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
@@ -182,20 +182,20 @@ const emits = defineEmits<{
 const navigationDrawer = ref(false)
 watch(navigationDrawer, v => {
   if (v) {
-    emits('select-skill', '')
+    emits('update:select-skill', '')
   }
 })
 
 const tokugiTableEditing = ref(false)
 
 async function updateInfo(info: SaikoroFictionTokugi) {
-  if (!graphQlStore) return
+  if (!graphQlStore || !player.value || !character.value) return
   const characterSheetClone = clone(characterSheet.value)!
   characterSheetClone.skill = info
   await graphQlStore.updateShinobigamiCharacter(
-    props.characterId,
+    props.characterId || '',
     player.value.id,
-    character.value.data.viewPass,
+    character.value.data.viewPass || '',
     characterSheetClone
   )
 }

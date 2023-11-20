@@ -27,7 +27,7 @@
             :persistent-hint="true"
             hint="主催者は常に全ての画面が使えます"
             :multiple="true"
-            :model-value="dashboard?.option.scope || ''"
+            :model-value="scopeWrap"
           >
             <template #item="{ item }">
               <template v-if="item.value === 'all' || item.value === 'owner'">
@@ -155,6 +155,12 @@ async function updateScope(scope: DashboardOption['scope'] | string) {
     scope: useScope
   })
 }
+
+const scopeWrap = computed((): string[] => {
+  const scope = graphQlStore?.state.dashboard?.option.scope
+  if (scope === 'all' || scope === 'owner') return [scope]
+  return scope || []
+})
 </script>
 
 <style lang="scss" scoped>

@@ -97,7 +97,9 @@ async function onLoadCharacterSheet(url: string, password: string) {
   const helper = new ShinobigamiHelper(url, password)
   if (helper.isThis()) {
     const { data } = await helper.getData()
-    await graphQlStore?.addShinobigamiCharacter(data, password)
+    if (data) {
+      await graphQlStore?.addShinobigamiCharacter(perspective.value, data, password)
+    }
   }
 }
 </script>

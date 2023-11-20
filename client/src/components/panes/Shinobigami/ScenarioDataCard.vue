@@ -1,13 +1,13 @@
 <template>
   <v-card
-    v-if="dataObj && (dataObj.type !== 'shinobigami-prize' || !perspective || prizeKnow)"
-    :color="typeList.find(t => t.value === dataObj.type)?.color || ''"
+    v-if="dataObj && (prizeKnow || !perspective)"
+    :color="typeList.find(t => t.value === dataObj?.type)?.color || ''"
     class="ml-3 mb-3 border elevation-4"
     rounded="lg"
   >
     <v-card-title class="ma-0 py-2" color="red">
-      <v-icon :icon="typeList.find(t => t.value === dataObj.type)?.icon(dataObj.data)" class="mr-1" />
-      <span>{{ typeList.find(t => t.value === dataObj.type)?.label || '' }}</span>
+      <v-icon :icon="typeList.find(t => t.value === dataObj?.type)?.icon(dataObj.data)" class="mr-1" />
+      <span>{{ typeList.find(t => t.value === dataObj?.type)?.label || '' }}</span>
     </v-card-title>
     <v-card-item class="pa-0">
       <v-sheet class="d-flex flex-column align-self-start px-2 pb-2 bg-transparent" style="gap: 0.5rem">
@@ -28,7 +28,7 @@
             item-title="name"
             variant="solo"
             :flat="true"
-            label="参加者"
+            label="担当者"
             class="align-self-start"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
@@ -110,7 +110,7 @@
                 <delete-menu-btn
                   class-text="align-self-end"
                   :target-name="arts.name"
-                  :session-id="graphQlStore?.state.session.id || ''"
+                  :session-id="graphQlStore?.state.session?.id || ''"
                   type="奥義"
                   @execute="onDeleteSpecialArts(idx)"
                 />
@@ -441,8 +441,7 @@
             :flat="true"
             label="所有者"
             class="align-self-start"
-            persistent-hint
-            hint="所有者はこのプライズの名前と説明を常に読めます"
+            :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
             :model-value="dataObj.data.owner"
@@ -481,8 +480,8 @@
           :target-name="
             dataObj.type === 'shinobigami-character' ? dataObj.data.character.characterName : dataObj.data.name
           "
-          :session-id="graphQlStore?.state.session?.id"
-          :type="typeList.find(t => t.value === dataObj.type)?.label || ''"
+          :session-id="graphQlStore?.state.session?.id || ''"
+          :type="typeList.find(t => t.value === dataObj?.type)?.label || ''"
           @execute="onDeleteSessionData"
         />
       </v-card-actions>
@@ -528,38 +527,37 @@ const ninpouListWrap = computed(() => clone(dataObj.value?.data.character?.ninja
 const otherHandouts = computed(() => {
   return graphQlStore?.state.sessionDataList.filter(sd => {
     if (sd.type !== 'shinobigami-handout') return false
-    if (sd.id === dataObj.value.id) return false
+    if (sd.id === dataObj.value?.id) return false
     return !props.perspective || sd.data.published
   })
 })
 
 const prizeKnow = computed(() => {
-  if (dataObj.value.type !== 'shinobigami-prize') return false
+  if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return true
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value.data.readableList.some(r => r === sd.id)) || []
-  const characters = knowHandouts
-    .map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
-    .filter(sd => Boolean(sd))
-  return characters.some(c => c.data.player === props.perspective)
+    graphQlStore?.state.sessionDataList.filter(
+      sd => dataObj.value?.data.readableList.some((r: string) => r === sd.id)
+    ) || []
+  const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
+  return characters.some(c => c?.data.player === props.perspective)
 })
 
 const prizeSecret = computed(() => {
-  if (dataObj.value.type !== 'shinobigami-prize') return false
+  if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return false
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value.data.leakedList.some(r => r === sd.id)) || []
-  const characters = knowHandouts
-    .map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
-    .filter(sd => Boolean(sd))
-  return characters.some(c => c.data.player === props.perspective)
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.leakedList.some((r: string) => r === sd.id)) ||
+    []
+  const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
+  return characters.some(c => c?.data.player === props.perspective)
 })
 
 const handoutSecretOpen = computed((): boolean => {
   if (!props.perspective) return true
-  if (dataObj.value.type !== 'shinobigami-handout') return false
+  if (!dataObj.value || dataObj.value.type !== 'shinobigami-handout') return false
 
   // キャラクターのオーナーの場合
   if (dataObj.value.data.knowSelfSecret) {
-    const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === dataObj.value.data.person)
+    const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === dataObj.value?.data.person)
     if (props.perspective === handoutCharacter?.data.player) return true
   }
 
@@ -569,7 +567,7 @@ const handoutSecretOpen = computed((): boolean => {
   )
 
   return (
-    secretRelations.some(sd => {
+    secretRelations?.some(sd => {
       const targetHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
       const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === targetHandout?.data.person)
       return props.perspective === character?.data.player
@@ -578,7 +576,7 @@ const handoutSecretOpen = computed((): boolean => {
 })
 
 const typeList = [
-  { value: 'shinobigami-character', label: 'キャラクター', color: 'light-blue-accent-1', icon: () => 'mdi-human' },
+  { value: 'shinobigami-character', label: 'キャラクター', color: 'cyan-lighten-4', icon: () => 'mdi-human' },
   {
     value: 'shinobigami-handout',
     label: 'ハンドアウト',
@@ -589,9 +587,14 @@ const typeList = [
     value: 'shinobigami-enigma',
     label: 'エニグマ',
     color: 'indigo-lighten-4',
-    icon: data => (data.disabled ? 'mdi-bomb-off' : 'mdi-bomb')
+    icon: (data: { disabled: boolean }) => (data.disabled ? 'mdi-bomb-off' : 'mdi-bomb')
   },
-  { value: 'shinobigami-persona', label: 'ペルソナ', color: 'cyan-lighten-4', icon: () => 'mdi-badge-account-outline' },
+  {
+    value: 'shinobigami-persona',
+    label: 'ペルソナ',
+    color: 'purple-lighten-4',
+    icon: () => 'mdi-badge-account-outline'
+  },
   { value: 'shinobigami-prize', label: 'プライズ', color: 'amber-lighten-4', icon: () => 'mdi-treasure-chest-outline' }
 ]
 
@@ -706,6 +709,7 @@ const hasEmptyPlayers = computed(() => {
   ]
 })
 const dataObjPlayerId = computed(() => {
+  if (!dataObj.value) return ''
   const playerId = dataObj.value.data.player
   return hasEmptyPlayers.value.some(p => p.id === playerId) ? playerId : ''
 })
@@ -729,11 +733,13 @@ const hasEmptyCharacterList = computed(() => {
   return resultList
 })
 const dataObjPerson = computed(() => {
+  if (!dataObj.value) return ''
   const person = dataObj.value.data.person
   return hasEmptyCharacterList.value.some(p => p.id === person) ? person : ''
 })
 
 async function onUpdateSecret(index: number, value: boolean) {
+  if (!dataObj.value) return
   const character = clone(dataObj.value.data.character)
   character.ninjaArtsList[index].secret = value
   await graphQlStore?.updateShinobigamiCharacter(
@@ -745,7 +751,7 @@ async function onUpdateSecret(index: number, value: boolean) {
 }
 
 async function onUpdateCharacterName(characterName: string) {
-  if (dataObj.value.data.character.characterName === characterName) return
+  if (!dataObj.value || dataObj.value.data.character.characterName === characterName) return
   const character = clone(dataObj.value.data.character)
   character.characterName = characterName
   await graphQlStore?.updateShinobigamiCharacter(
@@ -757,7 +763,7 @@ async function onUpdateCharacterName(characterName: string) {
 }
 
 async function onUpdateCharacterPlayer(playerId: string) {
-  if (dataObj.value.data.playerId === playerId) return
+  if (!dataObj.value || dataObj.value.data.playerId === playerId) return
   await graphQlStore?.updateShinobigamiCharacter(
     dataObj.value.id,
     playerId,
@@ -767,7 +773,7 @@ async function onUpdateCharacterPlayer(playerId: string) {
 }
 
 async function onUpdateHandoutName(name: string) {
-  if (dataObj.value.data.name === name) return
+  if (!dataObj.value || dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     name,
@@ -781,7 +787,7 @@ async function onUpdateHandoutName(name: string) {
 }
 
 async function onUpdateHandoutIntro(intro: string) {
-  if (dataObj.value.data.intro === intro) return
+  if (!dataObj.value || dataObj.value.data.intro === intro) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -795,7 +801,7 @@ async function onUpdateHandoutIntro(intro: string) {
 }
 
 async function onUpdateHandoutObjective(objective: string) {
-  if (dataObj.value.data.objective === objective) return
+  if (!dataObj.value || dataObj.value.data.objective === objective) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -809,7 +815,7 @@ async function onUpdateHandoutObjective(objective: string) {
 }
 
 async function onUpdateHandoutSecret(secret: string) {
-  if (dataObj.value.data.secret === secret) return
+  if (!dataObj.value || dataObj.value.data.secret === secret) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -823,7 +829,7 @@ async function onUpdateHandoutSecret(secret: string) {
 }
 
 async function onUpdateHandoutPerson(person: string) {
-  if (dataObj.value.data.person === person) return
+  if (!dataObj.value || dataObj.value.data.person === person) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -837,7 +843,7 @@ async function onUpdateHandoutPerson(person: string) {
 }
 
 async function onUpdateHandoutPublished(published: boolean) {
-  if (dataObj.value.data.published === published) return
+  if (!dataObj.value || dataObj.value.data.published === published) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -851,7 +857,7 @@ async function onUpdateHandoutPublished(published: boolean) {
 }
 
 async function onUpdateHandoutKnowSelfSecret(knowSelfSecret: boolean) {
-  if (dataObj.value.data.knowSelfSecret === knowSelfSecret) return
+  if (!dataObj.value || dataObj.value.data.knowSelfSecret === knowSelfSecret) return
   await graphQlStore?.updateShinobigamiHandout(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -865,7 +871,7 @@ async function onUpdateHandoutKnowSelfSecret(knowSelfSecret: boolean) {
 }
 
 async function onUpdateEnigmaName(name: string) {
-  if (dataObj.value.data.name === name) return
+  if (!dataObj.value || dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     name,
@@ -881,7 +887,7 @@ async function onUpdateEnigmaName(name: string) {
 }
 
 async function onUpdateEnigmaThreat(threat: number) {
-  if (dataObj.value.data.threat === threat) return
+  if (!dataObj.value || dataObj.value.data.threat === threat) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -897,7 +903,7 @@ async function onUpdateEnigmaThreat(threat: number) {
 }
 
 async function onUpdateEnigmaDisableJudgement(disableJudgement: string) {
-  if (dataObj.value.data.disableJudgement === disableJudgement) return
+  if (!dataObj.value || dataObj.value.data.disableJudgement === disableJudgement) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -913,7 +919,7 @@ async function onUpdateEnigmaDisableJudgement(disableJudgement: string) {
 }
 
 async function onUpdateEnigmaCamouflage(camouflage: string) {
-  if (dataObj.value.data.camouflage === camouflage) return
+  if (!dataObj.value || dataObj.value.data.camouflage === camouflage) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -929,7 +935,7 @@ async function onUpdateEnigmaCamouflage(camouflage: string) {
 }
 
 async function onUpdateEnigmaEntityName(entityName: string) {
-  if (dataObj.value.data.entityName === entityName) return
+  if (!dataObj.value || dataObj.value.data.entityName === entityName) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -945,7 +951,7 @@ async function onUpdateEnigmaEntityName(entityName: string) {
 }
 
 async function onUpdateEnigmaEffect(effect: string) {
-  if (dataObj.value.data.effect === effect) return
+  if (!dataObj.value || dataObj.value.data.effect === effect) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -961,7 +967,7 @@ async function onUpdateEnigmaEffect(effect: string) {
 }
 
 async function onUpdateEnigmaBind(bind: string) {
-  if (dataObj.value.data.bind === bind) return
+  if (!dataObj.value || dataObj.value.data.bind === bind) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -977,7 +983,7 @@ async function onUpdateEnigmaBind(bind: string) {
 }
 
 async function onUpdateEnigmaUsed(used: boolean) {
-  if (dataObj.value.data.used === used) return
+  if (!dataObj.value || dataObj.value.data.used === used) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -993,7 +999,7 @@ async function onUpdateEnigmaUsed(used: boolean) {
 }
 
 async function onUpdateEnigmaDisabled(disabled: boolean) {
-  if (dataObj.value.data.disabled === disabled) return
+  if (!dataObj.value || dataObj.value.data.disabled === disabled) return
   await graphQlStore?.updateShinobigamiEnigma(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1009,7 +1015,7 @@ async function onUpdateEnigmaDisabled(disabled: boolean) {
 }
 
 async function onUpdatePersonaName(name: string) {
-  if (dataObj.value.data.name === name) return
+  if (!dataObj.value || dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
     name,
@@ -1020,7 +1026,7 @@ async function onUpdatePersonaName(name: string) {
 }
 
 async function onUpdatePersonaEffect(effect: string) {
-  if (dataObj.value.data.effect === effect) return
+  if (!dataObj.value || dataObj.value.data.effect === effect) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1031,7 +1037,7 @@ async function onUpdatePersonaEffect(effect: string) {
 }
 
 async function onUpdatePersonaBind(bind: string) {
-  if (dataObj.value.data.bind === bind) return
+  if (!dataObj.value || dataObj.value.data.bind === bind) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1042,7 +1048,7 @@ async function onUpdatePersonaBind(bind: string) {
 }
 
 async function onUpdatePersonaLeaked(leaked: boolean) {
-  if (dataObj.value.data.leaked === leaked) return
+  if (!dataObj.value || dataObj.value.data.leaked === leaked) return
   await graphQlStore?.updateShinobigamiPersona(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1053,7 +1059,7 @@ async function onUpdatePersonaLeaked(leaked: boolean) {
 }
 
 async function onUpdatePrizeName(name: string) {
-  if (dataObj.value.data.name === name) return
+  if (!dataObj.value || dataObj.value.data.name === name) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
     name,
@@ -1066,7 +1072,7 @@ async function onUpdatePrizeName(name: string) {
 }
 
 async function onUpdatePrizeDescription(description: string) {
-  if (dataObj.value.data.description === description) return
+  if (!dataObj.value || dataObj.value.data.description === description) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1079,7 +1085,7 @@ async function onUpdatePrizeDescription(description: string) {
 }
 
 async function onUpdatePrizeSecret(secret: string) {
-  if (dataObj.value.data.secret === secret) return
+  if (!dataObj.value || dataObj.value.data.secret === secret) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1092,7 +1098,7 @@ async function onUpdatePrizeSecret(secret: string) {
 }
 
 async function onUpdatePrizeOwner(owner: string) {
-  if (dataObj.value.data.owner === owner) return
+  if (!dataObj.value || dataObj.value.data.owner === owner) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1105,7 +1111,7 @@ async function onUpdatePrizeOwner(owner: string) {
 }
 
 async function onUpdatePrizeReadableList(readableList: string[]) {
-  if (JSON.stringify(dataObj.value.data.readableList) === JSON.stringify(readableList)) return
+  if (!dataObj.value || JSON.stringify(dataObj.value.data.readableList) === JSON.stringify(readableList)) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
     dataObj.value.data.name,
@@ -1118,7 +1124,7 @@ async function onUpdatePrizeReadableList(readableList: string[]) {
 }
 
 async function onUpdatePrizeLeakedList(leakedList: string[]) {
-  if (JSON.stringify(dataObj.value.data.leakedList) === JSON.stringify(leakedList)) return
+  if (!dataObj.value || JSON.stringify(dataObj.value.data.leakedList) === JSON.stringify(leakedList)) return
   await graphQlStore?.updateShinobigamiPrize(
     dataObj.value.id,
     dataObj.value.data.name,

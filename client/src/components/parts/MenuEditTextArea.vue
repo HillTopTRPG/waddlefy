@@ -78,7 +78,7 @@ const props = defineProps<{
   textRows: number
   offset?: number
   width?: number
-  variant: string
+  variant: 'outlined' | 'plain' | 'solo-filled' | 'filled' | 'underlined' | 'solo' | 'solo-inverted'
   editable: boolean
   textareaClass?: string
 }>()

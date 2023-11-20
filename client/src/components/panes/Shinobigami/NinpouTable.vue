@@ -77,9 +77,9 @@ const emits = defineEmits<{
 
 const useList = computed(() => {
   if (props.mode === 'secret' || !props.perspective) {
-    return props.list
+    return props.list || []
   } else {
-    return props.list.filter(n => !n.secret)
+    return props.list?.filter(n => !n.secret) || []
   }
 })
 

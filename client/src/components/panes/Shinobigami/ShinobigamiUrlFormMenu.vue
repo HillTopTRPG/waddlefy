@@ -72,7 +72,7 @@ async function onExecute() {
 const opened = ref(false)
 
 const carouselTimerNum = ref(100)
-const carouselTimer = ref(null)
+const carouselTimer = ref<number | null>(null)
 
 const carouselValue = ref(0)
 const form = ref()

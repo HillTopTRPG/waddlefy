@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-const images = []
-function preload() {
-  for (let i = 0; i < arguments.length; i++) {
+const images: HTMLImageElement[] = []
+function preload(...args: string[]) {
+  for (let i = 0; i < args.length; i++) {
     images[i] = new Image()
     images[i].onload = () => {
       // console.log(arguments[i])

@@ -5,10 +5,12 @@ import {
   MutationResult,
   Mutations,
   Player,
+  PlayerForPlayer,
   Queries,
   QueryResult,
   Session,
   SessionData,
+  SessionForUser,
   SubscriptionResult,
   Subscriptions,
   User
@@ -27,8 +29,8 @@ import { Router } from 'vue-router'
 import { uuid } from 'vue-uuid'
 
 // ローカル開発時のみ有効な値
-const DEFAULT_URL = import.meta.env.VITE_GRAPHQL_URL
-const DEFAULT_REGION = import.meta.env.VITE_GRAPHQL_REGION
+const DEFAULT_URL = (import.meta.env as any).VITE_GRAPHQL_URL
+const DEFAULT_REGION = (import.meta.env as any).VITE_GRAPHQL_REGION
 
 export const DEFAULT_SESSION_NAME = 'No title session'
 export const DEFAULT_DASHBOARD_NAME = 'No title page'
@@ -67,6 +69,7 @@ export function makeGraphQlClient(endPointUrl: string, region: string, getAuthTo
         2
       )
     )
+    throw Error('GraphQLへの接続に失敗しました。')
   }
 }
 
@@ -75,7 +78,7 @@ function sortId(d: { id: string }, e: { id: string }): number {
   return d.id > e.id ? 1 : 0
 }
 
-async function addDefaultSessionForSignIn(appSyncClient: ApolloClient<NormalizedCacheObject>): Promise<string> {
+async function addDefaultSessionForSignIn(appSyncClient: ApolloClient<NormalizedCacheObject>): Promise<Session> {
   return new Promise(resolve => {
     callAddSession(appSyncClient, DEFAULT_SESSION_NAME, DEFAULT_SESSION_TYPE, session => {
       resolve(session)
@@ -102,12 +105,14 @@ export async function userSignIn(
   let { firstSession } = data
   localStorage.setItem(token, JSON.stringify({ secret }))
   localStorage.setItem('userId', userId)
+  let sessionId: string = firstSession?.id
+  let dashboardId = firstSession?.defaultDashboardId
   if (!firstSession) {
     const appSyncClientForCreateSession = makeGraphQlClient(graphql, region, () => `u/${token}/${secret || ''}`)
-    firstSession = await addDefaultSessionForSignIn(appSyncClientForCreateSession, DEFAULT_SESSION_NAME)
+    const { id, defaultDashboardId } = await addDefaultSessionForSignIn(appSyncClientForCreateSession)
+    sessionId = id
+    dashboardId = defaultDashboardId
   }
-  const sessionId = firstSession.id
-  const dashboardId = firstSession.defaultDashboardId
   if (dashboardId) {
     router.push({ name: 'UserMain2', params: { userToken: token, sessionId, dashboardId } }).then()
   } else {
@@ -246,7 +251,8 @@ async function callAddSession(
     token: data.token,
     name: data.name,
     sessionType: data.sessionType,
-    createdAt: data.createdAt
+    createdAt: data.createdAt,
+    defaultDashboardId: data.defaultDashboardId
   })
 }
 
@@ -387,7 +393,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     onUpdateUserSubscription()
 
-    const subscribedSessionId = []
+    const subscribedSessionId: string[] = []
     watch(
       () => state.session?.id,
       sessionId => {
@@ -649,7 +655,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     )
   }
 
-  async function updateDashboardHelper(name?: string, layout?: Layout, option?: DashboardOption) {
+  async function updateDashboardHelper(name: string | null, layout: Layout | null, option: DashboardOption | null) {
     if (!appSyncClient) return
     if (!state.user?.token) return
     console.log('Mutations.updateDashboard')
@@ -766,15 +772,15 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     console.log('Queries.directSessionAccess')
     async function requestDirectSessionAccess(useSessionId: string) {
-      const result = await appSyncClient.mutate<QueryResult.DirectSessionAccess>({
+      const result = await appSyncClient!.mutate<QueryResult.DirectSessionAccess>({
         mutation: Queries.directSessionAccess,
         variables: { sessionId: useSessionId }
       })
       console.log(JSON.stringify(result.data, null, 2))
-      data = result.data?.directSessionAccess
+      return result.data?.directSessionAccess
     }
     try {
-      await requestDirectSessionAccess(sessionId)
+      data = await requestDirectSessionAccess(sessionId)
     } catch (err) {
       await router.replace({ name: 'Home' })
       return
@@ -783,6 +789,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       const { id } = await addDefaultSessionForSignIn(appSyncClient)
       await requestDirectSessionAccess(id)
     }
+    if (!data) return
 
     state.user = {
       id: data.user.id,
@@ -802,8 +809,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     }
     state.players = data.players.sort(sortId)
     state.dashboards = data.dashboards
-      .map(d => {
-        d.option = JSON.parse(d.option) as DashboardOption
+      .map((d: AbstractDashboard) => {
+        d.option = JSON.parse(d.option.toString()) as DashboardOption
         return d
       })
       .sort(sortId)
@@ -815,14 +822,14 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
           layout: JSON.parse(data.defaultDashboard.layout) as Layout,
           option: JSON.parse(data.defaultDashboard.option) as DashboardOption
         }
-        state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
+        state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
       } else {
         await directDashboardAccess(dashboardId)
       }
     } else {
       state.dashboard = null
     }
-    state.sessionDataList = data.sessionDataList.sort(sortId).map(d => {
+    state.sessionDataList = data.sessionDataList.sort(sortId).map((d: SessionData<any>) => {
       const raw = JSON.parse(d.data)
       return {
         id: d.id,
@@ -872,7 +879,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         layout: JSON.parse(data.layout) as Layout,
         option: JSON.parse(data.option) as DashboardOption
       }
-      state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
+      state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
     }, 0)
   }
 
@@ -917,8 +924,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       name
     }
     state.dashboards = session.dashboards
-      .map(d => {
-        d.option = JSON.parse(d.option) as DashboardOption
+      .map((d: AbstractDashboard) => {
+        d.option = JSON.parse(d.option.toString()) as DashboardOption
         return d
       })
       .sort(sortId)
@@ -928,8 +935,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       layout: JSON.parse(session.defaultDashboard.layout) as Layout,
       option: JSON.parse(session.defaultDashboard.option) as DashboardOption
     }
-    state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
-    state.sessionDataList = session.sessionDataList.sort(sortId).map(d => {
+    state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
+    state.sessionDataList = session.sessionDataList.sort(sortId).map((d: SessionData<any>) => {
       const raw = JSON.parse(d.data)
       return {
         id: d.id,
@@ -999,9 +1006,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
   }
 
-  async function addShinobigamiCharacter(dataObj: ShinobiGami, password: string): Promise<void> {
+  async function addShinobigamiCharacter(perspective: string, dataObj: ShinobiGami, password: string): Promise<void> {
     const characterWrap: Omit<CharacterWrap, 'id'> = {
-      player: '',
+      player: perspective || 'user',
       viewPass: password,
       character: dataObj
     }
@@ -1133,8 +1140,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  function onAddPlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnAddPlayer>> {
-    if (!appSyncClient) return
+  function onAddPlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnAddPlayer>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnAddPlayer>({
       query: Subscriptions.onAddPlayer,
       variables: { sessionId },
@@ -1155,8 +1162,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function onAddDashboardSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnAddDashboard>> {
-    if (!appSyncClient) return
+  function onAddDashboardSubscription(
+    sessionId: string
+  ): Observable<FetchResult<SubscriptionResult.OnAddDashboard>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnAddDashboard>({
       query: Subscriptions.onAddDashboard,
       variables: { sessionId },
@@ -1178,7 +1187,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             layout: JSON.parse(data.layout) as Layout,
             option: JSON.parse(data.option) as DashboardOption
           }
-          state.dashboardCache.set(state.dashboard.id, clone(state.dashboard))
+          state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
         }
       },
       error(errorValue: any) {
@@ -1190,8 +1199,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   function onAddSessionDataSubscription(
     sessionId: string
-  ): Observable<FetchResult<SubscriptionResult.OnAddSessionData>> {
-    if (!appSyncClient) return
+  ): Observable<FetchResult<SubscriptionResult.OnAddSessionData>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnAddSessionData>({
       query: Subscriptions.onAddSessionData,
       variables: { sessionId },
@@ -1227,8 +1236,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function onUpdateUserSubscription(): Observable<FetchResult<SubscriptionResult.OnUpdateUser>> {
-    if (!appSyncClient) return
+  function onUpdateUserSubscription(): Observable<FetchResult<SubscriptionResult.OnUpdateUser>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdateUser>({
       query: Subscriptions.onUpdateUser,
       variables: { userId: state.user?.id || '' },
@@ -1238,7 +1247,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       next(value: FetchResult<SubscriptionResult.OnUpdateUser>) {
         console.log(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateUser
-        if (!data) return
+        if (!data || !state.user) return
         state.user.name = data.name
         state.user.iconToken = data.iconToken
       },
@@ -1249,8 +1258,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function onUpdateSessionSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnUpdateSession>> {
-    if (!appSyncClient) return
+  function onUpdateSessionSubscription(
+    sessionId: string
+  ): Observable<FetchResult<SubscriptionResult.OnUpdateSession>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdateSession>({
       query: Subscriptions.onUpdateSession,
       variables: { sessionId },
@@ -1280,8 +1291,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   function onUpdateDashboardSubscription(
     sessionId: string
-  ): Observable<FetchResult<SubscriptionResult.OnUpdateDashboard>> {
-    if (!appSyncClient) return
+  ): Observable<FetchResult<SubscriptionResult.OnUpdateDashboard>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdateDashboard>({
       query: Subscriptions.onUpdateDashboard,
       variables: { sessionId },
@@ -1304,7 +1315,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             state.dashboard.layout = null
             state.dashboard.option = option
             setTimeout(() => {
-              state.dashboard.layout = layout
+              state.dashboard!.layout = layout
             }, 0)
           }
           state.dashboardCache.set(data.id, {
@@ -1324,8 +1335,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   function onUpdateSessionDataSubscription(
     sessionId: string
-  ): Observable<FetchResult<SubscriptionResult.OnUpdateSessionData>> {
-    if (!appSyncClient) return
+  ): Observable<FetchResult<SubscriptionResult.OnUpdateSessionData>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdateSessionData>({
       query: Subscriptions.onUpdateSessionData,
       variables: { sessionId },
@@ -1367,8 +1378,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function onUpdatePlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnUpdatePlayer>> {
-    if (!appSyncClient) return
+  function onUpdatePlayerSubscription(
+    sessionId: string
+  ): Observable<FetchResult<SubscriptionResult.OnUpdatePlayer>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnUpdatePlayer>({
       query: Subscriptions.onUpdatePlayer,
       variables: { sessionId },
@@ -1397,8 +1410,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function onDeletePlayerSubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnDeletePlayer>> {
-    if (!appSyncClient) return
+  function onDeletePlayerSubscription(
+    sessionId: string
+  ): Observable<FetchResult<SubscriptionResult.OnDeletePlayer>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnDeletePlayer>({
       query: Subscriptions.onDeletePlayer,
       variables: { sessionId },
@@ -1422,8 +1437,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   function onDeleteSessionDataSubscription(
     sessionId: string
-  ): Observable<FetchResult<SubscriptionResult.OnDeleteSessionData>> {
-    if (!appSyncClient) return
+  ): Observable<FetchResult<SubscriptionResult.OnDeleteSessionData>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnDeleteSessionData>({
       query: Subscriptions.onDeleteSessionData,
       variables: { sessionId },
@@ -1447,8 +1462,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   function onDeleteDashboardSubscription(
     sessionId: string
-  ): Observable<FetchResult<SubscriptionResult.OnDeleteDashboard>> {
-    if (!appSyncClient) return
+  ): Observable<FetchResult<SubscriptionResult.OnDeleteDashboard>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnDeleteDashboard>({
       query: Subscriptions.onDeleteDashboard,
       variables: { sessionId },
@@ -1471,8 +1486,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     return subscriber
   }
 
-  function onNotifySubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnDeleteDashboard>> {
-    if (!appSyncClient) return
+  function onNotifySubscription(sessionId: string): Observable<FetchResult<SubscriptionResult.OnNotify>> | null {
+    if (!appSyncClient) return null
     const subscriber = appSyncClient.subscribe<SubscriptionResult.OnNotify>({
       query: Subscriptions.onNotify,
       variables: { sessionId },

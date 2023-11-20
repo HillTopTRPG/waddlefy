@@ -1,5 +1,5 @@
 <template>
-  <v-card class="px-2 pt-2 pb-1 bg-white border">
+  <v-card class="px-2 pt-2 pb-1 bg-white border base-info">
     <v-defaults-provider :defaults="{ VChip: { class: 'px-3 mr-1', size: 'small', variant: 'outlined' } }">
       <v-defaults-provider :defaults="{ VCardText: { class: 'pa-0' } }">
         <v-card-text class="mb-2">
@@ -38,7 +38,7 @@ defineProps<{
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .base-info {
-  background-image: url('/paint_00001.jpg');
+  background-image: url('/paint_00001.jpg') !important;
 }
 
 .tree {

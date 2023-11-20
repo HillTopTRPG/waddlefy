@@ -40,7 +40,7 @@
         <v-divider v-if="idx" />
         <data-view-card
           :character-id="cw.characterId"
-          :scenario-data-id="cw.scenarioDataId"
+          :scenario-data-id="cw.scenarioDataId || ''"
           :background-view="viewBackground"
           :ninpou-view="viewNinpou"
           :special-arts-view="viewSpecialArts"
@@ -84,8 +84,7 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import DataViewCard from '@/components/panes/Shinobigami/DataViewCard.vue'
 import { computed, inject, ref, watch } from 'vue'
 
-import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import { SessionData } from '@/components/graphql/schema'
+import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import DataViewPaneHelp from '@/components/panes/Shinobigami/DataViewPaneHelp.vue'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -123,8 +122,8 @@ const perspectiveList = computed(() => [
 
 const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
-const handoutDataList = computed<{ characterId?: string; scenarioDataId?: string }[]>(() => {
-  if (!graphQlStore) return [] as SessionData<CharacterWrap>[]
+const handoutDataList = computed((): { characterId?: string; scenarioDataId?: string }[] => {
+  if (!graphQlStore) return [] as { characterId?: string; scenarioDataId?: string }[]
   if (!perspective.value)
     return graphQlStore.state.sessionDataList
       .filter(sd => sd.type === 'shinobigami-handout')
@@ -147,14 +146,11 @@ const handoutDataList = computed<{ characterId?: string; scenarioDataId?: string
 })
 
 const enigmaList = computed(() => {
-  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-enigma')
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-enigma') || []
 })
 
 const prizeList = computed(() => {
-  if (!perspective.value) {
-    return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize')
-  }
-  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize')
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-prize') || []
 })
 
 const selectSkill = ref('')

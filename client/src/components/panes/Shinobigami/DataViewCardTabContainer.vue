@@ -190,11 +190,13 @@ const props = defineProps<{
 }>()
 
 const otherHandouts = computed(() => {
-  return graphQlStore?.state.sessionDataList.filter(sd => {
-    if (sd.type !== 'shinobigami-handout') return false
-    if (sd.id === handout.value.id) return false
-    return !props.perspective || sd.data.published
-  })
+  return (
+    graphQlStore?.state.sessionDataList.filter(sd => {
+      if (sd.type !== 'shinobigami-handout') return false
+      if (sd.id === handout.value?.id) return false
+      return !props.perspective || sd.data.published
+    }) || []
+  )
 })
 
 const tab = ref('session-memo')
@@ -257,8 +259,8 @@ const secretOpen = computed((): boolean => {
   if (!props.perspective) return true
 
   // キャラクターのオーナーの場合
-  if (handout.value.data.knowSelfSecret) {
-    const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.value.data.person)
+  if (handout.value?.data.knowSelfSecret) {
+    const handoutCharacter = graphQlStore?.state.sessionDataList.find(sd => sd.id === handout.value?.data.person)
     if (props.perspective === handoutCharacter?.data.player) return true
   }
 
@@ -268,7 +270,7 @@ const secretOpen = computed((): boolean => {
   )
 
   return (
-    secretRelations.some(sd => {
+    secretRelations?.some(sd => {
       const targetHandout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
       const character = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === targetHandout?.data.person)
       return props.perspective === character?.data.player

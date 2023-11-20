@@ -193,7 +193,7 @@ watch(
   { deep: true }
 )
 
-function setPaneComponent(pane: Layout, n: { [key: string]: string }, g: { group: string }) {
+function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
   pane.component = n
   pane.componentGroup = g.group
 }

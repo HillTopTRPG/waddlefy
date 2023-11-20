@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <v-chip :color="color" :label="true" :border="true" :elevation="3" variant="flat" size="small" v-bind="props">
         <v-icon :icon="icon" class="mr-1" />
-        <span>{{ text }}{{ usePoint ? `(${usePoint})` : '' }}</span>
+        <span>{{ text }}{{ `(${usePoint})` }}</span>
       </v-chip>
     </template>
     <v-card class="border" :class="chipClass" style="max-width: 20rem">
@@ -25,7 +25,10 @@ const props = defineProps<{
   type: string
 }>()
 
-const usePoint = computed(() => (isNaN(props.point) ? 0 : Number(props.point)))
+const usePoint = computed(() => {
+  const num = parseInt(props.point, 10)
+  return isNaN(num) ? 0 : num
+})
 
 function typeValue(strong: string, weak: string): string {
   if (props.type === '長所') return strong

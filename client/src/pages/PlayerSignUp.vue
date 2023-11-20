@@ -136,21 +136,21 @@ async function init() {
 
   if (props.playerId) {
     console.log('Queries.getSessionPlayer')
-    const result = await appSyncClient.mutate<QueryResult.GetSessionPlayer>({
+    const result = await appSyncClient?.mutate<QueryResult.GetSessionPlayer>({
       mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
     })
-    const getSessionPlayer = result.data?.getSessionPlayer
+    const getSessionPlayer = result?.data?.getSessionPlayer
     if (getSessionPlayer) {
       players.value = []
       player.value = getSessionPlayer
     }
   } else {
     console.log('Queries.getSessionPlayers')
-    const result = await appSyncClient.mutate<QueryResult.GetSessionPlayers>({
+    const result = await appSyncClient?.mutate<QueryResult.GetSessionPlayers>({
       mutation: Queries.getSessionPlayers
     })
-    const getSessionPlayers = result.data?.getSessionPlayers
+    const getSessionPlayers = result?.data?.getSessionPlayers
     if (getSessionPlayers) {
       players.value = getSessionPlayers
       player.value = null

@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.23.0",
+    "@types/jsonp": "^0.2.3",
     "@types/node": "^20.8.10",
     "@types/webfontloader": "^1.6.36",
     "@typescript-eslint/eslint-plugin": "^6.9.1",

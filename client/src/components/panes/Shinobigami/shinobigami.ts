@@ -79,22 +79,22 @@ export type DiffType = {
 const basicParams: {
   path: keyof Pick<
     ShinobiGami,
-    'url',
-    'playerName',
-    'characterName',
-    'characterNameKana',
-    'regulation',
-    'foe',
-    'exp',
-    'memo',
-    'upperStyle',
-    'subStyle',
-    'level',
-    'age',
-    'sex',
-    'cover',
-    'belief',
-    'stylerule'
+    | 'url'
+    | 'playerName'
+    | 'characterName'
+    | 'characterNameKana'
+    | 'regulation'
+    | 'foe'
+    | 'exp'
+    | 'memo'
+    | 'upperStyle'
+    | 'subStyle'
+    | 'level'
+    | 'age'
+    | 'sex'
+    | 'cover'
+    | 'belief'
+    | 'stylerule'
   >
   label: string
 }[] = [
@@ -120,23 +120,23 @@ export type DataType = 'basic' | 'tokugi' | 'ninpou' | 'background' | 'specialAr
 export const fullDataType: DataType[] = ['basic', 'tokugi', 'ninpou', 'background', 'specialArts']
 
 export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, targets: DataType[]): ShinobiGami {
-  const result: ShinobiGami = clone(oldData)
+  const result: ShinobiGami = clone<ShinobiGami>(oldData)!
   if (targets.some(t => t === 'basic')) {
     basicParams.forEach(p => {
-      result[p.path] = mergeData[p.path]
+      ;(result as any)[p.path] = (mergeData as any)[p.path]
     })
   }
   if (targets.some(t => t === 'tokugi')) {
-    result.skill = clone(mergeData.skill)
+    result.skill = clone(mergeData.skill)!
   }
   if (targets.some(t => t === 'ninpou')) {
-    result.ninjaArtsList = clone(mergeData.ninjaArtsList)
+    result.ninjaArtsList = clone(mergeData.ninjaArtsList)!
   }
   if (targets.some(t => t === 'background')) {
-    result.backgroundList = clone(mergeData.backgroundList)
+    result.backgroundList = clone(mergeData.backgroundList)!
   }
   if (targets.some(t => t === 'specialArts')) {
-    result.specialArtsList = clone(mergeData.specialArtsList)
+    result.specialArtsList = clone(mergeData.specialArtsList)!
   }
   return result
 }
@@ -146,10 +146,10 @@ export function getCharacterDiffMessages(
   wrapTwo: CharacterWrap,
   players: Player[],
   characterName: string
-): string[] {
+): { text: string; icon: string; color: string }[] {
   const diffs: DiffType[] = []
-  const cOne = wrapOne.character
-  const cTwo = wrapTwo.character
+  const cOne: any = wrapOne.character
+  const cTwo: any = wrapTwo.character
 
   function getName(player: string) {
     if (player === 'user') return '主催者'
@@ -161,10 +161,10 @@ export function getCharacterDiffMessages(
     if (cOne[p.path] === cTwo[p.path]) return
     diffs.push({
       op: 'replace',
-      path: p.path,
+      path: p.path.toString(),
       label: p.label,
-      before: cOne[p.path],
-      after: cTwo[p.path]
+      before: cOne[p.path]?.toString() || '',
+      after: cTwo[p.path]?.toString() || ''
     })
   })
 
@@ -208,19 +208,8 @@ export function getCharacterDiffMessages(
   }
   const colMappingList = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
   const spaceMappingList = colMappingList.map((col, idx) => `${colMappingList.slice(idx - 1)[0]}と${col}の間のギャップ`)
-  diffs.push(
-    ...getDiffSpace(
-      cOne.skill.spaceList,
-      cTwo.skill.spaceList,
-      'delete',
-      'skill.spaceList',
-      spaceMappingList,
-      'ギャップ'
-    )
-  )
-  diffs.push(
-    ...getDiffSpace(cTwo.skill.spaceList, cOne.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList, 'ギャップ')
-  )
+  diffs.push(...getDiffSpace(cOne.skill.spaceList, cTwo.skill.spaceList, 'delete', 'skill.spaceList', spaceMappingList))
+  diffs.push(...getDiffSpace(cTwo.skill.spaceList, cOne.skill.spaceList, 'add', 'skill.spaceList', spaceMappingList))
   diffs.push(
     ...getDiffSpace(
       cOne.skill.damagedColList,
@@ -254,7 +243,7 @@ export function getCharacterDiffMessages(
   }
 
   return diffs.map(diff => {
-    const deleteMap = {
+    const deleteMap: any = {
       'skill.damagedColList': {
         text: `${characterName}が${diff.before}を回復`,
         icon: 'mdi-medical-bag',
@@ -276,7 +265,7 @@ export function getCharacterDiffMessages(
         color: 'blue-grey-lighten-4'
       }
     }
-    const addMap = {
+    const addMap: any = {
       'skill.damagedColList': {
         text: `${characterName}の${diff.after}にダメージ`,
         icon: 'mdi-liquid-spot',

@@ -1,6 +1,16 @@
 <template>
   <pane-frame title="特技比較ツール">
     <template #title-action>
+      <template v-if="isUserControl">
+        <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+          <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
+            <template #prepend-inner>
+              <v-icon icon="mdi-triangle-small-down" />
+            </template>
+          </v-select>
+        </v-defaults-provider>
+      </template>
+
       <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
         <v-select prefix="比較数: " :items="[2, 3, 4, 5, 6]" style="max-width: 6.5em" v-model="nums">
           <template #prepend-inner>
@@ -26,7 +36,7 @@
               :info="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.skill || undefined"
               :perspective="perspective"
               v-model:select-skill="selectSkill"
-              @update:info="v => updateInfo(selectCharacters[i], v)"
+              @update:info="v => updateInfo(selectCharacters[i] || '', v)"
               :editing="false"
               :editable="false"
             />
@@ -85,7 +95,13 @@ const props = defineProps<{
   rootLayout: Layout
 }>()
 
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 const perspective = ref(graphQlStore?.state.user?.token ? '' : graphQlStore?.state.player?.id || '')
+
+const perspectiveList = computed(() => [
+  { value: '', name: '主催者' },
+  ...(graphQlStore?.state.players.map(p => ({ value: p.id, name: p.name })) || [])
+])
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const emits = defineEmits<{

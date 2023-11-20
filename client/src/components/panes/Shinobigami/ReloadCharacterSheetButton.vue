@@ -33,8 +33,8 @@
             class="justify-center flex-grow-0 flex-shrink-1"
             style="flex-basis: auto !important"
             label="全て"
-            :indeterminate="[0, fullDataType.length].every(l => l !== targets.length)"
-            :model-value="targets.length === fullDataType.length"
+            :indeterminate="[0, fullDataType.length].every(l => l !== targets?.length)"
+            :model-value="targets?.length === fullDataType.length"
             @update:model-value="v => (targets = v ? clone(fullDataType) : [])"
           />
         </v-sheet>
@@ -62,7 +62,7 @@
           color="primary"
           class="flex-0-1-100"
           variant="flat"
-          :disabled="!targets.length"
+          :disabled="!targets?.length"
           @click="confirm()"
           text="決定"
         />
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ShinobigamiHelper, fullDataType, mergeShinobigami } from '@/components/panes/Shinobigami/shinobigami'
+import { DataType, ShinobigamiHelper, fullDataType, mergeShinobigami } from '@/components/panes/Shinobigami/shinobigami'
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -88,17 +88,17 @@ const dataObj = computed(() => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
-const url = ref(dataObj.value.data.character.url)
-const viewPass = ref(dataObj.value.data.viewPass)
+const url = ref(dataObj.value?.data.character.url || '')
+const viewPass = ref(dataObj.value?.data.viewPass || '')
 const form = ref()
 
 function resetData() {
-  url.value = dataObj.value.data.character.url
-  viewPass.value = dataObj.value.data.viewPass
+  url.value = dataObj.value?.data.character.url || ''
+  viewPass.value = dataObj.value?.data.viewPass || ''
 }
 watch(dataObj, resetData)
 
-const targets = ref<string[]>(clone(fullDataType))
+const targets = ref(clone<DataType[]>(fullDataType))
 
 const opened = ref(false)
 watch(opened, v => {
@@ -114,16 +114,19 @@ function close() {
 }
 
 async function confirm() {
+  if (!dataObj.value || !targets.value) return
   const helper = new ShinobigamiHelper(url.value, viewPass.value)
   if (helper.isThis()) {
     const { data } = await helper.getData()
-    await graphQlStore?.updateShinobigamiCharacter(
-      dataObj.value.id,
-      dataObj.value.data.player,
-      viewPass.value,
-      mergeShinobigami(dataObj.value.data.character, data, targets.value)
-    )
-    console.log('再読込完了！！！！')
+    if (data) {
+      await graphQlStore?.updateShinobigamiCharacter(
+        dataObj.value.id,
+        dataObj.value.data.player,
+        viewPass.value,
+        mergeShinobigami(dataObj.value.data.character, data, targets.value)
+      )
+      console.log('再読込完了！！！！')
+    }
   }
   close()
 }

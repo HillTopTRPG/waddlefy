@@ -45,7 +45,7 @@
             {{ label }}
           </template>
           <template #item="{ props, item }">
-            <v-list-item v-bind="props" :title="item?.raw?.label" :subtitle="item?.raw?.group" />
+            <v-list-item v-bind="props" :title="item?.raw?.label || ''" :subtitle="item?.raw?.group || ''" />
           </template>
         </v-autocomplete>
       </v-card-item>
@@ -76,14 +76,16 @@ const opened = ref(false)
 const editValue = ref(props.value)
 const editElm = ref()
 
-const transpose = a => a[0].map((_, c) => a.map((rt, r) => ({ label: rt[c], group: `${SkillKind[c]}(${r + 2})` })))
+const transpose = (a: string[][]) =>
+  a[0].map((_: string, c: number) =>
+    a.map((rt: string[], r: number) => ({ label: rt[c], group: `${SkillKind[c]}(${r + 2})` }))
+  )
 const tokugiList = transpose(SkillTable).flat()
-tokugiList.forEach((t, idx) => t.id === idx)
 
 const emits = defineEmits<{
   (e: 'update', value: string): Promise<void>
 }>()
-function customFilter(itemTitle, queryText, item) {
+function customFilter(itemTitle: string, queryText: string, item: any) {
   const textOne = item.raw.label.toLowerCase()
   const textTwo = item.raw.group.toLowerCase()
   const searchText = queryText.toLowerCase()

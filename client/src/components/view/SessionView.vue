@@ -173,8 +173,9 @@
             </template>
           </v-text-field>
         </v-list-item>
-        <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length > 1">
+        <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length || 0 > 1">
           <delete-menu-btn
+            v-if="sessionId"
             :target-name="graphQlStore?.state.session?.name || ''"
             type="セッション"
             :sessionId="sessionId"
@@ -333,7 +334,7 @@ const inputSessionName = ref(graphQlStore?.state.session?.name || '')
 watch(
   () => graphQlStore?.state.session?.name,
   () => {
-    inputSessionName.value = graphQlStore?.state.session?.name
+    inputSessionName.value = graphQlStore?.state.session?.name || ''
   }
 )
 
@@ -422,7 +423,7 @@ function selectPlayer(playerId: string) {
   }, 100)
 }
 
-const bNavVal = ref([])
+const bNavVal = ref<string[]>([])
 watch(bNavVal, v => {
   const a = v.some(s => s === 'show-bar')
   const b = showBar.value

@@ -100,13 +100,13 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:selectSkill', selectSkill: string)
-  (e: 'update:info', info: SaikoroFictionTokugi)
-  (e: 'update:editable', editable: boolean)
-  (e: 'update:editing', editing: boolean)
+  (e: 'update:selectSkill', selectSkill: string): void
+  (e: 'update:info', info: SaikoroFictionTokugi): void
+  (e: 'update:editable', editable: boolean): void
+  (e: 'update:editing', editing: boolean): void
 }>()
 
-const tokugi = ref<SaikoroFictionTokugi>(clone(props.info))
+const tokugi = ref(clone<SaikoroFictionTokugi>(props.info || null))
 const targetValues = ref<TargetValueCalcResult[] | null>(null)
 
 function changeHandler(notifyParent: boolean = false) {
@@ -130,7 +130,7 @@ watch(
 watch(
   () => props.info,
   () => {
-    tokugi.value = clone(props.info)
+    tokugi.value = clone<SaikoroFictionTokugi>(props.info || null)
     updateTargetValue()
   },
   { deep: true }
@@ -189,13 +189,13 @@ function onChangeDamaged(col: number, value: boolean) {
 
 function onChangeBlank(col: number, value: boolean) {
   if (!tokugi.value) return
-  const idx = tokugi.value.spaceList.findIndex(c => c === col)
+  const idx = tokugi.value.spaceList.findIndex((c: number) => c === col)
   if (value && idx < 0) {
-    tokugi.value.spaceList.push(col)
+    tokugi.value?.spaceList.push(col)
     changeHandler(true)
   }
   if (!value && idx >= 0) {
-    tokugi.value.spaceList.splice(idx, 1)
+    tokugi.value?.spaceList.splice(idx, 1)
     changeHandler(true)
   }
 }

@@ -9,7 +9,7 @@
   >
     <template #activator="{ props }">
       <v-text-field
-        :variant="variant || 'solo'"
+        :variant="variant || ('solo' as 'solo')"
         :placeholder="placeholder || ''"
         :readonly="true"
         :flat="true"
@@ -64,7 +64,7 @@ const props = defineProps<{
   text: string
   icon?: string
   placeholder?: string
-  variant?: string
+  variant?: 'outlined' | 'plain' | 'solo-filled' | 'filled' | 'underlined' | 'solo' | 'solo-inverted'
   width: number
   editable: boolean
   classText?: string

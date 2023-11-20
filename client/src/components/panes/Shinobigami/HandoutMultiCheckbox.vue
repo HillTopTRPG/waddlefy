@@ -8,7 +8,7 @@
     density="compact"
     :hide-details="true"
     :model-value="list"
-    @update:model-value="v => emits('update', v)"
+    @update:model-value="v => emits('update', [v].flat().map(v => v.toString()))"
   >
     <template #label="{ label }">
       <span style="text-overflow: ellipsis; max-width: 16.5rem; overflow: hidden; white-space: nowrap">{{

@@ -139,8 +139,8 @@
             location-strategy="connected"
             v-if="
               !perspective ||
-              targetCharacter.data.player === perspective ||
-              (isOpenSpecialArts(arts.id) && ownerCharacter.data.player === perspective)
+              targetCharacter?.data.player === perspective ||
+              (isOpenSpecialArts(arts.id) && ownerCharacter?.data.player === perspective)
             "
           >
             <template #activator="{ props }">
@@ -194,11 +194,11 @@ const targetHandout = computed(() => {
 })
 
 const ownerCharacter = computed(() => {
-  return graphQlStore?.state.sessionDataList.find(sd => sd.id === ownerHandout.value.data.person)
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === ownerHandout.value?.data.person)
 })
 
 const targetCharacter = computed(() => {
-  return graphQlStore?.state.sessionDataList.find(sd => sd.id === targetHandout.value.data.person)
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === targetHandout.value?.data.person)
 })
 
 const emotionList = [
@@ -219,19 +219,19 @@ const emotionList = [
 
 const title = computed(() => {
   if (!targetCharacter.value) return targetHandout.value?.data.name || ''
-  const player = graphQlStore?.state.players.find(p => p.id === targetCharacter.value.data.player)
+  const player = graphQlStore?.state.players.find(p => p.id === targetCharacter.value?.data.player)
   const playerName = player?.id === props.perspective ? 'あなた' : player?.name
   const characterName = targetCharacter.value.data.character.characterName
   const afterName = playerName ? `${characterName}(${playerName})` : characterName
-  return `${targetHandout.value.data.name} : ${afterName}`
+  return `${targetHandout.value?.data.name || ''} : ${afterName}`
 })
 
-function matchRelationType(judge: (sd: SessionData) => boolean) {
+function matchRelationType(judge: (sd: SessionData<any>) => boolean) {
   return (
     graphQlStore?.state.sessionDataList.find(sd => {
       if (sd.type !== 'shinobigami-handout-relation') return false
-      if (sd.data.ownerId !== ownerHandout.value.id) return false
-      if (sd.data.targetId !== targetHandout.value.id) return false
+      if (sd.data.ownerId !== ownerHandout.value?.id) return false
+      if (sd.data.targetId !== targetHandout.value?.id) return false
       return judge(sd)
     })?.data.type || ''
   )
@@ -246,7 +246,7 @@ const isPerspectiveSecret = computed(() => {
   return (
     graphQlStore?.state.sessionDataList.some(sd => {
       if (sd.type !== 'shinobigami-handout-relation') return false
-      if (sd.data.targetId !== targetHandout.value.id) return false
+      if (sd.data.targetId !== targetHandout.value?.id) return false
       if (sd.data.type !== 'secret') return false
       const handout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
       if (!handout) return false
@@ -261,8 +261,8 @@ function isOpenSpecialArts(artsId: string) {
   return (
     graphQlStore?.state.sessionDataList.some(sd => {
       if (sd.type !== 'shinobigami-handout-relation') return false
-      if (sd.data.ownerId !== ownerHandout.value.id) return false
-      if (sd.data.targetId !== targetHandout.value.id) return false
+      if (sd.data.ownerId !== ownerHandout.value?.id) return false
+      if (sd.data.targetId !== targetHandout.value?.id) return false
       return sd.data.type === artsId
     }) || false
   )
@@ -273,7 +273,7 @@ function isPerspectiveSpecialArts(artsId: string) {
   return (
     graphQlStore?.state.sessionDataList.some(sd => {
       if (sd.type !== 'shinobigami-handout-relation') return false
-      if (sd.data.targetId !== targetHandout.value.id) return false
+      if (sd.data.targetId !== targetHandout.value?.id) return false
       if (sd.data.type !== artsId) return false
       const handout = graphQlStore?.state.sessionDataList.find(sdc => sdc.id === sd.data.ownerId)
       if (!handout) return false
@@ -289,8 +289,11 @@ function isOpenPerspectiveSA(artsId: string) {
 }
 
 async function onUpdateRelationFlag(type: 'location' | 'secret' | string) {
-  const ownerId = ownerHandout.value.id
-  const targetId = targetHandout.value.id
+  const ownerId = ownerHandout.value?.id
+  const targetId = targetHandout.value?.id
+
+  if (!ownerId || !targetId) return
+
   const findStr = JSON.stringify({ ownerId, targetId, type })
 
   const relation = graphQlStore?.state.sessionDataList.find(sd => {
@@ -305,8 +308,9 @@ async function onUpdateRelationFlag(type: 'location' | 'secret' | string) {
 }
 
 async function onUpdateRelationEmotion(emotionValue: ShinobigamiEmotion | '') {
-  const ownerId = ownerHandout.value.id
-  const targetId = targetHandout.value.id
+  const ownerId = ownerHandout.value?.id
+  const targetId = targetHandout.value?.id
+  if (!ownerId || !targetId) return
 
   const relation = graphQlStore?.state.sessionDataList.find(sd => {
     if (sd.type !== 'shinobigami-handout-relation') return false

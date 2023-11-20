@@ -14,7 +14,7 @@
             :text="player?.name || ''"
             :editable="true"
             :width="22"
-            @update="v => graphQlStore?.updatePlayerName(player?.id, v)"
+            @update="v => graphQlStore?.updatePlayerName(player?.id || '', v)"
           />
         </v-list-item>
         <v-list-item v-if="isUserControl || player?.token">
@@ -30,7 +30,7 @@
           <delete-menu-btn
             :target-name="player.name || ''"
             type="参加者"
-            :sessionId="graphQlStore?.state.session?.id"
+            :sessionId="graphQlStore?.state.session?.id || ''"
             @execute="onDeletePlayer()"
           />
         </v-list-item>
