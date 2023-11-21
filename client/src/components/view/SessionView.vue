@@ -128,50 +128,13 @@
       <v-list class="nav-dialog h-100">
         <v-list-subheader style="min-height: auto; background: none">セッション名</v-list-subheader>
         <v-list-item>
-          <v-text-field
-            :readonly="!editSessionName"
-            label=""
-            v-model="inputSessionName"
-            placeholder="セッション名"
-            color="primary"
-            variant="plain"
-            density="compact"
-            class="name-text-field"
-            style="letter-spacing: 1em; min-height: 1em"
-            :hide-details="true"
-            ref="sessionNameInputElm"
-            @keydown.enter="$event.keyCode === 13 && updateSessionName()"
-            @click:append-inner.stop
-          >
-            <template #append-inner v-if="isUserControl">
-              <v-divider :vertical="true" />
-              <v-defaults-provider
-                :defaults="{
-                  VBtn: { stacked: true, variant: 'text', size: 'x-small' }
-                }"
-              >
-                <v-btn
-                  v-if="editSessionName"
-                  :disabled="!inputSessionName"
-                  prepend-icon="mdi-check-bold"
-                  text="決定"
-                  class="bg-transparent h-100 px-1"
-                  @click.prevent.stop="updateSessionName()"
-                  @mousedown.prevent.stop
-                  @mouseup.prevent.stop
-                />
-                <v-btn
-                  v-else
-                  prepend-icon="mdi-pencil"
-                  text="編集"
-                  class="bg-transparent h-100 px-1"
-                  @click.prevent.stop="startEditSessionName()"
-                  @mousedown.prevent.stop
-                  @mouseup.prevent.stop
-                />
-              </v-defaults-provider>
-            </template>
-          </v-text-field>
+          <menu-edit-text-field
+            :editable="true"
+            :width="14"
+            label="セッション名"
+            :text="inputSessionName"
+            @update="updateSessionName"
+          />
         </v-list-item>
         <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length || 0 > 1">
           <delete-menu-btn
@@ -305,6 +268,7 @@ import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { DashboardOption } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 
 const props = defineProps<{
@@ -338,12 +302,12 @@ watch(
   }
 )
 
-async function updateSessionName() {
+async function updateSessionName(value: string) {
   const session = graphQlStore?.state.session
   if (!session) return
   console.log(session.sessionType)
   console.log(session.defaultDashboardId)
-  await graphQlStore?.updateSession(inputSessionName.value, session.sessionType, session.defaultDashboardId)
+  await graphQlStore?.updateSession(value, session.sessionType, session.defaultDashboardId)
   editSessionName.value = false
 }
 

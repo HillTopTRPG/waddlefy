@@ -4,8 +4,8 @@ import { deleteSessionData } from './delete-session-data'
 
 const ddbDocClient = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
-const sessionPeriod = 60 * 60 * 24 // 1日
-const userPeriod = 60 * 60 * 24 // 1日
+const sessionPeriod = 60 * 60 * 24 * 10 // 10日
+const userPeriod = 60 * 60 * 24 * 30 // 30日
 
 async function judgeSessionExpired(sessionId: string): Promise<boolean> {
   const expiredSecond = Date.now() / 1000 - sessionPeriod

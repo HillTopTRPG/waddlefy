@@ -54,7 +54,7 @@
       </v-defaults-provider>
     </v-tabs>
     <v-divider :vertical="true" />
-    <v-window v-model="tab" class="d-flex flex-row">
+    <v-window v-model="tab" class="d-flex flex-row" :touch="false">
       <v-window-item value="session-memo" class="h-100">
         <menu-edit-text-area
           label="共有メモ"
