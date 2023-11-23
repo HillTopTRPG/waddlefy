@@ -23,15 +23,18 @@
               <v-card-title>行動値</v-card-title>
               <v-card-text class="d-flex flex-row align-end flex-wrap">
                 <span class="pb-1 text-center" style="line-height: 20px; font-size: 13px">基本値<br />６</span>
-                <template
-                  v-for="(maneuver, idx) in character.data.character.maneuverList.filter(m => m.type === 3)"
-                  :key="idx"
-                >
-                  <v-sheet class="d-flex flex-column align-center pa-1">
+                <template v-for="(maneuver, idx) in character.data.character.maneuverList" :key="idx">
+                  <v-sheet
+                    v-if="maneuver.type === 3"
+                    class="d-flex flex-column align-center pa-1"
+                    :class="maneuver.lost ? 'bg-grey' : ''"
+                  >
                     <nechronica-maneuver-btn-menu
                       :character="character.data.character"
                       :disable-button="true"
                       :maneuver="maneuver"
+                      @update:lost="v => onUpdateManeuverLost(idx, v)"
+                      @update:used="v => onUpdateManeuverUsed(idx, v)"
                     />
                     <span>{{ getNum(maneuver.memo) }}</span>
                   </v-sheet>
@@ -62,7 +65,7 @@
           </v-menu>
         </v-card-title>
         <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
-          <v-menu :close-on-content-click="false" scroll-strategy="close">
+          <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
             <template v-slot:activator="{ props }">
               <v-sheet class="d-flex flex-row text-left align-center">
                 <v-sheet

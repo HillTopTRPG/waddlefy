@@ -91,7 +91,7 @@ defineProps<{
     opacity: 1;
     line-height: 1em;
     font-size: 11px;
-    transform: translateY(100%);
+    transform: translateY(130%);
     text-align: center;
     overflow-x: hidden;
     white-space: nowrap;

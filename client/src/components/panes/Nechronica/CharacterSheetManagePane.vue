@@ -89,9 +89,9 @@ const textRows = ref(3)
 
 const viewLabelSelections = [
   { value: '', label: 'なし' },
-  { value: 'cost', label: 'コスト' },
-  { value: 'range', label: '範囲' },
-  { value: 'timing', label: 'タイミング' }
+  { value: 'timing', label: 'T' },
+  { value: 'cost', label: 'C' },
+  { value: 'range', label: 'R' }
 ]
 
 const characters = computed(() => {

@@ -1,17 +1,44 @@
 <template>
-  <v-menu :close-on-content-click="false">
+  <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center">
     <template v-slot:activator="{ props }">
       <nechronica-maneuver-btn :maneuver="maneuver" :view-label="viewLabel" :activate-props="props" />
     </template>
     <v-card>
-      <v-card-title>{{ maneuver.name }}</v-card-title>
-      <v-card-text class="py-1">カテゴリ：{{ NechronicaPowerList[maneuver.type]?.text || '' }}</v-card-text>
-      <v-card-text class="py-1">タイミング：{{ NechronicaTimingList[maneuver.timing] }}</v-card-text>
-      <v-card-text class="py-1">射程：{{ maneuver.range }}</v-card-text>
-      <v-card-text class="py-1">コスト：{{ maneuver.cost }}</v-card-text>
-      <v-card-text class="py-1">取得先：{{ maneuver.shozoku }}</v-card-text>
-      <v-card-text class="py-1">効果：{{ maneuver.memo }}</v-card-text>
-      <v-divider />
+      <v-card-text class="pb-0">
+        <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
+          <v-defaults-provider :defaults="{ VChip: { size: 'small' } }">
+            <v-chip class="font-weight-bold" color="error" variant="flat" v-if="maneuver.lost">損傷</v-chip>
+            <v-chip class="font-weight-bold" color="secondary" variant="flat" v-if="maneuver.used">使用済</v-chip>
+            <v-chip :class="`type${maneuver.type}`">{{ NechronicaPowerList[maneuver.type]?.text || '' }}</v-chip>
+            <v-chip variant="outlined">{{ maneuver.shozoku }}</v-chip>
+          </v-defaults-provider>
+        </v-sheet>
+        <v-container class="pa-0" style="min-width: 25em; max-width: 25em">
+          <v-defaults-provider :defaults="{ VRow: { noGutters: true } }">
+            <v-defaults-provider :defaults="{ VCol: { class: 'overflow-hidden' } }">
+              <v-row class="" :no-gutters="true">
+                <v-col class="v-col-12 text-no-wrap px-2 text-h6 bg-grey-darken-3 font-weight-bold">
+                  <p style="transform: scale(1.3, 1); transform-origin: left">【{{ maneuver.name }}】</p>
+                </v-col>
+              </v-row>
+              <v-row class="" :no-gutters="true">
+                <v-defaults-provider :defaults="{ VCol: { class: 'py-2 text-no-wrap text-center text-body-1' } }">
+                  <v-col class="v-col-1 bg-grey-lighten-1 edging">T</v-col>
+                  <v-col class="v-col-3">{{ NechronicaTimingList[maneuver.timing] }}</v-col>
+                  <v-col class="v-col-1 bg-grey-lighten-1 edging">C</v-col>
+                  <v-col class="v-col-3">{{ maneuver.cost }}</v-col>
+                  <v-col class="v-col-1 bg-grey-lighten-1 edging">R</v-col>
+                  <v-col class="v-col-3">{{ maneuver.range }}</v-col>
+                </v-defaults-provider>
+              </v-row>
+              <v-row class="border-b" :no-gutters="true" style="min-height: 5em">
+                <v-col class="v-col-2 py-2 text-no-wrap text-center bg-grey-darken-3">効果</v-col>
+                <v-col class="v-col-10 text-wrap pa-2">{{ maneuver.memo }}</v-col>
+              </v-row>
+            </v-defaults-provider>
+          </v-defaults-provider>
+        </v-container>
+      </v-card-text>
       <v-card-actions class="flex-wrap justify-start py-0">
         <v-defaults-provider
           :defaults="{ VCheckbox: { density: 'comfortable', hideDetails: true, class: 'flex-grow-0' } }"
@@ -55,4 +82,45 @@ const emits = defineEmits<{
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.edging {
+  color: white !important;
+  text-shadow:
+    1px 1px 0 black,
+    -1px -1px 0 black,
+    -1px 1px 0 black,
+    1px -1px 0 black,
+    0px 1px 0 black,
+    0-1px 0 black,
+    -1px 0 0 black,
+    1px 0 0 black;
+}
+
+.type1 {
+  border: 2px solid rgb(0, 128, 1);
+}
+
+.type2 {
+  border: 2px solid rgb(139, 0, 0);
+}
+
+.type3 {
+  border: 2px solid rgb(217, 150, 38);
+}
+
+.type4 {
+  border: 2px solid rgb(128, 128, 255);
+}
+
+.type5 {
+  border: 2px solid rgb(255, 128, 128);
+}
+
+.type6 {
+  border: 2px solid rgb(191, 128, 255);
+}
+
+.type7 {
+  border: 2px solid rgb(223, 223, 128);
+}
+</style>
