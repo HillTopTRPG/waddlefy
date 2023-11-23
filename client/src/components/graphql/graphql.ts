@@ -16,7 +16,8 @@ import {
   User
 } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { Nechronica } from '@/components/panes/Nechronica/nechronica'
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
 import router from '@/router'
 import { Observable } from '@apollo/client'
@@ -102,7 +103,7 @@ export async function userSignIn(
   const data = result.data?.userSignIn
   if (!data) return
   const { token, secret } = data
-  let { firstSession } = data
+  const { firstSession } = data
   localStorage.setItem(token, JSON.stringify({ secret }))
   localStorage.setItem('userId', userId)
   let sessionId: string = firstSession?.id
@@ -508,6 +509,18 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // subscriptionにて更新される
   }
 
+  async function updateTargetConfig(configId: string, owner: string, target: string, type: string, data: any) {
+    await updateSessionDataHelper(
+      configId,
+      JSON.stringify({
+        owner,
+        target,
+        type,
+        data
+      })
+    )
+  }
+
   async function updateShinobigamiCharacter(
     characterId: string,
     playerId: string,
@@ -519,6 +532,16 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       JSON.stringify({
         player: playerId,
         viewPass,
+        character: data
+      })
+    )
+  }
+
+  async function updateNechronicaCharacter(characterId: string, playerId: string, data: Nechronica) {
+    await updateSessionDataHelper(
+      characterId,
+      JSON.stringify({
+        player: playerId,
         character: data
       })
     )
@@ -1006,6 +1029,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
   }
 
+  async function addTargetConfig(owner: string, target: string, type: string, data: any) {
+    await addSessionDataHelper('target-config', JSON.stringify({ owner, target, type, data }))
+  }
+
   async function addShinobigamiCharacter(perspective: string, dataObj: ShinobiGami, password: string): Promise<void> {
     const characterWrap: Omit<CharacterWrap, 'id'> = {
       player: perspective || 'user',
@@ -1013,6 +1040,15 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       character: dataObj
     }
     await addSessionDataHelper('shinobigami-character', JSON.stringify(characterWrap))
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addNechronicaCharacter(perspective: string, dataObj: Nechronica): Promise<void> {
+    const characterWrap = {
+      player: perspective || 'user',
+      character: dataObj
+    }
+    await addSessionDataHelper('nechronica-character', JSON.stringify(characterWrap))
     // Subscriptionによってstateに登録される
   }
 
@@ -1571,7 +1607,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addNotification,
     closeNotification,
     closeNotificationAll,
+    addTargetConfig,
     addShinobigamiCharacter,
+    addNechronicaCharacter,
     addShinobigamiHandoutSessionMemo,
     addShinobigamiHandoutPrivateMemo,
     addShinobigamiHandout,
@@ -1579,7 +1617,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiEnigma,
     addShinobigamiPersona,
     addShinobigamiPrize,
+    updateTargetConfig,
     updateShinobigamiCharacter,
+    updateNechronicaCharacter,
     updateShinobigamiHandoutSessionMemo,
     updateShinobigamiHandoutPrivateMemo,
     updateShinobigamiHandout,

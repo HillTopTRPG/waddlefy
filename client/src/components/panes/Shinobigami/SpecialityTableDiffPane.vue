@@ -82,9 +82,9 @@ import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import { computed, inject, ref, watch } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { clone } from '@/components/panes/PrimaryDataUtility'
+import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 import { ShinobigamiHandout } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

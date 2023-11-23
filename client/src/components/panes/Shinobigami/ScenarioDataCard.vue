@@ -493,9 +493,9 @@
 import { computed, inject } from 'vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import AddSpecialArtsButton from '@/components/panes/Shinobigami/AddSpecialArtsButton.vue'
 import HandoutMultiCheckbox from '@/components/panes/Shinobigami/HandoutMultiCheckbox.vue'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import ReloadCharacterSheetButton from '@/components/panes/Shinobigami/ReloadCharacterSheetButton.vue'
 import TokugiSelector from '@/components/panes/Shinobigami/TokugiSelector.vue'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'

@@ -7,8 +7,8 @@
       <slot name="title-action" />
     </v-sheet>
     <slot name="layout" />
-    <v-layout class="overflow-y-auto w-100 h-100" style="justify-self: flex-start; align-self: flex-start">
-      <div class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap">
+    <v-layout class="w-100 h-100" style="justify-self: flex-start; align-self: flex-start">
+      <div class="overflow-y-auto d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap">
         <slot />
       </div>
     </v-layout>

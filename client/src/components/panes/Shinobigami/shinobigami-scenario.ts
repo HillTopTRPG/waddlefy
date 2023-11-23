@@ -1,4 +1,4 @@
-import { getJsonByGet, getJsonByJsonp } from './fetch-util'
+import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
 
 export type ShinobigamiPC = {
   intro: string

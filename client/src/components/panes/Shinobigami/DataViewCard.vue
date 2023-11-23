@@ -85,15 +85,15 @@
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
+import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import { computed, inject, ref, watch } from 'vue'
 
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCardTabContainer.vue'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
