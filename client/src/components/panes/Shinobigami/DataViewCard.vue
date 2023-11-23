@@ -189,12 +189,12 @@ watch(navigationDrawer, v => {
 const tokugiTableEditing = ref(false)
 
 async function updateInfo(info: SaikoroFictionTokugi) {
-  if (!graphQlStore || !player.value || !character.value) return
+  if (!graphQlStore || !character.value) return
   const characterSheetClone = clone(characterSheet.value)!
   characterSheetClone.skill = info
   await graphQlStore.updateShinobigamiCharacter(
-    props.characterId || '',
-    player.value.id,
+    character.value.id || '',
+    character.value.data.player,
     character.value.data.viewPass || '',
     characterSheetClone
   )
