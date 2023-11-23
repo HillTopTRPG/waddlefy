@@ -6,20 +6,29 @@
     density="comfortable"
     :class="`${text ? 'mt-3 text' : ''} ${underText ? 'mb-3' : ''}`"
     :ripple="!disableButton"
-    :style="`cursor: ${disableButton ? 'auto' : 'cursor'}; ${underText ? '--under-text: \'' + underText + '\';' : ''}`"
+    :style="style"
     v-bind="activateProps || {}"
-    :text="text || ''"
   />
 </template>
 
 <script setup lang="ts">
 // eslint-disable-next-line unused-imports/no-unused-vars
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   activateProps?: any
   disableButton?: boolean
   text?: string
   underText?: string
 }>()
+
+const style = computed(() => {
+  return {
+    cursor: props.disableButton ? 'auto' : 'pointer',
+    '--text': props.text ? `'${props.text}'` : undefined,
+    '--under-text': props.underText ? `'${props.underText}'` : undefined
+  }
+})
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
@@ -51,506 +60,294 @@ defineProps<{
 .maneuver {
   box-sizing: border-box;
   padding: 0 !important;
-  background-size: 100% auto !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-color: transparent;
   overflow-y: visible;
   display: inline-flex !important;
   align-items: center;
   justify-content: flex-start;
 
-  &:before {
-    content: '';
+  @mixin absoluteFullSize {
     position: absolute;
-    opacity: 1;
-    background-origin: content-box !important;
-    background-position: center;
-    background-size: contain !important;
-  }
-
-  :deep(.v-btn__content) {
-    height: auto;
-    white-space: nowrap;
-    line-height: 1em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    font-size: 11px;
-    text-align: left;
-  }
-
-  :deep(.v-btn__underlay):after {
-    content: var(--under-text);
-    position: absolute;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    opacity: 1;
-    line-height: 1em;
-    font-size: 11px;
-    transform: translateY(130%);
-    text-align: center;
-    overflow-x: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
-  &:not(.small) {
-    width: 64px !important;
-    height: 64px !important;
-    min-width: 64px !important;
-    min-height: 64px !important;
+  @mixin imageCanvas {
+    background-color: transparent;
+    background-size: contain !important;
+    background-origin: content-box !important;
+    background-repeat: no-repeat !important;
+  }
+
+  @include imageCanvas;
+
+  &:before,
+  &:after,
+  :deep(.v-btn__content):before,
+  :deep(.v-btn__content):after {
+    content: '';
+    @include absoluteFullSize;
+    @include imageCanvas;
+  }
+
+  @mixin fixedSize($width) {
+    width: $width !important;
+    min-width: $width !important;
+    height: $width !important;
+    min-height: $width !important;
+  }
+
+  @mixin allFixedSize($width) {
+    @include fixedSize($width);
 
     :deep(.v-btn__content) {
-      width: 64px !important;
-      min-width: 64px !important;
-      max-width: 64px !important;
+      @include fixedSize($width);
     }
+    :deep(.v-btn__underlay) {
+      @include fixedSize($width);
+    }
+  }
 
-    &.text :deep(.v-btn__content) {
-      transform: translateY(calc(-64px / 2 - 6px));
-    }
-
-    &:before {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
+  &:not(.small):not(.x-small) {
+    $width: 64px;
+    @include allFixedSize($width);
   }
 
   &.small {
-    width: 52px !important;
-    min-width: 52px !important;
-    height: 52px !important;
-    min-height: 52px !important;
+    $width: 52px;
+    @include allFixedSize($width);
+  }
 
-    :deep(.v-btn__content) {
-      width: 52px !important;
-      min-width: 52px !important;
-      max-width: 52px !important;
-    }
+  &.x-small {
+    $width: 32px;
+    @include allFixedSize($width);
+  }
 
-    &.text :deep(.v-btn__content) {
-      transform: translateY(calc(-52px / 2 - 6px));
+  :deep(.v-btn__content) {
+    @include absoluteFullSize;
+    @include imageCanvas;
+    z-index: 3;
+    opacity: 1;
+  }
+
+  :deep(.v-btn__underlay) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+
+    &:before,
+    &:after {
+      position: absolute;
+      left: 0;
+      right: 0;
+      line-height: 1em;
+      font-size: 11px;
+      overflow-x: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     &:before {
-      top: 1px;
-      bottom: 1px;
-      left: 1px;
-      right: 1px;
+      content: var(--text);
+      top: 0;
+      transform: translateY(-100%);
+      text-align: left;
     }
+
+    &:after {
+      content: var(--under-text);
+      bottom: 0;
+      transform: translateY(100%);
+      text-align: center;
+    }
+  }
+
+  @mixin maneuverBackFrame($url) {
+    &:deep(.v-btn__content) {
+      background-image: $url;
+    }
+  }
+
+  @mixin statusImage($url) {
+    &:deep(.v-btn__content):after {
+      background-image: $url;
+    }
+  }
+
+  @mixin iconImage($url) {
+    &:deep(.v-btn__content):before {
+      background-image: $url;
+    }
+  }
+
+  &.type0 {
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-00.png'));
   }
 
   &.type1 {
-    background-color: rgb(0, 128, 1);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-01.png'));
   }
 
   &.type2 {
-    background-color: rgb(139, 0, 0);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-02.png'));
   }
 
   &.type3 {
-    background-color: rgb(217, 150, 38);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-03.png'));
   }
 
   &.type4 {
-    background-color: rgb(128, 128, 255);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-04.png'));
   }
 
   &.type5 {
-    background-color: rgb(255, 128, 128);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-05.png'));
   }
 
   &.type6 {
-    background-color: rgb(191, 128, 255);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-06.png'));
   }
 
   &.type7 {
-    background-color: rgb(223, 223, 128);
+    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-07.png'));
   }
 
-  &.part-skill {
-    &.maneuver-header:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.lost {
+    @include statusImage(url(/nechronica/lost.png));
   }
 
-  &.part-head {
-    &.maneuver-header:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
+  &.used {
+    @include statusImage(url(/nechronica/used.png));
   }
 
-  &.part-arm {
-    &.maneuver-header:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
+  &.skill {
+    @include iconImage(url(/nechronica/skill.png));
   }
 
-  &.part-body {
-    &.maneuver-header:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
+  &.head {
+    @include iconImage(url(/nechronica/head.png));
   }
 
-  &.part-leg {
-    &.maneuver-header:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
+  &.arm {
+    @include iconImage(url(/nechronica/arm.png));
   }
 
-  &.shozoku-armed {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.body {
+    @include iconImage(url(/nechronica/body.png));
   }
 
-  &.shozoku-mutation {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.leg {
+    @include iconImage(url(/nechronica/leg.png));
   }
 
-  &.shozoku-modification {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.armed {
+    @include iconImage(url(/nechronica/skill.png));
   }
 
-  &.alice:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.mutation {
+    @include iconImage(url(/nechronica/skill.png));
   }
 
-  &.shozoku-alice {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.modification {
+    @include iconImage(url(/nechronica/skill.png));
   }
 
-  &.holic:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.alice {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.shozoku-holic {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.holic {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.automaton:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.automaton {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.shozoku-automaton {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.junk {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.junk:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.coat {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.shozoku-junk {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.sorority {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.coat:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.psychedelic {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.shozoku-coat {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.stacy {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.sorority:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.thanatos {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.shozoku-sorority {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.gothic {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.psychedelic:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.requiem {
+    @include iconImage(url(/nechronica/requiem.png));
   }
 
-  &.shozoku-psychedelic {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-skill-normal.png);
-    }
+  &.baroque {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.stacy:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
+  &.romanesque {
+    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
   }
 
-  &.thanatos:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
-  }
-
-  &.gothic:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
-  }
-
-  &.requiem:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
-  }
-
-  &.baroque:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
-  }
-
-  &.romanesque:before {
-    background-image: url(/nechronica/maneuver-skill-normal.png);
-  }
-
-  &.shozoku-treasure {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-treasure-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-treasure-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-treasure-normal.png);
-    }
+  &.treasure {
+    @include iconImage(url(/nechronica/treasure.png));
   }
 
   &.basic-brain {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
+    @include iconImage(url(/nechronica/head.png));
   }
 
   &.basic-eye {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
+    @include iconImage(url(/nechronica/head.png));
   }
 
   &.basic-jaw {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-head-normal.png);
-    }
+    @include iconImage(url(/nechronica/head.png));
   }
 
   &.basic-fist {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
+    @include iconImage(url(/nechronica/arm.png));
   }
 
   &.basic-arm {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
+    @include iconImage(url(/nechronica/arm.png));
   }
 
   &.basic-shoulder {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-arm-normal.png);
-    }
+    @include iconImage(url(/nechronica/body.png));
   }
 
   &.basic-backbone {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
+    @include iconImage(url(/nechronica/body.png));
   }
 
   &.basic-viscera {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-body-normal.png);
-    }
+    @include iconImage(url(/nechronica/body.png));
   }
 
   &.basic-bone {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
+    @include iconImage(url(/nechronica/leg.png));
   }
 
   &.basic-leg {
-    &.status-normal:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-used:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
-    &.status-lost:before {
-      background-image: url(/nechronica/maneuver-leg-normal.png);
-    }
+    @include iconImage(url(/nechronica/leg.png));
   }
 }
 </style>

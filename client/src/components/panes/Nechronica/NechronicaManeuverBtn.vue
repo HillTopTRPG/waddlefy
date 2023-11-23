@@ -2,7 +2,7 @@
   <nechronica-icon-btn
     :class="classText"
     :disable-button="disableButton"
-    :text="maneuver.name"
+    :text="mode === 'normal' ? maneuver.name : ''"
     :under-text="text"
     :activate-props="activateProps || {}"
   />
@@ -18,6 +18,8 @@ const props = defineProps<{
   maneuver: NechronicaManeuver
   disableButton?: boolean
   activateProps?: any
+  size: 'x-small' | 'small' | 'normal'
+  mode: 'normal' | 'simple'
   viewLabel?: keyof NechronicaManeuver | ''
 }>()
 
@@ -31,7 +33,6 @@ const text = computed(() => {
 })
 
 const shozokuClassMap = [
-  { text: '基本', class: 'basic' },
   { text: '武装', class: 'armed' },
   { text: '変異', class: 'mutation' },
   { text: '改造', class: 'modification' },
@@ -55,42 +56,44 @@ const shozokuClassMap = [
 ]
 
 const basicPartsClassMap = [
-  { text: 'のうみそ', class: 'brain' },
-  { text: 'めだま', class: 'eye' },
-  { text: 'あご', class: 'jaw' },
-  { text: 'こぶし', class: 'fist' },
-  { text: 'うで', class: 'arm' },
-  { text: 'かた', class: 'shoulder' },
-  { text: 'せぼね', class: 'backbone' },
-  { text: 'はらわた', class: 'viscera' },
-  { text: 'ほね', class: 'bone' },
-  { text: 'あし', class: 'leg' }
+  { text: 'のうみそ', class: 'basic-brain' },
+  { text: 'めだま', class: 'basic-eye' },
+  { text: 'あご', class: 'basic-jaw' },
+  { text: 'こぶし', class: 'basic-fist' },
+  { text: 'うで', class: 'basic-arm' },
+  { text: 'かた', class: 'basic-shoulder' },
+  { text: 'せぼね', class: 'basic-backbone' },
+  { text: 'はらわた', class: 'basic-viscera' },
+  { text: 'ほね', class: 'basic-bone' },
+  { text: 'あし', class: 'basic-leg' }
 ]
 
 const partClassMap = ['', 'skill', 'skill', 'skill', 'head', 'arm', 'body', 'leg']
 
 const classText = computed(() => {
-  const result: string[] = ['small']
-  if (props.maneuver.lost) {
-    result.push('status-lost')
-  } else if (props.maneuver.used) {
-    result.push('status-used')
+  const result: string[] = []
+
+  if (props.size !== 'normal') {
+    result.push(props.size)
+  }
+
+  if (props.mode !== 'simple') {
+    if (props.maneuver.lost) {
+      result.push('lost')
+    } else if (props.maneuver.used) {
+      result.push('used')
+    }
+    result.push(`type${props.maneuver.type}`)
+  }
+
+  result.push(partClassMap[props.maneuver.parts] || '')
+
+  const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
+  if (shozokuClass) {
+    result.push(shozokuClass)
   } else {
-    result.push('status-normal')
+    result.push(basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || '')
   }
-
-  const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class
-  result.push(shozokuClass ? `shozoku-${shozokuClass}` : '')
-
-  const positionClass = partClassMap[props.maneuver.parts]
-  result.push(positionClass ? `part-${positionClass}` : '')
-
-  if (shozokuClass === 'basic') {
-    const basicPartsClass = basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || ''
-    result.push(basicPartsClass ? `basic-${basicPartsClass}` : '')
-  }
-
-  result.push(`type${props.maneuver.type}`)
 
   return result.join(' ')
 })

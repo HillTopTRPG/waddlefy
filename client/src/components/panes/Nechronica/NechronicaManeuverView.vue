@@ -6,10 +6,10 @@
   >
     <v-divider />
     <v-sheet class="d-flex flex-row w-100 bg-transparent">
-      <nechronica-icon-btn class="maneuver-header part-skill" :disable-button="true" />
+      <nechronica-icon-btn class="skill" :disable-button="true" />
       <v-sheet class="maneuver-container d-flex flex-row flex-wrap ml-3 bg-transparent">
         <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-          <template v-if="[1, 2, 3].some(n => n === maneuver.parts)">
+          <template v-if="[1, 2, 3].some(n => n === maneuver.parts) && judgeView(maneuver)">
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
@@ -23,10 +23,10 @@
     </v-sheet>
     <v-divider />
     <v-sheet class="d-flex flex-row w-100 bg-transparent">
-      <nechronica-icon-btn class="maneuver-header part-head" :disable-button="true" />
+      <nechronica-icon-btn class="head" :disable-button="true" />
       <v-sheet class="maneuver-container d-flex flex-row flex-wrap ml-3 bg-transparent">
         <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-          <template v-if="maneuver.parts === 4">
+          <template v-if="maneuver.parts === 4 && judgeView(maneuver)">
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
@@ -40,10 +40,10 @@
     </v-sheet>
     <v-divider />
     <v-sheet class="d-flex flex-row w-100 bg-transparent">
-      <nechronica-icon-btn class="maneuver-header part-arm" :disable-button="true" />
+      <nechronica-icon-btn class="arm" :disable-button="true" />
       <v-sheet class="maneuver-container d-flex flex-row flex-wrap ml-3 bg-transparent">
         <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-          <template v-if="maneuver.parts === 5">
+          <template v-if="maneuver.parts === 5 && judgeView(maneuver)">
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
@@ -57,10 +57,10 @@
     </v-sheet>
     <v-divider />
     <v-sheet class="d-flex flex-row w-100 bg-transparent">
-      <nechronica-icon-btn class="maneuver-header part-body" :disable-button="true" />
+      <nechronica-icon-btn class="body" :disable-button="true" />
       <v-sheet class="maneuver-container d-flex flex-row flex-wrap ml-3 bg-transparent">
         <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-          <template v-if="maneuver.parts === 6">
+          <template v-if="maneuver.parts === 6 && judgeView(maneuver)">
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
@@ -74,10 +74,10 @@
     </v-sheet>
     <v-divider />
     <v-sheet class="d-flex flex-row w-100 bg-transparent">
-      <nechronica-icon-btn class="maneuver-header part-leg" :disable-button="true" />
+      <nechronica-icon-btn class="leg" :disable-button="true" />
       <v-sheet class="maneuver-container d-flex flex-row flex-wrap ml-3 bg-transparent">
         <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-          <template v-if="maneuver.parts === 7">
+          <template v-if="maneuver.parts === 7 && judgeView(maneuver)">
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
@@ -96,19 +96,32 @@
 <script setup lang="ts">
 import NechronicaIconBtn from '@/components/panes/Nechronica/NechronicaIconBtn.vue'
 import NechronicaManeuverBtnMenu from '@/components/panes/Nechronica/NechronicaManeuverBtnMenu.vue'
-import { Nechronica } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-defineProps<{
+const props = defineProps<{
   character: Nechronica
   columns: number
   viewLabel: string
+  viewLost: boolean
+  viewUsed: boolean
+  viewTimings: number[]
+  viewTypes: number[]
+  viewBasicParts: boolean
 }>()
 
 const emits = defineEmits<{
   (e: 'update:used', idx: number, value: boolean): Promise<void>
   (e: 'update:lost', idx: number, value: boolean): Promise<void>
 }>()
+
+function judgeView(maneuver: NechronicaManeuver) {
+  if (props.viewTimings.every(t => t !== maneuver.timing)) return false
+  if (props.viewTypes.every(t => t !== maneuver.type)) return false
+  if (maneuver.lost && !props.viewLost) return false
+  if (maneuver.used && !props.viewUsed) return false
+  return true
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

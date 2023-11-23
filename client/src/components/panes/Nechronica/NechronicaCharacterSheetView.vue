@@ -3,7 +3,7 @@
     <template v-if="character">
       <v-card
         variant="outlined"
-        class="d-inline-block flex-column pa-3 rounded-xl overflow-y-auto"
+        class="d-inline-block flex-column pa-2 rounded-xl overflow-y-auto"
         style="box-sizing: border-box"
       >
         <v-card-title
@@ -44,7 +44,7 @@
           </v-menu>
           <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom right">
             <template v-slot:activator="{ props }">
-              <v-btn icon="mdi-cog" variant="text" class="mr-3" density="comfortable" v-bind="props" />
+              <v-btn icon="mdi-cog" variant="text" size="small" v-bind="props" />
             </template>
             <v-card>
               <v-card-title class="d-flex">
@@ -120,7 +120,12 @@
         </v-card-text>
         <v-card-text class="d-flex flex-column pa-0">
           <nechronica-maneuver-view
+            :view-lost="viewLost"
+            :view-used="viewUsed"
             :view-label="viewLabel"
+            :view-timings="viewTimings"
+            :view-types="viewTypes"
+            :view-basic-parts="viewBasicParts"
             :columns="useColumns"
             :character="character.data.character"
             @update:used="onUpdateManeuverUsed"
@@ -177,6 +182,11 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   characterId: string
   viewLabel?: keyof NechronicaManeuver | ''
+  viewLost: boolean
+  viewUsed: boolean
+  viewTimings: number[]
+  viewTypes: number[]
+  viewBasicParts: boolean
 }>()
 
 const character = computed((): { id: string; data: { player: string; character: Nechronica } } | undefined => {
