@@ -27,7 +27,7 @@ const text = computed(() => {
   if (!props.viewLabel) return ''
   const value = props.maneuver[props.viewLabel]
   if (props.viewLabel === 'timing') {
-    return NechronicaTimingList[value]
+    return NechronicaTimingList[value].text
   }
   return value || ''
 })
@@ -50,6 +50,18 @@ const shozokuClassMap = [
   { text: 'ｿﾛﾘﾃｨ', class: 'sorority' },
   { text: 'サイケデリック', class: 'psychedelic' },
   { text: 'ｻｲｹﾃﾞﾘｯｸ', class: 'psychedelic' },
+  { text: 'ステーシー', class: 'stacy' },
+  { text: 'ｽﾃｰｼｰ', class: 'stacy' },
+  { text: 'タナトス', class: 'thanatos' },
+  { text: 'ﾀﾅﾄｽ', class: 'thanatos' },
+  { text: 'ゴシック', class: 'gothic' },
+  { text: 'ｺﾞｼｯｸ', class: 'gothic' },
+  { text: 'レクイエム', class: 'requiem' },
+  { text: 'ﾚｸｲｴﾑ', class: 'requiem' },
+  { text: 'バロック', class: 'baroque' },
+  { text: 'ﾊﾞﾛｯｸ', class: 'baroque' },
+  { text: 'ロマネスク', class: 'romanesque' },
+  { text: 'ﾛﾏﾈｽｸ', class: 'romanesque' },
   { text: 'たからもの', class: 'treasure' },
   { text: 'タカラモノ', class: 'treasure' },
   { text: 'ﾀｶﾗﾓﾉ', class: 'treasure' }

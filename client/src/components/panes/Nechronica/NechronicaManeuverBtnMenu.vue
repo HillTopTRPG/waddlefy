@@ -1,6 +1,6 @@
 <template>
   <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <nechronica-maneuver-btn
         mode="normal"
         size="small"
@@ -33,7 +33,7 @@
             <v-row :no-gutters="true">
               <v-defaults-provider :defaults="{ VCol: { class: 'py-2 text-no-wrap text-center text-body-1' } }">
                 <v-col class="v-col-1 bg-grey-lighten-1 edging">T</v-col>
-                <v-col class="v-col-3">{{ NechronicaTimingList[maneuver.timing] }}</v-col>
+                <v-col class="v-col-3">{{ NechronicaTimingList[maneuver.timing].text }}</v-col>
                 <v-col class="v-col-1 bg-grey-lighten-1 edging">C</v-col>
                 <v-col class="v-col-3">{{ maneuver.cost }}</v-col>
                 <v-col class="v-col-1 bg-grey-lighten-1 edging">R</v-col>
@@ -52,12 +52,12 @@
           :defaults="{ VCheckbox: { density: 'comfortable', hideDetails: true, class: 'flex-grow-0' } }"
         >
           <v-checkbox color="error" :model-value="maneuver.lost" @update:model-value="v => emits('update:lost', v)">
-            <template v-slot:label>
+            <template #label>
               <span class="text-no-wrap">損傷</span>
             </template>
           </v-checkbox>
           <v-checkbox color="primary" :model-value="maneuver.used" @update:model-value="v => emits('update:used', v)">
-            <template v-slot:label>
+            <template #label>
               <span class="text-no-wrap">使用</span>
             </template>
           </v-checkbox>

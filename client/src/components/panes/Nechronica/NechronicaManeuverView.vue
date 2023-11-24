@@ -13,7 +13,7 @@
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
-              :view-label="viewLabel"
+              :view-label="viewOption.viewLabel"
               @update:lost="v => emits('update:lost', mIdx, v)"
               @update:used="v => emits('update:used', mIdx, v)"
             />
@@ -30,7 +30,7 @@
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
-              :view-label="viewLabel"
+              :view-label="viewOption.viewLabel"
               @update:lost="v => emits('update:lost', mIdx, v)"
               @update:used="v => emits('update:used', mIdx, v)"
             />
@@ -47,7 +47,7 @@
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
-              :view-label="viewLabel"
+              :view-label="viewOption.viewLabel"
               @update:lost="v => emits('update:lost', mIdx, v)"
               @update:used="v => emits('update:used', mIdx, v)"
             />
@@ -64,7 +64,7 @@
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
-              :view-label="viewLabel"
+              :view-label="viewOption.viewLabel"
               @update:lost="v => emits('update:lost', mIdx, v)"
               @update:used="v => emits('update:used', mIdx, v)"
             />
@@ -81,7 +81,7 @@
             <nechronica-maneuver-btn-menu
               :character="character"
               :maneuver="maneuver"
-              :view-label="viewLabel"
+              :view-label="viewOption.viewLabel"
               @update:lost="v => emits('update:lost', mIdx, v)"
               @update:used="v => emits('update:used', mIdx, v)"
             />
@@ -96,18 +96,14 @@
 <script setup lang="ts">
 import NechronicaIconBtn from '@/components/panes/Nechronica/NechronicaIconBtn.vue'
 import NechronicaManeuverBtnMenu from '@/components/panes/Nechronica/NechronicaManeuverBtnMenu.vue'
+import { NechronicaViewOption } from '@/components/panes/Nechronica/NechronicaViewOptionNav.vue'
 import { Nechronica, NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   character: Nechronica
   columns: number
-  viewLabel: string
-  viewLost: boolean
-  viewUsed: boolean
-  viewTimings: number[]
-  viewTypes: number[]
-  viewBasicParts: boolean
+  viewOption: NechronicaViewOption
 }>()
 
 const emits = defineEmits<{
@@ -116,10 +112,10 @@ const emits = defineEmits<{
 }>()
 
 function judgeView(maneuver: NechronicaManeuver) {
-  if (props.viewTimings.every(t => t !== maneuver.timing)) return false
-  if (props.viewTypes.every(t => t !== maneuver.type)) return false
-  if (maneuver.lost && !props.viewLost) return false
-  if (maneuver.used && !props.viewUsed) return false
+  if (props.viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
+  if (props.viewOption.selectedTypes.every(t => t !== maneuver.type)) return false
+  if (maneuver.lost && !props.viewOption.viewLost) return false
+  if (maneuver.used && !props.viewOption.viewUsed) return false
   return true
 }
 </script>

@@ -11,7 +11,7 @@
           :style="`max-width: ${(useColumns + 1) * 4}rem`"
         >
           <v-menu :close-on-content-click="false" scroll-strategy="close">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-btn variant="text" class="text-body-1 px-0" :text="`行動値：${actionValue}`" v-bind="props">
                 <div class="d-flex flex-row align-end underline">
                   <span class="text-caption">行動値：</span>
@@ -43,7 +43,7 @@
             </v-card>
           </v-menu>
           <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom right">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-btn icon="mdi-cog" variant="text" size="small" v-bind="props" />
             </template>
             <v-card>
@@ -56,7 +56,7 @@
               <v-card-subtitle>１行の最大マニューバ数</v-card-subtitle>
               <v-defaults-provider :defaults="{ VSlider: vSliderDefault }">
                 <v-slider show-ticks="always" v-model="useColumns" :min="4" :max="10">
-                  <template v-slot:prepend>
+                  <template #prepend>
                     <span style="width: 1.5em" class="text-right">{{ useColumns }}</span>
                   </template>
                 </v-slider>
@@ -66,7 +66,7 @@
         </v-card-title>
         <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
           <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-sheet class="d-flex flex-row text-left align-center">
                 <v-sheet
                   v-ripple
@@ -120,12 +120,7 @@
         </v-card-text>
         <v-card-text class="d-flex flex-column pa-0">
           <nechronica-maneuver-view
-            :view-lost="viewLost"
-            :view-used="viewUsed"
-            :view-label="viewLabel"
-            :view-timings="viewTimings"
-            :view-types="viewTypes"
-            :view-basic-parts="viewBasicParts"
+            :view-option="viewOption"
             :columns="useColumns"
             :character="character.data.character"
             @update:used="onUpdateManeuverUsed"
@@ -134,7 +129,7 @@
         </v-card-text>
         <v-card-actions class="justify-end pb-0">
           <v-menu :close-on-content-click="false" location="top right" v-model="resetUsedMenu">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-btn
                 color="primary"
                 class="text-decoration-underline"
@@ -169,11 +164,12 @@
 <script setup lang="ts">
 import NechronicaIconBtn from '@/components/panes/Nechronica/NechronicaIconBtn.vue'
 import NechronicaManeuverView from '@/components/panes/Nechronica/NechronicaManeuverView.vue'
-import { Nechronica, NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import NechronicaManeuverBtnMenu from '@/components/panes/Nechronica/NechronicaManeuverBtnMenu.vue'
+import { NechronicaViewOption } from '@/components/panes/Nechronica/NechronicaViewOptionNav.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -181,12 +177,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   characterId: string
-  viewLabel?: keyof NechronicaManeuver | ''
-  viewLost: boolean
-  viewUsed: boolean
-  viewTimings: number[]
-  viewTypes: number[]
-  viewBasicParts: boolean
+  viewOption: NechronicaViewOption
 }>()
 
 const character = computed((): { id: string; data: { player: string; character: Nechronica } } | undefined => {

@@ -255,43 +255,43 @@ const style = computed(() => {
   }
 
   &.alice {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.holic {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.automaton {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.junk {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.coat {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.sorority {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.psychedelic {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/skill.png));
   }
 
   &.stacy {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/requiem.png));
   }
 
   &.thanatos {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/requiem.png));
   }
 
   &.gothic {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/requiem.png));
   }
 
   &.requiem {
@@ -299,11 +299,11 @@ const style = computed(() => {
   }
 
   &.baroque {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/requiem.png));
   }
 
   &.romanesque {
-    @include iconImage(url(/nechronica/maneuver-skill-normal.png));
+    @include iconImage(url(/nechronica/requiem.png));
   }
 
   &.treasure {

@@ -55,7 +55,13 @@ export const NechronicaPowerList: { text: string; color: string }[] = [
 
 export const NechronicaPartsList: string[] = ['', 'ﾎﾟｼﾞｼｮﾝ', 'ﾒｲﾝｸﾗｽ', 'ｻﾌﾞｸﾗｽ', '頭', '腕', '胴', '足']
 
-export const NechronicaTimingList: string[] = ['オート', 'アクション', 'ジャッジ', 'ダメージ', 'ラピッド']
+export const NechronicaTimingList: { text: string; color: string } = [
+  { text: 'オート', color: 'primary' },
+  { text: 'アクション', color: 'primary' },
+  { text: 'ジャッジ', color: 'primary' },
+  { text: 'ダメージ', color: 'primary' },
+  { text: 'ラピッド', color: 'primary' }
+]
 
 export class NechronicaHelper {
   protected readonly url: string
@@ -156,7 +162,7 @@ export class NechronicaHelper {
         partsText: NechronicaPartsList[parts] || '',
         name: textFilter(list[4]),
         timing,
-        timingText: NechronicaTimingList[timing] || '',
+        timingText: NechronicaTimingList[timing].text || '',
         cost: textFilter(list[6]),
         range: textFilter(list[7]),
         memo: textFilter(list[8]),
