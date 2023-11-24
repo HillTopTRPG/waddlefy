@@ -1,7 +1,7 @@
 <template>
   <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center">
     <template #activator="{ props }">
-      <nechronica-maneuver-btn
+      <maneuver-btn
         mode="normal"
         size="small"
         :maneuver="maneuver"
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import NechronicaManeuverBtn from '@/components/panes/Nechronica/NechronicaManeuverBtn.vue'
+import ManeuverBtn from '@/components/panes/Nechronica/ManeuverBtn.vue'
 import {
   Nechronica,
   NechronicaManeuver,

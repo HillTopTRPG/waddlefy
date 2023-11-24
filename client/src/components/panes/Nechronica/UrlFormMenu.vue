@@ -24,7 +24,7 @@
             </v-defaults-provider>
           </v-defaults-provider>
         </v-alert>
-        <nechronica-url-form v-model:url="addUrl" ref="form" />
+        <url-form v-model:url="addUrl" ref="form" />
       </v-card-text>
       <v-divider />
       <v-card-actions>
@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import NechronicaUrlForm from '@/components/panes/Nechronica/NechronicaUrlForm.vue'
+import UrlForm from '@/components/panes/Nechronica/UrlForm.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{

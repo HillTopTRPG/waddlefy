@@ -1,5 +1,5 @@
 <template>
-  <nechronica-icon-btn
+  <icon-btn
     :class="classText"
     :disable-button="disableButton"
     :text="mode === 'normal' ? maneuver.name : ''"
@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import NechronicaIconBtn from '@/components/panes/Nechronica/NechronicaIconBtn.vue'
+import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
 import { NechronicaManeuver, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 

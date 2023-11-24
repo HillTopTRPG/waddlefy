@@ -29,7 +29,7 @@
                     class="d-flex flex-column align-center pa-1"
                     :class="maneuver.lost ? 'bg-grey' : ''"
                   >
-                    <nechronica-maneuver-btn-menu
+                    <maneuver-btn-menu
                       :character="character.data.character"
                       :disable-button="true"
                       :maneuver="maneuver"
@@ -90,13 +90,13 @@
 
             <v-card>
               <v-card-text class="d-flex flex-row align-end">
-                <nechronica-icon-btn
+                <icon-btn
                   :disable-button="true"
                   :under-text="positionList[character.data.character.basic.position]?.text || ''"
                   :class="positionList[character.data.character.basic.position].val || ''"
                 />
                 <span style="font-size: 11px; line-height: 1.2em">/</span>
-                <nechronica-icon-btn
+                <icon-btn
                   :disable-button="true"
                   :under-text="classList[character.data.character.basic.mainClass]?.text || ''"
                   class="small"
@@ -104,7 +104,7 @@
                 />
                 <template v-if="character.data.character.basic.mainClass !== character.data.character.basic.subClass">
                   <span style="font-size: 11px; line-height: 1.2em">/</span>
-                  <nechronica-icon-btn
+                  <icon-btn
                     :disable-button="true"
                     :under-text="classList[character.data.character.basic.subClass]?.text || ''"
                     class="small"
@@ -119,7 +119,7 @@
           </v-menu>
         </v-card-text>
         <v-card-text class="d-flex flex-column pa-0">
-          <nechronica-maneuver-view
+          <maneuver-view
             :view-option="viewOption"
             :columns="useColumns"
             :character="character.data.character"
@@ -162,14 +162,14 @@
 </template>
 
 <script setup lang="ts">
-import NechronicaIconBtn from '@/components/panes/Nechronica/NechronicaIconBtn.vue'
-import NechronicaManeuverView from '@/components/panes/Nechronica/NechronicaManeuverView.vue'
+import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
+import ManeuverView from '@/components/panes/Nechronica/ManeuverView.vue'
 import { Nechronica } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import NechronicaManeuverBtnMenu from '@/components/panes/Nechronica/NechronicaManeuverBtnMenu.vue'
-import { NechronicaViewOption } from '@/components/panes/Nechronica/NechronicaViewOptionNav.vue'
+import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
+import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

@@ -7,7 +7,7 @@
     </template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-1" style="gap: 0.1rem" v-if="!perspective">
-        <nechronica-url-form-menu
+        <url-form-menu
           text="キャラクターシート読込"
           @execute="onLoadCharacterSheet"
           :tips="[
@@ -27,12 +27,12 @@
         :style="nav ? 'padding-right: 250px !important;' : ''"
       >
         <template v-for="character in characters" :key="character.id">
-          <nechronica-character-sheet-view :character-id="character.id" :view-option="viewOption" />
+          <character-sheet-view :character-id="character.id" :view-option="viewOption" />
         </template>
       </v-sheet>
     </template>
     <template #nav>
-      <nechronica-view-option-nav v-model:nav="nav" v-model:option="viewOption" />
+      <view-option-nav v-model:nav="nav" v-model:option="viewOption" />
     </template>
   </pane-frame>
 </template>
@@ -54,11 +54,11 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import NechronicaCharacterSheetView from '@/components/panes/Nechronica/NechronicaCharacterSheetView.vue'
-import NechronicaUrlFormMenu from '@/components/panes/Nechronica/NechronicaUrlFormMenu.vue'
-import NechronicaViewOptionNav, {
+import CharacterSheetView from '@/components/panes/Nechronica/CharacterSheetView.vue'
+import UrlFormMenu from '@/components/panes/Nechronica/UrlFormMenu.vue'
+import ViewOptionNav, {
   NechronicaViewOption
-} from '@/components/panes/Nechronica/NechronicaViewOptionNav.vue'
+} from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { NechronicaHelper, NechronicaPowerList, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
