@@ -56,9 +56,7 @@ import { computed, inject, ref } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CharacterSheetView from '@/components/panes/Nechronica/CharacterSheetView.vue'
 import UrlFormMenu from '@/components/panes/Nechronica/UrlFormMenu.vue'
-import ViewOptionNav, {
-  NechronicaViewOption
-} from '@/components/panes/Nechronica/ViewOptionNav.vue'
+import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { NechronicaHelper, NechronicaPowerList, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

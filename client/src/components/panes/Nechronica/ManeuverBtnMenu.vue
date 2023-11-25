@@ -1,13 +1,7 @@
 <template>
   <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center">
     <template #activator="{ props }">
-      <maneuver-btn
-        mode="normal"
-        size="small"
-        :maneuver="maneuver"
-        :view-label="viewLabel"
-        :activate-props="props"
-      />
+      <maneuver-btn mode="normal" size="small" :maneuver="maneuver" :view-label="viewLabel" :activate-props="props" />
     </template>
     <v-card>
       <v-card-text class="pb-0">

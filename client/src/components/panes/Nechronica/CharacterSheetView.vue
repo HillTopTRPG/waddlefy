@@ -1,160 +1,35 @@
 <template>
   <v-sheet class="d-flex flex-row flex-wrap overflow-y-auto" style="gap: 0.5rem">
     <template v-if="character">
-      <v-card
-        variant="outlined"
-        class="d-inline-block flex-column pa-2 rounded-xl overflow-y-auto"
-        style="box-sizing: border-box"
-      >
-        <v-card-title
-          class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center justify-space-between"
-          :style="`max-width: ${(useColumns + 1) * 4}rem`"
-        >
-          <v-menu :close-on-content-click="false" scroll-strategy="close">
-            <template #activator="{ props }">
-              <v-btn variant="text" class="text-body-1 px-0" :text="`行動値：${actionValue}`" v-bind="props">
-                <div class="d-flex flex-row align-end underline">
-                  <span class="text-caption">行動値：</span>
-                  <span class="text-h5">{{ actionValue }}</span>
-                </div>
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>行動値</v-card-title>
-              <v-card-text class="d-flex flex-row align-end flex-wrap">
-                <span class="pb-1 text-center" style="line-height: 20px; font-size: 13px">基本値<br />６</span>
-                <template v-for="(maneuver, idx) in character.data.character.maneuverList" :key="idx">
-                  <v-sheet
-                    v-if="maneuver.type === 3"
-                    class="d-flex flex-column align-center pa-1"
-                    :class="maneuver.lost ? 'bg-grey' : ''"
-                  >
-                    <maneuver-btn-menu
-                      :character="character.data.character"
-                      :disable-button="true"
-                      :maneuver="maneuver"
-                      @update:lost="v => onUpdateManeuverLost(idx, v)"
-                      @update:used="v => onUpdateManeuverUsed(idx, v)"
-                    />
-                    <span>{{ getNum(maneuver.memo) }}</span>
-                  </v-sheet>
-                </template>
-              </v-card-text>
-            </v-card>
-          </v-menu>
-          <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom right">
-            <template #activator="{ props }">
-              <v-btn icon="mdi-cog" variant="text" size="small" v-bind="props" />
-            </template>
-            <v-card>
-              <v-card-title class="d-flex">
-                <span class="ellipsis" style="width: 10em !important">{{
-                  character.data.character.basic.characterName
-                }}</span>
-                <span class="text-no-wrap">の設定</span>
-              </v-card-title>
-              <v-card-subtitle>１行の最大マニューバ数</v-card-subtitle>
-              <v-defaults-provider :defaults="{ VSlider: vSliderDefault }">
-                <v-slider show-ticks="always" v-model="useColumns" :min="4" :max="10">
-                  <template #prepend>
-                    <span style="width: 1.5em" class="text-right">{{ useColumns }}</span>
-                  </template>
-                </v-slider>
-              </v-defaults-provider>
-            </v-card>
-          </v-menu>
+      <v-card variant="outlined" class="d-flex flex-column pa-2 rounded-xl" style="box-sizing: border-box">
+        <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center justify-space-between">
+          <action-value-menu
+            :maneuvers="character.data.character.maneuverList"
+            @update:used="onUpdateManeuverUsed"
+            @update:lost="onUpdateManeuverLost"
+          />
+          <character-sheet-view-config
+            :character-id="characterId"
+            :name="character?.data.character.basic.characterName || ''"
+          />
         </v-card-title>
         <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
-          <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
-            <template #activator="{ props }">
-              <v-sheet class="d-flex flex-row text-left align-center">
-                <v-sheet
-                  v-ripple
-                  v-bind="props"
-                  rounded="lg"
-                  class="ellipsis text-h5 text-decoration-underline overflow-y-hidden"
-                  style="width: 1em; flex-grow: 1"
-                >
-                  {{ character.data.character.basic.characterName }}
-                </v-sheet>
-                <v-btn
-                  icon="mdi-open-in-new"
-                  variant="flat"
-                  size="small"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  :href="character.data.character.url"
-                />
-              </v-sheet>
-            </template>
-
-            <v-card>
-              <v-card-text class="d-flex flex-row align-end">
-                <icon-btn
-                  :disable-button="true"
-                  :under-text="positionList[character.data.character.basic.position]?.text || ''"
-                  :class="positionList[character.data.character.basic.position].val || ''"
-                />
-                <span style="font-size: 11px; line-height: 1.2em">/</span>
-                <icon-btn
-                  :disable-button="true"
-                  :under-text="classList[character.data.character.basic.mainClass]?.text || ''"
-                  class="small"
-                  :class="classList[character.data.character.basic.mainClass].val || ''"
-                />
-                <template v-if="character.data.character.basic.mainClass !== character.data.character.basic.subClass">
-                  <span style="font-size: 11px; line-height: 1.2em">/</span>
-                  <icon-btn
-                    :disable-button="true"
-                    :under-text="classList[character.data.character.basic.subClass]?.text || ''"
-                    class="small"
-                    :class="classList[character.data.character.basic.subClass].val || ''"
-                  />
-                </template>
-                <template v-else>
-                  <span style="font-size: 11px; line-height: 1.2em">×2</span>
-                </template>
-              </v-card-text>
-            </v-card>
-          </v-menu>
+          <character-name-menu :character-id="characterId" />
         </v-card-text>
         <v-card-text class="d-flex flex-column pa-0">
-          <maneuver-view
+          <maneuver-list-view
+            :character="character.data.character"
             :view-option="viewOption"
             :columns="useColumns"
-            :character="character.data.character"
             @update:used="onUpdateManeuverUsed"
             @update:lost="onUpdateManeuverLost"
           />
         </v-card-text>
         <v-card-actions class="justify-end pb-0">
-          <v-menu :close-on-content-click="false" location="top right" v-model="resetUsedMenu">
-            <template #activator="{ props }">
-              <v-btn
-                color="primary"
-                class="text-decoration-underline"
-                v-bind="props"
-                :disabled="character.data.character.maneuverList.every(m => !m.used)"
-                >全て未使用状態にする</v-btn
-              >
-            </template>
-            <v-card>
-              <v-card-text>
-                全てのマニューバを未使用状態にします。<br />
-                よろしいですか？
-              </v-card-text>
-              <v-divider />
-              <v-card-actions>
-                <v-btn class="flex-grow-1" color="primary" variant="flat" text="適用する" @click="onResetUsedMenu" />
-                <v-btn
-                  class="text-decoration-underline flex-grow-1"
-                  variant="text"
-                  text="キャンセル"
-                  @click="resetUsedMenu = false"
-                />
-              </v-card-actions>
-            </v-card>
-          </v-menu>
+          <reset-used-maneuver-btn
+            :disabled="character.data.character.maneuverList.every(m => !m.used)"
+            @execute="onResetUsedMenu"
+          />
         </v-card-actions>
       </v-card>
     </template>
@@ -162,13 +37,15 @@
 </template>
 
 <script setup lang="ts">
-import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
-import ManeuverView from '@/components/panes/Nechronica/ManeuverView.vue'
+import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
 import { Nechronica } from '@/components/panes/Nechronica/nechronica'
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
+import ActionValueMenu from '@/components/panes/Nechronica/ActionValueMenu.vue'
+import CharacterNameMenu from '@/components/panes/Nechronica/CharacterNameMenu.vue'
+import CharacterSheetViewConfig from '@/components/panes/Nechronica/CharacterSheetViewConfig.vue'
+import ResetUsedManeuverBtn from '@/components/panes/Nechronica/ResetUsedManeuverBtn.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 
@@ -193,124 +70,45 @@ const characterViewConfig = computed(() => {
   })
 })
 
-const useColumns = ref(characterViewConfig.value ? characterViewConfig.value.data.data.columns : 10)
-
-let timeout: number | null = null
-
-watch(useColumns, columns => {
-  if (timeout !== null) {
-    window.clearTimeout(timeout)
-    timeout = null
-  }
-  timeout = window.setTimeout(() => {
-    console.log(Boolean(characterViewConfig.value))
-    if (characterViewConfig.value) {
-      graphQlStore?.updateTargetConfig(characterViewConfig.value.id, owner.value, props.characterId, 'character-view', {
-        columns
-      })
-    } else {
-      graphQlStore?.addTargetConfig(owner.value, props.characterId, 'character-view', {
-        columns
-      })
-    }
-  }, 1000)
-})
-
-const positionList = [
-  { val: '', text: '' },
-  { val: 'alice', text: 'アリス' },
-  { val: 'holic', text: 'ホリック' },
-  { val: 'automaton', text: 'オートマトン' },
-  { val: 'junk', text: 'ジャンク' },
-  { val: 'coat', text: 'コート' },
-  { val: 'sorority', text: 'ソロリティ' },
-  { val: 'psychedelic', text: 'サイケデリック' }
-]
-const classList = [
-  { val: '', text: '' },
-  { val: 'stacy', text: 'ステーシー' },
-  { val: 'thanatos', text: 'タナトス' },
-  { val: 'gothic', text: 'ゴシック' },
-  { val: 'requiem', text: 'レクイエム' },
-  { val: 'baroque', text: 'バロック' },
-  { val: 'romanesque', text: 'ロマネスク' }
-]
-
-function getNum(text: string): number {
-  const num = parseInt(text, 10)
-  if (!isNaN(num)) {
-    return num
-  }
-  return 0
-}
-
-const actionValue = computed(() => {
-  return (
-    character.value?.data.character.maneuverList.reduce((prev, current) => {
-      if (current.type === 3 && !current.lost) {
-        return prev + getNum(current.memo)
-      }
-      return prev
-    }, 6) || 0
-  )
-})
-
-const vSliderDefault = {
-  density: 'compact',
-  persistentHint: true,
-  step: 1,
-  class: 'ml-3 mr-5',
-  rounded: true,
-  color: 'primary'
-}
+const useColumns = ref(characterViewConfig.value?.data.data.columns || 10)
 
 const resetUsedMenu = ref(false)
 
-function updateNechronicaCharacterHelper(wrapFunc: (character: Nechronica) => void) {
+function updateNechronicaCharacterHelper(wrapFunc: (character: Nechronica) => boolean) {
   if (!character.value) return
   const updateCharacter = clone<Nechronica>(character.value.data.character)!
-  wrapFunc(updateCharacter)
+  if (!wrapFunc(updateCharacter)) return
   graphQlStore?.updateNechronicaCharacter(props.characterId, character.value.player, updateCharacter)
 }
+
 function onResetUsedMenu() {
   resetUsedMenu.value = false
 
   updateNechronicaCharacterHelper(c => {
-    if (c.maneuverList.every(m => !m.used)) return
+    if (c.maneuverList.every(m => !m.used)) return false
     c.maneuverList.forEach(m => {
       m.used = false
     })
+    return true
   })
 }
 
 function onUpdateManeuverUsed(idx: number, used: boolean) {
   updateNechronicaCharacterHelper(c => {
-    if (c.maneuverList[idx].used === used) return
+    if (c.maneuverList[idx].used === used) return false
     c.maneuverList[idx].used = used
+    return true
   })
 }
 
 function onUpdateManeuverLost(idx: number, lost: boolean) {
   updateNechronicaCharacterHelper(c => {
-    if (c.maneuverList[idx].lost === lost) return
+    if (c.maneuverList[idx].lost === lost) return false
     c.maneuverList[idx].lost = lost
+    return true
   })
 }
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped>
-.underline {
-  position: relative;
-
-  &:before {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: -4px;
-    right: -4px;
-    margin: auto;
-    border-bottom: 1px solid black;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
