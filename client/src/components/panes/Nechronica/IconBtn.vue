@@ -331,7 +331,7 @@ const style = computed(() => {
   }
 
   &.basic-shoulder {
-    @include iconImage(url(/nechronica/body.png));
+    @include iconImage(url(/nechronica/arm.png));
   }
 
   &.basic-backbone {

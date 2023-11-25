@@ -92,6 +92,7 @@
                   variant="solo"
                   label="効果／強み／弱み"
                   placeholder=""
+                  :offset="-textRows * 24 + 18"
                   :text="arts.effect || ''"
                   @update="v => onUpdateSpecialArtsEffect(idx, v)"
                 />
@@ -104,6 +105,7 @@
                   variant="solo"
                   label="演出"
                   placeholder=""
+                  :offset="-textRows * 24 + 18"
                   :text="arts.direction || ''"
                   @update="v => onUpdateSpecialArtsDirection(idx, v)"
                 />

@@ -106,4 +106,7 @@ function onSave() {
 .v-text-field.editable:deep(input[readonly]) {
   cursor: pointer;
 }
+:deep(.v-field__input) {
+  min-height: auto !important;
+}
 </style>

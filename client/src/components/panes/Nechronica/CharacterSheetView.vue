@@ -19,7 +19,7 @@
           <v-sheet class="d-flex flex-row pb-2">
             <v-sheet class="d-flex flex-row flex-wrap" style="width: 1em; flex-grow: 1; gap: 0.5rem">
               <template v-for="(roice, idx) in character?.data.character.roiceList || []" :key="idx">
-                <roice-badge :roice="roice" @update-damage="damage => onUpdateRoiceDamage(idx, damage)" />
+                <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(idx, updateRoice)" />
               </template>
             </v-sheet>
           </v-sheet>
@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
-import { Nechronica } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -69,8 +69,6 @@ const props = defineProps<{
 const character = computed((): { id: string; data: { player: string; character: Nechronica } } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
-
-const owner = computed(() => (graphQlStore?.state.user?.token ? 'user' : graphQlStore?.state.player?.id || ''))
 
 const columns = ref(10)
 
@@ -111,10 +109,11 @@ function onUpdateManeuverLost(idx: number, lost: boolean) {
   })
 }
 
-function onUpdateRoiceDamage(idx: number, damage: number) {
+function onUpdateRoice(idx: number, roice: NechronicaRoice) {
   updateNechronicaCharacterHelper(c => {
-    if (c.roiceList[idx].damage === damage) return false
-    c.roiceList[idx].damage = damage
+    const r = c.roiceList[idx]
+    if (JSON.stringify(r) === JSON.stringify(roice)) return false
+    c.roiceList[idx] = roice
     return true
   })
 }

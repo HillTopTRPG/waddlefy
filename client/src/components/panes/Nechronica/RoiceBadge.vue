@@ -1,65 +1,39 @@
 <template>
-  <v-menu :close-on-content-click="false" location="bottom center">
+  <v-menu
+    :close-on-content-click="false"
+    :max-width="`${width}rem`"
+    location="bottom left"
+    scroll-strategy="close"
+    style="box-sizing: content-box"
+  >
     <template #activator="{ props }">
-      <v-badge
-        :value="roiceDamages[roice.damage].label"
-        :content="roiceDamages[roice.damage].label"
-        :color="roiceDamages[roice.damage].color"
-        location="bottom right"
-        offset-x="12"
-        :model-value="roice.damage < 4"
-        offset-y="0"
-      >
-        <v-chip
-          class="overflow-visible"
-          :color="roiceDamages[roice.damage].color"
-          variant="tonal"
-          border
-          style="height: 3em; min-width: 2.5rem; max-width: 4rem; box-sizing: content-box"
-          v-bind="props"
-        >
-          <div class="text-wrap text-caption d-flex flex-column">
-            <span class="ellipsis mb-1" style="max-width: 4rem; box-sizing: content-box; line-height: 1em">{{
-              roice.name
-            }}</span>
-            <span v-if="roice.damage < 4">{{ roice.pos }}</span>
-            <ruby v-else class="font-weight-normal" style="line-height: 1em"
-              >{{ roice.neg }}<rt style="font-size: 8px">{{ roice.pos }}</rt></ruby
-            >
-          </div>
-        </v-chip>
-      </v-badge>
+      <v-defaults-provider :defaults="{ VBadge: { location: 'bottom right', offsetX: 12 } }">
+        <v-badge v-if="roice.damage < 3" :value="getValue()" :content="getValue()" :color="getColor()">
+          <roice-chip :roice="roice" :color="roiceDamages[roice.damage].color" :bind-props="props" />
+        </v-badge>
+        <v-badge v-else-if="roice.damage === 3" :value="getValue()" :content="getValue()" :color="getColor()">
+          <roice-chip :roice="roice" :color="roiceDamages[roice.damage].color" :bind-props="props" />
+        </v-badge>
+        <roice-chip v-else :roice="roice" :color="roiceDamages[roice.damage].color" :bind-props="props" />
+      </v-defaults-provider>
     </template>
-    <v-card class="pa-2" style="box-sizing: content-box" min-width="300" max-width="300">
-      <v-card-text class="px-0 py-2">
-        <span>{{ roice.name }}への</span>
-        <span class="font-weight-bold">{{ roice.pos }}</span>
+    <v-card class="pa-2" style="box-sizing: content-box" :min-width="`${width}rem`" :max-width="`${width}rem`">
+      <v-card-text class="px-0 py-2 d-flex flex-column flex-grow-0 align-self-start">
+        <v-sheet class="d-flex flex-column" style="max-height: 10em">
+          <menu-edit-text-field
+            label="対象"
+            icon="mdi-relation-one-to-one"
+            :editable="true"
+            variant="solo-filled"
+            :width="width"
+            :text="roice.name"
+            @update="onUpdateRoiceName"
+          />
+        </v-sheet>
       </v-card-text>
       <v-card-text class="px-0 py-1">
-        <v-chip
-          :color="roiceDamages[roiceDamage].color"
-          class="pa-0"
-          density="default"
-          style="line-height: 1.4em"
-          variant="tonal"
-        >
-          <v-select
-            class="chip-select"
-            :color="roiceDamages[roiceDamage].color"
-            :flat="true"
-            :hide-details="true"
-            density="compact"
-            :items="roiceDamages"
-            item-value="value"
-            item-title="text"
-            prefix="発狂度: "
-            v-model="roiceDamage"
-          >
-            <template #selection="{ item }">
-              <span class="text-h6">{{ item.title }}</span>
-            </template>
-          </v-select>
-        </v-chip>
+        <chip-select prefix="" :selections="posSelections" v-model="selectedPos" />
+        <chip-select prefix="狂気度" :selections="roiceDamages" v-model="roiceDamage" />
       </v-card-text>
       <v-card-subtitle class="px-0">発狂効果</v-card-subtitle>
       <v-card-text class="px-0 py-1 d-flex flex-row align-stretch">
@@ -68,14 +42,30 @@
           <span class="d-flex justify-start align-start">{{ roice.breakEffect }}</span>
         </v-sheet>
       </v-card-text>
-      <v-card-subtitle class="px-0">備考</v-card-subtitle>
-      <v-card-text class="px-0 py-1">{{ roice.memo || 'なし' }}</v-card-text>
+      <v-card-text class="px-0 py-1 d-flex flex-row">
+        <menu-edit-text-area
+          :editable="true"
+          icon="mdi-text-box-outline"
+          variant="solo-filled"
+          :text-rows="3"
+          :width="width"
+          :offset="-2 * 24"
+          label="備考など"
+          :text="roice.memo"
+          @update="onUpdateRoiceMemo"
+        />
+      </v-card-text>
     </v-card>
   </v-menu>
 </template>
 
 <script setup lang="ts">
-import { NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
+import ChipSelect from '@/components/panes/Nechronica/ChipSelect.vue'
+import RoiceChip from '@/components/panes/Nechronica/RoiceChip.vue'
+import { NechronicaRoice, roiceList } from '@/components/panes/Nechronica/nechronica'
+import { clone } from '@/components/panes/PrimaryDataUtility'
+import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import { ref, watch } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -84,54 +74,90 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update-damage', damage: number): void
+  (e: 'update', roice: NechronicaRoice): void
 }>()
 
-const roiceDamages = [
-  { value: 0, label: '０', text: '０', color: 'success' },
-  { value: 1, label: '１', text: '１', color: 'success' },
-  { value: 2, label: '２', text: '２', color: 'success' },
-  { value: 3, label: '３', text: '３', color: 'warning' },
-  { value: 4, label: '狂', text: '発狂', color: 'error' }
-]
+const width = 18
+
+function emitUpdateCloneRoice(callback: (clonedRoice: NechronicaRoice) => boolean) {
+  const clonedRoice = clone(props.roice)!
+  if (!callback(clonedRoice)) return
+  emits('update', clonedRoice)
+}
+
+watch(
+  () => props.roice,
+  () => {
+    selectedPos.value = props.roice.id
+    roiceDamage.value = props.roice.damage
+  },
+  { deep: true }
+)
+
+const selectedPos = ref(props.roice.id)
+watch(selectedPos, idx => {
+  emitUpdateCloneRoice(c => {
+    const rawData = roiceList[idx]
+    let execute = c.id !== idx || c.pos !== rawData.pos
+    execute = execute || !(c.neg === rawData.neg && c.breakEffect === rawData.breakEffect)
+    if (execute) {
+      c.id = idx
+      c.pos = rawData.pos
+      c.neg = rawData.neg
+      c.breakEffect = rawData.breakEffect
+    }
+    return execute
+  })
+})
 
 const roiceDamage = ref(props.roice.damage)
-watch(
-  () => props.roice.damage,
-  v => {
-    roiceDamage.value = v
-  }
-)
-watch(roiceDamage, v => {
-  emits('update-damage', v)
+watch(roiceDamage, damage => {
+  emitUpdateCloneRoice(c => {
+    if (c.damage === damage) return false
+    c.damage = damage
+    return true
+  })
 })
+
+function onUpdateRoiceName(name: string) {
+  emitUpdateCloneRoice(c => {
+    if (c.name === name) return false
+    c.name = name
+    return true
+  })
+}
+
+function onUpdateRoiceMemo(memo: string) {
+  emitUpdateCloneRoice(c => {
+    if (c.memo === memo) return false
+    c.memo = memo
+    return true
+  })
+}
+
+const posSelections = roiceList.map((r, idx) => ({
+  value: idx,
+  text: r.pos,
+  subTitle: r.target,
+  color: 'black'
+}))
+
+const roiceDamages = [
+  { value: 0, label: '０', text: '０', subTitle: '', color: 'success' },
+  { value: 1, label: '１', text: '１', subTitle: '', color: 'success' },
+  { value: 2, label: '２', text: '２', subTitle: '', color: 'success' },
+  { value: 3, label: '３', text: '３', subTitle: '', color: 'warning' },
+  { value: 4, label: '狂', text: '発狂', subTitle: '', color: 'error' }
+]
+
+function getValue(): string {
+  return roiceDamages[props.roice.damage].label
+}
+
+function getColor(): string {
+  return roiceDamages[props.roice.damage].color
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped>
-.chip-select {
-  flex-grow: 0;
-
-  :deep(.v-field) {
-    padding: 0 8px;
-  }
-  :deep(.v-field__field) {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    .v-field__input,
-    .v-select__selection,
-    .v-text-field__prefix,
-    .v-text-field__prefix__text,
-    .v-field__append-inner {
-      margin: 0;
-      padding: 0;
-      font-size: 14px;
-    }
-  }
-  :deep(.v-field__append-inner) .v-icon {
-    margin: 0;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

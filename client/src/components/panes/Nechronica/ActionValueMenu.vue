@@ -35,13 +35,11 @@
 
 <script setup lang="ts">
 import { Nechronica } from '@/components/panes/Nechronica/nechronica'
-import { computed, inject } from 'vue'
+import { computed } from 'vue'
 
-import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
 import { convertNumberZero } from '@/components/panes/PrimaryDataUtility'
 
-const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
