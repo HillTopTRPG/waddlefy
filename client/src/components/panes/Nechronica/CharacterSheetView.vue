@@ -4,23 +4,31 @@
       <v-card variant="outlined" class="d-flex flex-column pa-2 rounded-xl" style="box-sizing: border-box">
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center justify-space-between">
           <action-value-menu
-            :maneuvers="character.data.character.maneuverList"
+            :character="character.data.character"
             @update:used="onUpdateManeuverUsed"
             @update:lost="onUpdateManeuverLost"
           />
           <character-sheet-view-config
             :character-id="characterId"
             :name="character?.data.character.basic.characterName || ''"
+            @update:columns="v => (columns = v)"
           />
         </v-card-title>
         <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
           <character-name-menu :character-id="characterId" />
+          <v-sheet class="d-flex flex-row pb-2">
+            <v-sheet class="d-flex flex-row flex-wrap" style="width: 1em; flex-grow: 1; gap: 0.5rem">
+              <template v-for="(roice, idx) in character?.data.character.roiceList || []" :key="idx">
+                <roice-badge :roice="roice" @update-damage="damage => onUpdateRoiceDamage(idx, damage)" />
+              </template>
+            </v-sheet>
+          </v-sheet>
         </v-card-text>
         <v-card-text class="d-flex flex-column pa-0">
           <maneuver-list-view
             :character="character.data.character"
             :view-option="viewOption"
-            :columns="useColumns"
+            :columns="columns || 10"
             @update:used="onUpdateManeuverUsed"
             @update:lost="onUpdateManeuverLost"
           />
@@ -46,6 +54,7 @@ import ActionValueMenu from '@/components/panes/Nechronica/ActionValueMenu.vue'
 import CharacterNameMenu from '@/components/panes/Nechronica/CharacterNameMenu.vue'
 import CharacterSheetViewConfig from '@/components/panes/Nechronica/CharacterSheetViewConfig.vue'
 import ResetUsedManeuverBtn from '@/components/panes/Nechronica/ResetUsedManeuverBtn.vue'
+import RoiceBadge from '@/components/panes/Nechronica/RoiceBadge.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 
@@ -62,15 +71,8 @@ const character = computed((): { id: string; data: { player: string; character: 
 })
 
 const owner = computed(() => (graphQlStore?.state.user?.token ? 'user' : graphQlStore?.state.player?.id || ''))
-const characterViewConfig = computed(() => {
-  return graphQlStore?.state.sessionDataList.find(sd => {
-    if (sd.type !== 'target-config') return false
-    if (sd.data.type !== 'character-view') return false
-    return sd.data.owner === owner.value && sd.data.target === props.characterId
-  })
-})
 
-const useColumns = ref(characterViewConfig.value?.data.data.columns || 10)
+const columns = ref(10)
 
 const resetUsedMenu = ref(false)
 
@@ -78,7 +80,7 @@ function updateNechronicaCharacterHelper(wrapFunc: (character: Nechronica) => bo
   if (!character.value) return
   const updateCharacter = clone<Nechronica>(character.value.data.character)!
   if (!wrapFunc(updateCharacter)) return
-  graphQlStore?.updateNechronicaCharacter(props.characterId, character.value.player, updateCharacter)
+  graphQlStore?.updateNechronicaCharacter(props.characterId, character.value.data.player, updateCharacter)
 }
 
 function onResetUsedMenu() {
@@ -105,6 +107,14 @@ function onUpdateManeuverLost(idx: number, lost: boolean) {
   updateNechronicaCharacterHelper(c => {
     if (c.maneuverList[idx].lost === lost) return false
     c.maneuverList[idx].lost = lost
+    return true
+  })
+}
+
+function onUpdateRoiceDamage(idx: number, damage: number) {
+  updateNechronicaCharacterHelper(c => {
+    if (c.roiceList[idx].damage === damage) return false
+    c.roiceList[idx].damage = damage
     return true
   })
 }

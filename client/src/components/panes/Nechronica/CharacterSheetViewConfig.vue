@@ -33,6 +33,10 @@ const props = defineProps<{
   name: string
 }>()
 
+const emits = defineEmits<{
+  (e: 'update:columns', columns: number): void
+}>()
+
 const owner = computed(() => (graphQlStore?.state.user?.token ? 'user' : graphQlStore?.state.player?.id || ''))
 const characterViewConfig = computed(() => {
   return graphQlStore?.state.sessionDataList.find(sd => {
@@ -42,28 +46,40 @@ const characterViewConfig = computed(() => {
   })
 })
 
-const useColumns = ref(characterViewConfig.value?.data.data.columns || 10)
+const useColumns = ref<number>(characterViewConfig.value?.data.data.columns || 10)
 
 let timeout: number | null = null
 
-watch(useColumns, columns => {
-  if (timeout !== null) {
-    window.clearTimeout(timeout)
-    timeout = null
-  }
-  timeout = window.setTimeout(() => {
-    console.log(Boolean(characterViewConfig.value))
-    if (characterViewConfig.value) {
-      graphQlStore?.updateTargetConfig(characterViewConfig.value.id, owner.value, props.characterId, 'character-view', {
-        columns
-      })
-    } else {
-      graphQlStore?.addTargetConfig(owner.value, props.characterId, 'character-view', {
-        columns
-      })
+watch(
+  useColumns,
+  columns => {
+    emits('update:columns', columns)
+    if (!characterViewConfig.value || characterViewConfig.value.data.data.columns === columns) return
+    if (timeout !== null) {
+      window.clearTimeout(timeout)
+      timeout = null
     }
-  }, 1000)
-})
+    timeout = window.setTimeout(() => {
+      console.log(Boolean(characterViewConfig.value))
+      if (characterViewConfig.value) {
+        graphQlStore?.updateTargetConfig(
+          characterViewConfig.value.id,
+          owner.value,
+          props.characterId,
+          'character-view',
+          {
+            columns
+          }
+        )
+      } else {
+        graphQlStore?.addTargetConfig(owner.value, props.characterId, 'character-view', {
+          columns
+        })
+      }
+    }, 1000)
+  },
+  { immediate: true }
+)
 
 const vSliderDefault = {
   density: 'compact',

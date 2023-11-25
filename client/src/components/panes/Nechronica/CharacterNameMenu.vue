@@ -22,7 +22,6 @@
           />
         </v-sheet>
       </template>
-
       <v-card>
         <v-card-text class="d-flex flex-row align-end">
           <icon-btn
@@ -50,6 +49,18 @@
             <span style="font-size: 11px; line-height: 1.2em">×2</span>
           </template>
         </v-card-text>
+        <v-card-text>
+          {{ character.data.character.basic.characterName }}
+        </v-card-text>
+        <v-card-actions>
+          <delete-menu-btn
+            :target-name="character.data.character.basic.characterName"
+            :session-id="graphQlStore?.state.session?.id || ''"
+            type="キャラクター"
+            @execute="() => graphQlStore?.deleteSessionData(characterId)"
+          />
+          <reload-character-sheet-btn :character-id="characterId" />
+        </v-card-actions>
       </v-card>
     </v-menu>
   </template>
@@ -60,7 +71,9 @@ import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
 import { Nechronica } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
+import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/ReloadCharacterSheetBtn.vue'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -80,8 +93,7 @@ const positionList = [
   { val: 'automaton', text: 'オートマトン' },
   { val: 'junk', text: 'ジャンク' },
   { val: 'coat', text: 'コート' },
-  { val: 'sorority', text: 'ソロリティ' },
-  { val: 'psychedelic', text: 'サイケデリック' }
+  { val: 'sorority', text: 'ソロリティ' }
 ]
 const classList = [
   { val: '', text: '' },
@@ -90,7 +102,8 @@ const classList = [
   { val: 'gothic', text: 'ゴシック' },
   { val: 'requiem', text: 'レクイエム' },
   { val: 'baroque', text: 'バロック' },
-  { val: 'romanesque', text: 'ロマネスク' }
+  { val: 'romanesque', text: 'ロマネスク' },
+  { val: 'psychedelic', text: 'サイケデリック' }
 ]
 </script>
 

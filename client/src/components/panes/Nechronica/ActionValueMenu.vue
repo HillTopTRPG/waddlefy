@@ -12,14 +12,14 @@
       <v-card-title>行動値</v-card-title>
       <v-card-text class="d-flex flex-row align-end flex-wrap">
         <span class="pb-1 text-center" style="line-height: 20px; font-size: 13px">基本値<br />６</span>
-        <template v-for="(maneuver, idx) in maneuvers" :key="idx">
+        <template v-for="(maneuver, idx) in character.maneuverList" :key="idx">
           <v-sheet
             v-if="maneuver.type === 3"
             class="d-flex flex-column align-center pa-1"
             :class="maneuver.lost ? 'bg-grey' : ''"
           >
             <maneuver-btn-menu
-              :character="character.data.character"
+              :character="character"
               :disable-button="true"
               :maneuver="maneuver"
               @update:lost="v => onUpdateManeuverLost(idx, v)"
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -45,7 +45,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  maneuvers: NechronicaManeuver[]
+  character: Nechronica
 }>()
 
 const emits = defineEmits<{
@@ -55,7 +55,7 @@ const emits = defineEmits<{
 
 const actionValue = computed(() => {
   return (
-    props.maneuvers.reduce((prev, current) => {
+    props.character.maneuverList.reduce((prev, current) => {
       if (current.type === 3 && !current.lost) {
         return prev + convertNumberZero(current.memo)
       }

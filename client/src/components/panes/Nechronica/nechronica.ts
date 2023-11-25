@@ -1,4 +1,4 @@
-import { convertNumberZero } from '../PrimaryDataUtility'
+import { clone, convertNumberZero } from '../PrimaryDataUtility'
 import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
 
 export type NechronicaManeuver = {
@@ -19,12 +19,12 @@ export type NechronicaManeuver = {
 
 export type NechronicaRoice = {
   id: number
-  name: string
-  pos: string
-  damage: number
-  neg: string
-  breakEffect: string
-  memo: string
+  name: string // 対象
+  pos: string // 種類
+  damage: number // 狂気度
+  neg: string // 発狂
+  breakEffect: string // 発狂効果
+  memo: string // 備考など
 }
 
 export type Nechronica = {
@@ -55,7 +55,7 @@ export const NechronicaPowerList: { text: string; color: string }[] = [
 
 export const NechronicaPartsList: string[] = ['', 'ﾎﾟｼﾞｼｮﾝ', 'ﾒｲﾝｸﾗｽ', 'ｻﾌﾞｸﾗｽ', '頭', '腕', '胴', '足']
 
-export const NechronicaTimingList: { text: string; color: string } = [
+export const NechronicaTimingList: { text: string; color: string }[] = [
   { text: 'オート', color: 'primary' },
   { text: 'アクション', color: 'primary' },
   { text: 'ジャッジ', color: 'primary' },
@@ -86,7 +86,7 @@ export class NechronicaHelper {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getData(): Promise<{
     jsons: any[] | null
-    data: Nechronoca | null
+    data: Nechronica | null
   }> {
     const jsons = await this.getJsonData()
     const data = this.createData(jsons)
@@ -182,16 +182,16 @@ export class NechronicaHelper {
     const roiceList: NechronicaRoice[] = transpose(roice)
       .map(list => {
         const name: string = textFilter(list[0])
-        const post: string = textFilter(list[1])
+        const pos: string = textFilter(list[1])
         const id: number = convertNumberZero(list[2])
         const damage: number = convertNumberZero(list[3])
-        const neg: number = textFilter(list[5])
-        const breakEffect: number = textFilter(list[6])
-        const memo: string = textFilter(list[7])
+        const neg: string = textFilter(list[4])
+        const breakEffect: string = textFilter(list[5])
+        const memo: string = textFilter(list[6])
         const data: NechronicaRoice = {
-          name,
-          post,
           id,
+          name,
+          pos,
           damage,
           neg,
           breakEffect,
@@ -200,7 +200,7 @@ export class NechronicaHelper {
         return data
       })
       .filter(r => Boolean(r.name))
-    const nechnorica: Nechronoca = {
+    const nechnorica: Nechronica = {
       url: this.url,
       basic: {
         characterName: textFilter(json.pc_name),
@@ -216,4 +216,21 @@ export class NechronicaHelper {
     }
     return nechnorica
   }
+}
+
+export type DataType = 'maneuver' | 'roice' | 'basic'
+export const fullDataType: DataType[] = ['maneuver', 'roice', 'basic']
+
+export function mergeNechronica(oldData: Nechronica, mergeData: Nechronica, targets: DataType[]): Nechronica {
+  const result: Nechronica = clone<Nechronica>(oldData)!
+  if (targets.some(t => t === 'basic')) {
+    result.basic = clone(mergeData.basic)!
+  }
+  if (targets.some(t => t === 'roice')) {
+    result.roiceList = clone(mergeData.roiceList)!
+  }
+  if (targets.some(t => t === 'maneuver')) {
+    result.maneuverList = clone(mergeData.maneuverList)!
+  }
+  return result
 }

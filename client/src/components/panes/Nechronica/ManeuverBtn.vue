@@ -27,9 +27,9 @@ const text = computed(() => {
   if (!props.viewLabel) return ''
   const value = props.maneuver[props.viewLabel]
   if (props.viewLabel === 'timing') {
-    return NechronicaTimingList[value].text
+    return NechronicaTimingList[value as number].text
   }
-  return value || ''
+  return value?.toString() || ''
 })
 
 const shozokuClassMap = [

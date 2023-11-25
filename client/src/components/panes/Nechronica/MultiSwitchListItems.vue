@@ -32,7 +32,7 @@ import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
 const props = defineProps<{
   label: string
   modelValue: number[]
-  texts: string[]
+  texts: { text: string; color: string }[]
 }>()
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -41,7 +41,7 @@ const emits = defineEmits<{
 }>()
 
 watch(
-  () => props.values,
+  () => props.modelValue,
   v => {
     selected.value = v
   }
@@ -60,7 +60,7 @@ function updateAll() {
   emits('update:model-value', allStatus.value < 2 ? props.texts.map((_, idx) => idx) : [])
 }
 
-const selection = computed((): { value: number; text: string }[] => {
+const selection = computed((): { value: number; text: string; color: string }[] => {
   return props.texts.map((t, idx) => ({ value: idx, text: t.text || '空欄', color: t.color }))
 })
 </script>
