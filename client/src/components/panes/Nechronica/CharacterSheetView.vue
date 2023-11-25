@@ -4,7 +4,7 @@
       <v-card variant="outlined" class="d-flex flex-column pa-2 rounded-xl" style="box-sizing: border-box">
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center justify-space-between">
           <action-value-menu
-            :character="character.data.character"
+            :character-id="characterId"
             @update:used="onUpdateManeuverUsed"
             @update:lost="onUpdateManeuverLost"
           />
