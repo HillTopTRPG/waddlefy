@@ -5,12 +5,9 @@ export type NechronicaManeuver = {
   lost: boolean
   used: boolean
   type: number
-  typeText: string
   parts: number // hantei
-  partsText: string
   name: string
   timing: number
-  timingText: string
   cost: string
   range: string
   memo: string
@@ -140,11 +137,8 @@ export type Nechronica = {
   basic: {
     characterName: string
     position: number
-    positionName: string // Position_Name
     mainClass: number // MCLS
-    mainClassName: string // MCLS_Name
     subClass: number // SCLS
-    subClassName: string // SCLS_Name
   }
   maneuverList: NechronicaManeuver[]
   roiceList: NechronicaRoice[]
@@ -258,19 +252,13 @@ export class NechronicaHelper {
       json['Power_shozoku']
     ]
     const maneuverList = transpose(maneuvers).map(list => {
-      const type: number = convertNumberZero(list[2])
-      const parts: number = convertNumberZero(list[3])
-      const timing: number = convertNumberZero(list[5])
       const data: NechronicaManeuver = {
         lost: list[0] !== '0',
         used: list[1] !== '0',
-        type,
-        typeText: NechronicaPowerList[type]?.text || '',
-        parts,
-        partsText: NechronicaPartsList[parts] || '',
+        type: convertNumberZero(list[2]),
+        parts: convertNumberZero(list[3]),
         name: textFilter(list[4]),
-        timing,
-        timingText: NechronicaTimingList[timing].text || '',
+        timing: convertNumberZero(list[5]),
         cost: textFilter(list[6]),
         range: textFilter(list[7]),
         memo: textFilter(list[8]),
@@ -313,11 +301,8 @@ export class NechronicaHelper {
       basic: {
         characterName: textFilter(json.pc_name),
         position: convertNumberZero(json.position),
-        positionName: textFilter(json['Position_Name']),
         mainClass: convertNumberZero(json['MCLS']),
-        mainClassName: textFilter(json['MCLS_Name']),
-        subClass: convertNumberZero(json['SCLS']),
-        subClassName: textFilter(json['SCLS_Name'])
+        subClass: convertNumberZero(json['SCLS'])
       },
       maneuverList,
       roiceList

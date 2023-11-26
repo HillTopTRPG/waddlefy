@@ -5,8 +5,9 @@
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center justify-space-between">
           <action-value-menu
             :character-id="characterId"
-            @update:used="onUpdateManeuverUsed"
-            @update:lost="onUpdateManeuverLost"
+            @update:maneuver-used="onUpdateManeuverUsed"
+            @update:maneuver-lost="onUpdateManeuverLost"
+            @update:roice="onUpdateRoice"
           />
           <character-sheet-view-config
             :character-id="characterId"
@@ -19,7 +20,7 @@
           <v-sheet class="d-flex flex-row pb-2">
             <v-sheet class="d-flex flex-row flex-wrap" style="width: 1em; flex-grow: 1; gap: 0.5rem">
               <template v-for="(roice, idx) in character?.data.character.roiceList || []" :key="idx">
-                <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(idx, updateRoice)" />
+                <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)" />
               </template>
             </v-sheet>
           </v-sheet>
@@ -29,8 +30,8 @@
             :character="character.data.character"
             :view-option="viewOption"
             :columns="columns || 10"
-            @update:used="onUpdateManeuverUsed"
-            @update:lost="onUpdateManeuverLost"
+            @update:used="(idx, used) => onUpdateManeuverUsed(characterId, idx, used)"
+            @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
           />
         </v-card-text>
         <v-card-actions class="justify-end pb-0">
@@ -74,17 +75,18 @@ const columns = ref(10)
 
 const resetUsedMenu = ref(false)
 
-function updateNechronicaCharacterHelper(wrapFunc: (character: Nechronica) => boolean) {
-  if (!character.value) return
-  const updateCharacter = clone<Nechronica>(character.value.data.character)!
+function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (character: Nechronica) => boolean) {
+  const c = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)
+  if (!c) return
+  const updateCharacter = clone<Nechronica>(c.data.character)!
   if (!wrapFunc(updateCharacter)) return
-  graphQlStore?.updateNechronicaCharacter(props.characterId, character.value.data.player, updateCharacter)
+  graphQlStore?.updateNechronicaCharacter(characterId, c.data.player, updateCharacter)
 }
 
 function onResetUsedMenu() {
   resetUsedMenu.value = false
 
-  updateNechronicaCharacterHelper(c => {
+  updateNechronicaCharacterHelper(props.characterId, c => {
     if (c.maneuverList.every(m => !m.used)) return false
     c.maneuverList.forEach(m => {
       m.used = false
@@ -93,24 +95,24 @@ function onResetUsedMenu() {
   })
 }
 
-function onUpdateManeuverUsed(idx: number, used: boolean) {
-  updateNechronicaCharacterHelper(c => {
+function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
+  updateNechronicaCharacterHelper(characterId, c => {
     if (c.maneuverList[idx].used === used) return false
     c.maneuverList[idx].used = used
     return true
   })
 }
 
-function onUpdateManeuverLost(idx: number, lost: boolean) {
-  updateNechronicaCharacterHelper(c => {
+function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
+  updateNechronicaCharacterHelper(characterId, c => {
     if (c.maneuverList[idx].lost === lost) return false
     c.maneuverList[idx].lost = lost
     return true
   })
 }
 
-function onUpdateRoice(idx: number, roice: NechronicaRoice) {
-  updateNechronicaCharacterHelper(c => {
+function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
+  updateNechronicaCharacterHelper(characterId, c => {
     const r = c.roiceList[idx]
     if (JSON.stringify(r) === JSON.stringify(roice)) return false
     c.roiceList[idx] = roice

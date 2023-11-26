@@ -22,8 +22,8 @@
           />
         </v-sheet>
       </template>
-      <v-card>
-        <v-card-text class="d-flex flex-row align-end">
+      <v-card class="pb-1">
+        <v-card-text class="pt-2 pb-0 d-flex flex-row align-end">
           <icon-btn
             :disable-button="true"
             :under-text="positionList[character.data.character.basic.position]?.text || ''"
@@ -49,18 +49,20 @@
             <span style="font-size: 11px; line-height: 1.2em">×2</span>
           </template>
         </v-card-text>
-        <v-card-text>
+        <v-card-text class="text-h6">
           {{ character.data.character.basic.characterName }}
         </v-card-text>
-        <v-card-actions>
+        <v-card-text class="py-1 px-2">
+          <reload-character-sheet-btn :character-id="characterId" />
+        </v-card-text>
+        <v-card-text class="py-1 px-2">
           <delete-menu-btn
             :target-name="character.data.character.basic.characterName"
             :session-id="graphQlStore?.state.session?.id || ''"
             type="キャラクター"
             @execute="() => graphQlStore?.deleteSessionData(characterId)"
           />
-          <reload-character-sheet-btn :character-id="characterId" />
-        </v-card-actions>
+        </v-card-text>
       </v-card>
     </v-menu>
   </template>

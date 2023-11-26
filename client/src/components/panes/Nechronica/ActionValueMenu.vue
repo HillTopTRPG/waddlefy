@@ -4,7 +4,15 @@
       <v-btn variant="text" class="text-body-1 px-0" v-bind="props">
         <div class="d-flex flex-row align-end underline">
           <span class="text-caption">最大行動値：</span>
-          <span class="text-h5">{{ maneuverActionValue + myselfRoiceActionValue + otherRoiveActionValue }}</span>
+          <template v-if="maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue">
+            <span class="text-h5">{{ maneuverActionValue +  maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue }}</span>
+            <span class="text-body-1">=</span>
+            <span class="text-body-1 text-info">{{ maneuverActionValue }}</span>
+            <span class="text-body-1 text-error">{{ maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue }}</span>
+          </template>
+          <template v-else>
+            <span class="text-h5">{{ maneuverActionValue }}</span>
+          </template>
         </div>
       </v-btn>
     </template>
@@ -13,6 +21,7 @@
       <v-card-subtitle style="opacity: 1">
         <span style="opacity: 0.6">基礎値: </span>
         <span class="text-body-1 text-info font-weight-bold">{{ maneuverActionValue }}</span>
+        <span class="text-body-1 text-error font-weight-bold" v-if="maneuverLostActionValue">{{ maneuverLostActionValue }}</span>
       </v-card-subtitle>
       <v-card-text class="py-1 d-flex flex-row align-end flex-wrap">
         <span class="pb-1 d-flex flex-column align-center" style="line-height: 20px; font-size: 13px">
@@ -25,22 +34,22 @@
               :character="character!.data.character"
               :disable-button="true"
               :maneuver="maneuver"
-              @update:lost="v => onUpdateManeuverLost(idx, v)"
-              @update:used="v => onUpdateManeuverUsed(idx, v)"
+              @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
+              @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
             />
             <span class="text-body-1 font-weight-bold" :class="maneuver.lost ? 'text-grey' : 'text-info'">{{
-              maneuver.lost ? '0' : `+${convertNumberZero(maneuver.memo)}`
+              `+${convertNumberZero(maneuver.memo)}`
             }}</span>
           </v-sheet>
         </template>
       </v-card-text>
       <v-card-subtitle style="opacity: 1">
         <span style="opacity: 0.6">本人の未練: </span>
-        <span class="text-body-1 font-weight-bold text-error">{{ myselfRoiceActionValue }}</span>
+        <span class="text-body-1" :class="myselfRoiceActionValue ? 'font-weight-bold text-error' : ''">{{ myselfRoiceActionValue }}</span>
       </v-card-subtitle>
       <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
         <template v-for="(roice, idx) in actionValueRoices" :key="idx">
-          <roice-badge :roice="roice" />
+          <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)" />
         </template>
       </v-card-text>
       <template v-for="(info, infoIdx) in otherRoices" :key="infoIdx">
@@ -50,7 +59,7 @@
         </v-card-subtitle>
         <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap">
           <template v-for="(roice, idx) in info.roiceList" :key="idx">
-            <roice-badge :roice="roice.roice" />
+            <roice-badge :roice="roice.roice" @update="updateRoice => onUpdateRoice(info.character.id, idx, updateRoice)" />
           </template>
         </v-card-text>
       </template>
@@ -74,8 +83,9 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:used', idx: number, value: boolean): Promise<void>
-  (e: 'update:lost', idx: number, value: boolean): Promise<void>
+  (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'update:maneuver-lost', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
 const character = computed((): { id: string; data: { player: string; character: Nechronica } } | undefined => {
@@ -86,7 +96,10 @@ const actionValueManeuvers = computed((): NechronicaManeuver[] => {
   return character.value?.data.character.maneuverList.filter(m => m.type === 3) || []
 })
 const maneuverActionValue = computed((): number => {
-  return actionValueManeuvers.value.reduce((p, c) => (c.lost ? p : p + convertNumberZero(c.memo)), 6) || 0
+  return actionValueManeuvers.value.reduce((p, c) => p + convertNumberZero(c.memo), 6) || 0
+})
+const maneuverLostActionValue = computed((): number => {
+  return -actionValueManeuvers.value.reduce((p, c) => (c.lost ? p + convertNumberZero(c.memo) : p), 0) || 0
 })
 
 const actionValueRoices = computed((): NechronicaRoice[] => {
@@ -121,19 +134,24 @@ const otherRoices = computed((): OtherRoiceInfo[] => {
           roiceList,
           actionValue: -roiceList.filter(r => r.roice.damage === 4).length
         }
-      }) || []
+      })
+      .filter(info => info.roiceList.length) || []
   )
 })
 const otherRoiveActionValue = computed((): number => {
   return otherRoices.value.reduce((p, c) => p + c.actionValue, 0)
 })
 
-function onUpdateManeuverUsed(idx: number, used: boolean) {
-  emits('update:used', idx, used)
+function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
+  emits('update:maneuver-used', characterId, idx, used)
 }
 
-function onUpdateManeuverLost(idx: number, lost: boolean) {
-  emits('update:lost', idx, lost)
+function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
+  emits('update:maneuver-lost', characterId, idx, lost)
+}
+
+function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
+  emits('update:roice', characterId, idx, roice)
 }
 </script>
 
