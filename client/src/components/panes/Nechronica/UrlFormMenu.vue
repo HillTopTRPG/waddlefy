@@ -6,24 +6,26 @@
       </v-defaults-provider>
     </template>
     <v-card>
-      <v-card-text class="d-flex flex-column text-pre-wrap pa-2" style="gap: 0.5rem">
-        <v-alert color="light-blue-lighten-4" class="pb-0 pt-2">
-          <v-alert-title class="d-flex flex-row justify-space-between pb-2">
-            <div class="px-3 rounded-xl bg-secondary text-caption font-italic">Tips</div>
-            <v-defaults-provider :defaults="{ VProgressCircular: { size: 'x-small', bgColor: 'transparent' } }">
-              <v-progress-circular :model-value="carouselTimerNum" color="blue-grey-lighten-2" />
+      <v-card-text class="d-flex flex-column text-pre-wrap pa-2" style="gap: 0.5rem; min-width: 17em">
+        <template v-if="tipsWrap.length">
+          <v-alert color="light-blue-lighten-4" class="pb-0 pt-2">
+            <v-alert-title class="d-flex flex-row justify-space-between pb-2">
+              <div class="px-3 rounded-xl bg-secondary text-caption font-italic">Tips</div>
+              <v-defaults-provider :defaults="{ VProgressCircular: { size: 'x-small', bgColor: 'transparent' } }">
+                <v-progress-circular :model-value="carouselTimerNum" color="blue-grey-lighten-2" />
+              </v-defaults-provider>
+            </v-alert-title>
+            <v-defaults-provider :defaults="{ VCarousel: { showArrows: false, progress: false, interval: 11000 } }">
+              <v-defaults-provider :defaults="{ VCarousel: { cycle: true, touch: true, height: 85 } }">
+                <v-carousel :hide-delimiter-background="true" style="width: 21em" v-model="carouselValue">
+                  <v-carousel-item v-for="(tip, idx) in tipsWrap" :key="idx">
+                    <div v-html="tip"></div>
+                  </v-carousel-item>
+                </v-carousel>
+              </v-defaults-provider>
             </v-defaults-provider>
-          </v-alert-title>
-          <v-defaults-provider :defaults="{ VCarousel: { showArrows: false, progress: false, interval: 11000 } }">
-            <v-defaults-provider :defaults="{ VCarousel: { cycle: true, touch: true, height: 85 } }">
-              <v-carousel :hide-delimiter-background="true" style="width: 21em" v-model="carouselValue">
-                <v-carousel-item v-for="(tip, idx) in tipsWrap" :key="idx">
-                  <div v-html="tip"></div>
-                </v-carousel-item>
-              </v-carousel>
-            </v-defaults-provider>
-          </v-defaults-provider>
-        </v-alert>
+          </v-alert>
+        </template>
         <url-form v-model:url="addUrl" ref="form" />
       </v-card-text>
       <v-divider />

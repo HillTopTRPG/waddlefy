@@ -7,7 +7,7 @@
     variant="flat"
   >
     <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
-      <v-card-actions class="py-1">
+      <v-card-actions class="py-1" style="gap: 0.5rem">
         <v-select
           :items="typeSelection"
           :color="NechronicaPowerList[maneuver.type].color"
@@ -19,8 +19,6 @@
             カテゴリ
           </template>
         </v-select>
-      </v-card-actions>
-      <v-card-actions class="py-1">
         <v-select :items="partsSelection" :model-value="maneuver.parts" @update:model-value="v => onUpdateParts(v)">
           <template #label>
             <v-icon icon="mdi-hand-back-right-outline" class="mr-1" />
@@ -39,30 +37,31 @@
           @update="onUpdateName"
         />
       </v-card-text>
-      <v-card-actions class="py-1">
-        <v-select :items="timingSelection" :model-value="maneuver.timing" @update:model-value="v => onUpdateTiming(v)">
+      <v-card-text class="px-2 py-1 d-flex flex-row" style="gap: 0.5rem">
+        <v-select
+          :items="timingSelection"
+          style="max-width: 9em"
+          :model-value="maneuver.timing"
+          @update:model-value="v => onUpdateTiming(v)"
+        >
           <template #label>
             <v-icon icon="mdi-timer-outline" class="mr-1" />
             タイミング
           </template>
         </v-select>
-      </v-card-actions>
-      <v-card-text class="px-2 py-1">
         <menu-edit-text-field
           :editable="true"
           variant="solo-filled"
-          :width="width"
+          :width="5"
           icon="mdi-run"
           label="コスト"
           :text="maneuver.cost"
           @update="onUpdateCost"
         />
-      </v-card-text>
-      <v-card-text class="px-2 py-1">
         <menu-edit-text-field
           :editable="true"
           variant="solo-filled"
-          :width="width"
+          :width="5"
           icon="mdi-arrow-expand-vertical"
           label="射程"
           :text="maneuver.range"
@@ -117,6 +116,8 @@ const vSelectDefaults = {
   variant: 'solo'
 }
 
+const width = 20
+
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   maneuver: NechronicaManeuver
@@ -140,8 +141,6 @@ const timingSelection = NechronicaTimingList.map((t, idx) => ({
   value: idx,
   text: t.text
 }))
-
-const width = 9.5
 
 function updateHelper(wrapFunc: (m: NechronicaManeuver) => boolean) {
   const updateManeuver = clone(props.maneuver)!

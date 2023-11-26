@@ -40,6 +40,7 @@
               :character="character!.data.character"
               :disable-button="true"
               :maneuver="maneuver"
+              mode="view"
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
             />

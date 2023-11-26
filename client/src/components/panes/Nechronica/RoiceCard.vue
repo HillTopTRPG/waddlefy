@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="pa-2"
+    class="pa-2 overflow-hidden"
     variant="elevated"
     :style="`outline: rgb(var(--v-theme-${roiceDamages[roice.damage].color})) solid 3px`"
     style="box-sizing: content-box; outline-offset: -3px"

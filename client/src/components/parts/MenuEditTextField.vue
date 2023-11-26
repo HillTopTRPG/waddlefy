@@ -33,7 +33,7 @@
           variant="solo-filled"
           :placeholder="placeholder || ''"
           :flat="true"
-          :style="`width: ${width}rem; max-width: ${width}rem`"
+          :style="`width: ${Math.max(width, 10.5)}rem; max-width: ${Math.max(width, 10.5)}rem`"
           :persistent-placeholder="true"
           :hide-details="true"
           :autofocus="true"

@@ -58,6 +58,7 @@ const emits = defineEmits<{
 }>()
 
 const viewOption = ref<NechronicaViewOption>({
+  mode: 'view',
   roicePosition: 'before',
   viewLost: true,
   viewUsed: true,

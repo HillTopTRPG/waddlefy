@@ -64,6 +64,7 @@ const style = computed(() => {
   display: inline-flex !important;
   align-items: center;
   justify-content: flex-start;
+  text-transform: none;
 
   @mixin absoluteFullSize {
     position: absolute;

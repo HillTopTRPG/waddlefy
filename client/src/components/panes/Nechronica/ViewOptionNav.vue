@@ -12,6 +12,22 @@
         :defaults="{ VListSubheader: { class: 'bg-amber-lighten-4', style: 'height: 1.5rem; min-height:1.5rem' } }"
       >
         <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2">
+          モード
+        </v-list-item-title>
+        <v-switch
+          :label="`${option.mode === 'view' ? '閲覧' : '編集'}モード`"
+          :inset="true"
+          true-value="edit"
+          true-icon="mdi-pencil"
+          false-value="view"
+          false-icon="mdi-eye"
+          density="comfortable"
+          :hide-details="true"
+          class="ml-3"
+          :model-value="option.mode"
+          @update:model-value="v => updateMode(v)"
+        />
+        <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2">
           未練
         </v-list-item-title>
         <v-list-item class="py-1">
@@ -98,6 +114,7 @@ import { clone } from '@/components/panes/PrimaryDataUtility'
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
 
 export type NechronicaViewOption = {
+  mode: 'view' | 'edit'
   roicePosition: 'before' | 'after' | 'none'
   viewLabel: '' | 'timing' | 'cost' | 'range'
   viewLost: boolean
@@ -134,6 +151,12 @@ const viewLabelSelections = [
 function updateViewLabel(v: NechronicaViewOption['viewLabel']) {
   const opt = clone(props.option)!
   opt.viewLabel = v
+  emits('update:option', opt)
+}
+
+function updateMode(v: NechronicaViewOption['mode']) {
+  const opt = clone(props.option)!
+  opt.mode = v
   emits('update:option', opt)
 }
 

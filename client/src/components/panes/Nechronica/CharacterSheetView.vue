@@ -29,8 +29,10 @@
             :character="character.data.character"
             :view-option="viewOption"
             :columns="columns || 10"
+            :mode="viewOption.mode"
             @update:used="(idx, used) => onUpdateManeuverUsed(characterId, idx, used)"
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
+            @update="(idx, maneuver) => onUpdateManeuver(characterId, idx, maneuver)"
           />
         </v-card-text>
         <v-card-text class="d-flex flex-row justify-end px-1 py-0">
@@ -52,7 +54,7 @@
 
 <script setup lang="ts">
 import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
-import { Nechronica, NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaManeuver, NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -112,6 +114,14 @@ function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   updateNechronicaCharacterHelper(characterId, c => {
     if (c.maneuverList[idx].lost === lost) return false
     c.maneuverList[idx].lost = lost
+    return true
+  })
+}
+
+function onUpdateManeuver(characterId: string, idx: number, maneuver: NechronicaManeuver) {
+  updateNechronicaCharacterHelper(characterId, c => {
+    if (JSON.stringify(c.maneuverList[idx]) === JSON.stringify(maneuver)) return false
+    c.maneuverList[idx] = maneuver
     return true
   })
 }

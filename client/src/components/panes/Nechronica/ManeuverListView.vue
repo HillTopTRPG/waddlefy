@@ -10,9 +10,11 @@
               <maneuver-btn-menu
                 :character="character"
                 :maneuver="maneuver"
-                :view-label="viewOption.viewLabel"
+                :mode="mode"
+                :view-label="viewOption?.viewLabel || ''"
                 @update:lost="v => emits('update:lost', mIdx, v)"
                 @update:used="v => emits('update:used', mIdx, v)"
+                @update="v => emits('update', mIdx, v)"
               />
             </template>
           </template>
@@ -33,12 +35,14 @@ import { Nechronica, NechronicaManeuver } from '@/components/panes/Nechronica/ne
 const props = defineProps<{
   character: Nechronica
   columns: number
-  viewOption: NechronicaViewOption
+  mode: 'view' | 'edit'
+  viewOption: NechronicaViewOption | null
 }>()
 
 const emits = defineEmits<{
   (e: 'update:used', idx: number, value: boolean): Promise<void>
   (e: 'update:lost', idx: number, value: boolean): Promise<void>
+  (e: 'update', idx: number, maneuver: NechronicaManeuver): Promise<void>
 }>()
 
 const structures = [
@@ -50,6 +54,7 @@ const structures = [
 ]
 
 function judgeView(maneuver: NechronicaManeuver) {
+  if (!props.viewOption) return true
   if (maneuver.lost && !props.viewOption.viewLost) return false
   if (maneuver.used && !props.viewOption.viewUsed) return false
   if (props.viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
