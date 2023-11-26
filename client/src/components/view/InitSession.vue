@@ -19,7 +19,7 @@
         </v-select>
       </v-card-title>
       <v-card-text>
-        <p class="mt-3">忍術バトルRPG シノビガミを遊ぶのに適しています。</p>
+        <p class="mt-3">{{ items.find(item => item.val === sessionType)?.text || '' }}</p>
       </v-card-text>
     </v-card>
     <v-defaults-provider :defaults="{ VAlert: vAlertDefault }">
@@ -42,7 +42,10 @@ const emits = defineEmits<{
   (e: 'submit', sessionType: string): void
 }>()
 
-const items = [{ label: 'シノビガミ', val: 'Shinobigami' }]
+const items = [
+  { label: 'シノビガミ', val: 'Shinobigami', text: '忍術バトルRPG シノビガミを遊ぶのに適しています。' },
+  { label: 'ネクロニカ', val: 'Nechronica', text: '永い後日談のネクロニカを遊ぶのに適しています。' }
+]
 
 const sessionType = ref('Shinobigami')
 watch(
@@ -52,8 +55,6 @@ watch(
   },
   { immediate: true }
 )
-// eslint-disable-next-line unused-imports/no-unused-vars
-const label = computed(() => items.find(item => item.val === sessionType.value)?.label || '')
 
 const vAlertDefault = {
   border: 'start',

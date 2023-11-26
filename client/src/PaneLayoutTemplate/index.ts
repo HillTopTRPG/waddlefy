@@ -5,6 +5,8 @@ import ScenarioDataManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/Scena
 import SpecialityTableDiffPaneLayout from '@/PaneLayoutTemplate/Shinobigami/SpecialityTableDiffPaneLayout'
 import { GraphQlStore } from '@/components/graphql/graphql'
 import { DashboardOption } from '@/components/graphql/schema'
+import ActorViewPaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorViewPaneLayout'
+import ActorManagePaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorManagePaneLayout'
 
 export default [
   {
@@ -42,6 +44,12 @@ export async function addDashboards(graphQlStore: GraphQlStore, sessionType: str
     await graphQlStore.addDashboard('特技比較', SpecialityTableDiffPaneLayout, Scope.ALL)
     await waitDashboardNum(4)
     return graphQlStore.state.dashboards.find(d => d.name === 'データ閲覧')?.id || ''
+  }
+  if (sessionType === 'Nechronica') {
+    await graphQlStore.addDashboard('役者管理', ActorManagePaneLayout, Scope.ALL)
+    await graphQlStore.addDashboard('役者閲覧', ActorViewPaneLayout, Scope.ALL)
+    await waitDashboardNum(2)
+    return graphQlStore.state.dashboards.find(d => d.name === '役者閲覧')?.id || ''
   }
   return ''
 }

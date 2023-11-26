@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="キャラクターシート管理ツール">
+  <pane-frame title="役者閲覧ツール">
     <template #title-action>
       <v-btn :append-icon="nav ? 'mdi-menu-close' : 'mdi-menu-open'" size="small" variant="text" @click="onChangeNav">
         <span class="text-decoration-underline">表示制御</span>
@@ -43,8 +43,8 @@ import { defineComponent } from 'vue'
 export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
-  name: 'CharacterSheetManagerPane',
-  label: 'キャラクターシート管理'
+  name: 'ActorViewPane',
+  label: '役者閲覧'
 }
 </script>
 
