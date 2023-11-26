@@ -2,8 +2,8 @@
   <v-card
     class="pa-2"
     variant="elevated"
-    :color="roiceDamages[roice.damage].color"
-    style="box-sizing: content-box"
+    :style="`outline: rgb(var(--v-theme-${roiceDamages[roice.damage].color})) solid 3px`"
+    style="box-sizing: content-box; outline-offset: -3px"
     :min-width="`${width}rem`"
     :max-width="`${width}rem`"
   >
@@ -45,7 +45,7 @@
       />
     </v-card-text>
     <v-card-actions class="py-0 d-flex flex-row justify-end" style="min-height: auto" v-if="deletable">
-      <delete-menu-btn type="未練" color="white" :target-name="roice.name" @execute="emits('delete')" />
+      <delete-menu-btn type="未練" :target-name="roice.name" @execute="emits('delete')" />
     </v-card-actions>
   </v-card>
 </template>

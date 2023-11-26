@@ -43,10 +43,7 @@
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
             />
-            <span
-              class="text-body-1 font-weight-bold"
-              :class="hasHeiki || !maneuver.lost ? 'text-info' : 'text-grey'"
-            >
+            <span class="text-body-1 font-weight-bold" :class="hasHeiki || !maneuver.lost ? 'text-info' : 'text-grey'">
               {{ `+${convertNumberZero(maneuver.memo)}` }}
             </span>
           </v-sheet>
@@ -107,7 +104,7 @@ const character = computed((): { id: string; data: { player: string; character: 
 })
 
 const hasHeiki = computed(() => {
-  return character.value?.data.character.maneuverList.some(m => m.name === '平気')
+  return character.value?.data.character.maneuverList.some(m => m.name.includes('平気'))
 })
 
 const actionValueManeuvers = computed((): NechronicaManeuver[] => {

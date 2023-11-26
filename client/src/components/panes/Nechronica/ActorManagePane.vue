@@ -40,13 +40,8 @@
               @execute="() => graphQlStore?.deleteSessionData(character.id)"
             />
           </v-card-text>
-          <v-sheet class="sticky-subtitle">
-            <v-card-subtitle class="bg-amber-lighten-3 text-body-2">マニューバ</v-card-subtitle>
-            <v-card-text class="pa-1">
-              <v-btn variant="flat" color="secondary" density="comfortable" text="マニューバの追加" />
-            </v-card-text>
-          </v-sheet>
-          <v-card-text class="pt-0 pb-1 px-1 d-flex flex-row flex-wrap" style="gap: 0.3rem">
+          <v-card-subtitle class="bg-amber-lighten-3 text-body-2 sticky-subtitle">マニューバ</v-card-subtitle>
+          <v-card-text class="py-1 px-1 d-flex flex-row flex-wrap" style="gap: 0.3rem">
             <template v-for="(maneuver, idx) in character.data.character.maneuverList" :key="idx">
               <maneuver-card
                 :maneuver="maneuver"

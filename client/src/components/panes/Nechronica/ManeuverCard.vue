@@ -6,20 +6,14 @@
     :style="`outline-color: ${NechronicaPowerList[maneuver.type].color}`"
     variant="flat"
   >
-    <v-defaults-provider :defaults="{ VSelect: VSelectDefaults }">
-      <v-card-text class="px-2 py-1">
-        <menu-edit-text-field
-          :editable="true"
-          variant="solo-filled"
-          :width="width"
-          icon="mdi-puzzle"
-          label="マニューバ"
-          :text="maneuver.name"
-          @update="onUpdateName"
-        />
-      </v-card-text>
+    <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
       <v-card-actions class="py-1">
-        <v-select :items="typeSelection" :model-value="maneuver.type" @update:model-value="v => onUpdateType(v)">
+        <v-select
+          :items="typeSelection"
+          :color="NechronicaPowerList[maneuver.type].color"
+          :model-value="maneuver.type"
+          @update:model-value="v => onUpdateType(v)"
+        >
           <template #label>
             <v-icon icon="mdi-cards-spade-outline" class="mr-1" />
             カテゴリ
@@ -34,6 +28,17 @@
           </template>
         </v-select>
       </v-card-actions>
+      <v-card-text class="px-2 py-1">
+        <menu-edit-text-field
+          :editable="true"
+          variant="solo-filled"
+          :width="width"
+          icon="mdi-puzzle"
+          label="マニューバ"
+          :text="maneuver.name"
+          @update="onUpdateName"
+        />
+      </v-card-text>
       <v-card-actions class="py-1">
         <v-select :items="timingSelection" :model-value="maneuver.timing" @update:model-value="v => onUpdateTiming(v)">
           <template #label>
@@ -73,6 +78,7 @@
           :width="width"
           label="効果"
           :text="maneuver.memo"
+          :offset="-2 * 24"
           @update="onUpdateMemo"
         />
       </v-card-text>
@@ -102,7 +108,7 @@ import { clone } from '@/components/panes/PrimaryDataUtility'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 
-const VSelectDefaults = {
+const vSelectDefaults = {
   hideDetails: true,
   persistentPlaceholder: true,
   itemTitle: 'text',
