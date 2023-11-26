@@ -25,7 +25,7 @@
           :hide-details="true"
           class="ml-3"
           :model-value="option.mode"
-          @update:model-value="v => updateMode(v)"
+          @update:model-value="(v: any) => updateMode(v as 'view' | 'edit')"
         />
         <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2">
           未練

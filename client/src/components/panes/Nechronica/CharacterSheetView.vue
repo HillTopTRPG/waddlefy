@@ -21,8 +21,11 @@
         <character-sheet-view-roice-area
           v-if="viewOption.roicePosition === 'before'"
           :character-id="characterId"
+          :mode="viewOption.mode"
           :roice-list="character?.data.character.roiceList || []"
           @update:roice="onUpdateRoice"
+          @add="onAddRoice"
+          @delete="onDeleteRoice"
         />
         <v-card-text class="d-flex flex-column pa-0">
           <maneuver-list-view
@@ -44,8 +47,11 @@
         <character-sheet-view-roice-area
           v-if="viewOption.roicePosition === 'after'"
           :character-id="characterId"
+          :mode="viewOption.mode"
           :roice-list="character?.data.character.roiceList || []"
           @update:roice="onUpdateRoice"
+          @add="onAddRoice"
+          @delete="onDeleteRoice"
         />
       </v-card>
     </template>
@@ -54,7 +60,7 @@
 
 <script setup lang="ts">
 import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
-import { Nechronica, NechronicaManeuver, NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaManeuver, NechronicaRoice, roiceList } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -131,6 +137,29 @@ function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice)
     const r = c.roiceList[idx]
     if (JSON.stringify(r) === JSON.stringify(roice)) return false
     c.roiceList[idx] = roice
+    return true
+  })
+}
+
+function onAddRoice() {
+  updateNechronicaCharacterHelper(props.characterId, c => {
+    const rawRoice = roiceList[1]
+    c.roiceList.push({
+      id: 1,
+      name: `未練${c.roiceList.length + 1}`,
+      pos: rawRoice.pos,
+      damage: 3,
+      neg: rawRoice.neg,
+      breakEffect: rawRoice.breakEffect,
+      memo: ''
+    })
+    return true
+  })
+}
+
+function onDeleteRoice(characterId: string, idx: number) {
+  updateNechronicaCharacterHelper(characterId, c => {
+    c.roiceList.splice(idx, 1)
     return true
   })
 }

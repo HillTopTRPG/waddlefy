@@ -58,7 +58,11 @@
       </v-card-subtitle>
       <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
         <template v-for="(roice, idx) in actionValueRoices" :key="idx">
-          <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)" />
+          <roice-badge
+            mode="view"
+            :roice="roice"
+            @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)"
+          />
         </template>
       </v-card-text>
       <template v-for="(info, infoIdx) in otherRoices" :key="infoIdx">
@@ -69,6 +73,7 @@
         <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap">
           <template v-for="(roice, idx) in info.roiceList" :key="idx">
             <roice-badge
+              mode="view"
               :roice="roice.roice"
               @update="updateRoice => onUpdateRoice(info.character.id, idx, updateRoice)"
             />
