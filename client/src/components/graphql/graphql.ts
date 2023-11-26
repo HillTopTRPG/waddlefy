@@ -429,6 +429,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       state.players = []
       state.dashboards = []
       state.dashboard = null
+      state.sessionDataList = []
     })
   }
 
