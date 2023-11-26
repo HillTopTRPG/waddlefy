@@ -1,12 +1,12 @@
 import DefaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
+import ActorManagePaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorManagePaneLayout'
+import ActorViewPaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorViewPaneLayout'
 import CharacterSheetManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/CharacterSheetManagePaneLayout'
 import DataViewPaneLayout from '@/PaneLayoutTemplate/Shinobigami/DataViewPaneLayout'
 import ScenarioDataManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/ScenarioDataManagePaneLayout'
 import SpecialityTableDiffPaneLayout from '@/PaneLayoutTemplate/Shinobigami/SpecialityTableDiffPaneLayout'
 import { GraphQlStore } from '@/components/graphql/graphql'
 import { DashboardOption } from '@/components/graphql/schema'
-import ActorViewPaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorViewPaneLayout'
-import ActorManagePaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorManagePaneLayout'
 
 export default [
   {

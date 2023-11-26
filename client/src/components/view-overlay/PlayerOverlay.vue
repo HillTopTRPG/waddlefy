@@ -27,12 +27,7 @@
           />
         </v-list-item>
         <v-list-item class="mt-2" v-if="isUserControl && player">
-          <delete-menu-btn
-            :target-name="player.name || ''"
-            type="参加者"
-            :sessionId="graphQlStore?.state.session?.id || ''"
-            @execute="onDeletePlayer()"
-          />
+          <delete-menu-btn :target-name="player.name || ''" type="参加者" @execute="onDeletePlayer()" />
         </v-list-item>
       </v-list>
     </v-card-text>

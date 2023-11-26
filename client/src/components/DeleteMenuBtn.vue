@@ -1,7 +1,12 @@
 <template>
   <v-menu width="auto" v-model="opened" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn color="error" variant="text" class="text-decoration-underline" :class="classText || ''" v-bind="props"
+      <v-btn
+        :color="color || 'error'"
+        variant="text"
+        class="text-decoration-underline"
+        :class="classText || ''"
+        v-bind="props"
         >この{{ type }}を削除</v-btn
       >
     </template>
@@ -41,24 +46,16 @@
 import 'splitpanes/dist/splitpanes.css'
 import { ref, watch } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   type: string
   targetName: string
-  sessionId: string
   classText?: string
+  color?: string
 }>()
 
 const emits = defineEmits<{
   (e: 'execute'): Promise<void>
 }>()
-
-watch(
-  () => props.sessionId,
-  () => {
-    opened.value = false
-    inputTargetName.value = ''
-  }
-)
 
 const opened = ref(false)
 const inputTargetName = ref('')

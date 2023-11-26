@@ -9,7 +9,10 @@
     <slot name="layout" />
     <v-layout class="w-100 h-100" style="justify-self: flex-start; align-self: flex-start">
       <slot name="nav" />
-      <div class="overflow-y-auto d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap">
+      <div
+        class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap overflow-auto"
+        style="contain: paint"
+      >
         <slot />
       </div>
     </v-layout>

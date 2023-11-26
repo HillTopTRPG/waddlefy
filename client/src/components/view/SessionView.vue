@@ -141,7 +141,6 @@
             v-if="sessionId"
             :target-name="graphQlStore?.state.session?.name || ''"
             type="セッション"
-            :sessionId="sessionId"
             @execute="graphQlStore?.deleteSession(sessionId)"
           />
         </v-list-item>

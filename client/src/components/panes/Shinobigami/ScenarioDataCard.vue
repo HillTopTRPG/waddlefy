@@ -112,7 +112,6 @@
                 <delete-menu-btn
                   class-text="align-self-end"
                   :target-name="arts.name"
-                  :session-id="graphQlStore?.state.session?.id || ''"
                   type="奥義"
                   @execute="onDeleteSpecialArts(idx)"
                 />
@@ -482,7 +481,6 @@
           :target-name="
             dataObj.type === 'shinobigami-character' ? dataObj.data.character.characterName : dataObj.data.name
           "
-          :session-id="graphQlStore?.state.session?.id || ''"
           :type="typeList.find(t => t.value === dataObj?.type)?.label || ''"
           @execute="onDeleteSessionData"
         />

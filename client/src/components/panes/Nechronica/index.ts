@@ -2,9 +2,7 @@
 import ActorManagePane, {
   componentInfo as ActorManagePaneInfo
 } from '@/components/panes/Nechronica/ActorManagePane.vue'
-import ActorViewPane, {
-  componentInfo as ActorViewPaneInfo
-} from '@/components/panes/Nechronica/ActorViewPane.vue'
+import ActorViewPane, { componentInfo as ActorViewPaneInfo } from '@/components/panes/Nechronica/ActorViewPane.vue'
 
 const group = 'ネクロニカ'
 

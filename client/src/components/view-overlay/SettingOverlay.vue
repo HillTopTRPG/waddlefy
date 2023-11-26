@@ -69,12 +69,7 @@
           </v-select>
         </v-list-item>
         <v-list-item>
-          <delete-menu-btn
-            :target-name="dashboard?.name || ''"
-            :session-id="graphQlStore?.state.session?.id || ''"
-            type="画面"
-            @execute="deleteDashboardExecute()"
-          />
+          <delete-menu-btn :target-name="dashboard?.name || ''" type="画面" @execute="deleteDashboardExecute()" />
         </v-list-item>
       </v-list>
     </v-card-text>

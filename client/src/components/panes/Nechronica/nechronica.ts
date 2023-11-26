@@ -132,6 +132,21 @@ export const roiceList: (Pick<NechronicaRoice, 'pos' | 'neg' | 'breakEffect'> & 
   { pos: '信頼', target: '中立者10', neg: '疑心暗鬼', breakEffect: 'あなた以外の全ての姉妹の最大行動値に-1' }
 ]
 
+export const posSelections = roiceList.map((r, idx) => ({
+  value: idx,
+  text: r.pos,
+  subTitle: r.target,
+  color: 'black'
+}))
+
+export const roiceDamages = [
+  { value: 0, label: '０', text: '０', subTitle: '', color: 'success' },
+  { value: 1, label: '１', text: '１', subTitle: '', color: 'success' },
+  { value: 2, label: '２', text: '２', subTitle: '', color: 'success' },
+  { value: 3, label: '３', text: '３', subTitle: '', color: 'warning' },
+  { value: 4, label: '狂', text: '発狂', subTitle: '', color: 'error' }
+]
+
 export type Nechronica = {
   url: string
   basic: {

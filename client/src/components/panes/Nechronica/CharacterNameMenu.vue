@@ -12,14 +12,7 @@
           >
             {{ character.data.character.basic.characterName }}
           </v-sheet>
-          <v-btn
-            icon="mdi-open-in-new"
-            variant="flat"
-            size="small"
-            target="_blank"
-            rel="noopener noreferrer"
-            :href="character.data.character.url"
-          />
+          <link-btn :href="character.data.character.url" />
         </v-sheet>
       </template>
       <v-card class="pb-1">
@@ -55,14 +48,6 @@
         <v-card-text class="py-1 px-2">
           <reload-character-sheet-btn :character-id="characterId" />
         </v-card-text>
-        <v-card-text class="py-1 px-2">
-          <delete-menu-btn
-            :target-name="character.data.character.basic.characterName"
-            :session-id="graphQlStore?.state.session?.id || ''"
-            type="キャラクター"
-            @execute="() => graphQlStore?.deleteSessionData(characterId)"
-          />
-        </v-card-text>
       </v-card>
     </v-menu>
   </template>
@@ -73,9 +58,9 @@ import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
 import { Nechronica } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
-import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/ReloadCharacterSheetBtn.vue'
+import LinkBtn from '@/components/parts/LinkBtn.vue'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

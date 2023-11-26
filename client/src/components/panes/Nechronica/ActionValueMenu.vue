@@ -43,9 +43,12 @@
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
             />
-            <span class="text-body-1 font-weight-bold" :class="maneuver.lost ? 'text-grey' : 'text-info'">{{
-              `+${convertNumberZero(maneuver.memo)}`
-            }}</span>
+            <span
+              class="text-body-1 font-weight-bold"
+              :class="hasHeiki || !maneuver.lost ? 'text-info' : 'text-grey'"
+            >
+              {{ `+${convertNumberZero(maneuver.memo)}` }}
+            </span>
           </v-sheet>
         </template>
       </v-card-text>
@@ -103,6 +106,10 @@ const character = computed((): { id: string; data: { player: string; character: 
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
+const hasHeiki = computed(() => {
+  return character.value?.data.character.maneuverList.some(m => m.name === '平気')
+})
+
 const actionValueManeuvers = computed((): NechronicaManeuver[] => {
   return character.value?.data.character.maneuverList.filter(m => m.type === 3) || []
 })
@@ -110,6 +117,7 @@ const maneuverActionValue = computed((): number => {
   return actionValueManeuvers.value.reduce((p, c) => p + convertNumberZero(c.memo), 6) || 0
 })
 const maneuverLostActionValue = computed((): number => {
+  if (hasHeiki.value) return 0
   return -actionValueManeuvers.value.reduce((p, c) => (c.lost ? p + convertNumberZero(c.memo) : p), 0) || 0
 })
 

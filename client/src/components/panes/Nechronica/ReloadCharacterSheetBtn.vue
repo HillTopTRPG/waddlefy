@@ -1,12 +1,7 @@
 <template>
   <v-menu :close-on-content-click="false" width="auto" location="bottom left" v-model="opened">
     <template #activator="{ props }">
-      <v-btn
-        variant="text"
-        class="text-decoration-underline align-self-start"
-        text="キャラクターシートから再読込"
-        v-bind="props"
-      />
+      <v-btn variant="text" class="text-decoration-underline" text="キャラクターシートから再読込" v-bind="props" />
     </template>
     <v-card>
       <v-card-text class="d-flex flex-column px-2 pt-2 pb-0" style="gap: 0.5rem">

@@ -21,7 +21,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice)
+  (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): void
 }>()
 
 function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
