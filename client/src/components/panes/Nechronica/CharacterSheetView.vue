@@ -15,16 +15,15 @@
             @update:columns="v => (columns = v)"
           />
         </v-card-title>
-        <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
+        <v-card-text class="d-flex flex-column align-stretch justify-center px-0 pt-1 pb-0">
           <character-name-menu :character-id="characterId" />
-          <v-sheet class="d-flex flex-row pb-2">
-            <v-sheet class="d-flex flex-row flex-wrap" style="width: 1em; flex-grow: 1; gap: 0.5rem">
-              <template v-for="(roice, idx) in character?.data.character.roiceList || []" :key="idx">
-                <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)" />
-              </template>
-            </v-sheet>
-          </v-sheet>
         </v-card-text>
+        <character-sheet-view-roice-area
+          v-if="viewOption.roicePosition === 'before'"
+          :character-id="characterId"
+          :roice-list="character?.data.character.roiceList || []"
+          @update:roice="onUpdateRoice"
+        />
         <v-card-text class="d-flex flex-column pa-0">
           <maneuver-list-view
             :character="character.data.character"
@@ -34,12 +33,18 @@
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
           />
         </v-card-text>
-        <v-card-actions class="justify-end pb-0">
+        <v-card-text class="d-flex flex-row justify-end px-1 py-0">
           <reset-used-maneuver-btn
             :disabled="character.data.character.maneuverList.every(m => !m.used)"
             @execute="onResetUsedMenu"
           />
-        </v-card-actions>
+        </v-card-text>
+        <character-sheet-view-roice-area
+          v-if="viewOption.roicePosition === 'after'"
+          :character-id="characterId"
+          :roice-list="character?.data.character.roiceList || []"
+          @update:roice="onUpdateRoice"
+        />
       </v-card>
     </template>
   </v-sheet>
@@ -54,8 +59,8 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ActionValueMenu from '@/components/panes/Nechronica/ActionValueMenu.vue'
 import CharacterNameMenu from '@/components/panes/Nechronica/CharacterNameMenu.vue'
 import CharacterSheetViewConfig from '@/components/panes/Nechronica/CharacterSheetViewConfig.vue'
+import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/CharacterSheetViewRoiceArea.vue'
 import ResetUsedManeuverBtn from '@/components/panes/Nechronica/ResetUsedManeuverBtn.vue'
-import RoiceBadge from '@/components/panes/Nechronica/RoiceBadge.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 

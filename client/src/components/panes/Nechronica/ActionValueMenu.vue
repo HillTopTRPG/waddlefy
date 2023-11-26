@@ -5,10 +5,14 @@
         <div class="d-flex flex-row align-end underline">
           <span class="text-caption">最大行動値：</span>
           <template v-if="maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue">
-            <span class="text-h5">{{ maneuverActionValue +  maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue }}</span>
+            <span class="text-h5">{{
+              maneuverActionValue + maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue
+            }}</span>
             <span class="text-body-1">=</span>
             <span class="text-body-1 text-info">{{ maneuverActionValue }}</span>
-            <span class="text-body-1 text-error">{{ maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue }}</span>
+            <span class="text-body-1 text-error">{{
+              maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue
+            }}</span>
           </template>
           <template v-else>
             <span class="text-h5">{{ maneuverActionValue }}</span>
@@ -21,7 +25,9 @@
       <v-card-subtitle style="opacity: 1">
         <span style="opacity: 0.6">基礎値: </span>
         <span class="text-body-1 text-info font-weight-bold">{{ maneuverActionValue }}</span>
-        <span class="text-body-1 text-error font-weight-bold" v-if="maneuverLostActionValue">{{ maneuverLostActionValue }}</span>
+        <span class="text-body-1 text-error font-weight-bold" v-if="maneuverLostActionValue">{{
+          maneuverLostActionValue
+        }}</span>
       </v-card-subtitle>
       <v-card-text class="py-1 d-flex flex-row align-end flex-wrap">
         <span class="pb-1 d-flex flex-column align-center" style="line-height: 20px; font-size: 13px">
@@ -45,7 +51,9 @@
       </v-card-text>
       <v-card-subtitle style="opacity: 1">
         <span style="opacity: 0.6">本人の未練: </span>
-        <span class="text-body-1" :class="myselfRoiceActionValue ? 'font-weight-bold text-error' : ''">{{ myselfRoiceActionValue }}</span>
+        <span class="text-body-1" :class="myselfRoiceActionValue ? 'font-weight-bold text-error' : ''">{{
+          myselfRoiceActionValue
+        }}</span>
       </v-card-subtitle>
       <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
         <template v-for="(roice, idx) in actionValueRoices" :key="idx">
@@ -59,7 +67,10 @@
         </v-card-subtitle>
         <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap">
           <template v-for="(roice, idx) in info.roiceList" :key="idx">
-            <roice-badge :roice="roice.roice" @update="updateRoice => onUpdateRoice(info.character.id, idx, updateRoice)" />
+            <roice-badge
+              :roice="roice.roice"
+              @update="updateRoice => onUpdateRoice(info.character.id, idx, updateRoice)"
+            />
           </template>
         </v-card-text>
       </template>

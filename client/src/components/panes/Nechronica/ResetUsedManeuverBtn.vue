@@ -3,6 +3,7 @@
     <template #activator="{ props }">
       <v-btn
         color="primary"
+        variant="text"
         class="text-decoration-underline"
         v-bind="props"
         :disabled="disabled"

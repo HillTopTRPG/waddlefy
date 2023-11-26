@@ -77,6 +77,7 @@ const emits = defineEmits<{
 const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
 const viewOption = ref<NechronicaViewOption>({
+  roicePosition: 'before',
   viewLost: true,
   viewUsed: true,
   viewLabel: '',

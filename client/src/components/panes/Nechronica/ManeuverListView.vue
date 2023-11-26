@@ -1,6 +1,5 @@
 <template>
   <v-sheet :max-width="`${(columns + 1) * 4}rem`" class="d-flex flex-column" style="box-sizing: content-box; gap: 5px">
-    <v-divider />
     <template v-for="(structure, idx) in structures" :key="idx">
       <v-divider v-if="idx" />
       <v-sheet class="d-flex flex-row w-100">

@@ -1,5 +1,5 @@
 <template>
-  <v-list-subheader class="position-sticky" style="top: 0; z-index: 1">
+  <v-list-subheader class="position-sticky" style="top: 1.5rem; z-index: 1">
     <v-sheet class="d-flex flex-row align-center bg-transparent">
       <span>{{ label }}</span>
       <v-switch-compact
