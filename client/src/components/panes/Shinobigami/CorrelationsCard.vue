@@ -140,7 +140,7 @@
             v-if="
               !perspective ||
               targetCharacter?.data.player === perspective ||
-              (isOpenSpecialArts(arts.id) && ownerCharacter?.data.player === perspective)
+              (isOpenSpecialArts(arts._id) && ownerCharacter?.data.player === perspective)
             "
           >
             <template #activator="{ props }">

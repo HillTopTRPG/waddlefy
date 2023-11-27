@@ -123,8 +123,7 @@ export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, t
   const result: ShinobiGami = clone<ShinobiGami>(oldData)!
   if (targets.some(t => t === 'basic')) {
     basicParams.forEach(p => {
-      const resultData: any = result
-      resultData[p.path] = (mergeData as any)[p.path]
+      ;(result as any)[p.path] = (mergeData as any)[p.path]
     })
   }
   if (targets.some(t => t === 'tokugi')) {
