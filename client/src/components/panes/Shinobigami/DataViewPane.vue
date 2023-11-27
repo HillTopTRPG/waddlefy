@@ -145,17 +145,13 @@ const handoutDataList = computed((): { characterId?: string; scenarioDataId?: st
       if (player?.id === perspective.value) return true
 
       // 公開していなくても関係のあるハンドアウトなら見える
-      return graphQlStore.state.sessionDataList
-        .filter(sdc => sdc.type === 'shinobigami-handout-relation' && sdc.data.targetId === sd.id)
-        .some(r => {
-          const handout = graphQlStore.state.sessionDataList.find(sdc => sdc.id === r.data.ownerId)
-          if (!handout) return false
-          const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === handout.data.person)
-          if (!character) return false
-          const player = graphQlStore.state.players.find(p => p.id === character.data.player)
-          if (!player) return false
-          return player.id === perspective.value
-        })
+      return graphQlStore.state.sessionDataList.some(r => {
+        if (r.type !== 'shinobigami-handout-relation' || r.data.targetId !== sd.id) return false
+        const handout = graphQlStore.state.sessionDataList.find(sdc => sdc.id === r.data.ownerId)
+        const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === handout?.data.person)
+        const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+        return player?.id === perspective.value
+      })
     })
     .map(sd => {
       return {
