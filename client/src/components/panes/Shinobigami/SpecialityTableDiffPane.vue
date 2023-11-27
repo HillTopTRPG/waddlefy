@@ -31,9 +31,9 @@
       <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
         <template v-for="i in [...Array(nums)].map((_, j) => j)" :key="i">
           <v-sheet class="pa-1 overflow-auto align-start">
-            <v-select :prefix="`ハンドアウト: `" v-model="selectCharacters[i]" />
+            <v-select :prefix="`ハンドアウト: `" v-model="selectCharacters[i]" :items="list" />
             <speciality-table
-              :info="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.skill || undefined"
+              :info="list.find(cw => cw.value === selectCharacters[i])?.character.character.skill || undefined"
               :perspective="perspective"
               v-model:select-skill="selectSkill"
               @update:info="v => updateInfo(selectCharacters[i] || '', v)"
@@ -45,7 +45,7 @@
               class="mt-1"
               :perspective="perspective"
               :select-skill="selectSkill"
-              :list="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.ninjaArtsList"
+              :list="list.find(cw => cw.value === selectCharacters[i])?.character.character.ninjaArtsList"
               @click-skill="onClickSkill"
             />
             <special-arts-table
@@ -53,7 +53,7 @@
               class="mt-1"
               :owner-id="''"
               :select-skill="selectSkill"
-              :list="list.find(cw => cw.handoutId === selectCharacters[i])?.character.character.specialArtsList"
+              :list="list.find(cw => cw.value === selectCharacters[i])?.character.character.specialArtsList"
               :perspective="perspective"
               @click-skill="onClickSkill"
             />
@@ -86,7 +86,6 @@ import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
-import { ShinobigamiHandout } from '@/components/panes/Shinobigami/shinobigami'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -110,8 +109,7 @@ const emits = defineEmits<{
 }>()
 
 type Info = {
-  handoutId: string
-  handout: ShinobigamiHandout
+  value: string
   characterId: string
   character: CharacterWrap
   name: string
@@ -119,19 +117,32 @@ type Info = {
 
 const list = computed((): Info[] => {
   if (!graphQlStore) return [] as Info[]
-  return graphQlStore.state.sessionDataList
+  const handoutList = graphQlStore.state.sessionDataList
     .map(sd => {
       if (sd.type !== 'shinobigami-handout') return null
+
+      // 公開してなくても担当キャラだったらハンドアウトが見える
       const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
-      if (character && (graphQlStore.state.user?.token || sd.data.published)) {
-        const characterName = character?.data.character.characterName
-        const player = graphQlStore.state.players.find(p => p.id === character.data.player)
+      if (!character) return null
+      const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+      const execute = !perspective.value || sd.data.published || player?.id === perspective.value
+
+      // 公開していなくても関係のあるハンドアウトなら見える
+      const hasRelation = graphQlStore.state.sessionDataList.some(r => {
+        if (r.type !== 'shinobigami-handout-relation' || r.data.targetId !== sd.id) return false
+        const handout = graphQlStore.state.sessionDataList.find(sdc => sdc.id === r.data.ownerId)
+        const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === handout?.data.person)
+        const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+        return player?.id === perspective.value
+      })
+
+      if (execute || hasRelation) {
+        const characterName = character.data.character.characterName
         const playerName = player ? `(${player.name})` : ''
         const name = `${sd.data.name}:${characterName}${playerName}`
 
         return {
-          handoutId: sd.id,
-          handout: sd.data,
+          value: sd.id,
           characterId: character.id,
           character: character.data,
           name
@@ -140,19 +151,35 @@ const list = computed((): Info[] => {
       return null
     })
     .filter((info): info is Info => Boolean(info))
+  const characterList = graphQlStore.state.sessionDataList
+    .filter(sd => {
+      if (sd.type !== 'shinobigami-character') return false
+      if (sd.data.player) return false
+      return graphQlStore.state.sessionDataList.every(
+        sdc => sdc.type !== 'shinobigami-handout' || sdc.data.person !== sd.id
+      )
+    })
+    .map(sd => {
+      return {
+        value: sd.id,
+        characterId: sd.id,
+        character: sd.data,
+        name: sd.data.character.characterName
+      }
+    })
+  return [...handoutList, ...characterList]
 })
 
 const vSelectDefaults = {
   density: 'compact',
   variant: 'plain',
   hideDetails: true,
-  itemValue: 'handoutId',
+  itemValue: 'value',
   itemTitle: 'name',
   singleLine: true,
   active: true,
   class: 'character-select',
-  placeholder: '未選択',
-  items: list.value
+  placeholder: '未選択'
 }
 
 const selectCharacters = ref<(string | null)[]>([null, null])
@@ -168,7 +195,7 @@ const selectSkill = ref('')
 
 async function updateInfo(id: string, tokugi: SaikoroFictionTokugi) {
   if (!graphQlStore) return
-  const info = list.value.find(cw => cw.handoutId === id)
+  const info = list.value.find(cw => cw.value === id)
   if (!info) return
   const characterSheet = clone(info.character)
   if (!characterSheet) return

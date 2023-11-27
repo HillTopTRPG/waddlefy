@@ -192,9 +192,22 @@ const props = defineProps<{
 const otherHandouts = computed(() => {
   return (
     graphQlStore?.state.sessionDataList.filter(sd => {
-      if (sd.type !== 'shinobigami-handout') return false
-      if (sd.id === handout.value?.id) return false
-      return !props.perspective || sd.data.published
+      if (sd.type !== 'shinobigami-handout' || sd.id === handout.value?.id) return false
+      if (!props.perspective || sd.data.published) return true
+
+      // 公開してなくても担当キャラだったらハンドアウトが見える
+      const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+      const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+      if (player?.id === props.perspective) return true
+
+      // 公開していなくても関係のあるハンドアウトなら見える
+      return graphQlStore.state.sessionDataList.some(r => {
+        if (r.type !== 'shinobigami-handout-relation' || r.data.targetId !== sd.id) return false
+        const handout = graphQlStore.state.sessionDataList.find(sdc => sdc.id === r.data.ownerId)
+        const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === handout?.data.person)
+        const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+        return player?.id === props.perspective
+      })
     }) || []
   )
 })

@@ -102,7 +102,7 @@ export async function userSignIn(
   const data = result.data?.userSignIn
   if (!data) return
   const { token, secret } = data
-  let { firstSession } = data
+  const { firstSession } = data
   localStorage.setItem(token, JSON.stringify({ secret }))
   localStorage.setItem('userId', userId)
   let sessionId: string = firstSession?.id
