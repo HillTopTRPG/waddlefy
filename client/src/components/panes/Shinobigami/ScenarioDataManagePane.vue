@@ -132,7 +132,28 @@ const handoutList = computed(() => {
   if (!perspective.value) {
     return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout')
   }
-  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-handout' && sd.data.published)
+  return graphQlStore?.state.sessionDataList.filter(sd => {
+    if (sd.type !== 'shinobigami-handout') return false
+    if (sd.data.published) return true
+
+    // 公開してなくても担当キャラだったらハンドアウトが見える
+    const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+    const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+    if (player?.id === perspective.value) return true
+
+    // 公開していなくても関係のあるハンドアウトなら見える
+    return graphQlStore.state.sessionDataList
+      .filter(sdc => sdc.type === 'shinobigami-handout-relation' && sdc.data.targetId === sd.id)
+      .some(r => {
+        const handout = graphQlStore.state.sessionDataList.find(sdc => sdc.id === r.data.ownerId)
+        if (!handout) return false
+        const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === handout.data.person)
+        if (!character) return false
+        const player = graphQlStore.state.players.find(p => p.id === character.data.player)
+        if (!player) return false
+        return player.id === perspective.value
+      })
+  })
 })
 const enigmaList = computed(() => {
   return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'shinobigami-enigma')

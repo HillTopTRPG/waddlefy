@@ -35,6 +35,7 @@ const props = defineProps<{
   list: string[]
   exclude?: string
   editable: boolean
+  perspective: string
 }>()
 
 const emits = defineEmits<{
@@ -43,9 +44,29 @@ const emits = defineEmits<{
 
 const dataList = computed(() => {
   const handoutList =
-    graphQlStore?.state.sessionDataList.filter(
-      sd => sd.type === 'shinobigami-handout' && (props.exclude ? sd.id !== props.exclude : true)
-    ) || []
+    graphQlStore?.state.sessionDataList.filter(sd => {
+      if (sd.type !== 'shinobigami-handout') return false
+      if (props.exclude && sd.id === props.exclude) return false
+      if (!props.perspective || sd.data.published) return true
+
+      // 公開してなくても担当キャラだったらハンドアウトが見える
+      const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === sd.data.person)
+      const player = graphQlStore.state.players.find(p => p.id === character?.data.player)
+      if (player?.id === props.perspective) return true
+
+      // 公開していなくても関係のあるハンドアウトなら見える
+      return graphQlStore.state.sessionDataList
+        .filter(sdc => sdc.type === 'shinobigami-handout-relation' && sdc.data.targetId === sd.id)
+        .some(r => {
+          const handout = graphQlStore.state.sessionDataList.find(sdc => sdc.id === r.data.ownerId)
+          if (!handout) return false
+          const character = graphQlStore.state.sessionDataList.find(sdc => sdc.id === handout.data.person)
+          if (!character) return false
+          const player = graphQlStore.state.players.find(p => p.id === character.data.player)
+          if (!player) return false
+          return player.id === props.perspective
+        })
+    }) || []
   return handoutList.map(h => {
     const characterInfo = graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person)
     const nameList = [h.data.name]
