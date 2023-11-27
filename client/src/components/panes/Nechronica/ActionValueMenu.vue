@@ -33,6 +33,7 @@
         <span class="pb-1 d-flex flex-column align-center" style="line-height: 20px; font-size: 13px">
           <span style="opacity: 0.6">基本値</span>
           <span class="text-body-1 text-info font-weight-bold">６</span>
+          <v-spacer v-if="hasHeiki && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
         </span>
         <template v-for="(maneuver, idx) in character?.data.character.maneuverList || []" :key="idx">
           <v-sheet v-if="maneuver.type === 3" class="d-flex flex-column align-center pa-1">
@@ -44,9 +45,20 @@
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
             />
-            <span class="text-body-1 font-weight-bold" :class="hasHeiki || !maneuver.lost ? 'text-info' : 'text-grey'">
+            <span
+              class="text-body-1 font-weight-bold"
+              :class="!maneuver.lost || (hasHeiki && !maneuver.ignoreHeiki) ? 'text-info' : 'text-grey'"
+            >
               {{ `+${convertNumberZero(maneuver.memo)}` }}
             </span>
+            <heiki-btn
+              :ignore-heiki="maneuver.ignoreHeiki"
+              v-if="hasHeiki && maneuver.lost"
+              @click="onUpdateManeuverIgnoreHeiki(characterId, idx)"
+            />
+            <template v-else>
+              <v-spacer v-if="hasHeiki && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
+            </template>
           </v-sheet>
         </template>
       </v-card-text>
@@ -89,6 +101,7 @@ import { Nechronica, NechronicaManeuver, NechronicaRoice } from '@/components/pa
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
 import RoiceBadge from '@/components/panes/Nechronica/RoiceBadge.vue'
 import { convertNumberZero } from '@/components/panes/PrimaryDataUtility'
@@ -102,6 +115,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean): Promise<void>
   (e: 'update:maneuver-lost', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'update:maneuver-ignore-heiki', characterId: string, idx: number): Promise<void>
   (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
@@ -120,8 +134,12 @@ const maneuverActionValue = computed((): number => {
   return actionValueManeuvers.value.reduce((p, c) => p + convertNumberZero(c.memo), 6) || 0
 })
 const maneuverLostActionValue = computed((): number => {
-  if (hasHeiki.value) return 0
-  return -actionValueManeuvers.value.reduce((p, c) => (c.lost ? p + convertNumberZero(c.memo) : p), 0) || 0
+  return (
+    -actionValueManeuvers.value.reduce(
+      (p, c) => (!c.lost || (hasHeiki.value && !c.ignoreHeiki) ? p : p + convertNumberZero(c.memo)),
+      0
+    ) || 0
+  )
 })
 
 const actionValueRoices = computed((): NechronicaRoice[] => {
@@ -143,7 +161,7 @@ type OtherRoiceInfo = {
 const otherRoices = computed((): OtherRoiceInfo[] => {
   return (
     graphQlStore?.state.sessionDataList
-      .filter(sd => sd.type === 'nechronica-character' && sd.id !== props.characterId)
+      .filter(sd => sd.type === 'nechronica-character' && sd.data.type === 'doll' && sd.id !== props.characterId)
       .map((c: { id: string; data: { player: string; character: Nechronica } }): OtherRoiceInfo => {
         const roiceList = c.data.character.roiceList
           .map((roice, index): { index: number; roice: NechronicaRoice } => ({
@@ -170,6 +188,10 @@ function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
 
 function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   emits('update:maneuver-lost', characterId, idx, lost)
+}
+
+function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number) {
+  emits('update:maneuver-ignore-heiki', characterId, idx)
 }
 
 function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {

@@ -100,11 +100,12 @@ const classText = computed(() => {
 
   result.push(partClassMap[props.maneuver.parts] || '')
 
-  const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
-  if (shozokuClass) {
-    result.push(shozokuClass)
+  const basicClass = basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || ''
+  if (basicClass) {
+    result.push(basicClass)
   } else {
-    result.push(basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || '')
+    const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
+    result.push(shozokuClass)
   }
 
   return result.join(' ')

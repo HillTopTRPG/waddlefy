@@ -95,7 +95,7 @@ async function onLoadCharacterSheet(url: string) {
       return
     }
     console.log(JSON.stringify(data, null, 2))
-    await graphQlStore?.addNechronicaCharacter(perspective.value, data)
+    await graphQlStore?.addNechronicaCharacter(perspective.value, 'doll', data)
   }
 }
 </script>

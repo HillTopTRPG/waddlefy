@@ -7,6 +7,7 @@
             :character-id="characterId"
             @update:maneuver-used="onUpdateManeuverUsed"
             @update:maneuver-lost="onUpdateManeuverLost"
+            @update:maneuver-ignore-heiki="onUpdateManeuverIgnoreHeiki"
             @update:roice="onUpdateRoice"
           />
           <character-sheet-view-config
@@ -60,7 +61,13 @@
 
 <script setup lang="ts">
 import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
-import { Nechronica, NechronicaManeuver, NechronicaRoice, roiceList } from '@/components/panes/Nechronica/nechronica'
+import {
+  Nechronica,
+  NechronicaManeuver,
+  NechronicaRoice,
+  NechronicaType,
+  roiceList
+} from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -80,7 +87,7 @@ const props = defineProps<{
   viewOption: NechronicaViewOption
 }>()
 
-const character = computed((): { id: string; data: { player: string; character: Nechronica } } | undefined => {
+const character = computed((): { id: string; data: { player: string; type: NechronicaType, character: Nechronica } } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
@@ -120,6 +127,14 @@ function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   updateNechronicaCharacterHelper(characterId, c => {
     if (c.maneuverList[idx].lost === lost) return false
     c.maneuverList[idx].lost = lost
+    c.maneuverList[idx].ignoreHeiki = undefined
+    return true
+  })
+}
+
+function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number) {
+  updateNechronicaCharacterHelper(characterId, c => {
+    c.maneuverList[idx].ignoreHeiki = !c.maneuverList[idx].ignoreHeiki || undefined
     return true
   })
 }

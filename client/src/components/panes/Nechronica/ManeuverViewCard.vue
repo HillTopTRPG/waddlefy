@@ -8,7 +8,7 @@
           <v-chip :class="`type${maneuver.type}`">{{
             NechronicaPowerList[maneuver.type]?.text || 'カテゴリなし'
           }}</v-chip>
-          <v-chip variant="outlined">{{ maneuver.shozoku }}</v-chip>
+          <v-chip variant="outlined" v-if="maneuver.shozoku">{{ maneuver.shozoku }}</v-chip>
         </v-defaults-provider>
       </v-sheet>
       <v-container class="pa-0" style="min-width: 25em; max-width: 25em">

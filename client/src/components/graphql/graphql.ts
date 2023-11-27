@@ -16,7 +16,7 @@ import {
   User
 } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
-import { Nechronica } from '@/components/panes/Nechronica/nechronica'
+import {Nechronica, NechronicaType} from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
 import router from '@/router'
@@ -1044,9 +1044,14 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addNechronicaCharacter(perspective: string, dataObj: Nechronica): Promise<void> {
+  async function addNechronicaCharacter(
+    perspective: string,
+    type: NechronicaType,
+    dataObj: Nechronica
+  ): Promise<void> {
     const characterWrap = {
       player: perspective || 'user',
+      type,
       character: dataObj
     }
     await addSessionDataHelper('nechronica-character', JSON.stringify(characterWrap))

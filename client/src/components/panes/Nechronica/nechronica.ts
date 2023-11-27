@@ -12,6 +12,7 @@ export type NechronicaManeuver = {
   range: string
   memo: string
   shozoku: string
+  ignoreHeiki: boolean | undefined
 }
 
 export type NechronicaRoice = {
@@ -146,6 +147,8 @@ export const roiceDamages = [
   { value: 3, label: '３', text: '３', subTitle: '', color: 'warning' },
   { value: 4, label: '狂', text: '発狂', subTitle: '', color: 'error' }
 ]
+
+export type NechronicaType = 'doll' | 'legion' | 'horror' | 'savant'
 
 export type Nechronica = {
   url: string
