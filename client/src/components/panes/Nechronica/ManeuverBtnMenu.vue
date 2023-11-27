@@ -19,6 +19,7 @@
     <maneuver-view-card
       v-else
       :maneuver="maneuver"
+      :type="type"
       @update:used="v => emits('update:used', v)"
       @update:lost="v => emits('update:lost', v)"
     />
@@ -29,12 +30,13 @@
 import ManeuverBtn from '@/components/panes/Nechronica/ManeuverBtn.vue'
 import ManeuverEditCard from '@/components/panes/Nechronica/ManeuverEditCard.vue'
 import ManeuverViewCard from '@/components/panes/Nechronica/ManeuverViewCard.vue'
-import { Nechronica, NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 defineProps<{
   character: Nechronica
   maneuver: NechronicaManeuver
+  type: NechronicaType
   mode: 'view' | 'edit'
   viewLabel?: keyof NechronicaManeuver | ''
 }>()

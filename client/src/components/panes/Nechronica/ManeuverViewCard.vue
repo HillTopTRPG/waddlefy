@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card :class="type === 'legion' ? 'pb-2' : ''">
     <v-card-text class="px-2 pt-2 pb-0">
       <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
         <v-defaults-provider :defaults="{ VChip: { size: 'small' } }">
@@ -37,31 +37,47 @@
         </v-defaults-provider>
       </v-container>
     </v-card-text>
-    <v-card-actions class="flex-wrap justify-start py-0 px-2">
+    <v-card-text class="d-flex flex-wrap justify-start py-0 px-2" v-if="type !== 'legion'">
       <v-defaults-provider
         :defaults="{ VCheckbox: { density: 'comfortable', hideDetails: true, class: 'flex-grow-0' } }"
       >
-        <v-checkbox color="error" :model-value="maneuver.lost" @update:model-value="v => emits('update:lost', v)">
+        <v-checkbox
+          color="error"
+          density="compact"
+          :model-value="maneuver.lost"
+          @update:model-value="v => emits('update:lost', v)"
+        >
           <template #label>
             <span class="text-no-wrap">損傷</span>
           </template>
         </v-checkbox>
-        <v-checkbox color="primary" :model-value="maneuver.used" @update:model-value="v => emits('update:used', v)">
+        <v-checkbox
+          color="primary"
+          density="compact"
+          :model-value="maneuver.used"
+          @update:model-value="v => emits('update:used', v)"
+        >
           <template #label>
             <span class="text-no-wrap">使用</span>
           </template>
         </v-checkbox>
       </v-defaults-provider>
-    </v-card-actions>
+    </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { NechronicaManeuver, NechronicaPowerList, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
+import {
+  NechronicaManeuver,
+  NechronicaPowerList,
+  NechronicaTimingList,
+  NechronicaType
+} from '@/components/panes/Nechronica/nechronica'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 defineProps<{
   maneuver: NechronicaManeuver
+  type: NechronicaType
 }>()
 
 const emits = defineEmits<{

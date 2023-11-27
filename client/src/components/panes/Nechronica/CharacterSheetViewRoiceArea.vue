@@ -1,6 +1,6 @@
 <template>
   <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
-    <v-sheet class="d-flex flex-row pb-2">
+    <v-sheet class="d-flex flex-row">
       <v-sheet class="d-flex flex-row flex-wrap align-end" style="width: 1em; flex-grow: 1; gap: 0.5rem">
         <template v-for="(roice, idx) in roiceList || []" :key="idx">
           <roice-badge

@@ -104,6 +104,7 @@ async function confirm() {
       await graphQlStore?.updateNechronicaCharacter(
         dataObj.value.id,
         dataObj.value.data.player,
+        dataObj.value.data.type,
         mergeNechronica(dataObj.value.data.character, data, targets.value)
       )
       console.log('再読込完了！！！！')

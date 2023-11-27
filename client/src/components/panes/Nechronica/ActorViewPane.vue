@@ -7,14 +7,43 @@
     </template>
     <template #layout> </template>
     <template #default>
-      <v-sheet
-        class="d-flex flex-row flex-wrap align-start pa-2 overflow-auto"
-        style="gap: 0.5rem"
-        :style="nav ? 'padding-right: 250px !important;' : ''"
-      >
-        <template v-for="character in characters" :key="character.id">
-          <character-sheet-view :character-id="character.id" :view-option="viewOption" />
-        </template>
+      <v-sheet class="w-100">
+        <v-list-item-subtitle
+          class="bg-lime-lighten-2 flex-grow-1 position-sticky text-body-1 px-2"
+          style="top: 0; z-index: 100; opacity: 1"
+          v-text="'ドール・サヴァント'"
+        />
+        <v-sheet
+          class="d-flex flex-row flex-wrap align-start pa-2 overflow-auto"
+          style="gap: 0.5rem"
+          :style="nav ? 'padding-right: 250px !important;' : ''"
+        >
+          <template v-for="data in dolls" :key="data.id">
+            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+          </template>
+          <template v-for="data in servents" :key="data.id">
+            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+          </template>
+        </v-sheet>
+      </v-sheet>
+      <v-sheet class="w-100">
+        <v-list-item-subtitle
+          class="bg-teal-lighten-3 flex-grow-1 position-sticky text-body-1 px-2"
+          style="top: 0; z-index: 100; opacity: 1"
+          v-text="'レギオン・ホラー'"
+        />
+        <v-sheet
+          class="d-flex flex-row flex-wrap align-start pa-2 overflow-auto"
+          style="gap: 0.5rem"
+          :style="nav ? 'padding-right: 250px !important;' : ''"
+        >
+          <template v-for="data in legions" :key="data.id">
+            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+          </template>
+          <template v-for="data in horrors" :key="data.id">
+            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+          </template>
+        </v-sheet>
       </v-sheet>
     </template>
     <template #nav>
@@ -42,7 +71,12 @@ import { computed, inject, ref } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CharacterSheetView from '@/components/panes/Nechronica/CharacterSheetView.vue'
 import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
-import { Nechronica, NechronicaPowerList, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
+import {
+  Nechronica,
+  NechronicaPowerList,
+  NechronicaTimingList,
+  NechronicaType
+} from '@/components/panes/Nechronica/nechronica'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -67,9 +101,42 @@ const viewOption = ref<NechronicaViewOption>({
   selectedTimings: NechronicaTimingList.map((_, idx) => idx)
 })
 
-const characters = computed((): { id: string; data: { player: string; character: Nechronica } }[] => {
-  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character') || []
+const dolls = computed((): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
+  return (
+    graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character' && sd.data.type === 'doll') ||
+    []
+  )
 })
+
+const legions = computed(
+  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
+    return (
+      graphQlStore?.state.sessionDataList.filter(
+        sd => sd.type === 'nechronica-character' && sd.data.type === 'legion'
+      ) || []
+    )
+  }
+)
+
+const horrors = computed(
+  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
+    return (
+      graphQlStore?.state.sessionDataList.filter(
+        sd => sd.type === 'nechronica-character' && sd.data.type === 'horror'
+      ) || []
+    )
+  }
+)
+
+const servents = computed(
+  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
+    return (
+      graphQlStore?.state.sessionDataList.filter(
+        sd => sd.type === 'nechronica-character' && sd.data.type === 'servent'
+      ) || []
+    )
+  }
+)
 
 const nav = ref(false)
 function onChangeNav() {

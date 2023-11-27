@@ -41,6 +41,7 @@
               :character="character!.data.character"
               :disable-button="true"
               :maneuver="maneuver"
+              :type="character!.data.type"
               mode="view"
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
@@ -62,21 +63,23 @@
           </v-sheet>
         </template>
       </v-card-text>
-      <v-card-subtitle style="opacity: 1">
-        <span style="opacity: 0.6">本人の未練: </span>
-        <span class="text-body-1" :class="myselfRoiceActionValue ? 'font-weight-bold text-error' : ''">{{
-          myselfRoiceActionValue
-        }}</span>
-      </v-card-subtitle>
-      <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
-        <template v-for="(roice, idx) in actionValueRoices" :key="idx">
-          <roice-badge
-            mode="view"
-            :roice="roice"
-            @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)"
-          />
-        </template>
-      </v-card-text>
+      <template v-if="character?.data.type === 'doll'">
+        <v-card-subtitle style="opacity: 1">
+          <span style="opacity: 0.6">本人の未練: </span>
+          <span class="text-body-1" :class="myselfRoiceActionValue ? 'font-weight-bold text-error' : ''">{{
+            myselfRoiceActionValue
+          }}</span>
+        </v-card-subtitle>
+        <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
+          <template v-for="(roice, idx) in actionValueRoices" :key="idx">
+            <roice-badge
+              mode="view"
+              :roice="roice"
+              @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)"
+            />
+          </template>
+        </v-card-text>
+      </template>
       <template v-for="(info, infoIdx) in otherRoices" :key="infoIdx">
         <v-card-subtitle style="opacity: 1">
           <span style="opacity: 0.6">{{ info.character.data.character.basic.characterName }}の未練: </span>
@@ -97,7 +100,12 @@
 </template>
 
 <script setup lang="ts">
-import { Nechronica, NechronicaManeuver, NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
+import {
+  Nechronica,
+  NechronicaManeuver,
+  NechronicaRoice,
+  NechronicaType
+} from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -119,9 +127,11 @@ const emits = defineEmits<{
   (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
-const character = computed((): { id: string; data: { player: string; character: Nechronica } } | undefined => {
-  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
-})
+const character = computed(
+  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } } | undefined => {
+    return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
+  }
+)
 
 const hasHeiki = computed(() => {
   return character.value?.data.character.maneuverList.some(m => m.name.includes('平気'))
@@ -159,6 +169,7 @@ type OtherRoiceInfo = {
 }
 
 const otherRoices = computed((): OtherRoiceInfo[] => {
+  if (character.value?.data.type !== 'doll') return []
   return (
     graphQlStore?.state.sessionDataList
       .filter(sd => sd.type === 'nechronica-character' && sd.data.type === 'doll' && sd.id !== props.characterId)

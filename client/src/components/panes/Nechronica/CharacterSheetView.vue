@@ -2,14 +2,16 @@
   <v-sheet class="d-flex flex-row flex-wrap overflow-y-auto" style="gap: 0.5rem">
     <template v-if="character">
       <v-card variant="outlined" class="d-flex flex-column pa-2 rounded-xl" style="box-sizing: border-box">
-        <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center justify-space-between">
+        <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
           <action-value-menu
+            v-if="character.data.type !== 'legion'"
             :character-id="characterId"
             @update:maneuver-used="onUpdateManeuverUsed"
             @update:maneuver-lost="onUpdateManeuverLost"
             @update:maneuver-ignore-heiki="onUpdateManeuverIgnoreHeiki"
             @update:roice="onUpdateRoice"
           />
+          <v-spacer />
           <character-sheet-view-config
             :character-id="characterId"
             :name="character?.data.character.basic.characterName || ''"
@@ -20,7 +22,7 @@
           <character-name-menu :character-id="characterId" />
         </v-card-text>
         <character-sheet-view-roice-area
-          v-if="viewOption.roicePosition === 'before'"
+          v-if="character.data.type === 'doll' && viewOption.roicePosition === 'before'"
           :character-id="characterId"
           :mode="viewOption.mode"
           :roice-list="character?.data.character.roiceList || []"
@@ -28,16 +30,39 @@
           @add="onAddRoice"
           @delete="onDeleteRoice"
         />
-        <v-card-text class="d-flex flex-column pa-0">
+        <v-card-text
+          v-if="['doll', 'servent'].includes(character.data.type)"
+          class="d-flex flex-row flex-wrap px-0 pb-0 pt-2"
+        >
           <maneuver-list-view
             :character="character.data.character"
             :view-option="viewOption"
             :columns="columns || 10"
             :mode="viewOption.mode"
+            :type="character.data.type"
             @update:used="(idx, used) => onUpdateManeuverUsed(characterId, idx, used)"
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
             @update="(idx, maneuver) => onUpdateManeuver(characterId, idx, maneuver)"
           />
+        </v-card-text>
+        <v-card-text
+          v-else
+          class="d-flex flex-row flex-wrap px-0 pb-0 pt-2"
+          :style="`max-width: ${columns * 60 - 8}px`"
+          style="gap: 0.5rem"
+        >
+          <template v-for="(maneuver, idx) in character.data.character.maneuverList" :key="idx">
+            <maneuver-btn-menu
+              :character="character.data.character"
+              :maneuver="maneuver"
+              :mode="viewOption.mode"
+              :type="character.data.type"
+              :view-label="viewOption?.viewLabel || ''"
+              @update:lost="lost => onUpdateManeuverLost(characterId, idx, lost)"
+              @update:used="used => onUpdateManeuverUsed(characterId, idx, used)"
+              @update="maneuver => onUpdateManeuver(characterId, idx, maneuver)"
+            />
+          </template>
         </v-card-text>
         <v-card-text class="d-flex flex-row justify-end px-1 py-0">
           <reset-used-maneuver-btn
@@ -46,7 +71,7 @@
           />
         </v-card-text>
         <character-sheet-view-roice-area
-          v-if="viewOption.roicePosition === 'after'"
+          v-if="character.data.type === 'doll' && viewOption.roicePosition === 'after'"
           :character-id="characterId"
           :mode="viewOption.mode"
           :roice-list="character?.data.character.roiceList || []"
@@ -75,6 +100,7 @@ import ActionValueMenu from '@/components/panes/Nechronica/ActionValueMenu.vue'
 import CharacterNameMenu from '@/components/panes/Nechronica/CharacterNameMenu.vue'
 import CharacterSheetViewConfig from '@/components/panes/Nechronica/CharacterSheetViewConfig.vue'
 import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/CharacterSheetViewRoiceArea.vue'
+import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
 import ResetUsedManeuverBtn from '@/components/panes/Nechronica/ResetUsedManeuverBtn.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
@@ -87,9 +113,11 @@ const props = defineProps<{
   viewOption: NechronicaViewOption
 }>()
 
-const character = computed((): { id: string; data: { player: string; type: NechronicaType, character: Nechronica } } | undefined => {
-  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
-})
+const character = computed(
+  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } } | undefined => {
+    return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
+  }
+)
 
 const columns = ref(10)
 
@@ -100,7 +128,7 @@ function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (charact
   if (!c) return
   const updateCharacter = clone<Nechronica>(c.data.character)!
   if (!wrapFunc(updateCharacter)) return
-  graphQlStore?.updateNechronicaCharacter(characterId, c.data.player, updateCharacter)
+  graphQlStore?.updateNechronicaCharacter(characterId, c.data.player, c.data.type, updateCharacter)
 }
 
 function onResetUsedMenu() {

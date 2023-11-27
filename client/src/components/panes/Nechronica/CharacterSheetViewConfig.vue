@@ -1,5 +1,5 @@
 <template>
-  <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom right">
+  <v-dialog width="20em">
     <template #activator="{ props }">
       <v-btn icon="mdi-cog" variant="text" size="small" v-bind="props" />
     </template>
@@ -17,7 +17,7 @@
         </v-slider>
       </v-defaults-provider>
     </v-card>
-  </v-menu>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -54,13 +54,12 @@ watch(
   useColumns,
   columns => {
     emits('update:columns', columns)
-    if (!characterViewConfig.value || characterViewConfig.value.data.data.columns === columns) return
+    if (characterViewConfig.value?.data.data.columns === columns) return
     if (timeout !== null) {
       window.clearTimeout(timeout)
       timeout = null
     }
     timeout = window.setTimeout(() => {
-      console.log(Boolean(characterViewConfig.value))
       if (characterViewConfig.value) {
         graphQlStore?.updateTargetConfig(
           characterViewConfig.value.id,
@@ -76,7 +75,7 @@ watch(
           columns
         })
       }
-    }, 1000)
+    }, 5000)
   },
   { immediate: true }
 )

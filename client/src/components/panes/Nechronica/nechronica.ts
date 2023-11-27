@@ -12,7 +12,7 @@ export type NechronicaManeuver = {
   range: string
   memo: string
   shozoku: string
-  ignoreHeiki: boolean | undefined
+  ignoreHeiki?: boolean
 }
 
 export type NechronicaRoice = {
@@ -148,7 +148,7 @@ export const roiceDamages = [
   { value: 4, label: '狂', text: '発狂', subTitle: '', color: 'error' }
 ]
 
-export type NechronicaType = 'doll' | 'legion' | 'horror' | 'savant'
+export type NechronicaType = 'doll' | 'legion' | 'horror' | 'servent'
 
 export type Nechronica = {
   url: string
@@ -314,7 +314,7 @@ export class NechronicaHelper {
         return data
       })
       .filter(r => Boolean(r.name))
-    const nechnorica: Nechronica = {
+    return {
       url: this.url,
       basic: {
         characterName: textFilter(json.pc_name),
@@ -325,7 +325,6 @@ export class NechronicaHelper {
       maneuverList,
       roiceList
     }
-    return nechnorica
   }
 }
 
