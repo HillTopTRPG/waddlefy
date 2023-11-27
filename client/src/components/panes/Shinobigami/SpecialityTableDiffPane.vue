@@ -33,7 +33,7 @@
           <v-sheet class="pa-1 overflow-auto align-start">
             <v-select :prefix="`ハンドアウト: `" v-model="selectCharacters[i]" :items="list" />
             <speciality-table
-              :info="list.find(cw => cw.value === selectCharacters[i])?.character.skill || undefined"
+              :info="list.find(cw => cw.value === selectCharacters[i])?.character.character.skill || undefined"
               :perspective="perspective"
               v-model:select-skill="selectSkill"
               @update:info="v => updateInfo(selectCharacters[i] || '', v)"
@@ -45,7 +45,7 @@
               class="mt-1"
               :perspective="perspective"
               :select-skill="selectSkill"
-              :list="list.find(cw => cw.value === selectCharacters[i])?.character.ninjaArtsList"
+              :list="list.find(cw => cw.value === selectCharacters[i])?.character.character.ninjaArtsList"
               @click-skill="onClickSkill"
             />
             <special-arts-table
@@ -53,7 +53,7 @@
               class="mt-1"
               :owner-id="''"
               :select-skill="selectSkill"
-              :list="list.find(cw => cw.value === selectCharacters[i])?.character.specialArtsList"
+              :list="list.find(cw => cw.value === selectCharacters[i])?.character.character.specialArtsList"
               :perspective="perspective"
               @click-skill="onClickSkill"
             />
@@ -110,6 +110,7 @@ const emits = defineEmits<{
 
 type Info = {
   value: string
+  characterId: string
   character: CharacterWrap
   name: string
 }
@@ -142,7 +143,8 @@ const list = computed((): Info[] => {
 
         return {
           value: sd.id,
-          character: character.data.character,
+          characterId: character.id,
+          character: character.data,
           name
         }
       }
@@ -160,7 +162,8 @@ const list = computed((): Info[] => {
     .map(sd => {
       return {
         value: sd.id,
-        character: sd.data.character,
+        characterId: sd.id,
+        character: sd.data,
         name: sd.data.character.characterName
       }
     })
@@ -192,7 +195,7 @@ const selectSkill = ref('')
 
 async function updateInfo(id: string, tokugi: SaikoroFictionTokugi) {
   if (!graphQlStore) return
-  const info = list.value.find(cw => cw.handoutId === id)
+  const info = list.value.find(cw => cw.value === id)
   if (!info) return
   const characterSheet = clone(info.character)
   if (!characterSheet) return

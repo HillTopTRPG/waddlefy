@@ -337,14 +337,6 @@ onMounted(() => {
   isReady.value = true
 })
 
-const sessionNameInputElm = ref()
-function startEditSessionName() {
-  editSessionName.value = true
-  setTimeout(() => {
-    sessionNameInputElm.value.focus()
-  }, 100)
-}
-
 async function onSubmitSessionType(sessionType: string): Promise<void> {
   if (!graphQlStore) return
   const sessionName = graphQlStore?.state.session?.name || ''
