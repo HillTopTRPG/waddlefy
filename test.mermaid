@@ -1,0 +1,17 @@
+graph TD
+    start --> if1
+    if1 --> |ユーザー登録済みの場合| input-login ---> login --> |"（既存のセッション画面に遷移）"| restart-session
+    if1 --> |未登録の場合| to-sign-up --> |"（新規登録画面に遷移する）"| input-sign-up --> sign-up
+    sign-up --> |"（最初のセッションが作成される）"| Empty[ ] --> |"（セッション画面に遷移する）"| select-session-type
+    select-session-type --> |セッションタイプに応じてプリセット画面が用意される| session-create
+
+    start(["https://waddlefy.net にアクセス"])
+    if1{ }
+    input-login[ユーザーIDとパスワードを入力]
+    login[ログインボタンを押す]
+    restart-session[[既存のセッションを再開する]]
+    to-sign-up[新規登録ボタンを押す]
+    input-sign-up["登録情報を入力する（注１）"]
+    sign-up[新規登録ボタンを押す]
+    select-session-type["セッションタイプ（注２）の選択"]
+    session-create[[各セッションタイプ毎のセットアップ]]
