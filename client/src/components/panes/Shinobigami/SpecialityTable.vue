@@ -81,8 +81,8 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
+import { clone } from '@/components/panes/PrimaryDataUtility'
+import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import {
   SkillKind,
   SkillTable,

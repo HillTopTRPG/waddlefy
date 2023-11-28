@@ -1,5 +1,5 @@
 import { convertNumberZero } from './PrimaryDataUtility'
-import { SkillTable } from './shinobigami'
+import { SkillTable } from './Shinobigami/shinobigami'
 
 export type TokugiInfo = {
   name: string

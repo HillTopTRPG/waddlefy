@@ -76,7 +76,7 @@ import { DataType, ShinobigamiHelper, fullDataType, mergeShinobigami } from '@/c
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import ShinobigamiUrlForm from '@/components/panes/Shinobigami/ShinobigamiUrlForm.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

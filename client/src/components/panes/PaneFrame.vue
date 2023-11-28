@@ -7,8 +7,12 @@
       <slot name="title-action" />
     </v-sheet>
     <slot name="layout" />
-    <v-layout class="overflow-y-auto w-100 h-100" style="justify-self: flex-start; align-self: flex-start">
-      <div class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap">
+    <v-layout class="w-100 h-100" style="justify-self: flex-start; align-self: flex-start">
+      <slot name="nav" />
+      <div
+        class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap overflow-auto"
+        style="contain: paint"
+      >
         <slot />
       </div>
     </v-layout>

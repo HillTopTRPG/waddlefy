@@ -1,10 +1,12 @@
+import nechronicaPanes from './Nechronica'
 import noGroupPanes from './NoGroup'
 import shinobigamiPanes from './Shinobigami'
 // import generalPanes from './General'
 
 const panes = [
   ...noGroupPanes,
-  ...shinobigamiPanes
+  ...shinobigamiPanes,
+  ...nechronicaPanes
   // ...generalPanes
 ]
 
