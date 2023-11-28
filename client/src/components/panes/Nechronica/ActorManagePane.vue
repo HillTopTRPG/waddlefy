@@ -3,10 +3,14 @@
     <template #title-action></template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-1" style="gap: 0.1rem" v-if="!perspective">
-        <url-form-menu text="ドール読込" @execute="url => onLoadCharacterSheet(url, 'doll')" :tips="[]" />
-        <url-form-menu text="レギオン読込" @execute="url => onLoadCharacterSheet(url, 'legion')" :tips="[]" />
-        <url-form-menu text="ホラー読込" @execute="url => onLoadCharacterSheet(url, 'horror')" :tips="[]" />
-        <url-form-menu text="サヴァント読込" @execute="url => onLoadCharacterSheet(url, 'servent')" :tips="[]" />
+        <template v-for="type in nechronicaTypes" :key="type">
+          <url-form-menu
+            :text="`${NechronicaTypeColorMap.find(t => t.type === type)?.text || ''}読込`"
+            :color="NechronicaTypeColorMap.find(t => t.type === type)?.color || ''"
+            @execute="url => onLoadCharacterSheet(url, type)"
+            :tips="[]"
+          />
+        </template>
       </v-sheet>
     </template>
     <template #default>
@@ -15,7 +19,7 @@
           <v-card
             variant="elevated"
             rounded="lg"
-            :color="nechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
+            :color="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
           >
             <v-card-title class="text-body-1 d-flex flex-row justify-start align-center">
               <span class="ellipsis flex-grow-1" style="width: 1em">{{
@@ -29,14 +33,14 @@
                 variant="solo-filled"
                 :width="18"
                 icon="mdi-tag-text-outline"
-                :label="`${nechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''}名`"
+                :label="`${NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''}名`"
                 :text="character.data.character.basic.characterName"
                 @update="v => onUpdateCharacterName(character.id, v)"
               />
               <reload-character-sheet-btn :character-id="character.id" />
               <delete-menu-btn
                 :target-name="character.data.character.basic.characterName"
-                :type="nechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
+                :type="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
                 location="bottom center"
                 @execute="() => graphQlStore?.deleteSessionData(character.id)"
               />
@@ -69,7 +73,12 @@ import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/ReloadCharacterSheetBtn.vue'
 import UrlFormMenu from '@/components/panes/Nechronica/UrlFormMenu.vue'
-import { Nechronica, NechronicaHelper, NechronicaType } from '@/components/panes/Nechronica/nechronica'
+import {
+  NechronicaHelper,
+  NechronicaType,
+  NechronicaTypeColorMap,
+  NechronicaWrap
+} from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
@@ -91,11 +100,9 @@ const emits = defineEmits<{
 
 const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
-const characters = computed(
-  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
-    return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character') || []
-  }
-)
+const characters = computed((): { id: string; data: NechronicaWrap }[] => {
+  return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character') || []
+})
 
 async function onLoadCharacterSheet(url: string, type: NechronicaType) {
   const helper = new NechronicaHelper(url)
@@ -110,21 +117,16 @@ async function onLoadCharacterSheet(url: string, type: NechronicaType) {
   }
 }
 
-const nechronicaTypeColorMap: { type: NechronicaType; text: string; color: string }[] = [
-  { type: 'doll', text: 'ドール', color: 'lime-lighten-2' },
-  { type: 'legion', text: 'レギオン', color: 'teal-lighten-3' },
-  { type: 'horror', text: 'ホラー', color: 'indigo-lighten-4' },
-  { type: 'servent', text: 'サヴァント', color: 'deep-orange-lighten-3' }
-]
-
 function onUpdateCharacterName(characterId: string, name: string) {
   if (!graphQlStore) return
   const character = graphQlStore.state.sessionDataList.find(sd => sd.id === characterId)
   if (!character) return
-  const updateCharacter = clone<Nechronica>(character.data.character)!
-  updateCharacter.basic.characterName = name
-  graphQlStore.updateNechronicaCharacter(characterId, character.data.player, character.data.type, updateCharacter)
+  const updateCharacter = clone<NechronicaWrap>(character.data)!
+  updateCharacter.character.basic.characterName = name
+  graphQlStore.updateNechronicaCharacter(characterId, updateCharacter)
 }
+
+const nechronicaTypes: NechronicaType[] = ['doll', 'legion', 'horror', 'servent']
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

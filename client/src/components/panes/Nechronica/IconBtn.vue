@@ -311,6 +311,18 @@ const style = computed(() => {
     @include iconImage(url(/nechronica/treasure.png));
   }
 
+  &.legion {
+    @include iconImage(url(/nechronica/requiem.png));
+  }
+
+  &.horror {
+    @include iconImage(url(/nechronica/requiem.png));
+  }
+
+  &.servent {
+    @include iconImage(url(/nechronica/requiem.png));
+  }
+
   &.basic-brain {
     @include iconImage(url(/nechronica/head.png));
   }

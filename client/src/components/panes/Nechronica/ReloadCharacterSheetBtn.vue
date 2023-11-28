@@ -60,7 +60,13 @@ import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import UrlForm from '@/components/panes/Nechronica/UrlForm.vue'
-import { DataType, NechronicaHelper, fullDataType, mergeNechronica } from '@/components/panes/Nechronica/nechronica'
+import {
+  DataType,
+  NechronicaHelper,
+  NechronicaWrap,
+  fullDataType,
+  mergeNechronica
+} from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -68,7 +74,7 @@ const props = defineProps<{
   characterId: string
 }>()
 
-const dataObj = computed(() => {
+const dataObj = computed((): { id: string; data: NechronicaWrap } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
@@ -101,12 +107,9 @@ async function confirm() {
   if (helper.isThis()) {
     const { data } = await helper.getData()
     if (data) {
-      await graphQlStore?.updateNechronicaCharacter(
-        dataObj.value.id,
-        dataObj.value.data.player,
-        dataObj.value.data.type,
-        mergeNechronica(dataObj.value.data.character, data, targets.value)
-      )
+      const updateData = clone<NechronicaWrap>(dataObj.value?.data)!
+      updateData.character = mergeNechronica(dataObj.value.data.character, data, targets.value)
+      await graphQlStore?.updateNechronicaCharacter(dataObj.value.id, updateData)
       console.log('再読込完了！！！！')
     }
   }

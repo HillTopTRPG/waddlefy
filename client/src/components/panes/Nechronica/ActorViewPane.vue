@@ -7,10 +7,16 @@
     </template>
     <template #layout> </template>
     <template #default>
+      <v-sheet class="w-100 d-flex flex-row flex-wrap position-sticky pa-1" style="gap: 0.5rem; top: 0; z-index: 101">
+        <v-defaults-provider :defaults="{ VBtn: { density: 'comfortable', class: 'text-decoration-underline' } }">
+          <v-btn text="戦闘準備" color="secondary" variant="flat" />
+          <v-btn text="次ターン開始" color="secondary" variant="flat" />
+        </v-defaults-provider>
+      </v-sheet>
       <v-sheet class="w-100">
         <v-list-item-subtitle
           class="bg-lime-lighten-2 flex-grow-1 position-sticky text-body-1 px-2"
-          style="top: 0; z-index: 100; opacity: 1"
+          style="top: 36px; z-index: 100; opacity: 1"
           v-text="'ドール・サヴァント'"
         />
         <v-sheet
@@ -29,7 +35,7 @@
       <v-sheet class="w-100">
         <v-list-item-subtitle
           class="bg-teal-lighten-3 flex-grow-1 position-sticky text-body-1 px-2"
-          style="top: 0; z-index: 100; opacity: 1"
+          style="top: 36px; z-index: 100; opacity: 1"
           v-text="'レギオン・ホラー'"
         />
         <v-sheet
@@ -72,10 +78,10 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CharacterSheetView from '@/components/panes/Nechronica/CharacterSheetView.vue'
 import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
 import {
-  Nechronica,
   NechronicaPowerList,
   NechronicaTimingList,
-  NechronicaType
+  NechronicaType,
+  NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -101,42 +107,16 @@ const viewOption = ref<NechronicaViewOption>({
   selectedTimings: NechronicaTimingList.map((_, idx) => idx)
 })
 
-const dolls = computed((): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
+function getCharacters(type: NechronicaType): { id: string; data: NechronicaWrap }[] {
   return (
-    graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character' && sd.data.type === 'doll') ||
-    []
+    graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character' && sd.data.type === type) || []
   )
-})
+}
 
-const legions = computed(
-  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
-    return (
-      graphQlStore?.state.sessionDataList.filter(
-        sd => sd.type === 'nechronica-character' && sd.data.type === 'legion'
-      ) || []
-    )
-  }
-)
-
-const horrors = computed(
-  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
-    return (
-      graphQlStore?.state.sessionDataList.filter(
-        sd => sd.type === 'nechronica-character' && sd.data.type === 'horror'
-      ) || []
-    )
-  }
-)
-
-const servents = computed(
-  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } }[] => {
-    return (
-      graphQlStore?.state.sessionDataList.filter(
-        sd => sd.type === 'nechronica-character' && sd.data.type === 'servent'
-      ) || []
-    )
-  }
-)
+const dolls = computed(() => getCharacters('doll'))
+const legions = computed(() => getCharacters('legion'))
+const horrors = computed(() => getCharacters('horror'))
+const servents = computed(() => getCharacters('servent'))
 
 const nav = ref(false)
 function onChangeNav() {

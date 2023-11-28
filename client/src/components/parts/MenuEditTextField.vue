@@ -30,6 +30,9 @@
       <v-card-item class="pa-2">
         <v-text-field
           :label="label"
+          :type="type || 'text'"
+          :min="min || 1"
+          :step="step || 1"
           variant="solo-filled"
           :placeholder="placeholder || ''"
           :flat="true"
@@ -37,7 +40,8 @@
           :persistent-placeholder="true"
           :hide-details="true"
           :autofocus="true"
-          v-model="editingText"
+          :model-value="editingText"
+          @update:model-value="v => (editingText = v.toString())"
           ref="editElm"
         >
           <template #label>
@@ -68,6 +72,9 @@ const props = defineProps<{
   width: number
   editable: boolean
   classText?: string
+  type?: string
+  min?: number
+  step?: number
 }>()
 
 const emits = defineEmits<{
@@ -96,6 +103,7 @@ watch(opened, v => {
 })
 
 function onSave() {
+  console.log(typeof editingText.value)
   emits('update', editingText.value)
   opened.value = false
 }

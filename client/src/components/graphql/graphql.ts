@@ -16,7 +16,7 @@ import {
   User
 } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
-import { Nechronica, NechronicaType } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
 import router from '@/router'
@@ -538,20 +538,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     )
   }
 
-  async function updateNechronicaCharacter(
-    characterId: string,
-    playerId: string,
-    type: NechronicaType,
-    data: Nechronica
-  ) {
-    await updateSessionDataHelper(
-      characterId,
-      JSON.stringify({
-        player: playerId,
-        type,
-        character: data
-      })
-    )
+  async function updateNechronicaCharacter(characterId: string, wrapObj: NechronicaWrap) {
+    await updateSessionDataHelper(characterId, JSON.stringify(wrapObj))
   }
 
   async function updateShinobigamiHandoutSessionMemo(sessionMemoId: string, handoutId: string, text: string) {
@@ -1051,9 +1039,12 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   }
 
   async function addNechronicaCharacter(perspective: string, type: NechronicaType, dataObj: Nechronica): Promise<void> {
-    const characterWrap = {
+    const characterWrap: NechronicaWrap = {
       player: perspective || 'user',
       type,
+      position: 0,
+      actionValue: type === 'legion' ? 8 : 0,
+      maxActionValue: type === 'legion' ? 8 : 0,
       character: dataObj
     }
     await addSessionDataHelper('nechronica-character', JSON.stringify(characterWrap))

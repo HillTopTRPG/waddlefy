@@ -3,7 +3,8 @@
     <template #activator="{ props }">
       <v-btn variant="text" class="text-body-1 px-0" v-bind="props">
         <div class="d-flex flex-row align-end underline">
-          <span class="text-caption">最大行動値：</span>
+          <span class="text-caption text-justify">行動値：</span>
+          <span class="text-h5">{{ character?.data.actionValue || 0 }}/</span>
           <template v-if="maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue">
             <span class="text-h5">{{
               maneuverActionValue + maneuverLostActionValue + myselfRoiceActionValue + otherRoiveActionValue
@@ -21,6 +22,18 @@
       </v-btn>
     </template>
     <v-card>
+      <v-card-title>行動値</v-card-title>
+      <v-card-text class="py-1">
+        <menu-edit-text-field
+          :editable="true"
+          :width="11"
+          variant="solo-filled"
+          label="行動値"
+          type="number"
+          :text="character?.data.actionValue?.toString() || '0'"
+          @update="v => onUpdateActionValue(v)"
+        />
+      </v-card-text>
       <v-card-title>最大行動値</v-card-title>
       <v-card-subtitle style="opacity: 1">
         <span style="opacity: 0.6">基礎値: </span>
@@ -100,12 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Nechronica,
-  NechronicaManeuver,
-  NechronicaRoice,
-  NechronicaType
-} from '@/components/panes/Nechronica/nechronica'
+import { NechronicaManeuver, NechronicaRoice, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -113,6 +121,7 @@ import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
 import RoiceBadge from '@/components/panes/Nechronica/RoiceBadge.vue'
 import { convertNumberZero } from '@/components/panes/PrimaryDataUtility'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -121,17 +130,16 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
+  (e: 'update:action-value', value: number): Promise<void>
   (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean): Promise<void>
   (e: 'update:maneuver-lost', characterId: string, idx: number, value: boolean): Promise<void>
   (e: 'update:maneuver-ignore-heiki', characterId: string, idx: number): Promise<void>
   (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
-const character = computed(
-  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } } | undefined => {
-    return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
-  }
-)
+const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
+})
 
 const hasHeiki = computed(() => {
   return character.value?.data.character.maneuverList.some(m => m.name.includes('平気'))
@@ -160,7 +168,7 @@ const myselfRoiceActionValue = computed((): number => {
 })
 
 type OtherRoiceInfo = {
-  character: { id: string; data: { player: string; character: Nechronica } }
+  character: { id: string; data: NechronicaWrap }
   roiceList: {
     index: number
     roice: NechronicaRoice
@@ -173,7 +181,7 @@ const otherRoices = computed((): OtherRoiceInfo[] => {
   return (
     graphQlStore?.state.sessionDataList
       .filter(sd => sd.type === 'nechronica-character' && sd.data.type === 'doll' && sd.id !== props.characterId)
-      .map((c: { id: string; data: { player: string; character: Nechronica } }): OtherRoiceInfo => {
+      .map((c: { id: string; data: NechronicaWrap }): OtherRoiceInfo => {
         const roiceList = c.data.character.roiceList
           .map((roice, index): { index: number; roice: NechronicaRoice } => ({
             index,
@@ -192,6 +200,10 @@ const otherRoices = computed((): OtherRoiceInfo[] => {
 const otherRoiveActionValue = computed((): number => {
   return otherRoices.value.reduce((p, c) => p + c.actionValue, 0)
 })
+
+function onUpdateActionValue(v: string) {
+  emits('update:action-value', parseInt(v, 10))
+}
 
 function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
   emits('update:maneuver-used', characterId, idx, used)

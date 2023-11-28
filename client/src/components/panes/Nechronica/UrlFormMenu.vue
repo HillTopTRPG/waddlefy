@@ -1,8 +1,8 @@
 <template>
   <v-menu v-model="opened" location="bottom left" :close-on-content-click="false" scroll-strategy="close">
     <template #activator="{ props }">
-      <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
-        <v-btn class="text-decoration-underline" v-bind="props">{{ text }}</v-btn>
+      <v-defaults-provider :defaults="{ VBtn: { variant: 'flat', density: 'comfortable' } }">
+        <v-btn class="text-decoration-underline" :color="color" v-bind="props">{{ text }}</v-btn>
       </v-defaults-provider>
     </template>
     <v-card>
@@ -45,6 +45,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{
   text: string
+  color: string
   tips: string[]
 }>()
 

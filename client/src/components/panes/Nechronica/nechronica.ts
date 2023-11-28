@@ -162,6 +162,15 @@ export type Nechronica = {
   roiceList: NechronicaRoice[]
 }
 
+export type NechronicaWrap = {
+  player: string
+  type: NechronicaType
+  position: number
+  actionValue: number
+  maxActionValue: number
+  character: Nechronica
+}
+
 export const NechronicaPowerList: { text: string; color: string }[] = [
   { text: '', color: '#ffffff' },
   { text: '通常技', color: '#008001' },
@@ -171,6 +180,13 @@ export const NechronicaPowerList: { text: string; color: string }[] = [
   { text: '妨害', color: '#ff8080' },
   { text: '防御/生贄', color: '#bf80ff' },
   { text: '移動', color: '#dfdf80' }
+]
+
+export const NechronicaTypeColorMap: { type: NechronicaType; text: string; color: string }[] = [
+  { type: 'doll', text: 'ドール', color: '#DCE775' },
+  { type: 'legion', text: 'レギオン', color: '#80CBC4' },
+  { type: 'horror', text: 'ホラー', color: '#C5CAE9' },
+  { type: 'servent', text: 'サヴァント', color: '#FFAB91' }
 ]
 
 export const NechronicaPartsList: string[] = ['', 'ﾎﾟｼﾞｼｮﾝ', 'ﾒｲﾝｸﾗｽ', 'ｻﾌﾞｸﾗｽ', '頭', '腕', '胴', '足']

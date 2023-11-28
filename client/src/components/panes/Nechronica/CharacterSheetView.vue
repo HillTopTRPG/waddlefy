@@ -1,15 +1,28 @@
 <template>
   <v-sheet class="d-flex flex-row flex-wrap overflow-y-auto" style="gap: 0.5rem">
     <template v-if="character">
-      <v-card variant="outlined" class="d-flex flex-column pa-2 rounded-xl" style="box-sizing: border-box">
+      <v-card
+        variant="outlined"
+        class="d-flex flex-column pa-2 rounded-xl"
+        style="box-sizing: border-box; border-width: 3px"
+        :style="`border-color: ${
+          NechronicaTypeColorMap.find(nc => nc.type === character?.data.type)?.color || 'black'
+        }`"
+      >
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
           <action-value-menu
             v-if="character.data.type !== 'legion'"
             :character-id="characterId"
+            @update:action-value="onUpdateActionValue"
             @update:maneuver-used="onUpdateManeuverUsed"
             @update:maneuver-lost="onUpdateManeuverLost"
             @update:maneuver-ignore-heiki="onUpdateManeuverIgnoreHeiki"
             @update:roice="onUpdateRoice"
+          />
+          <action-value-menu-legion
+            v-else
+            :character-id="characterId"
+            @update:max-action-value="onUpdateMaxActionValue"
           />
           <v-spacer />
           <character-sheet-view-config
@@ -19,7 +32,7 @@
           />
         </v-card-title>
         <v-card-text class="d-flex flex-column align-stretch justify-center px-0 pt-1 pb-0">
-          <character-name-menu :character-id="characterId" />
+          <character-name-menu :character-id="characterId" @update:position="onUpdatePosition" />
         </v-card-text>
         <character-sheet-view-roice-area
           v-if="character.data.type === 'doll' && viewOption.roicePosition === 'before'"
@@ -53,6 +66,7 @@
         >
           <template v-for="(maneuver, idx) in character.data.character.maneuverList" :key="idx">
             <maneuver-btn-menu
+              v-if="judgeView(maneuver)"
               :character="character.data.character"
               :maneuver="maneuver"
               :mode="viewOption.mode"
@@ -87,16 +101,17 @@
 <script setup lang="ts">
 import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
 import {
-  Nechronica,
   NechronicaManeuver,
   NechronicaRoice,
-  NechronicaType,
+  NechronicaTypeColorMap,
+  NechronicaWrap,
   roiceList
 } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ActionValueMenu from '@/components/panes/Nechronica/ActionValueMenu.vue'
+import ActionValueMenuLegion from '@/components/panes/Nechronica/ActionValueMenuLegion.vue'
 import CharacterNameMenu from '@/components/panes/Nechronica/CharacterNameMenu.vue'
 import CharacterSheetViewConfig from '@/components/panes/Nechronica/CharacterSheetViewConfig.vue'
 import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/CharacterSheetViewRoiceArea.vue'
@@ -113,30 +128,36 @@ const props = defineProps<{
   viewOption: NechronicaViewOption
 }>()
 
-const character = computed(
-  (): { id: string; data: { player: string; type: NechronicaType; character: Nechronica } } | undefined => {
-    return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
-  }
-)
+const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
+  return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
+})
 
 const columns = ref(10)
 
 const resetUsedMenu = ref(false)
 
-function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (character: Nechronica) => boolean) {
+function judgeView(maneuver: NechronicaManeuver) {
+  if (!props.viewOption) return true
+  if (maneuver.lost && !props.viewOption.viewLost) return false
+  if (maneuver.used && !props.viewOption.viewUsed) return false
+  if (props.viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
+  return props.viewOption.selectedTypes.some(t => t === maneuver.type)
+}
+
+function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (character: NechronicaWrap) => boolean) {
   const c = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)
   if (!c) return
-  const updateCharacter = clone<Nechronica>(c.data.character)!
+  const updateCharacter = clone<NechronicaWrap>(c.data)!
   if (!wrapFunc(updateCharacter)) return
-  graphQlStore?.updateNechronicaCharacter(characterId, c.data.player, c.data.type, updateCharacter)
+  graphQlStore?.updateNechronicaCharacter(characterId, updateCharacter)
 }
 
 function onResetUsedMenu() {
   resetUsedMenu.value = false
 
   updateNechronicaCharacterHelper(props.characterId, c => {
-    if (c.maneuverList.every(m => !m.used)) return false
-    c.maneuverList.forEach(m => {
+    if (c.character.maneuverList.every(m => !m.used)) return false
+    c.character.maneuverList.forEach(m => {
       m.used = false
     })
     return true
@@ -145,41 +166,65 @@ function onResetUsedMenu() {
 
 function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
   updateNechronicaCharacterHelper(characterId, c => {
-    if (c.maneuverList[idx].used === used) return false
-    c.maneuverList[idx].used = used
+    if (c.character.maneuverList[idx].used === used) return false
+    c.character.maneuverList[idx].used = used
     return true
   })
 }
 
 function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   updateNechronicaCharacterHelper(characterId, c => {
-    if (c.maneuverList[idx].lost === lost) return false
-    c.maneuverList[idx].lost = lost
-    c.maneuverList[idx].ignoreHeiki = undefined
+    if (c.character.maneuverList[idx].lost === lost) return false
+    c.character.maneuverList[idx].lost = lost
+    c.character.maneuverList[idx].ignoreHeiki = undefined
     return true
   })
 }
 
 function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number) {
   updateNechronicaCharacterHelper(characterId, c => {
-    c.maneuverList[idx].ignoreHeiki = !c.maneuverList[idx].ignoreHeiki || undefined
+    c.character.maneuverList[idx].ignoreHeiki = !c.character.maneuverList[idx].ignoreHeiki || undefined
     return true
   })
 }
 
 function onUpdateManeuver(characterId: string, idx: number, maneuver: NechronicaManeuver) {
   updateNechronicaCharacterHelper(characterId, c => {
-    if (JSON.stringify(c.maneuverList[idx]) === JSON.stringify(maneuver)) return false
-    c.maneuverList[idx] = maneuver
+    if (JSON.stringify(c.character.maneuverList[idx]) === JSON.stringify(maneuver)) return false
+    c.character.maneuverList[idx] = maneuver
     return true
   })
 }
 
 function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
   updateNechronicaCharacterHelper(characterId, c => {
-    const r = c.roiceList[idx]
+    const r = c.character.roiceList[idx]
     if (JSON.stringify(r) === JSON.stringify(roice)) return false
-    c.roiceList[idx] = roice
+    c.character.roiceList[idx] = roice
+    return true
+  })
+}
+
+function onUpdateActionValue(actionValue: number) {
+  updateNechronicaCharacterHelper(props.characterId, c => {
+    if (c.actionValue === actionValue) return false
+    c.actionValue = actionValue
+    return true
+  })
+}
+
+function onUpdateMaxActionValue(maxActionValue: number) {
+  updateNechronicaCharacterHelper(props.characterId, c => {
+    if (c.maxActionValue === maxActionValue) return false
+    c.maxActionValue = maxActionValue
+    return true
+  })
+}
+
+function onUpdatePosition(position: number) {
+  updateNechronicaCharacterHelper(props.characterId, c => {
+    if (c.position === position) return false
+    c.position = position
     return true
   })
 }
@@ -187,9 +232,9 @@ function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice)
 function onAddRoice() {
   updateNechronicaCharacterHelper(props.characterId, c => {
     const rawRoice = roiceList[1]
-    c.roiceList.push({
+    c.character.roiceList.push({
       id: 1,
-      name: `未練${c.roiceList.length + 1}`,
+      name: `未練${c.character.roiceList.length + 1}`,
       pos: rawRoice.pos,
       damage: 3,
       neg: rawRoice.neg,
@@ -202,7 +247,7 @@ function onAddRoice() {
 
 function onDeleteRoice(characterId: string, idx: number) {
   updateNechronicaCharacterHelper(characterId, c => {
-    c.roiceList.splice(idx, 1)
+    c.character.roiceList.splice(idx, 1)
     return true
   })
 }
