@@ -3,12 +3,24 @@
     <template #activator="{ props }">
       <v-btn variant="text" class="text-body-1 px-0" v-bind="props">
         <div class="d-flex flex-row align-end underline">
-          <span class="text-caption">最大行動値：</span>
-          <span class="text-h5">{{ character?.data.maxActionValue || 0 }}</span>
+          <span class="text-caption">行動値：</span>
+          <span class="text-h5">{{ character?.data.actionValue || 0 }}/{{ character?.data.maxActionValue || 0 }}</span>
         </div>
       </v-btn>
     </template>
     <v-card>
+      <v-card-title>行動値</v-card-title>
+      <v-card-text class="py-1">
+        <menu-edit-text-field
+          :editable="true"
+          :width="11"
+          variant="solo-filled"
+          label="行動値"
+          type="number"
+          :text="character?.data.actionValue?.toString() || '0'"
+          @update="v => onUpdateActionValue(v)"
+        />
+      </v-card-text>
       <v-card-title>最大行動値</v-card-title>
       <v-card-text>
         <menu-edit-text-field
@@ -46,6 +58,10 @@ const emits = defineEmits<{
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
+
+function onUpdateActionValue(v: string) {
+  emits('update:action-value', parseInt(v, 10))
+}
 
 function onUpdateMaxActionValue(v: string) {
   emits('update:max-action-value', parseInt(v, 10))

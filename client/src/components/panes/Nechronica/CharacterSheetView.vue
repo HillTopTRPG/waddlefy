@@ -22,6 +22,7 @@
           <action-value-menu-legion
             v-else
             :character-id="characterId"
+            @update:action-value="onUpdateActionValue"
             @update:max-action-value="onUpdateMaxActionValue"
           />
           <v-spacer />
@@ -53,8 +54,9 @@
             :columns="columns || 10"
             :mode="viewOption.mode"
             :type="character.data.type"
-            @update:used="(idx, used) => onUpdateManeuverUsed(characterId, idx, used)"
+            @update:used="(idx, used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
+            @update:ignore-heiki="(idx, ignoreHeiki) => onUpdateManeuverIgnoreHeiki(characterId, idx, ignoreHeiki)"
             @update="(idx, maneuver) => onUpdateManeuver(characterId, idx, maneuver)"
           />
         </v-card-text>
@@ -73,8 +75,9 @@
               :type="character.data.type"
               :view-label="viewOption?.viewLabel || ''"
               @update:lost="lost => onUpdateManeuverLost(characterId, idx, lost)"
-              @update:used="used => onUpdateManeuverUsed(characterId, idx, used)"
-              @update="maneuver => onUpdateManeuver(characterId, idx, maneuver)"
+              @update:used="(used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
+              @update:ignore-heiki="ignoreHeiki => onUpdateManeuverIgnoreHeiki(characterId, idx, ignoreHeiki)"
+              @update="updateManeuver => onUpdateManeuver(characterId, idx, updateManeuver)"
             />
           </template>
         </v-card-text>
@@ -164,10 +167,15 @@ function onResetUsedMenu() {
   })
 }
 
-function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
+function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
   updateNechronicaCharacterHelper(characterId, c => {
     if (c.character.maneuverList[idx].used === used) return false
-    c.character.maneuverList[idx].used = used
+    const maneuver = c.character.maneuverList[idx]
+    maneuver.used = used
+    if (used) {
+      console.log({ cost })
+      c.actionValue -= cost
+    }
     return true
   })
 }
@@ -181,9 +189,9 @@ function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   })
 }
 
-function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number) {
+function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
   updateNechronicaCharacterHelper(characterId, c => {
-    c.character.maneuverList[idx].ignoreHeiki = !c.character.maneuverList[idx].ignoreHeiki || undefined
+    c.character.maneuverList[idx].ignoreHeiki = value || undefined
     return true
   })
 }

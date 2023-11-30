@@ -57,7 +57,8 @@
               :type="character!.data.type"
               mode="view"
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
-              @update:used="v => onUpdateManeuverUsed(characterId, idx, v)"
+              @update:used="(v, cost) => onUpdateManeuverUsed(characterId, idx, v, cost)"
+              @update:ignore-heiki="v => onUpdateManeuverIgnoreHeiki(characterId, idx, v)"
             />
             <span
               class="text-body-1 font-weight-bold"
@@ -68,7 +69,7 @@
             <heiki-btn
               :ignore-heiki="maneuver.ignoreHeiki"
               v-if="hasHeiki && maneuver.lost"
-              @click="onUpdateManeuverIgnoreHeiki(characterId, idx)"
+              @click="onUpdateManeuverIgnoreHeiki(characterId, idx, !maneuver.ignoreHeiki)"
             />
             <template v-else>
               <v-spacer v-if="hasHeiki && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
@@ -113,7 +114,12 @@
 </template>
 
 <script setup lang="ts">
-import { NechronicaManeuver, NechronicaRoice, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import {
+  getActionValueNum,
+  NechronicaManeuver,
+  NechronicaRoice,
+  NechronicaWrap
+} from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -131,9 +137,9 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: 'update:action-value', value: number): Promise<void>
-  (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean, cost: number): Promise<void>
   (e: 'update:maneuver-lost', characterId: string, idx: number, value: boolean): Promise<void>
-  (e: 'update:maneuver-ignore-heiki', characterId: string, idx: number): Promise<void>
+  (e: 'update:maneuver-ignore-heiki', characterId: string, idx: number, value: boolean): Promise<void>
   (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
@@ -149,12 +155,12 @@ const actionValueManeuvers = computed((): NechronicaManeuver[] => {
   return character.value?.data.character.maneuverList.filter(m => m.type === 3) || []
 })
 const maneuverActionValue = computed((): number => {
-  return actionValueManeuvers.value.reduce((p, c) => p + convertNumberZero(c.memo), 6) || 0
+  return actionValueManeuvers.value.reduce((p, c) => p + getActionValueNum(c.memo), 6) || 0
 })
 const maneuverLostActionValue = computed((): number => {
   return (
     -actionValueManeuvers.value.reduce(
-      (p, c) => (!c.lost || (hasHeiki.value && !c.ignoreHeiki) ? p : p + convertNumberZero(c.memo)),
+      (p, c) => (!c.lost || (hasHeiki.value && !c.ignoreHeiki) ? p : p + getActionValueNum(c.memo)),
       0
     ) || 0
   )
@@ -205,16 +211,16 @@ function onUpdateActionValue(v: string) {
   emits('update:action-value', parseInt(v, 10))
 }
 
-function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean) {
-  emits('update:maneuver-used', characterId, idx, used)
+function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
+  emits('update:maneuver-used', characterId, idx, used, cost)
 }
 
 function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   emits('update:maneuver-lost', characterId, idx, lost)
 }
 
-function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number) {
-  emits('update:maneuver-ignore-heiki', characterId, idx)
+function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
+  emits('update:maneuver-ignore-heiki', characterId, idx, value)
 }
 
 function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {

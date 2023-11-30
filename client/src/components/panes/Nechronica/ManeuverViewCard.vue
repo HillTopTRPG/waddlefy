@@ -37,7 +37,11 @@
         </v-defaults-provider>
       </v-container>
     </v-card-text>
-    <v-card-text class="d-flex flex-wrap justify-start py-0 px-2" v-if="type !== 'legion'">
+    <v-card-text
+      class="d-flex flex-wrap justify-start align-center py-0 px-2"
+      style="gap: 0.5rem"
+      v-if="type !== 'legion'"
+    >
       <v-defaults-provider
         :defaults="{ VCheckbox: { density: 'comfortable', hideDetails: true, class: 'flex-grow-0' } }"
       >
@@ -51,22 +55,20 @@
             <span class="text-no-wrap">損傷</span>
           </template>
         </v-checkbox>
-        <v-checkbox
-          color="primary"
-          density="compact"
-          :model-value="maneuver.used"
-          @update:model-value="v => emits('update:used', v)"
-        >
-          <template #label>
-            <span class="text-no-wrap">使用</span>
-          </template>
-        </v-checkbox>
+        <heiki-btn
+          :ignore-heiki="maneuver.ignoreHeiki"
+          v-if="hasHeiki && maneuver.lost"
+          @click="emits('update:ignoreHeiki', !maneuver.ignoreHeiki)"
+        />
+        <maneuver-use-btn :used="maneuver.used" :cost="maneuver.cost" @execute="execute" />
       </v-defaults-provider>
     </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
+import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
+import ManeuverUseBtn from '@/components/panes/Nechronica/ManeuverUseBtn.vue'
 import {
   NechronicaManeuver,
   NechronicaPowerList,
@@ -78,12 +80,18 @@ import {
 defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
+  hasHeiki: boolean
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:used', value: boolean): Promise<void>
+  (e: 'update:used', value: boolean, cost: number): Promise<void>
   (e: 'update:lost', value: boolean): Promise<void>
+  (e: 'update:ignoreHeiki', value: boolean): Promise<void>
 }>()
+
+function execute(used: boolean, cost: number) {
+  emits('update:used', used, cost)
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

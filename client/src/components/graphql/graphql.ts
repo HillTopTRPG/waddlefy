@@ -542,6 +542,10 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     await updateSessionDataHelper(characterId, JSON.stringify(wrapObj))
   }
 
+  async function updateSingleton(singletonId: string, dataObj: any) {
+    await updateSessionDataHelper(singletonId, JSON.stringify(dataObj))
+  }
+
   async function updateShinobigamiHandoutSessionMemo(sessionMemoId: string, handoutId: string, text: string) {
     await updateSessionDataHelper(
       sessionMemoId,
@@ -1045,9 +1049,15 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       position: 0,
       actionValue: type === 'legion' ? 8 : 0,
       maxActionValue: type === 'legion' ? 8 : 0,
+      backboneStack: false,
       character: dataObj
     }
     await addSessionDataHelper('nechronica-character', JSON.stringify(characterWrap))
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addSingleton(dataObj: any): Promise<void> {
+    await addSessionDataHelper('singleton', JSON.stringify(dataObj))
     // Subscriptionによってstateに登録される
   }
 
@@ -1581,6 +1591,20 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     }, 300)
   }
 
+  async function updateSingletonHelper<T>(makeData: (data: Partial<T>) => T | null) {
+    const singleton = state.sessionDataList.find(sd => sd.type === 'singleton')
+    if (singleton) {
+      const cloned = clone(singleton.data)!
+      const updateData = makeData(cloned)
+      if (!updateData) return
+      await updateSingleton(singleton.id, updateData)
+    } else {
+      const data = makeData({})
+      if (!data) return
+      await addSingleton(data)
+    }
+  }
+
   return {
     state,
     addDefaultSession,
@@ -1608,7 +1632,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     closeNotificationAll,
     addTargetConfig,
     addShinobigamiCharacter,
-    addNechronicaCharacter,
     addShinobigamiHandoutSessionMemo,
     addShinobigamiHandoutPrivateMemo,
     addShinobigamiHandout,
@@ -1616,16 +1639,18 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiEnigma,
     addShinobigamiPersona,
     addShinobigamiPrize,
+    addNechronicaCharacter,
     updateTargetConfig,
     updateShinobigamiCharacter,
-    updateNechronicaCharacter,
     updateShinobigamiHandoutSessionMemo,
     updateShinobigamiHandoutPrivateMemo,
     updateShinobigamiHandout,
     updateShinobigamiHandoutRelation,
     updateShinobigamiEnigma,
     updateShinobigamiPersona,
-    updateShinobigamiPrize
+    updateShinobigamiPrize,
+    updateNechronicaCharacter,
+    updateSingletonHelper
   }
 }
 

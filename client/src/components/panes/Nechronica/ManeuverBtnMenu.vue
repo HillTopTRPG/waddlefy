@@ -19,9 +19,11 @@
     <maneuver-view-card
       v-else
       :maneuver="maneuver"
+      :has-heiki="hasHeiki"
       :type="type"
-      @update:used="v => emits('update:used', v)"
+      @update:used="(v, cost) => emits('update:used', v, cost)"
       @update:lost="v => emits('update:lost', v)"
+      @update:ignore-heiki="v => emits('update:ignore-heiki', v)"
     />
   </v-menu>
 </template>
@@ -31,9 +33,10 @@ import ManeuverBtn from '@/components/panes/Nechronica/ManeuverBtn.vue'
 import ManeuverEditCard from '@/components/panes/Nechronica/ManeuverEditCard.vue'
 import ManeuverViewCard from '@/components/panes/Nechronica/ManeuverViewCard.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
+import { computed } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-defineProps<{
+const props = defineProps<{
   character: Nechronica
   maneuver: NechronicaManeuver
   type: NechronicaType
@@ -42,10 +45,15 @@ defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:used', value: boolean): Promise<void>
+  (e: 'update:used', value: boolean, cost: number): Promise<void>
   (e: 'update:lost', value: boolean): Promise<void>
+  (e: 'update:ignore-heiki', value: boolean): Promise<void>
   (e: 'update', maneuver: NechronicaManeuver): Promise<void>
 }>()
+
+const hasHeiki = computed(() => {
+  return props.character.maneuverList.some(m => m.name.includes('平気'))
+})
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
