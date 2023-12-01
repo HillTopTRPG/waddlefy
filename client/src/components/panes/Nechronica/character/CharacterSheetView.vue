@@ -81,12 +81,6 @@
             />
           </template>
         </v-card-text>
-        <v-card-text class="d-flex flex-row justify-end px-1 py-0">
-          <reset-used-maneuver-btn
-            :disabled="character.data.character.maneuverList.every(m => !m.used)"
-            @execute="onResetUsedMenu"
-          />
-        </v-card-text>
         <character-sheet-view-roice-area
           v-if="character.data.type === 'doll' && viewOption.roicePosition === 'after'"
           :character-id="characterId"
@@ -159,18 +153,6 @@ async function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (c
   const updateCharacter = clone<NechronicaWrap>(c.data)!
   if (!wrapFunc(updateCharacter)) return
   await graphQlStore?.updateNechronicaCharacter(characterId, updateCharacter)
-}
-
-async function onResetUsedMenu() {
-  resetUsedMenu.value = false
-
-  await updateNechronicaCharacterHelper(props.characterId, c => {
-    if (c.character.maneuverList.every(m => !m.used)) return false
-    c.character.maneuverList.forEach(m => {
-      m.used = false
-    })
-    return true
-  })
 }
 
 const singleton = computed(
