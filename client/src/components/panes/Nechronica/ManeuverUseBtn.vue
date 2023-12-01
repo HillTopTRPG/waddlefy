@@ -1,7 +1,7 @@
 <template>
   <v-menu :close-on-content-click="false" v-model="opened">
     <template #activator="{ props }">
-      <v-btn :text="used ? '未使用にする' : '使用する'" v-bind="props" />
+      <v-btn density="comfortable" :text="used ? '未使用にする' : '使用する'" v-bind="props" />
     </template>
     <v-card>
       <v-card-text class="pt-2 pb-0">

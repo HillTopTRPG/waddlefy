@@ -1,13 +1,23 @@
 <template>
   <v-card
     class="px-0 py-1 rounded-lg"
-    border
     style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
     :style="`outline-color: ${NechronicaPowerList[maneuver.type].color}`"
     variant="flat"
+    v-if="mode === 'edit'"
   >
+    <v-card-text class="d-flex flex-row py-1 px-2">
+      <v-spacer />
+      <v-btn
+        icon="mdi-eye-outline"
+        density="comfortable"
+        size="small"
+        :flat="true"
+        @click="emits('update:mode', 'view')"
+      />
+    </v-card-text>
     <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
-      <v-card-actions class="py-1" style="gap: 0.5rem">
+      <v-card-actions class="py-0" style="gap: 0.5rem">
         <v-select
           :items="typeSelection"
           :color="NechronicaPowerList[maneuver.type].color"
@@ -81,7 +91,7 @@
           @update="onUpdateMemo"
         />
       </v-card-text>
-      <v-card-text class="px-2 py-1">
+      <v-card-text class="px-2 pt-1 pb-0">
         <menu-edit-text-field
           :editable="true"
           variant="solo-filled"
@@ -90,6 +100,18 @@
           label="取得先"
           :text="maneuver.shozoku"
           @update="onUpdateShozoku"
+        />
+      </v-card-text>
+      <v-card-text class="px-2 py-0">
+        <v-switch
+          label="【平気】として扱う"
+          color="primary"
+          true-icon="mdi-emoticon-tongue"
+          :hide-details="true"
+          density="compact"
+          class="ml-2"
+          :model-value="maneuver.isHeiki || false"
+          @update:model-value="(v: any) => onUpdateIsHeiki(v as boolean)"
         />
       </v-card-text>
     </v-defaults-provider>
@@ -121,10 +143,12 @@ const width = 20
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   maneuver: NechronicaManeuver
+  mode: 'view' | 'edit'
 }>()
 
 const emits = defineEmits<{
   (e: 'update', maneuver: NechronicaManeuver): void
+  (e: 'update:mode', mode: 'view' | 'edit'): void
 }>()
 
 const partsSelection = NechronicaPartsList.map((p, idx) => ({
@@ -208,6 +232,14 @@ function onUpdateShozoku(shozoku: string) {
   updateHelper(m => {
     if (m.shozoku === shozoku) return false
     m.shozoku = shozoku
+    return true
+  })
+}
+
+function onUpdateIsHeiki(isHeiki: boolean) {
+  updateHelper(m => {
+    if (m.isHeiki === isHeiki) return false
+    m.isHeiki = isHeiki
     return true
   })
 }

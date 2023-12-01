@@ -1,23 +1,11 @@
 <template>
-  <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center">
+  <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center" v-model="opened">
     <template #activator="{ props }">
-      <v-badge
-        :model-value="mode === 'edit'"
-        color="red"
-        text-color="red"
-        :floating="true"
-        location="bottom right"
-        offset-x="6"
-        offset-y="6"
-        :dot="true"
-        rounded="xl"
-      >
-        <maneuver-btn mode="normal" size="small" :maneuver="maneuver" :view-label="viewLabel" :activate-props="props" />
-      </v-badge>
+      <maneuver-btn mode="normal" size="small" :maneuver="maneuver" :view-label="viewLabel" :activate-props="props" />
     </template>
-    <maneuver-edit-card v-if="mode === 'edit'" :maneuver="maneuver" @update="v => emits('update', v)" />
+    <maneuver-edit-card v-model:mode="mode" :maneuver="maneuver" @update="v => emits('update', v)" />
     <maneuver-view-card
-      v-else
+      v-model:mode="mode"
       :maneuver="maneuver"
       :has-heiki="hasHeiki"
       :type="type"
@@ -33,16 +21,17 @@ import ManeuverBtn from '@/components/panes/Nechronica/ManeuverBtn.vue'
 import ManeuverEditCard from '@/components/panes/Nechronica/ManeuverEditCard.vue'
 import ManeuverViewCard from '@/components/panes/Nechronica/ManeuverViewCard.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   character: Nechronica
   maneuver: NechronicaManeuver
   type: NechronicaType
-  mode: 'view' | 'edit'
   viewLabel?: keyof NechronicaManeuver | ''
 }>()
+
+const mode = ref<'view' | 'edit'>('view')
 
 const emits = defineEmits<{
   (e: 'update:used', value: boolean, cost: number): Promise<void>
@@ -51,8 +40,13 @@ const emits = defineEmits<{
   (e: 'update', maneuver: NechronicaManeuver): Promise<void>
 }>()
 
+const opened = ref(false)
+watch(opened, v => {
+  if (v) mode.value = 'view'
+})
+
 const hasHeiki = computed(() => {
-  return props.character.maneuverList.some(m => m.name.includes('平気'))
+  return props.character.maneuverList.some(m => m.isHeiki)
 })
 </script>
 

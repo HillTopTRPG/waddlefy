@@ -55,7 +55,6 @@
               :disable-button="true"
               :maneuver="maneuver"
               :type="character!.data.type"
-              mode="view"
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="(v, cost) => onUpdateManeuverUsed(characterId, idx, v, cost)"
               @update:ignore-heiki="v => onUpdateManeuverIgnoreHeiki(characterId, idx, v)"
@@ -86,11 +85,7 @@
         </v-card-subtitle>
         <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
           <template v-for="(roice, idx) in actionValueRoices" :key="idx">
-            <roice-badge
-              mode="view"
-              :roice="roice"
-              @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)"
-            />
+            <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)" />
           </template>
         </v-card-text>
       </template>
@@ -102,7 +97,6 @@
         <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap">
           <template v-for="(roice, idx) in info.roiceList" :key="idx">
             <roice-badge
-              mode="view"
               :roice="roice.roice"
               @update="updateRoice => onUpdateRoice(info.character.id, idx, updateRoice)"
             />
@@ -148,7 +142,7 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
 })
 
 const hasHeiki = computed(() => {
-  return character.value?.data.character.maneuverList.some(m => m.name.includes('平気'))
+  return character.value?.data.character.maneuverList.some(m => m.isHeiki)
 })
 
 const actionValueManeuvers = computed((): NechronicaManeuver[] => {

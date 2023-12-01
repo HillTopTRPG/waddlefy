@@ -44,7 +44,7 @@
         @update="onUpdateRoiceMemo"
       />
     </v-card-text>
-    <v-card-actions class="py-0 d-flex flex-row justify-end" style="min-height: auto" v-if="mode === 'edit'">
+    <v-card-actions class="py-0 d-flex flex-row justify-end" style="min-height: auto">
       <delete-menu-btn type="未練" :target-name="roice.name" @execute="emits('delete')" />
     </v-card-actions>
   </v-card>
@@ -62,7 +62,6 @@ import { ref, watch } from 'vue'
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   roice: NechronicaRoice
-  mode: 'view' | 'edit'
 }>()
 
 const emits = defineEmits<{

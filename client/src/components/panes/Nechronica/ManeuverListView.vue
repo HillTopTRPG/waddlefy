@@ -15,7 +15,6 @@
                 :character="character"
                 :maneuver="maneuver"
                 :type="type"
-                :mode="mode"
                 :view-label="viewOption?.viewLabel || ''"
                 @update:lost="v => emits('update:lost', mIdx, v)"
                 @update:used="(v, cost) => emits('update:used', mIdx, v, cost)"

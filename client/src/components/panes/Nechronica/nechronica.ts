@@ -13,6 +13,7 @@ export type NechronicaManeuver = {
   memo: string
   shozoku: string
   ignoreHeiki?: boolean
+  isHeiki?: boolean
 }
 
 export type NechronicaRoice = {
@@ -157,6 +158,15 @@ export type Nechronica = {
     position: number
     mainClass: number // MCLS
     subClass: number // SCLS
+    basePosition: number // 0: 煉獄, 1: 花園, 2: 楽園
+    hairColor: string
+    eyeColor: string
+    skinColor: string
+    height: string
+    weight: string
+    age: string
+    shuzoku: string
+    carma: string
   }
   maneuverList: NechronicaManeuver[]
   roiceList: NechronicaRoice[]
@@ -294,17 +304,19 @@ export class NechronicaHelper {
       json['Power_shozoku']
     ]
     const maneuverList = transpose(maneuvers).map(list => {
+      const name = textFilter(list[4])
       const data: NechronicaManeuver = {
         lost: list[0] !== '0',
         used: list[1] !== '0',
         type: convertNumberZero(list[2]),
         parts: convertNumberZero(list[3]),
-        name: textFilter(list[4]),
+        name,
         timing: convertNumberZero(list[5]),
         cost: textFilter(list[6]),
         range: textFilter(list[7]),
         memo: textFilter(list[8]),
-        shozoku: textFilter(list[9])
+        shozoku: textFilter(list[9]),
+        isHeiki: ['平気', '自動制御装置'].includes(name)
       }
       return data
     })
@@ -338,13 +350,23 @@ export class NechronicaHelper {
         return data
       })
       .filter(r => Boolean(r.name))
+    console.log(JSON.stringify(json, null, 2))
     return {
       url: this.url,
       basic: {
-        characterName: textFilter(json.pc_name),
+        characterName: textFilter(json.pc_name) || textFilter(json.data_title),
         position: convertNumberZero(json.position),
         mainClass: convertNumberZero(json['MCLS']),
-        subClass: convertNumberZero(json['SCLS'])
+        subClass: convertNumberZero(json['SCLS']),
+        basePosition: parseInt(json['SL_sex'], 10),
+        hairColor: textFilter(json.color_hair),
+        eyeColor: textFilter(json.color_eye),
+        skinColor: textFilter(json.color_skin),
+        height: textFilter(json.pc_height),
+        weight: textFilter(json.pc_weight),
+        age: textFilter(json.age),
+        shuzoku: textFilter(json.shuzoku),
+        carma: textFilter(json.pc_carma)
       },
       maneuverList,
       roiceList

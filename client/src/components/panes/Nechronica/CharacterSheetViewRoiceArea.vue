@@ -5,7 +5,6 @@
         <template v-for="(roice, idx) in roiceList || []" :key="idx">
           <roice-badge
             :roice="roice"
-            :mode="mode"
             @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)"
             @delete="onDeleteRoice(characterId, idx)"
           />

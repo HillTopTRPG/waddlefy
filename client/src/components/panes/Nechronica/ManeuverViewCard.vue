@@ -1,5 +1,10 @@
 <template>
-  <v-card :class="type === 'legion' ? 'pb-2' : ''">
+  <v-card
+    class="rounded-lg"
+    v-if="mode === 'view'"
+    style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
+    :style="`outline-color: ${NechronicaPowerList[maneuver.type].color}`"
+  >
     <v-card-text class="px-2 pt-2 pb-0">
       <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
         <v-defaults-provider :defaults="{ VChip: { size: 'small' } }">
@@ -10,8 +15,16 @@
           }}</v-chip>
           <v-chip variant="outlined" v-if="maneuver.shozoku">{{ maneuver.shozoku }}</v-chip>
         </v-defaults-provider>
+        <v-spacer />
+        <v-btn
+          icon="mdi-pencil"
+          density="comfortable"
+          size="small"
+          :flat="true"
+          @click="emits('update:mode', 'edit')"
+        />
       </v-sheet>
-      <v-container class="pa-0" style="min-width: 25em; max-width: 25em">
+      <v-container class="pa-0" style="min-width: 20rem; max-width: 20rem">
         <v-defaults-provider :defaults="{ VCol: { class: 'overflow-hidden' } }">
           <v-row :no-gutters="true">
             <v-col class="v-col-12 text-no-wrap bg-grey-darken-3 font-weight-bold">
@@ -37,37 +50,21 @@
         </v-defaults-provider>
       </v-container>
     </v-card-text>
-    <v-card-text
-      class="d-flex flex-wrap justify-start align-center py-0 px-2"
-      style="gap: 0.5rem"
-      v-if="type !== 'legion'"
-    >
-      <v-defaults-provider
-        :defaults="{ VCheckbox: { density: 'comfortable', hideDetails: true, class: 'flex-grow-0' } }"
-      >
-        <v-checkbox
-          color="error"
-          density="compact"
-          :model-value="maneuver.lost"
-          @update:model-value="v => emits('update:lost', v)"
-        >
-          <template #label>
-            <span class="text-no-wrap">損傷</span>
-          </template>
-        </v-checkbox>
-        <heiki-btn
-          :ignore-heiki="maneuver.ignoreHeiki"
-          v-if="hasHeiki && maneuver.lost"
-          @click="emits('update:ignoreHeiki', !maneuver.ignoreHeiki)"
-        />
-        <maneuver-use-btn :used="maneuver.used" :cost="maneuver.cost" @execute="execute" />
-      </v-defaults-provider>
+    <v-card-text class="d-flex flex-wrap justify-start align-center px-2 pt-1 pb-2" style="gap: 0.5rem">
+      <maneuver-lost-btn :lost="maneuver.lost" @execute="onManeuverLost" />
+      <heiki-btn
+        :ignore-heiki="maneuver.ignoreHeiki"
+        v-if="hasHeiki && maneuver.lost"
+        @click="emits('update:ignoreHeiki', !maneuver.ignoreHeiki)"
+      />
+      <maneuver-use-btn :used="maneuver.used" :cost="maneuver.cost" @execute="onManeuverUse" />
     </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
 import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
+import ManeuverLostBtn from '@/components/panes/Nechronica/ManeuverLostBtn.vue'
 import ManeuverUseBtn from '@/components/panes/Nechronica/ManeuverUseBtn.vue'
 import {
   NechronicaManeuver,
@@ -81,15 +78,21 @@ defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
   hasHeiki: boolean
+  mode: 'view' | 'edit'
 }>()
 
 const emits = defineEmits<{
   (e: 'update:used', value: boolean, cost: number): Promise<void>
   (e: 'update:lost', value: boolean): Promise<void>
+  (e: 'update:mode', value: 'view' | 'edit'): Promise<void>
   (e: 'update:ignoreHeiki', value: boolean): Promise<void>
 }>()
 
-function execute(used: boolean, cost: number) {
+function onManeuverLost(lost: boolean) {
+  emits('update:lost', lost)
+}
+
+function onManeuverUse(used: boolean, cost: number) {
   emits('update:used', used, cost)
 }
 </script>

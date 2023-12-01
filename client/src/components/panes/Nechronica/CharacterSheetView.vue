@@ -71,7 +71,6 @@
               v-if="judgeView(maneuver)"
               :character="character.data.character"
               :maneuver="maneuver"
-              :mode="viewOption.mode"
               :type="character.data.type"
               :view-label="viewOption?.viewLabel || ''"
               @update:lost="lost => onUpdateManeuverLost(characterId, idx, lost)"

@@ -156,16 +156,25 @@ const singleton = computed(
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
-function getMaxActionValue(data: NechronicaWrap, ignoreHeikiFlg: boolean) {
+function getMaxActionValue(characterId: string, data: NechronicaWrap, ignoreHeikiFlg: boolean) {
   if (data.type === 'legion') return data.maxActionValue
-  const hasHeiki = data.character.maneuverList.some(m => m.name.includes('平気'))
-  return data.character.maneuverList.reduce((p, c) => {
+  const hasHeiki = data.character.maneuverList.some(m => m.isHeiki)
+  const dependenceRoiceNum = data.character.roiceList.filter(r => r.damage === 4 && r.id % 10 === 3).length
+  const otherInsanityRoice: number =
+    graphQlStore?.state.sessionDataList
+      .filter(sd => sd.type === 'nechronica-character' && sd.id !== characterId && sd.data.type === 'doll')
+      .map(({ data }: { data: NechronicaWrap }): number => {
+        return data.character.roiceList.filter(r => r.damage === 4 && [10, 30].includes(r.id)).length
+      })
+      .reduce((p, c) => p + c, 0) || 0
+  const maneuverValue = data.character.maneuverList.reduce((p, c) => {
     if (c.type !== 3) return p
     const actionValue = getActionValueNum(c.memo)
     if (!c.lost) return p + actionValue
-    if (!ignoreHeikiFlg && (hasHeiki && !c.ignoreHeiki)) return p + actionValue
-    return p
+    if (ignoreHeikiFlg || !hasHeiki || c.ignoreHeiki) return p
+    return p + actionValue
   }, 6)
+  return maneuverValue - dependenceRoiceNum * 2 - otherInsanityRoice
 }
 
 const progress = ref(100)
@@ -182,7 +191,7 @@ function getLostManeuverInfoList(): {
       .filter(sd => {
         if (sd.type !== 'nechronica-character') return false
         const data: NechronicaWrap = sd.data
-        return data.character.maneuverList.some(m => m.name.includes('平気'))
+        return data.character.maneuverList.some(m => m.isHeiki)
       })
       .map(sd => {
         const data: NechronicaWrap = sd.data
@@ -211,10 +220,10 @@ const battleStartOption = computed(() => {
   return [
     lostManeuverNum
       ? {
-        value: 'ignore-heiki',
-        text: `${lostManeuverNum}個の損傷済マニューバを【平気】の対象外化にする`,
-        color: 'warning'
-      }
+          value: 'ignore-heiki',
+          text: `${lostManeuverNum}個の損傷済マニューバを【平気】の対象外化にする`,
+          color: 'warning'
+        }
       : null,
     { value: 'init-action-value', text: '全員の行動値の初期化', color: 'primary' },
     { value: 'init-position', text: '全員を初期配置に移動', color: 'primary' },
@@ -235,18 +244,22 @@ async function onBattleStart(option: string[]) {
 
   let maxAllActionValue = 0
 
-  if (option.some(o => ['ignore-heiki', 'init-action-value', 'init-maneuver-used'].includes(o))) {
+  if (option.some(o => ['ignore-heiki', 'init-action-value', 'init-position', 'init-maneuver-used'].includes(o))) {
     for (const sd of graphQlStore?.state.sessionDataList || []) {
       if (sd.type !== 'nechronica-character') continue
       const cloneObj = clone<NechronicaWrap>(sd.data)!
 
-      const maxActionValue = getMaxActionValue(cloneObj, option.includes('ignore-heiki'))
+      const maxActionValue = getMaxActionValue(sd.id, cloneObj, option.includes('ignore-heiki'))
       if (maxAllActionValue < maxActionValue) {
         maxAllActionValue = maxActionValue
       }
 
       if (option.includes('init-action-value')) {
         cloneObj.actionValue = maxActionValue
+      }
+
+      if (option.includes('init-position')) {
+        cloneObj.position = cloneObj.character.basic.basePosition + 3
       }
 
       if (option.includes('init-maneuver-used') || option.includes('ignore-heiki')) {
@@ -270,7 +283,7 @@ async function onBattleStart(option: string[]) {
       maxAllActionValue =
         graphQlStore?.state.sessionDataList.reduce((p, c) => {
           if (c.type !== 'nechronica-character') return p
-          return p + getMaxActionValue(c.data, option.includes('ignore-heiki'))
+          return p + getMaxActionValue(c.id, c.data, option.includes('ignore-heiki'))
         }, 0) || 0
     }
     updateProgress(total, count)
@@ -352,11 +365,13 @@ const nextTurnOption = computed(() => {
   return [
     battleCount ? { value: 'reset-action-value', text: '0を超える行動値を全て0にする', color: 'error' } : null,
     { value: 'action-value-recovery', text: '全員の行動値を最大値分回復する', color: 'primary' },
-    lostManeuverNum ? {
-      value: 'ignore-heiki',
-      text: `${lostManeuverNum}個の損傷済マニューバを【平気】の対象外化にする`,
-      color: 'warning'
-    }: null
+    lostManeuverNum
+      ? {
+          value: 'ignore-heiki',
+          text: `${lostManeuverNum}個の損傷済マニューバを【平気】の対象外化にする`,
+          color: 'warning'
+        }
+      : null
   ].filter((item): item is { text: string; value: string; color: string } => Boolean(item))
 })
 function onNextTurn(option: string[]) {

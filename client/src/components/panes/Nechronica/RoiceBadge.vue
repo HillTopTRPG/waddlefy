@@ -17,12 +17,7 @@
         <roice-chip v-else :roice="roice" :color="roiceDamages[roice.damage].color" :bind-props="props" />
       </v-defaults-provider>
     </template>
-    <roice-card
-      :roice="roice"
-      :mode="mode"
-      @update="updateRoice => emits('update', updateRoice)"
-      @delete="emits('delete')"
-    />
+    <roice-card :roice="roice" @update="updateRoice => emits('update', updateRoice)" @delete="emits('delete')" />
   </v-menu>
 </template>
 
@@ -34,7 +29,6 @@ import { NechronicaRoice, roiceDamages } from '@/components/panes/Nechronica/nec
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   roice: NechronicaRoice
-  mode: 'view' | 'edit'
 }>()
 
 const emits = defineEmits<{
