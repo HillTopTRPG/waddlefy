@@ -42,7 +42,6 @@ const props = defineProps<{
   character: Nechronica
   columns: number
   type: NechronicaType
-  mode: 'view' | 'edit'
   viewOption: NechronicaViewOption | null
   battleTiming: string
 }>()

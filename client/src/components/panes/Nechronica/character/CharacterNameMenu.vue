@@ -20,8 +20,8 @@
               prefix="エリア"
               style="max-width: 9em"
               :items="positionSelection"
-              :model-value="character.data.position || 0"
-              @update:model-value="v => emits('update:position', v)"
+              :model-value="character?.data.position.toString() || '0'"
+              @update:model-value="v => emits('update:position', parseInt(v, 10))"
             />
           </v-sheet>
         </v-sheet>
@@ -114,12 +114,12 @@ const classList = [
 ]
 
 const positionSelection = [
-  { value: 0, text: '' },
-  { value: 1, text: '奈落' },
-  { value: 2, text: '地獄' },
-  { value: 3, text: '煉獄' },
-  { value: 4, text: '花園' },
-  { value: 5, text: '楽園' }
+  { value: '0', text: '' },
+  { value: '1', text: '奈落' },
+  { value: '2', text: '地獄' },
+  { value: '3', text: '煉獄' },
+  { value: '4', text: '花園' },
+  { value: '5', text: '楽園' }
 ]
 
 const icon = computed(() => {

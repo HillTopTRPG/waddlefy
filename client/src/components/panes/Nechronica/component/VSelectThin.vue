@@ -17,13 +17,13 @@
 <script setup lang="ts">
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  modelValue: string | number
+  modelValue: string
   prefix: string
-  items: { value: string | number; text: string }[]
+  items: { value: string; text: string }[]
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:model-value', modelValue: string | number): void
+  (e: 'update:model-value', modelValue: string): void
 }>()
 </script>
 

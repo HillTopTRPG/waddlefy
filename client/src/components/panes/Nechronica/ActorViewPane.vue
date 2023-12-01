@@ -6,11 +6,21 @@
       </v-btn>
     </template>
     <template #layout>
-      <v-sheet class="d-flex flex-row flex-wrap px-2 pb-0" style="gap: 0.5rem">
-        <template v-for="(info, idx) in maneuverStackWrap" :key="idx">
-          <maneuver-stack :data="info" />
+      <draggable
+        :list="maneuverStackWrap"
+        :group="{ name: 'people', pull: 'clone', put: false }"
+        :component-data="{ name: 'fade' }"
+        class="d-flex flex-row flex-wrap px-2 pb-0"
+        style="gap: 0.5rem"
+        ghost-class="ghost"
+        handle=".drag-thumb"
+        :animation="200"
+        item-key="id"
+      >
+        <template #item="{ element, index }">
+          <maneuver-stack :data="element" :view-thumb="maneuverStackWrap.length > 1" @delete="onDeleteStack(index)" />
         </template>
-      </v-sheet>
+      </draggable>
     </template>
     <template #default>
       <v-sheet class="w-100">
@@ -140,6 +150,7 @@ import ManeuverStack from '@/components/panes/Nechronica/maneuver-stack/Maneuver
 import {
   Nechronica,
   NechronicaManeuver,
+  NechronicaManeuverStack,
   NechronicaPowerList,
   NechronicaSingleton,
   NechronicaTimingList,
@@ -148,6 +159,8 @@ import {
   getActionValueNum
 } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
+import { omit } from 'lodash'
+import draggable from 'vuedraggable'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -163,7 +176,6 @@ const emits = defineEmits<{
 }>()
 
 const viewOption = ref<NechronicaViewOption>({
-  mode: 'view',
   roicePosition: 'before',
   viewLost: true,
   viewUsed: true,
@@ -202,27 +214,51 @@ const singleton = computed(
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
-const maneuverStackWrap = ref(singleton.value?.data.maneuverStack || [])
+function createManeuverStackWrap(): (NechronicaManeuverStack & { id: string })[] {
+  return (
+    singleton.value?.data.maneuverStack?.map((ms: NechronicaManeuverStack, idx: number) => {
+      return { id: `${ms.characterId}-${ms.maneuverIndex}-${idx}`, ...ms }
+    }) || []
+  )
+}
+
+const maneuverStackWrap = ref(createManeuverStackWrap())
 watch(
   () => singleton.value?.data.maneuverStack,
   () => {
-    maneuverStackWrap.value = singleton.value?.data.maneuverStack || []
+    const after = createManeuverStackWrap()
+    if (JSON.stringify(maneuverStackWrap.value) === JSON.stringify(after)) return
+    maneuverStackWrap.value = after
   },
   { deep: true }
 )
 watch(
   maneuverStackWrap,
   async () => {
+    const after = maneuverStackWrap.value.map(v => omit(v, 'id'))
+    if (JSON.stringify(singleton.value?.data.maneuverStack) === JSON.stringify(after)) return
     await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
       const result: NechronicaSingleton = {
         ...d,
-        maneuverStack: maneuverStackWrap.value
+        maneuverStack: maneuverStackWrap.value.map(v => omit(v, 'id'))
       }
       return result
     })
   },
   { deep: true }
 )
+
+async function onDeleteStack(index: number) {
+  const cloned = clone<NechronicaManeuverStack[]>(maneuverStackWrap.value.map(ms => omit(ms, 'id')))!
+  cloned.splice(index, 1)
+  await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+    const result: NechronicaSingleton = {
+      ...d,
+      maneuverStack: cloned
+    }
+    return result
+  })
+}
 
 function getMaxActionValue(characterId: string, data: NechronicaWrap, ignoreHeikiFlg: boolean) {
   if (data.type === 'legion') return data.maxActionValue
@@ -448,4 +484,8 @@ function onNextTurn(option: string[]) {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.ghost {
+  opacity: 0.5;
+}
+</style>

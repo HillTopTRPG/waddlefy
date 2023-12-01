@@ -68,7 +68,7 @@ watch(
 
 function execute() {
   opened.value = false
-  emits('execute', !props.used, getActionValueNum(props.cost, 10) + addNum.value)
+  emits('execute', !props.used, getActionValueNum(props.cost) + addNum.value)
 }
 </script>
 

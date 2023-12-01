@@ -39,7 +39,6 @@
         <character-sheet-view-roice-area
           v-if="character.data.type === 'doll' && viewOption.roicePosition === 'before'"
           :character-id="characterId"
-          :mode="viewOption.mode"
           :roice-list="character?.data.character.roiceList || []"
           @update:roice="onUpdateRoice"
           @add="onAddRoice"
@@ -54,7 +53,6 @@
             :view-option="viewOption"
             :battle-timing="battleTiming"
             :columns="columns || 10"
-            :mode="viewOption.mode"
             :type="character.data.type"
             @update:used="(idx, used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
@@ -92,7 +90,6 @@
         <character-sheet-view-roice-area
           v-if="character.data.type === 'doll' && viewOption.roicePosition === 'after'"
           :character-id="characterId"
-          :mode="viewOption.mode"
           :roice-list="character?.data.character.roiceList || []"
           @update:roice="onUpdateRoice"
           @add="onAddRoice"
@@ -141,7 +138,7 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
 })
 
 const isCurrent = computed(() => {
-  return character.value?.data.actionValue >= props.battleCount
+  return (character.value?.data.actionValue || 0) >= props.battleCount
 })
 
 const columns = ref(10)

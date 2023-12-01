@@ -9,7 +9,7 @@
             @delete="onDeleteRoice(characterId, idx)"
           />
         </template>
-        <v-btn variant="tonal" rounded="xl" v-if="mode === 'edit'" class="" text="追加" @click="emits('add')" />
+        <v-btn variant="tonal" rounded="xl" class="" text="追加" @click="emits('add')" />
       </v-sheet>
     </v-sheet>
   </v-card-text>
@@ -23,7 +23,6 @@ import RoiceBadge from '@/components/panes/Nechronica/roice/RoiceBadge.vue'
 const props = defineProps<{
   characterId: string
   roiceList: NechronicaRoice[]
-  mode: 'view' | 'edit'
 }>()
 
 const emits = defineEmits<{
