@@ -7,7 +7,7 @@
     </template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap px-2 pb-0" style="gap: 0.5rem">
-        <template v-for="(info, idx) in singleton?.data.maneuverStack || []" :key="idx">
+        <template v-for="(info, idx) in maneuverStackWrap" :key="idx">
           <maneuver-stack :data="info" />
         </template>
       </v-sheet>
@@ -129,7 +129,7 @@ export const componentInfo = {
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
-import { computed, inject, ref } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CharacterSheetView from '@/components/panes/Nechronica/character/CharacterSheetView.vue'
@@ -200,6 +200,28 @@ function onChangeNav() {
 const singleton = computed(
   (): { id: string; data: NechronicaSingleton } | undefined =>
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+)
+
+const maneuverStackWrap = ref(singleton.value?.data.maneuverStack || [])
+watch(
+  () => singleton.value?.data.maneuverStack,
+  () => {
+    maneuverStackWrap.value = singleton.value?.data.maneuverStack || []
+  },
+  { deep: true }
+)
+watch(
+  maneuverStackWrap,
+  async () => {
+    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+      const result: NechronicaSingleton = {
+        ...d,
+        maneuverStack: maneuverStackWrap.value
+      }
+      return result
+    })
+  },
+  { deep: true }
 )
 
 function getMaxActionValue(characterId: string, data: NechronicaWrap, ignoreHeikiFlg: boolean) {
