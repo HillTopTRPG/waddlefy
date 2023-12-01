@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import UrlForm from '@/components/panes/Nechronica/UrlForm.vue'
+import UrlForm from '@/components/panes/Nechronica/component/UrlForm.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{

@@ -1,7 +1,8 @@
 <template>
   <v-card
     class="rounded-lg"
-    v-if="mode === 'view'"
+    :class="mode === 'view' ? '' : 'pb-2'"
+    v-if="mode.startsWith('view')"
     style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
     :style="`outline-color: ${NechronicaPowerList[maneuver.type].color}`"
   >
@@ -17,6 +18,7 @@
         </v-defaults-provider>
         <v-spacer />
         <v-btn
+          v-if="mode === 'view'"
           icon="mdi-pencil"
           density="comfortable"
           size="small"
@@ -43,14 +45,18 @@
               <v-col class="v-col-3">{{ maneuver.range }}</v-col>
             </v-defaults-provider>
           </v-row>
-          <v-row class="border-b" :no-gutters="true" style="min-height: 5em">
+          <v-row class="" :no-gutters="true" style="min-height: 5em">
             <v-col class="v-col-2 py-2 text-no-wrap text-center bg-grey-darken-3">効果</v-col>
             <v-col class="v-col-10 text-wrap pa-2">{{ maneuver.memo }}</v-col>
           </v-row>
         </v-defaults-provider>
       </v-container>
     </v-card-text>
-    <v-card-text class="d-flex flex-wrap justify-start align-center px-2 pt-1 pb-2" style="gap: 0.5rem">
+    <v-card-text
+      class="d-flex flex-wrap justify-start align-center px-2 pt-1 pb-2"
+      style="gap: 0.5rem"
+      v-if="mode === 'view'"
+    >
       <maneuver-lost-btn :lost="maneuver.lost" @execute="onManeuverLost" />
       <heiki-btn
         :ignore-heiki="maneuver.ignoreHeiki"
@@ -63,9 +69,9 @@
 </template>
 
 <script setup lang="ts">
-import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
-import ManeuverLostBtn from '@/components/panes/Nechronica/ManeuverLostBtn.vue'
-import ManeuverUseBtn from '@/components/panes/Nechronica/ManeuverUseBtn.vue'
+import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import ManeuverLostBtn from '@/components/panes/Nechronica/maneuver/ManeuverLostBtn.vue'
+import ManeuverUseBtn from '@/components/panes/Nechronica/maneuver/ManeuverUseBtn.vue'
 import {
   NechronicaManeuver,
   NechronicaPowerList,
@@ -78,7 +84,7 @@ defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
   hasHeiki: boolean
-  mode: 'view' | 'edit'
+  mode: 'view' | 'view-simple' | 'edit'
 }>()
 
 const emits = defineEmits<{

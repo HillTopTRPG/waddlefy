@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import RoiceCard from '@/components/panes/Nechronica/RoiceCard.vue'
-import RoiceChip from '@/components/panes/Nechronica/RoiceChip.vue'
 import { NechronicaRoice, roiceDamages } from '@/components/panes/Nechronica/nechronica'
+import RoiceCard from '@/components/panes/Nechronica/roice/RoiceCard.vue'
+import RoiceChip from '@/components/panes/Nechronica/roice/RoiceChip.vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{

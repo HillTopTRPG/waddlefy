@@ -151,7 +151,7 @@ export const componentInfo = {
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
-import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
+import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
 
 defineProps<{

@@ -1,14 +1,14 @@
 <template>
   <v-sheet
     :max-width="`${columns * 60 + 64 + 4}px`"
-    class="d-flex flex-column"
+    class="d-flex flex-column bg-transparent"
     style="box-sizing: content-box; gap: 5px"
   >
     <template v-for="(structure, idx) in structures" :key="idx">
       <v-divider v-if="idx" />
-      <v-sheet class="d-flex flex-row w-100">
+      <v-sheet class="d-flex flex-row w-100 bg-transparent">
         <icon-btn :class="structure.headerClass" :disable-button="true" />
-        <v-sheet class="d-flex flex-row flex-wrap ml-3" style="gap: 0.5rem">
+        <v-sheet class="d-flex flex-row flex-wrap ml-3 bg-transparent" style="gap: 0.5rem">
           <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
             <template v-if="structure.targetParts.some(n => n === maneuver.parts) && judgeView(maneuver)">
               <maneuver-btn-menu
@@ -16,6 +16,7 @@
                 :maneuver="maneuver"
                 :type="type"
                 :view-label="viewOption?.viewLabel || ''"
+                :battle-timing="battleTiming"
                 @update:lost="v => emits('update:lost', mIdx, v)"
                 @update:used="(v, cost) => emits('update:used', mIdx, v, cost)"
                 @update:ignore-heiki="v => emits('update:ignore-heiki', mIdx, v)"
@@ -31,9 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
-import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
-import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
+import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
+import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
+import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -43,6 +44,7 @@ const props = defineProps<{
   type: NechronicaType
   mode: 'view' | 'edit'
   viewOption: NechronicaViewOption | null
+  battleTiming: string
 }>()
 
 const emits = defineEmits<{

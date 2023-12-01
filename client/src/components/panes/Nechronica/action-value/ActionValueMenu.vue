@@ -63,7 +63,7 @@
               class="text-body-1 font-weight-bold"
               :class="!maneuver.lost || (hasHeiki && !maneuver.ignoreHeiki) ? 'text-info' : 'text-grey'"
             >
-              {{ `+${convertNumberZero(maneuver.memo)}` }}
+              {{ `+${getActionValueNum(maneuver.memo)}` }}
             </span>
             <heiki-btn
               :ignore-heiki="maneuver.ignoreHeiki"
@@ -117,10 +117,9 @@ import {
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import HeikiBtn from '@/components/panes/Nechronica/HeikiBtn.vue'
-import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
-import RoiceBadge from '@/components/panes/Nechronica/RoiceBadge.vue'
-import { convertNumberZero } from '@/components/panes/PrimaryDataUtility'
+import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
+import RoiceBadge from '@/components/panes/Nechronica/roice/RoiceBadge.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

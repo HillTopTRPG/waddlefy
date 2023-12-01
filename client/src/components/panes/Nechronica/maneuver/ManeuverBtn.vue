@@ -1,15 +1,17 @@
 <template>
-  <icon-btn
-    :class="classText"
-    :disable-button="disableButton"
-    :text="mode === 'normal' ? maneuver.name : ''"
-    :under-text="text"
-    :activate-props="activateProps || {}"
-  />
+  <v-sheet class="px-0" :class="battleTargetClass[isBattleTarget]">
+    <icon-btn
+      :class="classText"
+      :disable-button="disableButton"
+      :text="mode === 'normal' ? maneuver.name : ''"
+      :under-text="text"
+      :activate-props="activateProps || {}"
+    />
+  </v-sheet>
 </template>
 
 <script setup lang="ts">
-import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
+import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import { NechronicaManeuver, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 
@@ -19,10 +21,12 @@ const props = defineProps<{
   disableButton?: boolean
   activateProps?: any
   size: 'x-small' | 'small' | 'normal'
-  mode: 'normal' | 'simple'
+  mode: 'normal' | 'simple' | 'icon'
   viewLabel?: keyof NechronicaManeuver | ''
+  battleTiming?: string
 }>()
 
+const battleTargetClass = ['bg-transparent', 'bg-cyan-lighten-4', 'bg-yellow-accent-2']
 const text = computed(() => {
   if (!props.viewLabel) return ''
   const value = props.maneuver[props.viewLabel]
@@ -30,6 +34,25 @@ const text = computed(() => {
     return NechronicaTimingList[value as number].text
   }
   return value?.toString() || ''
+})
+
+const isBattleTarget = computed((): number => {
+  if (!props.battleTiming || props.maneuver.type === 3) return 0
+  if (props.battleTiming === 'action') {
+    if (props.maneuver.timing === 1) return 2
+    return [0, 4].includes(props.maneuver.timing) ? 1 : 0
+  }
+  if (props.battleTiming === 'rapid') {
+    if (props.maneuver.timing === 4) return 2
+    return props.maneuver.timing === 0 ? 1 : 0
+  }
+  if (props.battleTiming === 'judge') {
+    if (props.maneuver.timing === 2) return 2
+    return props.maneuver.timing === 0 ? 1 : 0
+  }
+  // damage
+  if (props.maneuver.timing === 3) return 2
+  return props.maneuver.timing === 0 ? 1 : 0
 })
 
 const shozokuClassMap = [
@@ -83,18 +106,21 @@ const basicPartsClassMap = [
 const partClassMap = ['', 'skill', 'skill', 'skill', 'head', 'arm', 'body', 'leg']
 
 const classText = computed(() => {
-  const result: string[] = []
+  const result: string[] = ['']
 
   if (props.size !== 'normal') {
     result.push(props.size)
   }
 
-  if (props.mode !== 'simple') {
+  if (props.mode === 'normal') {
     if (props.maneuver.lost) {
       result.push('lost')
     } else if (props.maneuver.used) {
       result.push('used')
     }
+  }
+
+  if (props.mode !== 'simple') {
     result.push(`type${props.maneuver.type}`)
   }
 

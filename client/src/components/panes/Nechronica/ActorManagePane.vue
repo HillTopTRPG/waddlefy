@@ -71,8 +71,8 @@ import { computed, inject, ref } from 'vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/ReloadCharacterSheetBtn.vue'
-import UrlFormMenu from '@/components/panes/Nechronica/UrlFormMenu.vue'
+import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
+import UrlFormMenu from '@/components/panes/Nechronica/component/UrlFormMenu.vue'
 import {
   NechronicaHelper,
   NechronicaType,

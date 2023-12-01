@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
-import ChipSelect from '@/components/panes/Nechronica/ChipSelect.vue'
+import ChipSelect from '@/components/panes/Nechronica/component/ChipSelect.vue'
 import { NechronicaRoice, posSelections, roiceDamages, roiceList } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'

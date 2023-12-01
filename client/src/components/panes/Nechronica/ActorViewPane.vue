@@ -5,23 +5,39 @@
         <span class="text-decoration-underline">表示制御</span>
       </v-btn>
     </template>
-    <template #layout> </template>
+    <template #layout>
+      <v-sheet class="d-flex flex-row flex-wrap px-2 pb-0" style="gap: 0.5rem">
+        <template v-for="(info, idx) in singleton?.data.maneuverStack || []" :key="idx">
+          <maneuver-stack :data="info" />
+        </template>
+      </v-sheet>
+    </template>
     <template #default>
-      <v-sheet class="w-100 d-flex flex-row flex-wrap position-sticky pa-1" style="gap: 0.5rem; top: 0; z-index: 101">
-        <multi-select-menu title="戦闘準備" :items="battleStartOption" @execute="onBattleStart" />
-        {{ singleton?.data.battleCount || 0 }}
-        <multi-select-menu
-          v-if="singleton?.data.battleCount"
-          title="カウント減少"
-          :items="countDownOption"
-          @execute="onCountDown"
-        />
-        <multi-select-menu title="次ターン開始" :items="nextTurnOption" @execute="onNextTurn" />
+      <v-sheet class="w-100">
+        <v-sheet class="w-100 d-flex flex-row flex-wrap position-sticky pa-1" style="gap: 0.5rem; top: 0; z-index: 1">
+          <multi-select-menu title="戦闘準備" :items="battleStartOption" @execute="onBattleStart" />
+          {{ singleton?.data.battleCount || 0 }}
+          <v-select-thin
+            prefix="T"
+            :items="battleTimingSelection"
+            item-value="value"
+            item-title="text"
+            style="max-width: 9.5em"
+            v-model="battleTiming"
+          />
+          <multi-select-menu
+            v-if="singleton?.data.battleCount"
+            title="カウント減少"
+            :items="countDownOption"
+            @execute="onCountDown"
+          />
+          <multi-select-menu title="次ターン開始" :items="nextTurnOption" @execute="onNextTurn" />
+        </v-sheet>
       </v-sheet>
       <v-sheet class="w-100">
         <v-list-item-subtitle
           class="bg-lime-lighten-2 flex-grow-1 position-sticky text-body-1 px-2"
-          style="top: 36px; z-index: 100; opacity: 1"
+          style="top: 0; z-index: 100; opacity: 1"
           v-text="'ドール・サヴァント'"
         />
         <v-sheet
@@ -30,17 +46,27 @@
           :style="nav ? 'padding-right: 250px !important;' : ''"
         >
           <template v-for="data in dolls" :key="data.id">
-            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+            <character-sheet-view
+              :character-id="data.id"
+              :battle-count="singleton?.data.battleCount || 0"
+              :battle-timing="battleTiming"
+              :view-option="viewOption"
+            />
           </template>
           <template v-for="data in servents" :key="data.id">
-            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+            <character-sheet-view
+              :character-id="data.id"
+              :battle-count="singleton?.data.battleCount || 0"
+              :battle-timing="battleTiming"
+              :view-option="viewOption"
+            />
           </template>
         </v-sheet>
       </v-sheet>
       <v-sheet class="w-100">
         <v-list-item-subtitle
           class="bg-teal-lighten-3 flex-grow-1 position-sticky text-body-1 px-2"
-          style="top: 36px; z-index: 100; opacity: 1"
+          style="top: 0; z-index: 100; opacity: 1"
           v-text="'レギオン・ホラー'"
         />
         <v-sheet
@@ -49,10 +75,20 @@
           :style="nav ? 'padding-right: 250px !important;' : ''"
         >
           <template v-for="data in legions" :key="data.id">
-            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+            <character-sheet-view
+              :character-id="data.id"
+              :battle-count="singleton?.data.battleCount || 0"
+              :battle-timing="battleTiming"
+              :view-option="viewOption"
+            />
           </template>
           <template v-for="data in horrors" :key="data.id">
-            <character-sheet-view :character-id="data.id" :view-option="viewOption" />
+            <character-sheet-view
+              :character-id="data.id"
+              :battle-count="singleton?.data.battleCount || 0"
+              :battle-timing="battleTiming"
+              :view-option="viewOption"
+            />
           </template>
         </v-sheet>
       </v-sheet>
@@ -96,13 +132,16 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import CharacterSheetView from '@/components/panes/Nechronica/CharacterSheetView.vue'
-import MultiSelectMenu from '@/components/panes/Nechronica/MultiSelectMenu.vue'
-import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
+import CharacterSheetView from '@/components/panes/Nechronica/character/CharacterSheetView.vue'
+import MultiSelectMenu from '@/components/panes/Nechronica/component/MultiSelectMenu.vue'
+import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
+import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
+import ManeuverStack from '@/components/panes/Nechronica/maneuver-stack/ManeuverStack.vue'
 import {
   Nechronica,
   NechronicaManeuver,
   NechronicaPowerList,
+  NechronicaSingleton,
   NechronicaTimingList,
   NechronicaType,
   NechronicaWrap,
@@ -139,6 +178,15 @@ function getCharacters(type: NechronicaType): { id: string; data: NechronicaWrap
   )
 }
 
+const battleTiming = ref('')
+const battleTimingSelection = [
+  { value: '', text: '無指定' },
+  { value: 'action', text: 'アクション' },
+  { value: 'rapid', text: 'ラピッド' },
+  { value: 'judge', text: 'ジャッジ' },
+  { value: 'damage', text: 'ダメージ' }
+]
+
 const dolls = computed(() => getCharacters('doll'))
 const legions = computed(() => getCharacters('legion'))
 const horrors = computed(() => getCharacters('horror'))
@@ -148,8 +196,6 @@ const nav = ref(false)
 function onChangeNav() {
   nav.value = !nav.value
 }
-
-type NechronicaSingleton = { battleCount: number }
 
 const singleton = computed(
   (): { id: string; data: NechronicaSingleton } | undefined =>

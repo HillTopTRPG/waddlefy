@@ -2,29 +2,24 @@
   <template v-if="character">
     <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
       <template #activator="{ props }">
-        <v-sheet class="d-flex flex-row text-left align-center">
+        <v-sheet class="d-flex flex-row text-left align-center bg-transparent">
           <icon-btn :disable-button="true" :class="icon" class="mr-1" />
-          <v-sheet class="d-flex flex-column flex-grow-1">
-            <v-sheet class="d-flex flex-row">
+          <v-sheet class="d-flex flex-column flex-grow-1 bg-transparent">
+            <v-sheet class="d-flex flex-row bg-transparent">
               <v-sheet
                 v-ripple
                 v-bind="props"
                 rounded="lg"
-                class="ellipsis text-h5 text-decoration-underline position-relative overflow-y-hidden"
+                class="ellipsis text-h5 text-decoration-underline position-relative overflow-y-hidden bg-transparent"
                 style="width: 1em; flex-grow: 1"
               >
                 {{ character.data.character.basic.characterName }}
               </v-sheet>
             </v-sheet>
-            <v-select
-              prefix="エリア:"
-              variant="solo-filled"
-              :persistent-placeholder="true"
+            <v-select-thin
+              prefix="エリア"
+              style="max-width: 9em"
               :items="positionSelection"
-              item-value="value"
-              item-title="text"
-              style="max-width: 10em"
-              :hide-details="true"
               :model-value="character.data.position || 0"
               @update:model-value="v => emits('update:position', v)"
             />
@@ -74,12 +69,13 @@
 </template>
 
 <script setup lang="ts">
-import IconBtn from '@/components/panes/Nechronica/IconBtn.vue'
+import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import { NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/ReloadCharacterSheetBtn.vue'
+import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
+import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -136,11 +132,4 @@ const icon = computed(() => {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped>
-$padding-size: 3px;
-:deep(.v-input--density-default .v-field--no-label) {
-  --v-input-padding-top: #{$padding-size};
-  --v-field-padding-bottom: #{$padding-size} !important;
-  --v-input-control-height: 1rem;
-}
-</style>
+<style lang="scss" scoped></style>

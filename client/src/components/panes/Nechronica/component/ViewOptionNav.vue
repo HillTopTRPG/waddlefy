@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import MultiSwitchListItems from '@/components/panes/Nechronica/MultiSwitchListItems.vue'
+import MultiSwitchListItems from '@/components/panes/Nechronica/component/MultiSwitchListItems.vue'
 import { NechronicaPowerList, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'

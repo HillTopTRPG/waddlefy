@@ -4,6 +4,7 @@
       <v-card
         variant="outlined"
         class="d-flex flex-column pa-2 rounded-xl"
+        :class="isCurrent ? '' : 'bg-grey-lighten-2'"
         style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${
           NechronicaTypeColorMap.find(nc => nc.type === character?.data.type)?.color || 'black'
@@ -51,6 +52,7 @@
           <maneuver-list-view
             :character="character.data.character"
             :view-option="viewOption"
+            :battle-timing="battleTiming"
             :columns="columns || 10"
             :mode="viewOption.mode"
             :type="character.data.type"
@@ -73,6 +75,7 @@
               :maneuver="maneuver"
               :type="character.data.type"
               :view-label="viewOption?.viewLabel || ''"
+              :battle-timing="battleTiming"
               @update:lost="lost => onUpdateManeuverLost(characterId, idx, lost)"
               @update:used="(used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
               @update:ignore-heiki="ignoreHeiki => onUpdateManeuverIgnoreHeiki(characterId, idx, ignoreHeiki)"
@@ -101,10 +104,11 @@
 </template>
 
 <script setup lang="ts">
-import ManeuverListView from '@/components/panes/Nechronica/ManeuverListView.vue'
+import ManeuverListView from '@/components/panes/Nechronica/maneuver/ManeuverListView.vue'
 import {
   NechronicaManeuver,
   NechronicaRoice,
+  NechronicaSingleton,
   NechronicaTypeColorMap,
   NechronicaWrap,
   roiceList
@@ -112,14 +116,14 @@ import {
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import ActionValueMenu from '@/components/panes/Nechronica/ActionValueMenu.vue'
-import ActionValueMenuLegion from '@/components/panes/Nechronica/ActionValueMenuLegion.vue'
-import CharacterNameMenu from '@/components/panes/Nechronica/CharacterNameMenu.vue'
-import CharacterSheetViewConfig from '@/components/panes/Nechronica/CharacterSheetViewConfig.vue'
-import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/CharacterSheetViewRoiceArea.vue'
-import ManeuverBtnMenu from '@/components/panes/Nechronica/ManeuverBtnMenu.vue'
-import ResetUsedManeuverBtn from '@/components/panes/Nechronica/ResetUsedManeuverBtn.vue'
-import { NechronicaViewOption } from '@/components/panes/Nechronica/ViewOptionNav.vue'
+import ActionValueMenu from '@/components/panes/Nechronica/action-value/ActionValueMenu.vue'
+import ActionValueMenuLegion from '@/components/panes/Nechronica/action-value/ActionValueMenuLegion.vue'
+import CharacterNameMenu from '@/components/panes/Nechronica/character/CharacterNameMenu.vue'
+import CharacterSheetViewConfig from '@/components/panes/Nechronica/character/CharacterSheetViewConfig.vue'
+import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/character/CharacterSheetViewRoiceArea.vue'
+import ResetUsedManeuverBtn from '@/components/panes/Nechronica/component/ResetUsedManeuverBtn.vue'
+import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
+import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -128,10 +132,16 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   characterId: string
   viewOption: NechronicaViewOption
+  battleTiming: string
+  battleCount: number
 }>()
 
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
+})
+
+const isCurrent = computed(() => {
+  return character.value?.data.actionValue >= props.battleCount
 })
 
 const columns = ref(10)
@@ -146,18 +156,18 @@ function judgeView(maneuver: NechronicaManeuver) {
   return props.viewOption.selectedTypes.some(t => t === maneuver.type)
 }
 
-function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (character: NechronicaWrap) => boolean) {
+async function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (character: NechronicaWrap) => boolean) {
   const c = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)
   if (!c) return
   const updateCharacter = clone<NechronicaWrap>(c.data)!
   if (!wrapFunc(updateCharacter)) return
-  graphQlStore?.updateNechronicaCharacter(characterId, updateCharacter)
+  await graphQlStore?.updateNechronicaCharacter(characterId, updateCharacter)
 }
 
-function onResetUsedMenu() {
+async function onResetUsedMenu() {
   resetUsedMenu.value = false
 
-  updateNechronicaCharacterHelper(props.characterId, c => {
+  await updateNechronicaCharacterHelper(props.characterId, c => {
     if (c.character.maneuverList.every(m => !m.used)) return false
     c.character.maneuverList.forEach(m => {
       m.used = false
@@ -166,8 +176,13 @@ function onResetUsedMenu() {
   })
 }
 
-function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
-  updateNechronicaCharacterHelper(characterId, c => {
+const singleton = computed(
+  (): { id: string; data: NechronicaSingleton } | undefined =>
+    graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+)
+
+async function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
+  await updateNechronicaCharacterHelper(characterId, c => {
     if (c.character.maneuverList[idx].used === used) return false
     const maneuver = c.character.maneuverList[idx]
     maneuver.used = used
@@ -177,34 +192,58 @@ function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, c
     }
     return true
   })
+  if (used) {
+    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+      const maneuverStack = singleton.value?.data.maneuverStack || []
+      const cloned = clone(maneuverStack)!
+      cloned.unshift({ characterId, maneuverIndex: idx, type: 'use', cost })
+      const result: NechronicaSingleton = {
+        ...d,
+        maneuverStack: cloned
+      }
+      return result
+    })
+  }
 }
 
-function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
-  updateNechronicaCharacterHelper(characterId, c => {
+async function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
+  await updateNechronicaCharacterHelper(characterId, c => {
     if (c.character.maneuverList[idx].lost === lost) return false
     c.character.maneuverList[idx].lost = lost
     c.character.maneuverList[idx].ignoreHeiki = undefined
     return true
   })
+  if (lost) {
+    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+      const maneuverStack = singleton.value?.data.maneuverStack || []
+      const cloned = clone(maneuverStack)!
+      cloned.unshift({ characterId, maneuverIndex: idx, type: 'lost', cost: 0 })
+      const result: NechronicaSingleton = {
+        ...d,
+        maneuverStack: cloned
+      }
+      return result
+    })
+  }
 }
 
-function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
-  updateNechronicaCharacterHelper(characterId, c => {
+async function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
+  await updateNechronicaCharacterHelper(characterId, c => {
     c.character.maneuverList[idx].ignoreHeiki = value || undefined
     return true
   })
 }
 
-function onUpdateManeuver(characterId: string, idx: number, maneuver: NechronicaManeuver) {
-  updateNechronicaCharacterHelper(characterId, c => {
+async function onUpdateManeuver(characterId: string, idx: number, maneuver: NechronicaManeuver) {
+  await updateNechronicaCharacterHelper(characterId, c => {
     if (JSON.stringify(c.character.maneuverList[idx]) === JSON.stringify(maneuver)) return false
     c.character.maneuverList[idx] = maneuver
     return true
   })
 }
 
-function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
-  updateNechronicaCharacterHelper(characterId, c => {
+async function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
+  await updateNechronicaCharacterHelper(characterId, c => {
     const r = c.character.roiceList[idx]
     if (JSON.stringify(r) === JSON.stringify(roice)) return false
     c.character.roiceList[idx] = roice
@@ -212,32 +251,32 @@ function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice)
   })
 }
 
-function onUpdateActionValue(actionValue: number) {
-  updateNechronicaCharacterHelper(props.characterId, c => {
+async function onUpdateActionValue(actionValue: number) {
+  await updateNechronicaCharacterHelper(props.characterId, c => {
     if (c.actionValue === actionValue) return false
     c.actionValue = actionValue
     return true
   })
 }
 
-function onUpdateMaxActionValue(maxActionValue: number) {
-  updateNechronicaCharacterHelper(props.characterId, c => {
+async function onUpdateMaxActionValue(maxActionValue: number) {
+  await updateNechronicaCharacterHelper(props.characterId, c => {
     if (c.maxActionValue === maxActionValue) return false
     c.maxActionValue = maxActionValue
     return true
   })
 }
 
-function onUpdatePosition(position: number) {
-  updateNechronicaCharacterHelper(props.characterId, c => {
+async function onUpdatePosition(position: number) {
+  await updateNechronicaCharacterHelper(props.characterId, c => {
     if (c.position === position) return false
     c.position = position
     return true
   })
 }
 
-function onAddRoice() {
-  updateNechronicaCharacterHelper(props.characterId, c => {
+async function onAddRoice() {
+  await updateNechronicaCharacterHelper(props.characterId, c => {
     const rawRoice = roiceList[1]
     c.character.roiceList.push({
       id: 1,
@@ -252,8 +291,8 @@ function onAddRoice() {
   })
 }
 
-function onDeleteRoice(characterId: string, idx: number) {
-  updateNechronicaCharacterHelper(characterId, c => {
+async function onDeleteRoice(characterId: string, idx: number) {
+  await updateNechronicaCharacterHelper(characterId, c => {
     c.character.roiceList.splice(idx, 1)
     return true
   })

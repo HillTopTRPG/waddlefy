@@ -172,6 +172,15 @@ export type Nechronica = {
   roiceList: NechronicaRoice[]
 }
 
+export type NechronicaManeuverStack = {
+  characterId: string
+  maneuverIndex: number
+  type: 'use' | 'lost'
+  cost: number
+}
+
+export type NechronicaSingleton = { battleCount?: number; maneuverStack?: NechronicaManeuverStack[] }
+
 export type NechronicaWrap = {
   player: string
   type: NechronicaType

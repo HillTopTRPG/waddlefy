@@ -1,7 +1,7 @@
 <template>
   <v-card-text class="d-flex flex-column align-stretch justify-center px-0 py-1">
-    <v-sheet class="d-flex flex-row">
-      <v-sheet class="d-flex flex-row flex-wrap align-end" style="width: 1em; flex-grow: 1; gap: 0.5rem">
+    <v-sheet class="d-flex flex-row bg-transparent">
+      <v-sheet class="d-flex flex-row flex-wrap align-end bg-transparent" style="width: 1em; flex-grow: 1; gap: 0.5rem">
         <template v-for="(roice, idx) in roiceList || []" :key="idx">
           <roice-badge
             :roice="roice"
@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
-import RoiceBadge from '@/components/panes/Nechronica/RoiceBadge.vue'
+import RoiceBadge from '@/components/panes/Nechronica/roice/RoiceBadge.vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{

@@ -1,7 +1,14 @@
 <template>
   <v-menu :close-on-content-click="false" scroll-strategy="close" location="bottom center" v-model="opened">
     <template #activator="{ props }">
-      <maneuver-btn mode="normal" size="small" :maneuver="maneuver" :view-label="viewLabel" :activate-props="props" />
+      <maneuver-btn
+        mode="normal"
+        size="small"
+        :maneuver="maneuver"
+        :view-label="viewLabel"
+        :battle-timing="battleTiming"
+        :activate-props="props"
+      />
     </template>
     <maneuver-edit-card v-model:mode="mode" :maneuver="maneuver" @update="v => emits('update', v)" />
     <maneuver-view-card
@@ -17,9 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import ManeuverBtn from '@/components/panes/Nechronica/ManeuverBtn.vue'
-import ManeuverEditCard from '@/components/panes/Nechronica/ManeuverEditCard.vue'
-import ManeuverViewCard from '@/components/panes/Nechronica/ManeuverViewCard.vue'
+import ManeuverBtn from '@/components/panes/Nechronica/maneuver/ManeuverBtn.vue'
+import ManeuverEditCard from '@/components/panes/Nechronica/maneuver/ManeuverEditCard.vue'
+import ManeuverViewCard from '@/components/panes/Nechronica/maneuver/ManeuverViewCard.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 import { computed, ref, watch } from 'vue'
 
@@ -29,6 +36,7 @@ const props = defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
   viewLabel?: keyof NechronicaManeuver | ''
+  battleTiming?: string
 }>()
 
 const mode = ref<'view' | 'edit'>('view')
