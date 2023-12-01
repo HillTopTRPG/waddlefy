@@ -112,7 +112,6 @@ import ActionValueMenuLegion from '@/components/panes/Nechronica/action-value/Ac
 import CharacterNameMenu from '@/components/panes/Nechronica/character/CharacterNameMenu.vue'
 import CharacterSheetViewConfig from '@/components/panes/Nechronica/character/CharacterSheetViewConfig.vue'
 import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/character/CharacterSheetViewRoiceArea.vue'
-import ResetUsedManeuverBtn from '@/components/panes/Nechronica/component/ResetUsedManeuverBtn.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import { clone } from '@/components/panes/PrimaryDataUtility'
@@ -136,8 +135,6 @@ const isCurrent = computed(() => {
 })
 
 const columns = ref(10)
-
-const resetUsedMenu = ref(false)
 
 function judgeView(maneuver: NechronicaManeuver) {
   if (!props.viewOption) return true
