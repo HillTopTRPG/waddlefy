@@ -1,5 +1,5 @@
 <template>
-  <v-menu :close-on-content-click="false">
+  <v-menu :close-on-content-click="false" location="bottom left">
     <template #activator="{ props }">
       <v-btn icon="mdi-help" color="info" variant="outlined" size="small" density="comfortable" v-bind="props" />
     </template>

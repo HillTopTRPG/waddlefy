@@ -1,5 +1,5 @@
 <template>
-  <v-menu :close-on-content-click="false" v-model="opened">
+  <v-menu :close-on-content-click="false" v-model="opened" location="bottom right">
     <template #activator="{ props }">
       <v-btn text="まとめて消す" density="comfortable" variant="outlined" color="primary" v-bind="props" />
     </template>

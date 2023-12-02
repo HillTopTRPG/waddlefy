@@ -36,13 +36,19 @@
             </v-col>
           </v-row>
           <v-row :no-gutters="true">
-            <v-defaults-provider :defaults="{ VCol: { class: 'py-2 text-no-wrap text-center text-body-1' } }">
-              <v-col class="v-col-1 bg-grey-lighten-1 edging">T</v-col>
-              <v-col class="v-col-3">{{ NechronicaTimingList[maneuver.timing].text }}</v-col>
-              <v-col class="v-col-1 bg-grey-lighten-1 edging">C</v-col>
-              <v-col class="v-col-3">{{ maneuver.cost }}</v-col>
-              <v-col class="v-col-1 bg-grey-lighten-1 edging">R</v-col>
-              <v-col class="v-col-3">{{ maneuver.range }}</v-col>
+            <v-defaults-provider :defaults="{ VCol: { class: 'text-no-wrap text-center text-body-1 flex-column' } }">
+              <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">T</v-col>
+              <v-col class="v-col-3 d-flex justify-center">{{ NechronicaTimingList[maneuver.timing].text }}</v-col>
+              <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">C</v-col>
+              <v-col class="v-col-3 d-flex justify-space-around">
+                <span v-if="overCostWrap === undefined">{{ costWrap }}</span>
+                <template v-else>
+                  <span class="text-decoration-line-through text-body-2" style="line-height: 1em">{{ costWrap }}</span>
+                  <span class="text-body-1" style="line-height: 1em">{{ overCostWrap }}</span>
+                </template>
+              </v-col>
+              <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">R</v-col>
+              <v-col class="v-col-3 d-flex justify-center">{{ maneuver.range }}</v-col>
             </v-defaults-provider>
           </v-row>
           <v-row class="" :no-gutters="true" style="min-height: 5em">
@@ -73,16 +79,19 @@ import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
 import ManeuverLostBtn from '@/components/panes/Nechronica/maneuver/ManeuverLostBtn.vue'
 import ManeuverUseBtn from '@/components/panes/Nechronica/maneuver/ManeuverUseBtn.vue'
 import {
+  getActionValueNum,
   NechronicaManeuver,
   NechronicaPowerList,
   NechronicaTimingList,
   NechronicaType
 } from '@/components/panes/Nechronica/nechronica'
+import { computed } from 'vue'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-defineProps<{
+const props = defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
+  overCost?: number
   hasHeiki: boolean
   mode: 'view' | 'view-simple' | 'edit'
 }>()
@@ -93,6 +102,17 @@ const emits = defineEmits<{
   (e: 'update:mode', value: 'view' | 'edit'): Promise<void>
   (e: 'update:ignoreHeiki', value: boolean): Promise<void>
 }>()
+
+const costWrap = computed(() => {
+  if (overCostWrap.value !== undefined && props.maneuver.cost === '') return 'なし'
+  return props.maneuver.cost
+})
+
+const overCostWrap = computed((): number | undefined => {
+  if (props.overCost === undefined) return undefined
+  const cost = getActionValueNum(props.maneuver.cost)
+  return cost === props.overCost ? undefined : props.overCost
+})
 
 function onManeuverLost(lost: boolean) {
   emits('update:lost', lost)

@@ -157,6 +157,21 @@ const singleton = computed(
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
+async function addManeuverStack(characterId: string, maneuverIndex: number, type: 'use' | 'lost', cost: number) {
+  await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+    const maneuverStack = singleton.value?.data.maneuverStack || []
+    const cloned = clone(maneuverStack)!
+    const idx = cloned.findIndex(c => !c.status)
+    console.log(idx)
+    cloned.splice(idx, 0, { characterId, maneuverIndex, type, cost, status: '', start: 0, end: 0 })
+    const result: NechronicaSingleton = {
+      ...d,
+      maneuverStack: cloned
+    }
+    return result
+  })
+}
+
 async function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
   await updateNechronicaCharacterHelper(characterId, c => {
     if (c.character.maneuverList[idx].used === used) return false
@@ -169,16 +184,7 @@ async function onUpdateManeuverUsed(characterId: string, idx: number, used: bool
     return true
   })
   if (used) {
-    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
-      const maneuverStack = singleton.value?.data.maneuverStack || []
-      const cloned = clone(maneuverStack)!
-      cloned.unshift({ characterId, maneuverIndex: idx, type: 'use', cost })
-      const result: NechronicaSingleton = {
-        ...d,
-        maneuverStack: cloned
-      }
-      return result
-    })
+    await addManeuverStack(characterId, idx, 'use', cost)
   }
 }
 
@@ -190,16 +196,7 @@ async function onUpdateManeuverLost(characterId: string, idx: number, lost: bool
     return true
   })
   if (lost) {
-    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
-      const maneuverStack = singleton.value?.data.maneuverStack || []
-      const cloned = clone(maneuverStack)!
-      cloned.unshift({ characterId, maneuverIndex: idx, type: 'lost', cost: 0 })
-      const result: NechronicaSingleton = {
-        ...d,
-        maneuverStack: cloned
-      }
-      return result
-    })
+    await addManeuverStack(characterId, idx, 'lost', 0)
   }
 }
 

@@ -1,23 +1,27 @@
 <template>
-  <draggable
-    :list="maneuverStackWrap"
-    group="people"
-    :component-data="{ name: 'fade' }"
-    class="d-flex flex-row flex-wrap px-2 pb-1"
-    style="gap: 0.3rem 0.5rem"
-    ghost-class="ghost"
-    handle=".drag-thumb"
-    :animation="200"
-    item-key="id"
-  >
-    <template #item="{ index }">
-      <maneuver-stack
-        :dataList="maneuverStackWrap.slice(0, index + 1).reverse()"
-        :view-thumb="maneuverStackWrap.length > 1"
-        @delete="onDeleteStack(index)"
-      />
+  <v-sheet class="d-flex flex-row flex-wrap px-2 pb-1" style="gap: 0.3rem 0.5rem">
+    <template v-for="(_, idx) in unDraggableStackList" :key="idx">
+      <maneuver-stack :index="idx" :dataList="unDraggableStackList" />
     </template>
-  </draggable>
+    <draggable
+      :list="draggableStackList"
+      group="people"
+      :component-data="{ name: 'fade' }"
+      style="display: contents"
+      ghost-class="ghost"
+      handle=".drag-thumb"
+      :animation="200"
+      item-key="id"
+    >
+      <template #item="{ index }">
+        <maneuver-stack
+          :index="index"
+          :dataList="draggableStackList"
+          @resolve="onResolveStack(unDraggableStackList.length + index)"
+        />
+      </template>
+    </draggable>
+  </v-sheet>
 </template>
 
 <script setup lang="ts">
@@ -36,33 +40,46 @@ const singleton = computed(
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
-function createManeuverStackWrap(): (NechronicaManeuverStack & { id: string })[] {
+function createDraggableStackWrap(draggable: boolean): (NechronicaManeuverStack & { id: string })[] {
   return (
-    singleton.value?.data.maneuverStack?.map((ms: NechronicaManeuverStack, idx: number) => {
-      return { id: `${ms.characterId}-${ms.maneuverIndex}-${idx}`, ...ms }
-    }) || []
+    singleton.value?.data.maneuverStack
+      ?.map((ms: NechronicaManeuverStack, idx: number) => {
+        return { id: `${ms.characterId}-${ms.maneuverIndex}-${idx}`, ...ms }
+      })
+      .filter(d => draggable === (d.status !== 'resolved')) || []
   )
 }
 
-const maneuverStackWrap = ref(createManeuverStackWrap())
+const startIndex = computed(() => singleton.value?.data.maneuverStack?.findIndex(ms => !ms.status) || 0)
+watch(
+  startIndex,
+  v => {
+    console.log({ v })
+  },
+  { immediate: true }
+)
+const draggableStackList = ref(createDraggableStackWrap(true))
+const unDraggableStackList = ref(createDraggableStackWrap(false))
 watch(
   () => singleton.value?.data.maneuverStack,
   () => {
-    const after = createManeuverStackWrap()
-    if (JSON.stringify(maneuverStackWrap.value) === JSON.stringify(after)) return
-    maneuverStackWrap.value = after
+    draggableStackList.value = createDraggableStackWrap(true)
+    unDraggableStackList.value = createDraggableStackWrap(false)
   },
   { deep: true }
 )
+const allStackWrap = computed(() => {
+  return [...unDraggableStackList.value, ...draggableStackList.value]
+})
 watch(
-  maneuverStackWrap,
+  allStackWrap,
   async () => {
-    const after = maneuverStackWrap.value.map(v => omit(v, 'id'))
+    const after = allStackWrap.value.map(v => omit(v, 'id'))
     if (JSON.stringify(singleton.value?.data.maneuverStack) === JSON.stringify(after)) return
     await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
       const result: NechronicaSingleton = {
         ...d,
-        maneuverStack: maneuverStackWrap.value.map(v => omit(v, 'id'))
+        maneuverStack: allStackWrap.value.map(v => omit(v, 'id'))
       }
       return result
     })
@@ -70,13 +87,26 @@ watch(
   { deep: true }
 )
 
-async function onDeleteStack(index: number) {
-  const cloned = clone<NechronicaManeuverStack[]>(maneuverStackWrap.value.map(ms => omit(ms, 'id')))!
-  if (cloned.length > index) {
-    cloned.splice(0, index + 1)
-  } else {
-    cloned.splice(0, cloned.length)
-  }
+async function onResolveStack(index: number) {
+  const cloned = clone<NechronicaManeuverStack[]>(allStackWrap.value.map(ms => omit(ms, 'id')))!
+  console.log(JSON.stringify(cloned, null, 2))
+  console.log({ startIndex: startIndex.value })
+  new Array(index - startIndex.value + 1)
+    .fill(null)
+    .map((_, idx) => idx)
+    .forEach(idx => {
+      const ms = cloned[startIndex.value + idx]
+      ms.status = 'resolved'
+      ms.start = startIndex.value
+      ms.end = index
+      console.log(idx, startIndex.value)
+    })
+  // if (cloned.length > index) {
+  //   cloned.splice(0, index + 1)
+  // } else {
+  //   cloned.splice(0, cloned.length)
+  // }
+  console.log(JSON.stringify(cloned, null, 2))
   await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
     const result: NechronicaSingleton = {
       ...d,

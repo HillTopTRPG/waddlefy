@@ -176,7 +176,10 @@ export type NechronicaManeuverStack = {
   characterId: string
   maneuverIndex: number
   type: 'use' | 'lost'
+  status: '' | 'resolved'
   cost: number
+  start: number
+  end: number
 }
 
 export type NechronicaSingleton = { battleCount?: number; maneuverStack?: NechronicaManeuverStack[] }
