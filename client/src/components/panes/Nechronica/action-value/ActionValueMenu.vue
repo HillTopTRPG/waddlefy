@@ -27,6 +27,7 @@
         <menu-edit-text-field
           :editable="true"
           :width="11"
+          :min="-99"
           variant="solo-filled"
           label="行動値"
           type="number"

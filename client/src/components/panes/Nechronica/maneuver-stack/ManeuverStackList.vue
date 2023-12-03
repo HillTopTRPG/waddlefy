@@ -51,13 +51,6 @@ function createDraggableStackWrap(draggable: boolean): (NechronicaManeuverStack 
 }
 
 const startIndex = computed(() => singleton.value?.data.maneuverStack?.findIndex(ms => !ms.status) || 0)
-watch(
-  startIndex,
-  v => {
-    console.log({ v })
-  },
-  { immediate: true }
-)
 const draggableStackList = ref(createDraggableStackWrap(true))
 const unDraggableStackList = ref(createDraggableStackWrap(false))
 watch(
