@@ -4,9 +4,7 @@
       <v-btn text="処理済みにする" density="comfortable" variant="outlined" color="primary" v-bind="props" />
     </template>
     <v-card class="pa-2">
-      <v-card-text class="px-1 py-1">
-        このマニューバ履歴を処理済みにします。
-      </v-card-text>
+      <v-card-text class="px-1 py-1"> このマニューバ履歴を処理済みにします。 </v-card-text>
       <v-card-text class="pa-1 d-flex flex-row">
         <v-spacer />
         <v-btn density="comfortable" color="info" variant="outlined" text="実行" @click="onExecute()" />

@@ -16,7 +16,12 @@ import {
   User
 } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
-import { Nechronica, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import {
+  Nechronica,
+  NechronicaCopiableWrap,
+  NechronicaType,
+  NechronicaWrap
+} from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
 import router from '@/router'
@@ -542,6 +547,15 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     await updateSessionDataHelper(characterId, JSON.stringify(wrapObj))
   }
 
+  async function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (cloned: NechronicaWrap) => void) {
+    const character = state.sessionDataList.find(sd => sd.id === characterId)
+    if (!character) return
+    let cloned = clone<NechronicaWrap>(character.data)!
+    wrapFunc(cloned)
+    if (JSON.stringify(cloned) === JSON.stringify(character.data)) return
+    await updateNechronicaCharacter(characterId, cloned)
+  }
+
   async function updateSingleton(singletonId: string, dataObj: any) {
     await updateSessionDataHelper(singletonId, JSON.stringify(dataObj))
   }
@@ -1042,13 +1056,21 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addNechronicaCharacter(perspective: string, type: NechronicaType, dataObj: Nechronica): Promise<void> {
+  async function addNechronicaCharacter(
+    perspective: string,
+    type: NechronicaType,
+    dataObj: Nechronica,
+    copy: Partial<NechronicaCopiableWrap>
+  ): Promise<void> {
     const characterWrap: NechronicaWrap = {
       player: perspective || 'user',
       type,
       position: 0,
       actionValue: type === 'legion' ? 8 : 0,
+      health: type === 'legion' ? 5 : 0,
+      hide: type !== 'doll',
       maxActionValue: type === 'legion' ? 8 : 0,
+      ...copy,
       backboneStack: false,
       character: dataObj
     }
@@ -1651,7 +1673,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateShinobigamiEnigma,
     updateShinobigamiPersona,
     updateShinobigamiPrize,
-    updateNechronicaCharacter,
+    updateNechronicaCharacterHelper,
     updateSingletonHelper
   }
 }

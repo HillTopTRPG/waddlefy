@@ -184,12 +184,17 @@ export type NechronicaManeuverStack = {
 
 export type NechronicaSingleton = { battleCount?: number; maneuverStack?: NechronicaManeuverStack[] }
 
-export type NechronicaWrap = {
-  player: string
-  type: NechronicaType
+export type NechronicaCopiableWrap = {
   position: number
   actionValue: number
+  health: number
+  hide: boolean
   maxActionValue: number
+}
+
+export type NechronicaWrap = NechronicaCopiableWrap & {
+  player: string
+  type: NechronicaType
   backboneStack: boolean
   character: Nechronica
 }

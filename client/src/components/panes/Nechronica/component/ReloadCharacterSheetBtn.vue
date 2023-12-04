@@ -107,9 +107,9 @@ async function confirm() {
   if (helper.isThis()) {
     const { data } = await helper.getData()
     if (data) {
-      const updateData = clone<NechronicaWrap>(dataObj.value?.data)!
-      updateData.character = mergeNechronica(dataObj.value.data.character, data, targets.value)
-      await graphQlStore?.updateNechronicaCharacter(dataObj.value.id, updateData)
+      await graphQlStore?.updateNechronicaCharacterHelper(dataObj.value.id, c => {
+        c.character = mergeNechronica(dataObj.value!.data.character, data, targets.value!)
+      })
       console.log('再読込完了！！！！')
     }
   }

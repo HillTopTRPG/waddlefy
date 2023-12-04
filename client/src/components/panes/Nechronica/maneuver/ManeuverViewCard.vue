@@ -63,7 +63,7 @@
       style="gap: 0.5rem"
       v-if="mode === 'view'"
     >
-      <maneuver-lost-btn :lost="maneuver.lost" @execute="onManeuverLost" />
+      <maneuver-lost-btn v-if="type !== 'legion'" :lost="maneuver.lost" @execute="onManeuverLost" />
       <heiki-btn
         :ignore-heiki="maneuver.ignoreHeiki"
         v-if="hasHeiki && maneuver.lost"

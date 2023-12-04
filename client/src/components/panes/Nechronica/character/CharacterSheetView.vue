@@ -144,14 +144,6 @@ function judgeView(maneuver: NechronicaManeuver) {
   return props.viewOption.selectedTypes.some(t => t === maneuver.type)
 }
 
-async function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (character: NechronicaWrap) => boolean) {
-  const c = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)
-  if (!c) return
-  const updateCharacter = clone<NechronicaWrap>(c.data)!
-  if (!wrapFunc(updateCharacter)) return
-  await graphQlStore?.updateNechronicaCharacter(characterId, updateCharacter)
-}
-
 const singleton = computed(
   (): { id: string; data: NechronicaSingleton } | undefined =>
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
@@ -173,27 +165,18 @@ async function addManeuverStack(characterId: string, maneuverIndex: number, type
 }
 
 async function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
-  await updateNechronicaCharacterHelper(characterId, c => {
-    if (c.character.maneuverList[idx].used === used) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     const maneuver = c.character.maneuverList[idx]
     maneuver.used = used
-    if (used) {
-      console.log({ cost })
-      c.actionValue -= cost
-    }
-    return true
+    if (used) c.actionValue -= cost
   })
-  if (used) {
-    await addManeuverStack(characterId, idx, 'use', cost)
-  }
+  if (used) await addManeuverStack(characterId, idx, 'use', cost)
 }
 
 async function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
-  await updateNechronicaCharacterHelper(characterId, c => {
-    if (c.character.maneuverList[idx].lost === lost) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.maneuverList[idx].lost = lost
     c.character.maneuverList[idx].ignoreHeiki = undefined
-    return true
   })
   if (lost) {
     await addManeuverStack(characterId, idx, 'lost', 0)
@@ -201,55 +184,43 @@ async function onUpdateManeuverLost(characterId: string, idx: number, lost: bool
 }
 
 async function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
-  await updateNechronicaCharacterHelper(characterId, c => {
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.maneuverList[idx].ignoreHeiki = value || undefined
-    return true
   })
 }
 
 async function onUpdateManeuver(characterId: string, idx: number, maneuver: NechronicaManeuver) {
-  await updateNechronicaCharacterHelper(characterId, c => {
-    if (JSON.stringify(c.character.maneuverList[idx]) === JSON.stringify(maneuver)) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.maneuverList[idx] = maneuver
-    return true
   })
 }
 
 async function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
-  await updateNechronicaCharacterHelper(characterId, c => {
-    const r = c.character.roiceList[idx]
-    if (JSON.stringify(r) === JSON.stringify(roice)) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.roiceList[idx] = roice
-    return true
   })
 }
 
 async function onUpdateActionValue(actionValue: number) {
-  await updateNechronicaCharacterHelper(props.characterId, c => {
-    if (c.actionValue === actionValue) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
     c.actionValue = actionValue
-    return true
   })
 }
 
 async function onUpdateMaxActionValue(maxActionValue: number) {
-  await updateNechronicaCharacterHelper(props.characterId, c => {
-    if (c.maxActionValue === maxActionValue) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
     c.maxActionValue = maxActionValue
-    return true
   })
 }
 
 async function onUpdatePosition(position: number) {
-  await updateNechronicaCharacterHelper(props.characterId, c => {
-    if (c.position === position) return false
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
     c.position = position
-    return true
   })
 }
 
 async function onAddRoice() {
-  await updateNechronicaCharacterHelper(props.characterId, c => {
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
     const rawRoice = roiceList[1]
     c.character.roiceList.push({
       id: 1,
@@ -260,14 +231,12 @@ async function onAddRoice() {
       breakEffect: rawRoice.breakEffect,
       memo: ''
     })
-    return true
   })
 }
 
 async function onDeleteRoice(characterId: string, idx: number) {
-  await updateNechronicaCharacterHelper(characterId, c => {
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.roiceList.splice(idx, 1)
-    return true
   })
 }
 </script>

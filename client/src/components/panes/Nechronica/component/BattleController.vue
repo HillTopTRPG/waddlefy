@@ -211,10 +211,10 @@ const battleOption = computed(
         : null,
       usedActionManeuverCharacterNum
         ? {
-          value: 'recovery-action-maneuver',
-          text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
-          color: 'primary'
-        }
+            value: 'recovery-action-maneuver',
+            text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
+            color: 'primary'
+          }
         : null,
       { value: 'action-value-recovery', text: '全員の行動値を最大値分回復する', color: 'primary' },
       maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
@@ -254,19 +254,16 @@ async function onBattleStart(option: string[]) {
     updateProgress(total, count)
     count++
 
-    const cloned = clone<NechronicaWrap>(c.data)!
-
-    if (execInitActionValue) cloned.actionValue = c.maxActionValues[acIdx]
-    if (execInitPosition && c.afterPosition !== null) cloned.position = c.afterPosition
-    if (execInitManeuverUsed || execIgnoreHeiki) {
-      cloned.character.maneuverList.forEach(m => {
-        if (execInitManeuverUsed) m.used = false
-        if (execIgnoreHeiki && m.lost && !m.ignoreHeiki) m.ignoreHeiki = true
-      })
-    }
-    if (JSON.stringify(cloned) !== JSON.stringify(c.data)) {
-      await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
-    }
+    await graphQlStore?.updateNechronicaCharacterHelper(c.id, cloned => {
+      if (execInitActionValue) cloned.actionValue = c.maxActionValues[acIdx]
+      if (execInitPosition && c.afterPosition !== null) cloned.position = c.afterPosition
+      if (execInitManeuverUsed || execIgnoreHeiki) {
+        cloned.character.maneuverList.forEach(m => {
+          if (execInitManeuverUsed) m.used = false
+          if (execIgnoreHeiki && m.lost && !m.ignoreHeiki) m.ignoreHeiki = true
+        })
+      }
+    })
   }
 
   if (execInitCount) {
@@ -317,17 +314,14 @@ async function onCountDown(option: string[]) {
     updateProgress(total, count)
     count++
 
-    const cloned = clone(c.data)!
-
-    if (execCharacterCountDown) {
-      cloned.actionValue -= c.downActionValue
-    }
-    if (execRecoveryActionManeuver) {
-      cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
-    }
-    if (JSON.stringify(cloned) !== JSON.stringify(c.data)) {
-      await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
-    }
+    await graphQlStore?.updateNechronicaCharacterHelper(c.id, cloned => {
+      if (execCharacterCountDown) {
+        cloned.actionValue -= c.downActionValue
+      }
+      if (execRecoveryActionManeuver) {
+        cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
+      }
+    })
   }
   if (total) updateProgress(total, count)
 }
@@ -359,22 +353,18 @@ async function onNextTurn(option: string[]) {
     updateProgress(total, count)
     count++
 
-    const cloned = clone(c.data)!
+    await graphQlStore?.updateNechronicaCharacterHelper(c.id, cloned => {
+      if (execResetActionValue && cloned.actionValue > 0) cloned.actionValue = 0
+      if (execIgnoreHeiki && c.ignoreHeikiManeuverNum) {
+        cloned.character.maneuverList.filter(m => m.lost && !m.ignoreHeiki).forEach(m => (m.ignoreHeiki = true))
+      }
+      if (execRecoveryActionManeuver) {
+        cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
+      }
+      if (execActionValueRecovery) cloned.actionValue += c.maxActionValues[acIdx]
 
-    if (execResetActionValue && cloned.actionValue > 0) cloned.actionValue = 0
-    if (execIgnoreHeiki && c.ignoreHeikiManeuverNum) {
-      cloned.character.maneuverList.filter(m => m.lost && !m.ignoreHeiki).forEach(m => (m.ignoreHeiki = true))
-    }
-    if (execRecoveryActionManeuver) {
-      cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
-    }
-    if (execActionValueRecovery) cloned.actionValue += c.maxActionValues[acIdx]
-
-    maxAllActionValue = Math.max(maxAllActionValue, cloned.actionValue)
-
-    if (JSON.stringify(cloned) !== JSON.stringify(c.data)) {
-      await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
-    }
+      maxAllActionValue = Math.max(maxAllActionValue, cloned.actionValue)
+    })
   }
 
   if (execResetCount || execClearManeuverStack) {
