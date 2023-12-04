@@ -82,8 +82,6 @@ watch(
 
 async function onResolveStack(index: number) {
   const cloned = clone<NechronicaManeuverStack[]>(allStackWrap.value.map(ms => omit(ms, 'id')))!
-  console.log(JSON.stringify(cloned, null, 2))
-  console.log({ startIndex: startIndex.value })
   new Array(index - startIndex.value + 1)
     .fill(null)
     .map((_, idx) => idx)
@@ -92,14 +90,7 @@ async function onResolveStack(index: number) {
       ms.status = 'resolved'
       ms.start = startIndex.value
       ms.end = index
-      console.log(idx, startIndex.value)
     })
-  // if (cloned.length > index) {
-  //   cloned.splice(0, index + 1)
-  // } else {
-  //   cloned.splice(0, cloned.length)
-  // }
-  console.log(JSON.stringify(cloned, null, 2))
   await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
     const result: NechronicaSingleton = {
       ...d,

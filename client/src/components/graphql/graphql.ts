@@ -1597,7 +1597,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       const cloned = clone(singleton.data)!
       const updateData = makeData(cloned)
       if (!updateData) return
-      await updateSingleton(singleton.id, updateData)
+      if (JSON.stringify(singleton.data) !== JSON.stringify(updateData)) {
+        await updateSingleton(singleton.id, updateData)
+      }
     } else {
       const data = makeData({})
       if (!data) return

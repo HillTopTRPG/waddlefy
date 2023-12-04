@@ -35,13 +35,13 @@
         <v-card-text class="py-1 d-flex flex-row align-center px-2">
           <maneuver-stack-help-btn />
           <v-spacer />
-          <maneuver-stack-resolve-btn @execute="onResolved" />
+          <maneuver-stack-resolve-btn v-if="!currentData?.status" @execute="onResolved" />
         </v-card-text>
         <template v-for="(data, idx) in viewDataList" :key="idx">
           <v-card-text v-if="idx" class="d-flex flex-row justify-space-around py-0">
             <v-icon v-for="n in 7" :key="n" :icon="n % 2 === 0 ? 'mdi-arrow-up-bold' : 'mdi-arrow-up-bold-outline'" />
           </v-card-text>
-          <maneuver-stack-content :data="data" />
+          <maneuver-stack-content :data="data" @cancel="onCancel(idx)" />
         </template>
       </v-card>
     </v-dialog>
@@ -75,14 +75,13 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: 'resolve'): void
+  (e: 'cancel', idx: number): void
 }>()
 
 const viewDataList = computed(() => {
-  console.log(`-- ${props.index}`)
   const c = props.dataList[props.index]
   if (!c.status) {
     const startIndex = props.dataList.findIndex(d => !d.status)
-    console.log(startIndex, props.index + 1)
     return props.dataList.slice(startIndex, props.index + 1).reverse()
   }
   return props.dataList.slice(c.start, c.end + 1).reverse()
@@ -125,6 +124,10 @@ const currentManeuver = computed(() => {
 
 function onResolved() {
   emits('resolve')
+}
+
+function onCancel(idx: number) {
+  emits('cancel', idx)
 }
 </script>
 

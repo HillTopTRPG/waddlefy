@@ -4,7 +4,7 @@
     <v-sheet class="text-body-2 ellipsis" style="width: 1em; flex-grow: 1">{{
       character?.data.character.basic.characterName
     }}</v-sheet>
-    <maneuver-stack-cancel-btn @execute="emits('cancel')" />
+    <maneuver-stack-cancel-btn v-if="!data.status" @execute="emits('cancel')" />
   </v-card-text>
   <v-card-text class="pt-0 pb-1 px-2">
     <maneuver-view-card
@@ -32,7 +32,6 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'resolve'): void
   (e: 'cancel'): void
 }>()
 

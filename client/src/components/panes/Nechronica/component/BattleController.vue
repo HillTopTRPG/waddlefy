@@ -1,6 +1,6 @@
 <template>
   <v-sheet class="w-100 d-flex flex-row flex-wrap position-sticky pa-1" style="gap: 0.5rem; top: 0; z-index: 1">
-    <multi-select-menu title="戦闘準備" :items="battleStartOption" @execute="onBattleStart" />
+    <multi-select-menu title="戦闘準備" :items="battleOption.battleStart" @execute="onBattleStart" />
     {{ singleton?.data.battleCount || 0 }}
     <v-select-thin
       prefix="T"
@@ -14,10 +14,10 @@
     <multi-select-menu
       v-if="singleton?.data.battleCount"
       title="カウント減少"
-      :items="countDownOption"
+      :items="battleOption.countDown"
       @execute="onCountDown"
     />
-    <multi-select-menu title="次ターン開始" :items="nextTurnOption" @execute="onNextTurn" />
+    <multi-select-menu title="次ターン開始" :items="battleOption.nextTurn" @execute="onNextTurn" />
   </v-sheet>
 </template>
 
@@ -95,6 +95,9 @@ type BattleDataWrap = {
 }
 
 function getBattleDataInfo() {
+  console.log('########################################')
+  console.log('getBattleDataInfo')
+  console.log('########################################')
   const targets: BattleDataWrap[] = []
   const battleCount = singleton.value?.data.battleCount || 0
   let maxAllActionValues = [0, 0]
@@ -147,25 +150,84 @@ function getBattleDataInfo() {
   }
 }
 
-const battleStartOption = computed(() => {
-  const { ignoreHeikiCharacterNum, usedManeuverCharacterNum } = getBattleDataInfo()
+type OptionItem = { text: string; value: string; color: string }
+const battleOption = computed(
+  (): {
+    battleStart: OptionItem[]
+    countDown: OptionItem[]
+    nextTurn: OptionItem[]
+  } => {
+    const {
+      ignoreHeikiCharacterNum,
+      usedManeuverCharacterNum,
+      downBattleCount,
+      usedActionManeuverCharacterNum,
+      overCountNum,
+      maxAllCurrentActionValue
+    } = getBattleDataInfo()
+    const maneuverStackLength = singleton.value?.data.maneuverStack?.length || 0
 
-  return [
-    ignoreHeikiCharacterNum
-      ? {
-          value: 'ignore-heiki',
-          text: `${ignoreHeikiCharacterNum}体の損傷済マニューバを【平気】の対象外化にする`,
-          color: 'warning'
+    const battleStart = [
+      ignoreHeikiCharacterNum
+        ? {
+            value: 'ignore-heiki',
+            text: `${ignoreHeikiCharacterNum}体の損傷済マニューバを【平気】の対象外化にする`,
+            color: 'warning'
+          }
+        : null,
+      { value: 'init-action-value', text: '全員の行動値の初期化', color: 'primary' },
+      { value: 'init-position', text: '全員を初期配置に移動', color: 'primary' },
+      { value: 'init-count', text: 'カウントの初期化', color: 'primary' },
+      usedManeuverCharacterNum
+        ? { value: 'init-maneuver-used', text: `${usedManeuverCharacterNum}体のマニューバの未使用化`, color: 'warning' }
+        : null
+    ].filter((item): item is OptionItem => Boolean(item))
+
+    const countDown = [
+      { value: 'count-down', text: `カウントを${downBattleCount}減らす`, color: 'primary' },
+      usedActionManeuverCharacterNum
+        ? {
+            value: 'recovery-action-maneuver',
+            text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
+            color: 'primary'
+          }
+        : null,
+      maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
+      overCountNum
+        ? { value: 'character-count-down', text: `${overCountNum}体の未行動者の行動値を減らす`, color: 'error' }
+        : null
+    ].filter((item): item is OptionItem => Boolean(item))
+
+    const nextTurn = [
+      maxAllCurrentActionValue > 0
+        ? { value: 'reset-action-value', text: '0を超える行動値を全て0にする', color: 'error' }
+        : null,
+      ignoreHeikiCharacterNum
+        ? {
+            value: 'ignore-heiki',
+            text: `${ignoreHeikiCharacterNum}体の損傷済マニューバを【平気】の対象外化にする`,
+            color: 'warning'
+          }
+        : null,
+      usedActionManeuverCharacterNum
+        ? {
+          value: 'recovery-action-maneuver',
+          text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
+          color: 'primary'
         }
-      : null,
-    { value: 'init-action-value', text: '全員の行動値の初期化', color: 'primary' },
-    { value: 'init-position', text: '全員を初期配置に移動', color: 'primary' },
-    { value: 'init-count', text: 'カウントの初期化', color: 'primary' },
-    usedManeuverCharacterNum
-      ? { value: 'init-maneuver-used', text: `${usedManeuverCharacterNum}体のマニューバの未使用化`, color: 'warning' }
-      : null
-  ].filter((item): item is { text: string; value: string; color: string } => Boolean(item))
-})
+        : null,
+      { value: 'action-value-recovery', text: '全員の行動値を最大値分回復する', color: 'primary' },
+      maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
+      { value: 'reset-count', text: 'カウントの再設定', color: 'primary' }
+    ].filter((item): item is OptionItem => Boolean(item))
+
+    return {
+      battleStart,
+      countDown,
+      nextTurn
+    }
+  }
+)
 
 async function onBattleStart(option: string[]) {
   const { targets, maxAllActionValues } = getBattleDataInfo()
@@ -188,21 +250,23 @@ async function onBattleStart(option: string[]) {
   const total = updateList.length + (execInitCount ? 1 : 0)
   let count = 0
 
-  for (const target of updateList) {
+  for (const c of updateList) {
     updateProgress(total, count)
     count++
 
-    const cloneObj = clone<NechronicaWrap>(target.data)!
+    const cloned = clone<NechronicaWrap>(c.data)!
 
-    if (execInitActionValue) cloneObj.actionValue = target.maxActionValues[acIdx]
-    if (execInitPosition && target.afterPosition !== null) cloneObj.position = target.afterPosition
+    if (execInitActionValue) cloned.actionValue = c.maxActionValues[acIdx]
+    if (execInitPosition && c.afterPosition !== null) cloned.position = c.afterPosition
     if (execInitManeuverUsed || execIgnoreHeiki) {
-      cloneObj.character.maneuverList.forEach(m => {
+      cloned.character.maneuverList.forEach(m => {
         if (execInitManeuverUsed) m.used = false
         if (execIgnoreHeiki && m.lost && !m.ignoreHeiki) m.ignoreHeiki = true
       })
     }
-    await graphQlStore?.updateNechronicaCharacter(target.id, cloneObj)
+    if (JSON.stringify(cloned) !== JSON.stringify(c.data)) {
+      await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
+    }
   }
 
   if (execInitCount) {
@@ -218,25 +282,6 @@ async function onBattleStart(option: string[]) {
   }
   if (total) updateProgress(total, count)
 }
-
-const countDownOption = computed(() => {
-  const { downBattleCount, usedActionManeuverCharacterNum, overCountNum } = getBattleDataInfo()
-  const maneuverStackLength = singleton.value?.data.maneuverStack?.length || 0
-  return [
-    { value: 'count-down', text: `カウントを${downBattleCount}減らす`, color: 'primary' },
-    usedActionManeuverCharacterNum
-      ? {
-          value: 'recovery-action-maneuver',
-          text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
-          color: 'primary'
-        }
-      : null,
-    maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
-    overCountNum
-      ? { value: 'character-count-down', text: `${overCountNum}体の未行動者の行動値を減らす`, color: 'error' }
-      : null
-  ].filter((item): item is { value: string; text: string; color: string } => Boolean(item))
-})
 
 async function onCountDown(option: string[]) {
   const { targets, afterBattleCount } = getBattleDataInfo()
@@ -277,36 +322,21 @@ async function onCountDown(option: string[]) {
     if (execCharacterCountDown) {
       cloned.actionValue -= c.downActionValue
     }
-    if (execRecoveryActionManeuver)
+    if (execRecoveryActionManeuver) {
       cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
-    await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
+    }
+    if (JSON.stringify(cloned) !== JSON.stringify(c.data)) {
+      await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
+    }
   }
   if (total) updateProgress(total, count)
 }
 
-const nextTurnOption = computed(() => {
-  const { maxAllCurrentActionValue, ignoreHeikiCharacterNum } = getBattleDataInfo()
-  const maneuverStackLength = singleton.value?.data.maneuverStack?.length || 0
-  return [
-    maxAllCurrentActionValue > 0
-      ? { value: 'reset-action-value', text: '0を超える行動値を全て0にする', color: 'error' }
-      : null,
-    ignoreHeikiCharacterNum
-      ? {
-          value: 'ignore-heiki',
-          text: `${ignoreHeikiCharacterNum}体の損傷済マニューバを【平気】の対象外化にする`,
-          color: 'warning'
-        }
-      : null,
-    { value: 'action-value-recovery', text: '全員の行動値を最大値分回復する', color: 'primary' },
-    maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
-    { value: 'reset-count', text: 'カウントの再設定', color: 'primary' }
-  ].filter((item): item is { text: string; value: string; color: string } => Boolean(item))
-})
 async function onNextTurn(option: string[]) {
   const { targets } = getBattleDataInfo()
   const execResetActionValue = option.includes('reset-action-value')
   const execIgnoreHeiki = option.includes('ignore-heiki')
+  const execRecoveryActionManeuver = option.includes('recovery-action-maneuver')
   const execActionValueRecovery = option.includes('action-value-recovery')
   const execClearManeuverStack = option.includes('clear-maneuver-stack')
   const execResetCount = option.includes('reset-count')
@@ -316,6 +346,7 @@ async function onNextTurn(option: string[]) {
   const updateList = targets.filter(t => {
     if (execResetActionValue && t.data.actionValue > 0) return true
     if (execIgnoreHeiki && t.ignoreHeikiManeuverNum) return true
+    if (execRecoveryActionManeuver && t.usedActionManeuverNum) return true
     return execActionValueRecovery
   })
 
@@ -334,11 +365,16 @@ async function onNextTurn(option: string[]) {
     if (execIgnoreHeiki && c.ignoreHeikiManeuverNum) {
       cloned.character.maneuverList.filter(m => m.lost && !m.ignoreHeiki).forEach(m => (m.ignoreHeiki = true))
     }
+    if (execRecoveryActionManeuver) {
+      cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
+    }
     if (execActionValueRecovery) cloned.actionValue += c.maxActionValues[acIdx]
 
     maxAllActionValue = Math.max(maxAllActionValue, cloned.actionValue)
 
-    await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
+    if (JSON.stringify(cloned) !== JSON.stringify(c.data)) {
+      await graphQlStore?.updateNechronicaCharacter(c.id, cloned)
+    }
   }
 
   if (execResetCount || execClearManeuverStack) {
