@@ -1,14 +1,10 @@
 <template>
   <v-menu width="auto" v-model="opened" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn
-        :color="color || 'error'"
-        variant="text"
-        class="text-decoration-underline"
-        :class="classText || ''"
-        v-bind="props"
-        >この{{ type }}を削除</v-btn
-      >
+      <v-btn :color="color || 'error'" variant="text" :class="classText || ''" v-bind="props">
+        <v-icon icon="mdi-delete-outline" />
+        <span class="text-decoration-underline">この{{ type }}を削除</span>
+      </v-btn>
     </template>
     <v-card>
       <v-card-text class="pb-1">削除するにはこの{{ type }}の名前を入力してください</v-card-text>

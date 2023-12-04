@@ -18,39 +18,51 @@
         :text="character.data.character.basic.characterName"
         @update="v => onUpdateCharacterName(character.id, v)"
       />
-      <menu-edit-text-field
-        v-if="character.data.type === 'legion'"
-        :editable="true"
-        :width="11"
-        :min="-99"
-        variant="solo-filled"
-        label="数"
-        type="number"
-        :text="character?.data.health?.toString() || '0'"
-        @update="v => onUpdateCharacterHealth(character.id, parseInt(v, 10))"
-      />
-      <v-switch
-        v-if="!perspective && character.data.type !== 'doll'"
-        color="primary"
-        true-icon="mdi-check"
-        label="参加者に見せる"
-        :hide-details="true"
-        density="compact"
-      />
-      <v-select-thin
-        prefix="初期配置"
-        style="max-width: 10em"
-        :items="positionSelection"
-        :model-value="character.data.character.basic.basePosition.toString() || '0'"
-        @update:model-value="v => onUpdateCharacterBasePosition(character.id, parseInt(v, 10))"
-      />
-      <v-btn
-        v-if="['legion', 'horror'].includes(character.data.type)"
-        variant="text"
-        class="text-decoration-underline"
-        text="複製する"
-        @click="onCopyLegion()"
-      />
+      <v-sheet class="d-flex flex-row bg-transparent w-100">
+        <v-select
+          prefix="初期配置"
+          style="max-width: 10.5em"
+          :items="positionSelection"
+          item-title="text"
+          item-value="value"
+          :hide-details="true"
+          variant="solo-filled"
+          :flat="true"
+          :model-value="character.data.character.basic.basePosition.toString() || '0'"
+          @update:model-value="v => onUpdateCharacterBasePosition(character.id, parseInt(v, 10))"
+        />
+        <template v-if="character.data.type === 'legion'">
+          <v-spacer />
+          <menu-edit-text-field
+            :editable="true"
+            :width="7"
+            :min="-99"
+            variant="solo-filled"
+            label="数"
+            type="number"
+            :text="character?.data.health?.toString() || '0'"
+            @update="v => onUpdateCharacterHealth(character.id, parseInt(v, 10))"
+          />
+        </template>
+      </v-sheet>
+      <v-sheet class="d-flex flex-row align-center bg-transparent w-100">
+        <v-switch
+          v-if="!perspective && character.data.type !== 'doll'"
+          color="primary"
+          class="ml-2"
+          true-icon="mdi-check"
+          label="参加者に見せない"
+          :hide-details="true"
+          density="compact"
+          :model-value="character.data.hide"
+          @update:model-value="(v: any) => onUpdateCharacterHide(character.id, v as boolean)"
+        />
+        <v-spacer />
+        <v-btn v-if="['legion', 'horror'].includes(character.data.type)" variant="text" @click="onCopyLegion()">
+          <v-icon icon="mdi-content-copy" />
+          <span class="text-decoration-underline">複製する</span>
+        </v-btn>
+      </v-sheet>
       <reload-character-sheet-btn :character-id="character.id" />
       <delete-menu-btn
         :target-name="character.data.character.basic.characterName"
@@ -69,7 +81,6 @@ import { computed, inject, ref } from 'vue'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
-import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
 import {
   NechronicaCopiableWrap,
   NechronicaTypeColorMap,
@@ -118,6 +129,12 @@ async function onUpdateCharacterName(characterId: string, name: string) {
 async function onUpdateCharacterHealth(characterId: string, health: number) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, cloned => {
     cloned.health = health
+  })
+}
+
+async function onUpdateCharacterHide(characterId: string, hide: boolean) {
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, cloned => {
+    cloned.hide = hide
   })
 }
 
