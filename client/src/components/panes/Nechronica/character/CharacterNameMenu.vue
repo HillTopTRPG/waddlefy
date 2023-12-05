@@ -17,8 +17,8 @@
               </v-sheet>
             </v-sheet>
             <v-select-thin
-              prefix="エリア"
-              style="max-width: 9em"
+              prefix="配置"
+              style="max-width: 8em"
               :items="positionSelection"
               :model-value="character?.data.position.toString() || '0'"
               @update:model-value="v => emits('update:position', parseInt(v, 10))"

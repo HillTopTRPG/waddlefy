@@ -148,6 +148,7 @@ const style = computed(() => {
       overflow-x: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      pointer-events: all;
     }
 
     &:before {

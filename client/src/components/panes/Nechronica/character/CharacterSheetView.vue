@@ -25,6 +25,7 @@
             :character-id="characterId"
             @update:action-value="onUpdateActionValue"
             @update:max-action-value="onUpdateMaxActionValue"
+            @update:health="onUpdateHealth"
           />
           <v-spacer />
           <character-sheet-view-config
@@ -198,6 +199,12 @@ async function onUpdateManeuver(characterId: string, idx: number, maneuver: Nech
 async function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.roiceList[idx] = roice
+  })
+}
+
+async function onUpdateHealth(health: number) {
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
+    c.health = health
   })
 }
 

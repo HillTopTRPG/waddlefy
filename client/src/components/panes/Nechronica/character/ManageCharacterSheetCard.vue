@@ -2,13 +2,17 @@
   <v-card
     variant="elevated"
     rounded="lg"
+    class="pb-2"
     :color="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
   >
-    <v-card-title class="text-body-1 d-flex flex-row justify-start align-center">
+    <v-card-title class="text-body-1 d-flex flex-row justify-start align-center pt-1 pb-0">
       <span class="ellipsis flex-grow-1" style="width: 1em">{{ character.data.character.basic.characterName }}</span>
       <link-btn :href="character.data.character.url" />
     </v-card-title>
-    <v-card-text class="py-1 px-2 d-flex flex-column flex-wrap align-end" style="gap: 0.3rem">
+    <v-card-text
+      class="py-0 px-2 d-flex flex-column flex-wrap align-end"
+      :class="!perspective || character.data.type === 'doll' ? '' : 'pt-1'"
+    >
       <menu-edit-text-field
         :editable="!perspective || character.data.type === 'doll'"
         :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
@@ -18,7 +22,10 @@
         :text="character.data.character.basic.characterName"
         @update="v => onUpdateCharacterName(character.id, v)"
       />
-      <v-sheet class="d-flex flex-row bg-transparent align-center w-100" :class="!perspective || character.data.type === 'doll' ? '' : 'pt-1'">
+      <v-sheet
+        class="d-flex flex-row bg-transparent align-center w-100 mt-2"
+        :class="!perspective || character.data.type === 'doll' ? '' : 'pt-1'"
+      >
         <v-select
           prefix="初期配置"
           style="max-width: 10.5em"
@@ -38,7 +45,7 @@
             :editable="!perspective"
             :width="7"
             :min="-99"
-            :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
+            :variant="perspective ? 'outlined' : 'solo-filled'"
             icon="mdi-chess-pawn"
             label="数"
             type="number"
@@ -48,7 +55,7 @@
         </template>
       </v-sheet>
       <template v-if="!perspective">
-        <v-sheet class="d-flex flex-row align-center bg-transparent w-100">
+        <v-sheet class="d-flex flex-row align-center bg-transparent w-100 pt-2">
           <v-switch
             v-if="character.data.type !== 'doll'"
             color="primary"
@@ -68,13 +75,13 @@
         </v-sheet>
       </template>
       <template v-if="!perspective || character.data.type === 'doll'">
-      <reload-character-sheet-btn :character-id="character.id" />
-      <delete-menu-btn
-        :target-name="character.data.character.basic.characterName"
-        :type="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
-        location="bottom center"
-        @execute="() => graphQlStore?.deleteSessionData(character.id)"
-      />
+        <reload-character-sheet-btn :character-id="character.id" />
+        <delete-menu-btn
+          :target-name="character.data.character.basic.characterName"
+          :type="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
+          location="bottom center"
+          @execute="() => graphQlStore?.deleteSessionData(character.id)"
+        />
       </template>
     </v-card-text>
   </v-card>
@@ -82,7 +89,7 @@
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
-import { computed, inject, ref } from 'vue'
+import { inject } from 'vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -98,7 +105,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  character: { id: string; data: NechronicaWrap },
+  character: { id: string; data: NechronicaWrap }
   perspective: string
 }>()
 
@@ -120,7 +127,12 @@ async function onCopyCharacter() {
     hide: character.data.hide,
     maxActionValue: character.data.maxActionValue
   }
-  await graphQlStore?.addNechronicaCharacter(character.data.player, character.data.type, character.data.character, copyProps)
+  await graphQlStore?.addNechronicaCharacter(
+    character.data.player,
+    character.data.type,
+    character.data.character,
+    copyProps
+  )
 }
 
 async function onUpdateCharacterName(characterId: string, name: string) {

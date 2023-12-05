@@ -6,6 +6,10 @@
           <span class="text-caption">行動値：</span>
           <span class="text-h5">{{ character?.data.actionValue || 0 }}/{{ character?.data.maxActionValue || 0 }}</span>
         </div>
+        <div class="d-flex flex-row align-end underline ml-2">
+          <span class="text-caption text-justify">数：</span>
+          <span class="text-h5">{{ character?.data.health || 0 }}</span>
+        </div>
       </v-btn>
     </template>
     <v-card>
@@ -33,6 +37,19 @@
           @update="v => onUpdateMaxActionValue(v)"
         />
       </v-card-text>
+      <v-card-title>数</v-card-title>
+      <v-card-text class="py-0 px-0">
+        <menu-edit-text-field
+          :editable="true"
+          :width="11"
+          :min="-99"
+          variant="solo-filled"
+          label="数"
+          type="number"
+          :text="character?.data.health.toString() || '0'"
+          @update="v => onUpdateHealth(parseInt(v, 10))"
+        />
+      </v-card-text>
     </v-card>
   </v-menu>
 </template>
@@ -53,6 +70,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'update:action-value', actionValue: number): Promise<void>
   (e: 'update:max-action-value', maxActionValue: number): Promise<void>
+  (e: 'update:health', health: number): Promise<void>
 }>()
 
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
@@ -65,6 +83,10 @@ function onUpdateActionValue(v: string) {
 
 function onUpdateMaxActionValue(v: string) {
   emits('update:max-action-value', parseInt(v, 10))
+}
+
+function onUpdateHealth(v: number) {
+  emits('update:health', v)
 }
 </script>
 

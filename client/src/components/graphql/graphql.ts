@@ -550,7 +550,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (cloned: NechronicaWrap) => void) {
     const character = state.sessionDataList.find(sd => sd.id === characterId)
     if (!character) return
-    let cloned = clone<NechronicaWrap>(character.data)!
+    const cloned = clone<NechronicaWrap>(character.data)!
     wrapFunc(cloned)
     if (JSON.stringify(cloned) === JSON.stringify(character.data)) return
     await updateNechronicaCharacter(characterId, cloned)
