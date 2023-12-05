@@ -1,6 +1,15 @@
 <template>
   <pane-frame title="役者閲覧ツール">
     <template #title-action>
+      <template v-if="isUserControl">
+        <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
+          <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
+            <template #prepend-inner>
+              <v-icon icon="mdi-triangle-small-down" />
+            </template>
+          </v-select>
+        </v-defaults-provider>
+      </template>
       <v-btn :append-icon="nav ? 'mdi-menu-close' : 'mdi-menu-open'" size="small" variant="text" @click="onChangeNav">
         <span class="text-decoration-underline">表示制御</span>
       </v-btn>
@@ -33,6 +42,7 @@
           </template>
           <template v-for="data in servents" :key="data.id">
             <character-sheet-view
+              v-if="!perspective || !data.data.hide"
               :character-id="data.id"
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
@@ -54,6 +64,7 @@
         >
           <template v-for="data in legions" :key="data.id">
             <character-sheet-view
+              v-if="!perspective || !data.data.hide"
               :character-id="data.id"
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
@@ -62,6 +73,7 @@
           </template>
           <template v-for="data in horrors" :key="data.id">
             <character-sheet-view
+              v-if="!perspective || !data.data.hide"
               :character-id="data.id"
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
@@ -122,6 +134,12 @@ import {
   NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+
+const perspectiveList = [
+  { value: '', name: '主催者' },
+  { value: 'player', name: '参加者' }
+]
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
@@ -134,6 +152,8 @@ const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
 }>()
+
+const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
 const singleton = computed(
   (): { id: string; data: NechronicaSingleton } | undefined =>
@@ -171,4 +191,28 @@ const progress = ref(100)
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.menu-select {
+  flex-grow: 0;
+
+  :deep(.v-field__append-inner) {
+    display: none;
+  }
+  :deep(.v-field__prepend-inner) .v-icon {
+    opacity: 1 !important;
+    text-align: right;
+    font-size: 18px;
+    margin-top: 4px;
+  }
+  :deep(.v-field__prepend-inner),
+  :deep(.v-text-field__prefix),
+  :deep(.v-field__input) {
+    padding-top: 0;
+    padding-left: 0;
+    margin-top: 2px;
+    color: black;
+    font-size: 14px;
+    min-height: auto;
+  }
+}
+</style>

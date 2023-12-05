@@ -10,23 +10,24 @@
     </v-card-title>
     <v-card-text class="py-1 px-2 d-flex flex-column flex-wrap align-end" style="gap: 0.3rem">
       <menu-edit-text-field
-        :editable="true"
-        variant="solo-filled"
+        :editable="!perspective || character.data.type === 'doll'"
+        :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
         :width="18"
         icon="mdi-tag-text-outline"
         :label="`${NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''}名`"
         :text="character.data.character.basic.characterName"
         @update="v => onUpdateCharacterName(character.id, v)"
       />
-      <v-sheet class="d-flex flex-row bg-transparent w-100">
+      <v-sheet class="d-flex flex-row bg-transparent align-center w-100" :class="!perspective || character.data.type === 'doll' ? '' : 'pt-1'">
         <v-select
           prefix="初期配置"
           style="max-width: 10.5em"
           :items="positionSelection"
+          :readonly="Boolean(perspective) && character.data.type !== 'doll'"
           item-title="text"
           item-value="value"
           :hide-details="true"
-          variant="solo-filled"
+          :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
           :flat="true"
           :model-value="character.data.character.basic.basePosition.toString() || '0'"
           @update:model-value="v => onUpdateCharacterBasePosition(character.id, parseInt(v, 10))"
@@ -34,10 +35,11 @@
         <template v-if="character.data.type === 'legion'">
           <v-spacer />
           <menu-edit-text-field
-            :editable="true"
+            :editable="!perspective"
             :width="7"
             :min="-99"
-            variant="solo-filled"
+            :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
+            icon="mdi-chess-pawn"
             label="数"
             type="number"
             :text="character?.data.health?.toString() || '0'"
@@ -45,24 +47,27 @@
           />
         </template>
       </v-sheet>
-      <v-sheet class="d-flex flex-row align-center bg-transparent w-100">
-        <v-switch
-          v-if="!perspective && character.data.type !== 'doll'"
-          color="primary"
-          class="ml-2"
-          true-icon="mdi-check"
-          label="参加者に見せない"
-          :hide-details="true"
-          density="compact"
-          :model-value="character.data.hide"
-          @update:model-value="(v: any) => onUpdateCharacterHide(character.id, v as boolean)"
-        />
-        <v-spacer />
-        <v-btn v-if="['legion', 'horror'].includes(character.data.type)" variant="text" @click="onCopyLegion()">
-          <v-icon icon="mdi-content-copy" />
-          <span class="text-decoration-underline">複製する</span>
-        </v-btn>
-      </v-sheet>
+      <template v-if="!perspective">
+        <v-sheet class="d-flex flex-row align-center bg-transparent w-100">
+          <v-switch
+            v-if="character.data.type !== 'doll'"
+            color="primary"
+            class="ml-2"
+            true-icon="mdi-check"
+            label="参加者に見せる"
+            :hide-details="true"
+            density="compact"
+            :model-value="!character.data.hide"
+            @update:model-value="(v: any) => onUpdateCharacterHide(character.id, !v as boolean)"
+          />
+          <v-spacer />
+          <v-btn v-if="['legion', 'horror'].includes(character.data.type)" variant="text" @click="onCopyCharacter()">
+            <v-icon icon="mdi-content-copy" />
+            <span class="text-decoration-underline">複製する</span>
+          </v-btn>
+        </v-sheet>
+      </template>
+      <template v-if="!perspective || character.data.type === 'doll'">
       <reload-character-sheet-btn :character-id="character.id" />
       <delete-menu-btn
         :target-name="character.data.character.basic.characterName"
@@ -70,6 +75,7 @@
         location="bottom center"
         @execute="() => graphQlStore?.deleteSessionData(character.id)"
       />
+      </template>
     </v-card-text>
   </v-card>
 </template>
@@ -90,11 +96,10 @@ import LinkBtn from '@/components/parts/LinkBtn.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
-
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
-  character: { id: string; data: NechronicaWrap }
+  character: { id: string; data: NechronicaWrap },
+  perspective: string
 }>()
 
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -103,21 +108,19 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
-const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
-
-async function onCopyLegion() {
-  const legion: { id: string; data: NechronicaWrap } | undefined = graphQlStore?.state.sessionDataList.find(
+async function onCopyCharacter() {
+  const character: { id: string; data: NechronicaWrap } | undefined = graphQlStore?.state.sessionDataList.find(
     sd => sd.id === props.character.id
   )
-  if (!legion) return
+  if (!character) return
   const copyProps: NechronicaCopiableWrap = {
-    position: legion.data.position,
-    actionValue: legion.data.actionValue,
-    health: legion.data.health,
-    hide: legion.data.hide,
-    maxActionValue: legion.data.maxActionValue
+    position: character.data.position,
+    actionValue: character.data.actionValue,
+    health: character.data.health,
+    hide: character.data.hide,
+    maxActionValue: character.data.maxActionValue
   }
-  await graphQlStore?.addNechronicaCharacter(legion.data.player, 'legion', legion.data.character, copyProps)
+  await graphQlStore?.addNechronicaCharacter(character.data.player, character.data.type, character.data.character, copyProps)
 }
 
 async function onUpdateCharacterName(characterId: string, name: string) {
