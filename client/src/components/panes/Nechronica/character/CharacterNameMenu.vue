@@ -3,7 +3,7 @@
     <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
       <template #activator="{ props }">
         <v-sheet class="d-flex flex-row text-left align-center bg-transparent">
-          <icon-btn :disable-button="true" :class="icon" class="mr-1" />
+          <icon-btn :disable-button="true" size="normal" :class="icon" class="mr-1" />
           <v-sheet class="d-flex flex-column flex-grow-1 bg-transparent">
             <v-sheet class="d-flex flex-row bg-transparent">
               <v-sheet
@@ -31,14 +31,15 @@
           <template v-if="character.data.type === 'doll'">
             <icon-btn
               :disable-button="true"
-              :under-text="positionList[character.data.character.basic.position]?.text || ''"
-              :class="positionList[character.data.character.basic.position].val || ''"
+              size="normal"
+              :under-text="NechronicaPositionList[character.data.character.basic.position]?.text || ''"
+              :class="NechronicaPositionList[character.data.character.basic.position].val || ''"
             />
             <span style="font-size: 11px; line-height: 1.2em">/</span>
             <icon-btn
               :disable-button="true"
               :under-text="classList[character.data.character.basic.mainClass]?.text || ''"
-              class="small"
+              size="small"
               :class="classList[character.data.character.basic.mainClass].val || ''"
             />
             <template v-if="character.data.character.basic.mainClass !== character.data.character.basic.subClass">
@@ -46,7 +47,7 @@
               <icon-btn
                 :disable-button="true"
                 :under-text="classList[character.data.character.basic.subClass]?.text || ''"
-                class="small"
+                size="small"
                 :class="classList[character.data.character.basic.subClass].val || ''"
               />
             </template>
@@ -70,7 +71,7 @@
 
 <script setup lang="ts">
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
-import { NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import { NechronicaPositionList, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -93,26 +94,6 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
-const positionList = [
-  { val: '', text: '' },
-  { val: 'alice', text: 'アリス' },
-  { val: 'holic', text: 'ホリック' },
-  { val: 'automaton', text: 'オートマトン' },
-  { val: 'junk', text: 'ジャンク' },
-  { val: 'coat', text: 'コート' },
-  { val: 'sorority', text: 'ソロリティ' }
-]
-const classList = [
-  { val: '', text: '' },
-  { val: 'stacy', text: 'ステーシー' },
-  { val: 'thanatos', text: 'タナトス' },
-  { val: 'gothic', text: 'ゴシック' },
-  { val: 'requiem', text: 'レクイエム' },
-  { val: 'baroque', text: 'バロック' },
-  { val: 'romanesque', text: 'ロマネスク' },
-  { val: 'psychedelic', text: 'サイケデリック' }
-]
-
 const positionSelection = [
   { value: '0', text: '' },
   { value: '1', text: '奈落' },
@@ -125,7 +106,7 @@ const positionSelection = [
 const icon = computed(() => {
   if (!character.value) return ''
   if (character.value?.data.type === 'doll') {
-    return positionList[character.value?.data.character.basic.position].val
+    return NechronicaPositionList[character.value?.data.character.basic.position].val
   }
   return character.value?.data.type
 })

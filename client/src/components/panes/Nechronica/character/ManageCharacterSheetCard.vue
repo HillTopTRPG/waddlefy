@@ -5,7 +5,16 @@
     class="pb-2"
     :color="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
   >
-    <v-card-title class="text-body-1 d-flex flex-row justify-start align-center pt-1 pb-0">
+    <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
+      <icon-btn
+        class="mr-1"
+        :class="
+          character.data.type === 'doll'
+            ? NechronicaPositionList[character.data.character.basic.position].val
+            : character.data.type
+        "
+        size="x-small"
+      />
       <span class="ellipsis flex-grow-1" style="width: 1em">{{ character.data.character.basic.characterName }}</span>
       <link-btn :href="character.data.character.url" />
     </v-card-title>
@@ -94,8 +103,10 @@ import { inject } from 'vue'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
+import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import {
   NechronicaCopiableWrap,
+  NechronicaPositionList,
   NechronicaTypeColorMap,
   NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'

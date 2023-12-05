@@ -7,7 +7,7 @@
     <template v-for="(structure, idx) in structures" :key="idx">
       <v-divider v-if="idx" />
       <v-sheet class="d-flex flex-row w-100 bg-transparent">
-        <icon-btn :class="structure.headerClass" :disable-button="true" />
+        <icon-btn :class="structure.headerClass" size="normal" :disable-button="true" />
         <v-sheet class="d-flex flex-row flex-wrap ml-3 bg-transparent" style="gap: 0.5rem">
           <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
             <template v-if="structure.targetParts.some(n => n === maneuver.parts) && judgeView(maneuver)">

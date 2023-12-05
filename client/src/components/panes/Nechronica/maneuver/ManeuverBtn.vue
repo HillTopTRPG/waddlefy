@@ -1,10 +1,11 @@
 <template>
-  <v-sheet class="px-0" :class="battleTargetClass[isBattleTarget]">
+  <v-sheet class="px-0 d-flex flex-column" :class="battleTargetClass[isBattleTarget]">
     <icon-btn
       :class="classText"
-      :disable-button="disableButton"
+      :size="size"
       :text="mode === 'normal' ? maneuver.name : ''"
       :under-text="text"
+      :disable-button="disableButton"
       :activate-props="activateProps || {}"
     />
   </v-sheet>
@@ -108,10 +109,6 @@ const partClassMap = ['', 'skill', 'skill', 'skill', 'head', 'arm', 'body', 'leg
 const classText = computed(() => {
   const result: string[] = ['']
 
-  if (props.size !== 'normal') {
-    result.push(props.size)
-  }
-
   if (props.mode === 'normal') {
     if (props.maneuver.lost) {
       result.push('lost')
@@ -139,4 +136,14 @@ const classText = computed(() => {
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.maneuver-label {
+  line-height: 1em;
+  font-size: 11px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 52px;
+  font-family: 'M PLUS Rounded 1c', sans-serif !important;
+}
+</style>

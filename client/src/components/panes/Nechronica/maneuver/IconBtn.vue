@@ -1,14 +1,18 @@
 <template>
-  <v-btn
-    class="maneuver"
-    variant="flat"
-    rounded="pill"
-    density="comfortable"
-    :class="`${text ? 'mt-3 text' : ''} ${underText ? 'mb-3' : ''}`"
-    :ripple="!disableButton"
-    :style="style"
-    v-bind="activateProps || {}"
-  />
+  <v-sheet class="px-0 d-flex flex-column bg-transparent">
+    <span v-if="text" class="maneuver-label text-left" :class="size">{{ text }}</span>
+    <v-btn
+      class="maneuver"
+      variant="flat"
+      rounded="pill"
+      density="comfortable"
+      :class="classWrap"
+      :ripple="!disableButton"
+      :style="`cursor: ${disableButton ? 'auto' : 'pointer'}`"
+      v-bind="activateProps || {}"
+    />
+    <span v-if="underText" class="maneuver-label text-center">{{ underText }}</span>
+  </v-sheet>
 </template>
 
 <script setup lang="ts">
@@ -19,41 +23,32 @@ const props = defineProps<{
   activateProps?: any
   disableButton?: boolean
   text?: string
+  size: 'x-small' | 'small' | 'normal'
   underText?: string
+  class: string
 }>()
 
-const style = computed(() => {
-  return {
-    cursor: props.disableButton ? 'auto' : 'pointer',
-    '--text': props.text ? `'${props.text}'` : undefined,
-    '--under-text': props.underText ? `'${props.underText}'` : undefined
-  }
-})
+const classWrap = computed(() => `${props.class} ${props.size}`)
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
-.menu-select {
-  flex-grow: 0;
+.maneuver-label {
+  line-height: 1em;
+  font-size: 11px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: 'M PLUS Rounded 1c', sans-serif !important;
 
-  :deep(.v-field__append-inner) {
-    display: none;
+  &.normal {
+    max-width: 64px;
   }
-  :deep(.v-field__prepend-inner) .v-icon {
-    opacity: 1 !important;
-    text-align: right;
-    font-size: 18px;
-    margin-top: 4px;
+  &.small {
+    max-width: 52px;
   }
-  :deep(.v-field__prepend-inner),
-  :deep(.v-text-field__prefix),
-  :deep(.v-field__input) {
-    padding-top: 0;
-    padding-left: 0;
-    margin-top: 2px;
-    color: black;
-    font-size: 14px;
-    min-height: auto;
+  &.x-small {
+    max-width: 32px;
   }
 }
 
@@ -137,33 +132,6 @@ const style = computed(() => {
     width: 100%;
     height: 100%;
     z-index: 2;
-
-    &:before,
-    &:after {
-      position: absolute;
-      left: 0;
-      right: 0;
-      line-height: 1em;
-      font-size: 11px;
-      overflow-x: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      pointer-events: all;
-    }
-
-    &:before {
-      content: var(--text);
-      top: 0;
-      transform: translateY(-100%);
-      text-align: left;
-    }
-
-    &:after {
-      content: var(--under-text);
-      bottom: 0;
-      transform: translateY(100%);
-      text-align: center;
-    }
   }
 
   @mixin maneuverBackFrame($url) {

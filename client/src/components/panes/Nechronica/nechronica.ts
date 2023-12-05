@@ -227,6 +227,26 @@ export const NechronicaTimingList: { text: string; color: string }[] = [
   { text: 'ラピッド', color: 'primary' }
 ]
 
+export const NechronicaPositionList = [
+  { val: '', text: '' },
+  { val: 'alice', text: 'アリス' },
+  { val: 'holic', text: 'ホリック' },
+  { val: 'automaton', text: 'オートマトン' },
+  { val: 'junk', text: 'ジャンク' },
+  { val: 'coat', text: 'コート' },
+  { val: 'sorority', text: 'ソロリティ' }
+]
+export const NechronicaClassList = [
+  { val: '', text: '' },
+  { val: 'stacy', text: 'ステーシー' },
+  { val: 'thanatos', text: 'タナトス' },
+  { val: 'gothic', text: 'ゴシック' },
+  { val: 'requiem', text: 'レクイエム' },
+  { val: 'baroque', text: 'バロック' },
+  { val: 'romanesque', text: 'ロマネスク' },
+  { val: 'psychedelic', text: 'サイケデリック' }
+]
+
 export function getActionValueNum(text: string): number {
   const matchResult = text.match(/-?[0-9０-９]+/)
   if (!matchResult || !matchResult.length) return 0
