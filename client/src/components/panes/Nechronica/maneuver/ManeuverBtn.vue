@@ -107,7 +107,25 @@ const basicPartsClassMap = [
 const partClassMap = ['', 'skill', 'skill', 'skill', 'head', 'arm', 'body', 'leg']
 
 const classText = computed(() => {
-  const result: string[] = ['']
+  const result: string[] = []
+
+  const partsClass = partClassMap[props.maneuver.parts] || ''
+  if (partsClass) {
+    result.push(partsClass)
+  }
+
+  const basicClass = basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || ''
+  if (basicClass) {
+    result.push(basicClass)
+  } else {
+    const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
+    if (shozokuClass) {
+      result.push(shozokuClass)
+    }
+  }
+  if (!result.length) {
+    result.push('skill')
+  }
 
   if (props.mode === 'normal') {
     if (props.maneuver.lost) {
@@ -119,16 +137,6 @@ const classText = computed(() => {
 
   if (props.mode !== 'simple') {
     result.push(`type${props.maneuver.type}`)
-  }
-
-  result.push(partClassMap[props.maneuver.parts] || '')
-
-  const basicClass = basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || ''
-  if (basicClass) {
-    result.push(basicClass)
-  } else {
-    const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
-    result.push(shozokuClass)
   }
 
   return result.join(' ')

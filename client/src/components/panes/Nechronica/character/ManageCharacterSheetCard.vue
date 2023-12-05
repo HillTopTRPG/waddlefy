@@ -69,7 +69,8 @@
             v-if="character.data.type !== 'doll'"
             color="primary"
             class="ml-2"
-            true-icon="mdi-check"
+            true-icon="mdi-eye-outline"
+            false-icon="mdi-eye-off-outline"
             label="参加者に見せる"
             :hide-details="true"
             density="compact"
@@ -135,7 +136,7 @@ async function onCopyCharacter() {
     position: character.data.position,
     actionValue: character.data.actionValue,
     health: character.data.health,
-    hide: character.data.hide,
+    hide: true,
     maxActionValue: character.data.maxActionValue
   }
   await graphQlStore?.addNechronicaCharacter(

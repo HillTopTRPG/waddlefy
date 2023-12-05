@@ -180,7 +180,8 @@ const battleOption = computed(
       { value: 'init-count', text: 'カウントの初期化', color: 'primary' },
       usedManeuverCharacterNum
         ? { value: 'init-maneuver-used', text: `${usedManeuverCharacterNum}体のマニューバの未使用化`, color: 'warning' }
-        : null
+        : null,
+      maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null
     ].filter((item): item is OptionItem => Boolean(item))
 
     const countDown = [
@@ -237,6 +238,7 @@ async function onBattleStart(option: string[]) {
   const execInitManeuverUsed = option.includes('init-maneuver-used')
   const execIgnoreHeiki = option.includes('ignore-heiki')
   const execInitCount = option.includes('init-count')
+  const execClearManeuverStack = option.includes('clear-maneuver-stack')
 
   const acIdx = execIgnoreHeiki ? 0 : 1
 
@@ -247,7 +249,7 @@ async function onBattleStart(option: string[]) {
     return execIgnoreHeiki && target.ignoreHeikiManeuverNum > 0
   })
 
-  const total = updateList.length + (execInitCount ? 1 : 0)
+  const total = updateList.length + (execInitCount || execClearManeuverStack ? 1 : 0)
   let count = 0
 
   for (const c of updateList) {
@@ -266,14 +268,15 @@ async function onBattleStart(option: string[]) {
     })
   }
 
-  if (execInitCount) {
+  if (execInitCount || execClearManeuverStack) {
     updateProgress(total, count)
     count++
     await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
       const result: NechronicaSingleton = {
-        ...d,
-        battleCount: maxAllActionValues[acIdx]
+        ...d
       }
+      if (execInitCount) result.battleCount = maxAllActionValues[acIdx]
+      if (execClearManeuverStack) result.maneuverStack = []
       return result
     })
   }
