@@ -102,7 +102,9 @@ async function onResolveStack(index: number) {
 }
 
 async function onCancelStack(index: number) {
-  const ms: NechronicaManeuverStack = singleton.value?.data.maneuverStack[index]
+  const maneuverStackList = singleton.value?.data.maneuverStack
+  if (!maneuverStackList || maneuverStackList.length <= index) return
+  const ms: NechronicaManeuverStack = maneuverStackList[index]
   if (ms.type === 'use') {
     await graphQlStore?.updateNechronicaCharacterHelper(ms.characterId, c => {
       c.character.maneuverList[ms.maneuverIndex].used = false

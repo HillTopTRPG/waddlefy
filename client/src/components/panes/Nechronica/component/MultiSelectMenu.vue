@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <v-btn
         :text="title"
-        color="secondary"
+        :color="color || 'secondary'"
         density="comfortable"
         class="text-decoration-underline"
         variant="flat"
@@ -40,6 +40,7 @@ import { ref, watch } from 'vue'
 const props = defineProps<{
   title: string
   items: { text: string; value: string; color: string }[]
+  color: string
 }>()
 
 const results = ref<string[]>(props.items.map(item => item.value))

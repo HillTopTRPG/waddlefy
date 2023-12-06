@@ -61,7 +61,7 @@
         <v-card-text class="text-body-1 ellipsis" style="max-width: 20rem">
           {{ character.data.character.basic.characterName }}
         </v-card-text>
-        <v-card-text class="py-1 px-2">
+        <v-card-text class="py-1 px-2" v-if="character.data.type === 'doll' || !perspective">
           <reload-character-sheet-btn :character-id="characterId" />
         </v-card-text>
       </v-card>
@@ -84,6 +84,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   characterId: string
+  perspective: string
 }>()
 
 const emits = defineEmits<{

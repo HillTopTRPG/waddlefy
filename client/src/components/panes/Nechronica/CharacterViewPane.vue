@@ -1,21 +1,17 @@
 <template>
   <pane-frame title="キャラクター閲覧ツール">
     <template #title-action>
-      <template v-if="isUserControl">
-        <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
-          <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-            <template #prepend-inner>
-              <v-icon icon="mdi-triangle-small-down" />
-            </template>
-          </v-select>
-        </v-defaults-provider>
-      </template>
+      <perspective-select v-model="perspective" />
       <v-btn :append-icon="nav ? 'mdi-menu-close' : 'mdi-menu-open'" size="small" variant="text" @click="onChangeNav">
         <span class="text-decoration-underline">表示制御</span>
       </v-btn>
     </template>
     <template #layout>
-      <battle-controller v-model:battle-timing="battleTiming" @update:progress="p => (progress = p)" />
+      <battle-controller
+        :perspective="perspective"
+        v-model:battle-timing="battleTiming"
+        @update:progress="p => (progress = p)"
+      />
     </template>
     <template #default>
       <v-sheet class="w-100">
@@ -38,6 +34,7 @@
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
               :view-option="viewOption"
+              :perspective="perspective"
             />
           </template>
           <template v-for="data in servents" :key="data.id">
@@ -47,6 +44,7 @@
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
               :view-option="viewOption"
+              :perspective="perspective"
             />
           </template>
         </v-sheet>
@@ -69,6 +67,7 @@
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
               :view-option="viewOption"
+              :perspective="perspective"
             />
           </template>
           <template v-for="data in horrors" :key="data.id">
@@ -78,6 +77,7 @@
               :battle-count="singleton?.data.battleCount || 0"
               :battle-timing="battleTiming"
               :view-option="viewOption"
+              :perspective="perspective"
             />
           </template>
         </v-sheet>
@@ -133,13 +133,9 @@ import {
   NechronicaType,
   NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'
+import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
-
-const perspectiveList = [
-  { value: '', name: '主催者' },
-  { value: 'player', name: '参加者' }
-]
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
@@ -153,7 +149,7 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
-const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
+const perspective = ref<string>(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
 const singleton = computed(
   (): { id: string; data: NechronicaSingleton } | undefined =>
@@ -191,28 +187,4 @@ const progress = ref(100)
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped>
-.menu-select {
-  flex-grow: 0;
-
-  :deep(.v-field__append-inner) {
-    display: none;
-  }
-  :deep(.v-field__prepend-inner) .v-icon {
-    opacity: 1 !important;
-    text-align: right;
-    font-size: 18px;
-    margin-top: 4px;
-  }
-  :deep(.v-field__prepend-inner),
-  :deep(.v-text-field__prefix),
-  :deep(.v-field__input) {
-    padding-top: 0;
-    padding-left: 0;
-    margin-top: 2px;
-    color: black;
-    font-size: 14px;
-    min-height: auto;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

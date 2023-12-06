@@ -36,8 +36,7 @@
         :class="!perspective || character.data.type === 'doll' ? '' : 'pt-1'"
       >
         <v-select
-          prefix="初期配置"
-          style="max-width: 10.5em"
+          style="max-width: 8em"
           :items="positionSelection"
           :readonly="Boolean(perspective) && character.data.type !== 'doll'"
           item-title="text"
@@ -47,7 +46,12 @@
           :flat="true"
           :model-value="character.data.character.basic.basePosition.toString() || '0'"
           @update:model-value="v => onUpdateCharacterBasePosition(character.id, parseInt(v, 10))"
-        />
+        >
+          <template #label>
+            <v-icon icon="mdi-map-marker-outline" />
+            <span>初期配置</span>
+          </template>
+        </v-select>
         <template v-if="character.data.type === 'legion'">
           <v-spacer />
           <menu-edit-text-field

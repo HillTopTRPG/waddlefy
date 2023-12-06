@@ -1,7 +1,15 @@
 <template>
-  <v-sheet class="w-100 d-flex flex-row flex-wrap position-sticky pa-1" style="gap: 0.5rem; top: 0; z-index: 1">
-    <multi-select-menu title="戦闘準備" :items="battleOption.battleStart" @execute="onBattleStart" />
-    {{ singleton?.data.battleCount || 0 }}
+  <v-sheet
+    class="w-100 d-flex flex-row flex-wrap align-end position-sticky pa-1"
+    style="gap: 0.5rem; top: 0; z-index: 1"
+  >
+    <multi-select-menu
+      v-if="!perspective"
+      title="戦闘開始"
+      :items="battleOption.battleStart"
+      :color="battleOption.battleStartColor"
+      @execute="onBattleStart"
+    />
     <v-select-thin
       prefix="T"
       :items="battleTimingSelection"
@@ -11,13 +19,24 @@
       :model-value="battleTiming"
       @update:model-value="v => emits('update:battle-timing', v)"
     />
+    <span class="d-flex flex-row align-end h-100 pb-1">
+      <span class="text-caption" style="line-height: 1em">カウント:</span>
+      <span class="text-h5" style="line-height: 1em">{{ singleton?.data.battleCount || 0 }}</span>
+    </span>
     <multi-select-menu
-      v-if="singleton?.data.battleCount"
+      v-if="!perspective && singleton?.data.battleCount"
       title="カウント減少"
+      :color="battleOption.countDownColor"
       :items="battleOption.countDown"
       @execute="onCountDown"
     />
-    <multi-select-menu title="次ターン開始" :items="battleOption.nextTurn" @execute="onNextTurn" />
+    <multi-select-menu
+      v-if="!perspective"
+      title="次ターン開始"
+      :items="battleOption.nextTurn"
+      :color="battleOption.nextTurnColor"
+      @execute="onNextTurn"
+    />
   </v-sheet>
 </template>
 
@@ -33,6 +52,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{
   battleTiming: string
+  perspective: string
 }>()
 
 const emits = defineEmits<{
@@ -61,7 +81,7 @@ function getMaxActionValues(characterId: string, data: NechronicaWrap): number[]
   if (data.type === 'legion') return [data.maxActionValue, data.maxActionValue]
   const hasHeiki = data.character.maneuverList.some(m => m.isHeiki)
   const dependenceRoiceNum = data.character.roiceList.filter(r => r.damage === 4 && r.id % 10 === 3).length
-  const characterType = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId).data.type
+  const characterType = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)?.data.type
   const otherInsanityRoice: number =
     graphQlStore?.state.sessionDataList
       .filter(sd => sd.type === 'nechronica-character' && sd.id !== characterId && sd.data.type === 'doll')
@@ -152,10 +172,14 @@ type OptionItem = { text: string; value: string; color: string }
 const battleOption = computed(
   (): {
     battleStart: OptionItem[]
+    battleStartColor: string
     countDown: OptionItem[]
+    countDownColor: string
     nextTurn: OptionItem[]
+    nextTurnColor: string
   } => {
     const {
+      targets,
       ignoreHeikiCharacterNum,
       usedManeuverCharacterNum,
       downBattleCount,
@@ -164,8 +188,16 @@ const battleOption = computed(
       maxAllCurrentActionValue
     } = getBattleDataInfo()
     const maneuverStackLength = singleton.value?.data.maneuverStack?.length || 0
+    const unOpenPawns = targets.filter(t => t.data.type !== 'doll' && t.data.hide)
 
     const battleStart = [
+      unOpenPawns.length
+        ? {
+            value: 'open-pawns',
+            text: `${unOpenPawns.length}体の手駒を公開する`,
+            color: 'warning'
+          }
+        : null,
       ignoreHeikiCharacterNum
         ? {
             value: 'ignore-heiki',
@@ -222,8 +254,11 @@ const battleOption = computed(
 
     return {
       battleStart,
+      battleStartColor: 'secondary',
       countDown,
-      nextTurn
+      countDownColor: overCountNum ? 'warning' : 'secondary',
+      nextTurn,
+      nextTurnColor: maxAllCurrentActionValue ? 'warning' : 'secondary'
     }
   }
 )
@@ -231,6 +266,7 @@ const battleOption = computed(
 async function onBattleStart(option: string[]) {
   const { targets, maxAllActionValues } = getBattleDataInfo()
 
+  const execOpenPawns = option.includes('open-pawns')
   const execInitActionValue = option.includes('init-action-value')
   const execInitPosition = option.includes('init-position')
   const execInitManeuverUsed = option.includes('init-maneuver-used')
@@ -241,6 +277,7 @@ async function onBattleStart(option: string[]) {
   const acIdx = execIgnoreHeiki ? 0 : 1
 
   const updateList = targets.filter(target => {
+    if (execOpenPawns && target.data.type !== 'doll' && target.data.hide) return true
     if (execInitActionValue && target.data.actionValue !== target.maxActionValues[acIdx]) return true
     if (execInitPosition && target.afterPosition !== null) return true
     if (execInitManeuverUsed && target.usedManeuverNum) return true
@@ -255,6 +292,7 @@ async function onBattleStart(option: string[]) {
     count++
 
     await graphQlStore?.updateNechronicaCharacterHelper(c.id, cloned => {
+      if (execOpenPawns && cloned.type !== 'doll' && cloned.hide) cloned.hide = false
       if (execInitActionValue) cloned.actionValue = c.maxActionValues[acIdx]
       if (execInitPosition && c.afterPosition !== null) cloned.position = c.afterPosition
       if (execInitManeuverUsed || execIgnoreHeiki) {

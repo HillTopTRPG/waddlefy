@@ -1,15 +1,7 @@
 <template>
   <pane-frame title="キャラクター管理ツール">
     <template #title-action>
-      <template v-if="isUserControl">
-        <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
-          <v-select prefix="視点:" :items="perspectiveList" item-title="name" item-value="value" v-model="perspective">
-            <template #prepend-inner>
-              <v-icon icon="mdi-triangle-small-down" />
-            </template>
-          </v-select>
-        </v-defaults-provider>
-      </template>
+      <perspective-select v-model="perspective" />
     </template>
     <template #layout>
       <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.3rem">
@@ -81,13 +73,9 @@ import {
   NechronicaTypeColorMap,
   NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'
+import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
-
-const perspectiveList = [
-  { value: '', name: '主催者' },
-  { value: 'player', name: '参加者' }
-]
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
@@ -101,7 +89,7 @@ const emits = defineEmits<{
   (e: 'change-layout', newLayout: Layout): void
 }>()
 
-const perspective = ref(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
+const perspective = ref<string>(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
 const characters = computed((): { id: string; data: NechronicaWrap }[] => {
   return graphQlStore?.state.sessionDataList.filter(sd => sd.type === 'nechronica-character') || []
@@ -124,28 +112,4 @@ const nechronicaTypes: NechronicaType[] = ['doll', 'servent', 'legion', 'horror'
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped>
-.menu-select {
-  flex-grow: 0;
-
-  :deep(.v-field__append-inner) {
-    display: none;
-  }
-  :deep(.v-field__prepend-inner) .v-icon {
-    opacity: 1 !important;
-    text-align: right;
-    font-size: 18px;
-    margin-top: 4px;
-  }
-  :deep(.v-field__prepend-inner),
-  :deep(.v-text-field__prefix),
-  :deep(.v-field__input) {
-    padding-top: 0;
-    padding-left: 0;
-    margin-top: 2px;
-    color: black;
-    font-size: 14px;
-    min-height: auto;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

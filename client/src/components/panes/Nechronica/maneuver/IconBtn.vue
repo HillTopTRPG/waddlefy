@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="px-0 d-flex flex-column bg-transparent">
+  <v-sheet class="px-0 d-inline-flex flex-column bg-transparent">
     <span v-if="text" class="maneuver-label text-left" :class="size">{{ text }}</span>
     <v-btn
       class="maneuver"

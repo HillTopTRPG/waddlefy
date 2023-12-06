@@ -35,7 +35,11 @@
           />
         </v-card-title>
         <v-card-text class="d-flex flex-column align-stretch justify-center px-0 pt-1 pb-0">
-          <character-name-menu :character-id="characterId" @update:position="onUpdatePosition" />
+          <character-name-menu
+            :character-id="characterId"
+            :perspective="perspective"
+            @update:position="onUpdatePosition"
+          />
         </v-card-text>
         <character-sheet-view-roice-area
           v-if="character.data.type === 'doll' && viewOption.roicePosition === 'before'"
@@ -125,6 +129,7 @@ const props = defineProps<{
   viewOption: NechronicaViewOption
   battleTiming: string
   battleCount: number
+  perspective: string
 }>()
 
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
