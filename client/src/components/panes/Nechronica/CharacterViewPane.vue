@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="役者閲覧ツール">
+  <pane-frame title="キャラクター閲覧ツール">
     <template #title-action>
       <template v-if="isUserControl">
         <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
@@ -112,7 +112,7 @@ export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
   name: 'ActorViewPane',
-  label: '役者閲覧'
+  label: 'キャラクター閲覧'
 }
 </script>
 

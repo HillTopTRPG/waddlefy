@@ -21,9 +21,9 @@
         </div>
       </v-btn>
     </template>
-    <v-card>
-      <v-card-title>行動値</v-card-title>
-      <v-card-text class="py-1">
+    <v-card class="pa-2">
+      <v-card-title class="pa-0">行動値</v-card-title>
+      <v-card-text class="pa-0">
         <menu-edit-text-field
           :editable="true"
           :width="11"
@@ -35,15 +35,15 @@
           @update="v => onUpdateActionValue(v)"
         />
       </v-card-text>
-      <v-card-title>最大行動値</v-card-title>
-      <v-card-subtitle style="opacity: 1">
+      <v-card-title class="px-0 pt-1 pb-0">最大行動値</v-card-title>
+      <v-card-subtitle class="px-0" style="opacity: 1">
         <span style="opacity: 0.6">基礎値: </span>
         <span class="text-body-1 text-info font-weight-bold">{{ maneuverActionValue }}</span>
         <span class="text-body-1 text-error font-weight-bold" v-if="maneuverLostActionValue">{{
           maneuverLostActionValue
         }}</span>
       </v-card-subtitle>
-      <v-card-text class="py-1 d-flex flex-row align-end flex-wrap">
+      <v-card-text class="px-0 py-1 d-flex flex-row align-end flex-wrap">
         <span class="pb-1 d-flex flex-column align-center" style="line-height: 20px; font-size: 13px">
           <span style="opacity: 0.6">基本値</span>
           <span class="text-body-1 text-info font-weight-bold">６</span>
@@ -78,28 +78,28 @@
         </template>
       </v-card-text>
       <template v-if="character?.data.type === 'doll'">
-        <v-card-subtitle style="opacity: 1">
+        <v-card-subtitle class="pa-0" style="opacity: 1">
           <span style="opacity: 0.6">本人の未練: </span>
           <span class="text-body-1" :class="myselfRoiceActionValue ? 'font-weight-bold text-error' : ''">{{
             myselfRoiceActionValue
           }}</span>
         </v-card-subtitle>
-        <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
+        <v-card-text class="px-0 pt-1 pb-3 d-flex flex-row align-end flex-wrap" style="gap: 0.5rem">
           <template v-for="(roice, idx) in actionValueRoices" :key="idx">
             <roice-badge :roice="roice" @update="updateRoice => onUpdateRoice(characterId, idx, updateRoice)" />
           </template>
         </v-card-text>
       </template>
       <template v-for="(info, infoIdx) in otherRoices" :key="infoIdx">
-        <v-card-subtitle style="opacity: 1">
+        <v-card-subtitle class="pa-0" style="opacity: 1">
           <span style="opacity: 0.6">{{ info.character.data.character.basic.characterName }}の未練: </span>
           <span class="text-body-1 font-weight-bold text-error">{{ info.actionValue }}</span>
         </v-card-subtitle>
-        <v-card-text class="pt-1 pb-3 d-flex flex-row align-end flex-wrap">
+        <v-card-text class="px-0 py-1 d-flex flex-row align-end flex-wrap">
           <template v-for="(roice, idx) in info.roiceList" :key="idx">
             <roice-badge
               :roice="roice.roice"
-              @update="updateRoice => onUpdateRoice(info.character.id, idx, updateRoice)"
+              @update="updateRoice => onUpdateRoice(info.character.id, roice.index, updateRoice)"
             />
           </template>
         </v-card-text>

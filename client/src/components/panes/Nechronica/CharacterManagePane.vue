@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="役者管理ツール">
+  <pane-frame title="キャラクター管理ツール">
     <template #title-action>
       <template v-if="isUserControl">
         <v-defaults-provider :defaults="{ VSelect: { variant: 'plain', hideDetails: true, class: 'menu-select' } }">
@@ -63,7 +63,7 @@ export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
   name: 'ActorManagePane',
-  label: '役者管理'
+  label: 'キャラクター管理'
 }
 </script>
 

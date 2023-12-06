@@ -38,17 +38,17 @@
             <span style="font-size: 11px; line-height: 1.2em">/</span>
             <icon-btn
               :disable-button="true"
-              :under-text="classList[character.data.character.basic.mainClass]?.text || ''"
+              :under-text="NechronicaClassList[character.data.character.basic.mainClass]?.text || ''"
               size="small"
-              :class="classList[character.data.character.basic.mainClass].val || ''"
+              :class="NechronicaClassList[character.data.character.basic.mainClass].val || ''"
             />
             <template v-if="character.data.character.basic.mainClass !== character.data.character.basic.subClass">
               <span style="font-size: 11px; line-height: 1.2em">/</span>
               <icon-btn
                 :disable-button="true"
-                :under-text="classList[character.data.character.basic.subClass]?.text || ''"
+                :under-text="NechronicaClassList[character.data.character.basic.subClass]?.text || ''"
                 size="small"
-                :class="classList[character.data.character.basic.subClass].val || ''"
+                :class="NechronicaClassList[character.data.character.basic.subClass].val || ''"
               />
             </template>
             <template v-else>
@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
-import { NechronicaPositionList, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import { NechronicaClassList, NechronicaPositionList, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'

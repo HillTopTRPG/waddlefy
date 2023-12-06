@@ -1,7 +1,6 @@
 import DefaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
-import ActorManagePaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorManagePaneLayout'
-import ActorViewPaneLayout from '@/PaneLayoutTemplate/Nechronica/ActorViewPaneLayout'
-import SessionProgressPaneLayout from '@/PaneLayoutTemplate/Nechronica/SessionProgressPaneLayout'
+import CharacterManagePaneLayout from '@/PaneLayoutTemplate/Nechronica/CharacterManagePaneLayout'
+import CharacterViewPaneLayout from '@/PaneLayoutTemplate/Nechronica/CharacterViewPaneLayout'
 import TipsPaneLayout from '@/PaneLayoutTemplate/Nechronica/TipsPaneLayout'
 import CharacterSheetManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/CharacterSheetManagePaneLayout'
 import DataViewPaneLayout from '@/PaneLayoutTemplate/Shinobigami/DataViewPaneLayout'
@@ -48,12 +47,11 @@ export async function addDashboards(graphQlStore: GraphQlStore, sessionType: str
     return graphQlStore.state.dashboards.find(d => d.name === 'データ閲覧')?.id || ''
   }
   if (sessionType === 'Nechronica') {
-    await graphQlStore.addDashboard('役者管理', ActorManagePaneLayout, Scope.ALL)
-    await graphQlStore.addDashboard('役者閲覧', ActorViewPaneLayout, Scope.ALL)
-    await graphQlStore.addDashboard('セッション進行', SessionProgressPaneLayout, Scope.ALL)
+    await graphQlStore.addDashboard('キャラクター管理', CharacterManagePaneLayout, Scope.ALL)
+    await graphQlStore.addDashboard('キャラクター閲覧', CharacterViewPaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('ネクロニカ専用機能のTips', TipsPaneLayout, Scope.ALL)
-    await waitDashboardNum(2)
-    return graphQlStore.state.dashboards.find(d => d.name === '役者管理')?.id || ''
+    await waitDashboardNum(3)
+    return graphQlStore.state.dashboards.find(d => d.name === 'キャラクター管理')?.id || ''
   }
   return ''
 }

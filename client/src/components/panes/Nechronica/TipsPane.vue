@@ -9,9 +9,7 @@
           <v-card-title>マニューバのアイコンの決まり方</v-card-title>
           <v-card-subtitle>１．基本パーツかどうか</v-card-subtitle>
           <v-card-text>
-            マニューバの名前で基本パーツと判断できたら基本パーツ専用のアイコンになります。<br />
-            以下のテキストとの<b>完全一致</b>で判定されます。<br />
-            マニューバの名前に【】などを含めないように注意してください。
+            マニューバの名前が以下のテキストと一致したら基本パーツのアイコンになります。<br />
             <v-sheet class="d-flex flex-row" style="gap: 1rem; flex-grow: 1">
               <v-sheet class="d-flex flex-row flex-wrap overflow-hidden" style="gap: 1rem; width: 1em; flex-grow: 1">
                 <ul class="ml-5">
@@ -34,6 +32,8 @@
                 </ul>
               </v-sheet>
             </v-sheet>
+
+            ※ マニューバの名前に【】などを含めないように注意してください。
           </v-card-text>
           <v-card-subtitle>２．取得先</v-card-subtitle>
           <v-card-text class="d-flex flex-column align-stretch">
@@ -96,7 +96,10 @@
             </v-sheet>
           </v-card-text>
           <v-card-subtitle>３．それ以外の場合</v-card-subtitle>
-          <v-card-text> 基本パーツでなく取得先でも判断できなかった場合、部位のアイコンとなります。 </v-card-text>
+          <v-card-text>
+            基本パーツでなく取得先でも判断できなかった場合、部位のアイコンとなります。<br />
+            部位も設定されていなければ、スキルのアイコンになります。
+          </v-card-text>
           <v-card-subtitle>背景</v-card-subtitle>
           <v-card-text>
             カテゴリに合わせて背景の色が変わります。<br />
@@ -124,12 +127,23 @@
           </v-card-text>
           <v-card-subtitle>特殊処理：【平気】</v-card-subtitle>
           <v-card-text>
-            ステーシーのクラススキル【平気】を持っていると、損傷したマニューバに以下のボタンが表示されます。<br />
+            キャラクターシートの読み込み時にマニューバの名前が「平気」「自動制御装置」のいずれかだった場合、<br />
+            <v-switch
+              label="【平気】として扱う"
+              color="primary"
+              true-icon="mdi-emoticon-tongue"
+              :hide-details="true"
+              density="compact"
+              class="ml-2"
+            />
+            が ON として登録されます。<br />
+            自作で別名のマニューバを作成していた場合はマニューバの編集にて ON に変更してください。<br />
+            「【平気】として扱う」が ON のマニューバがあると、損傷したマニューバに下記のボタンが表示されます。<br />
             <heiki-btn :ignore-heiki="false" />：このターンに損傷したため平気。最大行動値に含まれる状態。<br />
             <heiki-btn
               :ignore-heiki="true"
             />：以前のターンに損傷していたため平気ではない。最大行動値には含まれない状態。<br />
-            セッション進行ツール上で「次のターン」に進むと、損傷したマニューバは全て平気の対象から外されます。<br />
+            「戦闘開始」や「次ターン開始」をすると、全ての損傷したマニューバは平気の対象から外されます。<br />
             平気かどうかはボタンを押すことで手動で切り替えることもできます。<br />
           </v-card-text>
         </v-card>

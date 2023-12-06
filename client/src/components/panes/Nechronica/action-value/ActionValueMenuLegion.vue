@@ -12,9 +12,9 @@
         </div>
       </v-btn>
     </template>
-    <v-card>
-      <v-card-title>行動値</v-card-title>
-      <v-card-text class="py-1">
+    <v-card class="pa-2">
+      <v-card-title class="pa-0">行動値</v-card-title>
+      <v-card-text class="pa-0">
         <menu-edit-text-field
           :editable="true"
           :width="11"
@@ -25,8 +25,8 @@
           @update="v => onUpdateActionValue(v)"
         />
       </v-card-text>
-      <v-card-title>最大行動値</v-card-title>
-      <v-card-text>
+      <v-card-title class="px-0 py-1">最大行動値</v-card-title>
+      <v-card-text class="pa-0">
         <menu-edit-text-field
           :editable="true"
           :width="11"
@@ -37,8 +37,8 @@
           @update="v => onUpdateMaxActionValue(v)"
         />
       </v-card-text>
-      <v-card-title>数</v-card-title>
-      <v-card-text class="py-0 px-0">
+      <v-card-title class="px-0 py-1">数</v-card-title>
+      <v-card-text class="pa-0">
         <menu-edit-text-field
           :editable="true"
           :width="11"

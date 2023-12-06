@@ -1,29 +1,23 @@
 // noinspection TypeScriptCheckImport
-import ActorManagePane, {
-  componentInfo as ActorManagePaneInfo
-} from '@/components/panes/Nechronica/ActorManagePane.vue'
-import ActorViewPane, { componentInfo as ActorViewPaneInfo } from '@/components/panes/Nechronica/ActorViewPane.vue'
-import SessionProgressPane, {
-  componentInfo as SessionProgressPaneInfo
-} from '@/components/panes/Nechronica/SessionProgressPane.vue'
+import CharacterManagePane, {
+  componentInfo as CharacterManagePaneInfo
+} from '@/components/panes/Nechronica/CharacterManagePane.vue'
+import CharacterViewPane, {
+  componentInfo as CharacterViewPaneInfo
+} from '@/components/panes/Nechronica/CharacterViewPane.vue'
 import TipsPane, { componentInfo as TipsPaneInfo } from '@/components/panes/Nechronica/TipsPane.vue'
 
 const group = 'ネクロニカ'
 
 export default [
   {
-    component: ActorManagePane,
-    info: ActorManagePaneInfo,
+    component: CharacterManagePane,
+    info: CharacterManagePaneInfo,
     group: group
   },
   {
-    component: ActorViewPane,
-    info: ActorViewPaneInfo,
-    group: group
-  },
-  {
-    component: SessionProgressPane,
-    info: SessionProgressPaneInfo,
+    component: CharacterViewPane,
+    info: CharacterViewPaneInfo,
     group: group
   },
   {
