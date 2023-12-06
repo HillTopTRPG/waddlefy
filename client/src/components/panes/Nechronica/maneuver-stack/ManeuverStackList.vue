@@ -18,6 +18,7 @@
           :index="index"
           :dataList="draggableStackList"
           @resolve="onResolveStack(unDraggableStackList.length + index)"
+          @cancel="idx => onCancelStack(idx + unDraggableStackList.length)"
         />
       </template>
     </draggable>
@@ -95,6 +96,29 @@ async function onResolveStack(index: number) {
     const result: NechronicaSingleton = {
       ...d,
       maneuverStack: cloned
+    }
+    return result
+  })
+}
+
+async function onCancelStack(index: number) {
+  const ms: NechronicaManeuverStack = singleton.value?.data.maneuverStack[index]
+  if (ms.type === 'use') {
+    await graphQlStore?.updateNechronicaCharacterHelper(ms.characterId, c => {
+      c.character.maneuverList[ms.maneuverIndex].used = false
+      c.actionValue += ms.cost
+    })
+  } else {
+    await graphQlStore?.updateNechronicaCharacterHelper(ms.characterId, c => {
+      c.character.maneuverList[ms.maneuverIndex].lost = false
+    })
+  }
+  await graphQlStore?.updateSingletonHelper(d => {
+    const maneuverStack = clone(singleton.value?.data.maneuverStack || [])!
+    maneuverStack.splice(index, 1)
+    const result: NechronicaSingleton = {
+      ...d,
+      maneuverStack
     }
     return result
   })

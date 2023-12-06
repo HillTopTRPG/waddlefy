@@ -41,7 +41,7 @@
           <v-card-text v-if="idx" class="d-flex flex-row justify-space-around py-0">
             <v-icon v-for="n in 7" :key="n" :icon="n % 2 === 0 ? 'mdi-arrow-up-bold' : 'mdi-arrow-up-bold-outline'" />
           </v-card-text>
-          <maneuver-stack-content :data="data" @cancel="onCancel(idx)" />
+          <maneuver-stack-content :data="data.data" @cancel="onCancel(data.index)" />
         </template>
       </v-card>
     </v-dialog>
@@ -82,9 +82,15 @@ const viewDataList = computed(() => {
   const c = props.dataList[props.index]
   if (!c.status) {
     const startIndex = props.dataList.findIndex(d => !d.status)
-    return props.dataList.slice(startIndex, props.index + 1).reverse()
+    return props.dataList
+      .map((data, index) => ({ index, data }))
+      .slice(startIndex, props.index + 1)
+      .reverse()
   }
-  return props.dataList.slice(c.start, c.end + 1).reverse()
+  return props.dataList
+    .map((data, index) => ({ index, data }))
+    .slice(c.start, c.end + 1)
+    .reverse()
 })
 
 const isResolvedStack = computed(() => {
