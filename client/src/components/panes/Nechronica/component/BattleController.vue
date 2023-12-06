@@ -61,6 +61,7 @@ function getMaxActionValues(characterId: string, data: NechronicaWrap): number[]
   if (data.type === 'legion') return [data.maxActionValue, data.maxActionValue]
   const hasHeiki = data.character.maneuverList.some(m => m.isHeiki)
   const dependenceRoiceNum = data.character.roiceList.filter(r => r.damage === 4 && r.id % 10 === 3).length
+  const characterType = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId).data.type
   const otherInsanityRoice: number =
     graphQlStore?.state.sessionDataList
       .filter(sd => sd.type === 'nechronica-character' && sd.id !== characterId && sd.data.type === 'doll')
@@ -68,7 +69,7 @@ function getMaxActionValues(characterId: string, data: NechronicaWrap): number[]
         return data.character.roiceList.filter(r => r.damage === 4 && [10, 30].includes(r.id)).length
       })
       .reduce((p, c) => p + c, 0) || 0
-  const minusValue = dependenceRoiceNum * 2 + otherInsanityRoice
+  const minusValue = characterType === 'doll' ? dependenceRoiceNum * 2 + otherInsanityRoice : 0
 
   function getManeuverValue(ignoreHeikiFlg: boolean) {
     return data.character.maneuverList.reduce((p, c) => {
@@ -95,9 +96,6 @@ type BattleDataWrap = {
 }
 
 function getBattleDataInfo() {
-  console.log('########################################')
-  console.log('getBattleDataInfo')
-  console.log('########################################')
   const targets: BattleDataWrap[] = []
   const battleCount = singleton.value?.data.battleCount || 0
   let maxAllActionValues = [0, 0]
