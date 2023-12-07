@@ -36,9 +36,7 @@ const emotionList: string[][] = [
   ['black-6+:狂信', 'black-6-:殺意']
 ]
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
 export function createEmotion(json: any): Personality[] {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (json.personalities as any[]).map(p => ({
     emotion: emotionList[convertNumberZero(p.emotion)][convertNumberZero(p.direction) - 1],
     name: p.name || '',
@@ -126,7 +124,6 @@ export function createEmotion(json: any): Personality[] {
 // }
 
 export function createTokugi(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
   json: any,
   table: string[][],
   isUseColDamage: boolean,
@@ -144,7 +141,6 @@ export function createTokugi(
     isUseSingleDamage,
     isOutputSingleDamage
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(json.learned as any[])
     .filter(t => t.id)
     .forEach(t => {
@@ -179,7 +175,6 @@ export function createTokugi(
   return tokugi
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
 export function nlFormat(text: any): string {
   if (text === null || text === undefined) return ''
   return text

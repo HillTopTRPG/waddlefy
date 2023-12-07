@@ -6,4 +6,4 @@ interface Window {
     error: (msg: string) => void
   }
 }
-declare var window: Window
+declare let window: Window

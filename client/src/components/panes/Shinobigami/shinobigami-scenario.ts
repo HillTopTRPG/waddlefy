@@ -123,11 +123,7 @@ export class ShinobigamiScenarioHelper {
    * @protected
    * @return JSONPの生データ
    */
-  private async getJsonData(
-    type: 'jsonp' | 'get' = 'jsonp',
-    url: string = this.url
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<any[] | null> {
+  private async getJsonData(type: 'jsonp' | 'get' = 'jsonp', url: string = this.url): Promise<any[] | null> {
     try {
       const matchResult = url.match(this.urlRegExp)
       const key = matchResult ? matchResult[1] : null
@@ -135,7 +131,6 @@ export class ShinobigamiScenarioHelper {
         .replace('{key}', key || '')
         .replace('{sheetViewPass}', this.sheetViewPass || '')
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const results: any[] = []
       results.push(type === 'jsonp' ? await getJsonByJsonp(jsonSecretUrl) : await getJsonByGet(jsonSecretUrl))
       return results
@@ -149,7 +144,6 @@ export class ShinobigamiScenarioHelper {
    * @param jsons JSONPから取得した生データ
    * @protected
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
   private createData(jsons: any[] | null): ShinobiGamiScenario | null {
     if (!jsons) return null
     const json = jsons[0]
@@ -184,7 +178,6 @@ export class ShinobigamiScenarioHelper {
         stage: textFilter(json.base.stage)
       },
       npc: json.npc
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           intro: textFilter(n.intro),
           name: textFilter(n.name),
@@ -193,10 +186,8 @@ export class ShinobigamiScenarioHelper {
           secret: textFilter(n.secret),
           secretcheck: boolFilter(n.secretcheck)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(`${n.intro}${n.name}${n.mission}${n.recommend}${n.secret}`)),
       pc: json.pc
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           intro: textFilter(n.intro),
           name: textFilter(n.name),
@@ -204,19 +195,15 @@ export class ShinobigamiScenarioHelper {
           recommend: textFilter(n.recommend),
           secret: textFilter(n.secret)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(`${n.intro}${n.name}${n.mission}${n.recommend}${n.secret}`)),
       characters: json.characters
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           inputUrl: textFilter(n.inputUrl),
           note: textFilter(n.note),
           secret: boolFilter(n.secret)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(n.inputUrl) || Boolean(n.note)),
       enigma: json.enigma
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           name: textFilter(n.name),
           menace: textFilter(n.menace),
@@ -224,35 +211,28 @@ export class ShinobigamiScenarioHelper {
           power: textFilter(n.power),
           target: textFilter(n.target)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(`${n.name}${n.menace}${n.notes}${n.power}${n.target}`)),
       prize: json.prize
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           careerClose: textFilter(n.careerClose),
           careerOpen: textFilter(n.careerOpen),
           name: textFilter(n.name),
           secret: boolFilter(n.secret)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(n.careerClose) || Boolean(n.careerOpen) || Boolean(n.name)),
       righthand: json.righthand
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           menace: textFilter(n.menace),
           name: textFilter(n.name),
           notes: textFilter(n.notes)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(n.menace) || Boolean(n.name) || Boolean(n.notes)),
       summary: json.summary
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((n: any) => ({
           contents: textFilter(n.contents),
           secret: boolFilter(n.secret),
           title: textFilter(n.title)
         }))
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .filter((n: any) => Boolean(n.contents) || Boolean(n.title))
     }
   }
