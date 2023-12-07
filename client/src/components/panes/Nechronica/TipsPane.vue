@@ -212,7 +212,6 @@ defineProps<{
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void

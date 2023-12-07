@@ -87,7 +87,6 @@ import {
 } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType

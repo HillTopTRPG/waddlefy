@@ -10,7 +10,7 @@
                 v-ripple
                 v-bind="props"
                 rounded="lg"
-                class="ellipsis text-h5 text-decoration-underline position-relative overflow-y-hidden bg-transparent"
+                class="ellipsis text-h6 text-decoration-underline position-relative overflow-y-hidden bg-transparent"
                 style="width: 1em; flex-grow: 1"
               >
                 {{ character.data.character.basic.characterName }}
@@ -81,7 +81,6 @@ import LinkBtn from '@/components/parts/LinkBtn.vue'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   characterId: string
   perspective: string

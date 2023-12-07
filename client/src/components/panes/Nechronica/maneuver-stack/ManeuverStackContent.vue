@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ManeuverStackCancelBtn from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackCancelBtn.vue'
 import ManeuverViewCard from '@/components/panes/Nechronica/maneuver/ManeuverViewCard.vue'

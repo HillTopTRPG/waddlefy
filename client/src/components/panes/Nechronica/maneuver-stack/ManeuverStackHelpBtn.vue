@@ -26,9 +26,7 @@
   </v-menu>
 </template>
 
-<script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
-</script>
+<script setup lang="ts"></script>
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

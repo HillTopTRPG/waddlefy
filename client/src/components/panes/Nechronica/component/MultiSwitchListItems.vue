@@ -28,14 +28,12 @@ import { computed, ref, watch } from 'vue'
 
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   label: string
   modelValue: number[]
   texts: { text: string; color: string }[]
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const emits = defineEmits<{
   (e: 'update:model-value', values: number[]): void
 }>()

@@ -30,7 +30,6 @@ import ManeuverViewCard from '@/components/panes/Nechronica/maneuver/ManeuverVie
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 import { computed, ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   character: Nechronica
   maneuver: NechronicaManeuver

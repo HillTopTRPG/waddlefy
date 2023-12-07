@@ -62,7 +62,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   label: string
   text: string

@@ -62,7 +62,6 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   characterId: string
 }>()

@@ -107,7 +107,6 @@ export class ShinobigamiScenarioHelper {
     return this.urlRegExp.test(this.url)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getData(): Promise<{ jsons: any[] | null; data: ShinobiGamiScenario | null }> {
     const jsons = await this.getJsonData()
     const data = this.createData(jsons)

@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
 import { computed } from 'vue'
 
 const props = defineProps<{

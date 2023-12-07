@@ -510,7 +510,6 @@ import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vu
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   dataId: string
   textRows: number

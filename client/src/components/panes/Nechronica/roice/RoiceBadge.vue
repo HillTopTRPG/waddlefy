@@ -26,7 +26,6 @@ import { NechronicaRoice, roiceDamages } from '@/components/panes/Nechronica/nec
 import RoiceCard from '@/components/panes/Nechronica/roice/RoiceCard.vue'
 import RoiceChip from '@/components/panes/Nechronica/roice/RoiceChip.vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   roice: NechronicaRoice
 }>()

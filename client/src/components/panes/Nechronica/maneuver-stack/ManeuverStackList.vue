@@ -26,7 +26,6 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ManeuverStack from '@/components/panes/Nechronica/maneuver-stack/ManeuverStack.vue'
 import { NechronicaManeuverStack, NechronicaSingleton } from '@/components/panes/Nechronica/nechronica'

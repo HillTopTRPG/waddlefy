@@ -62,7 +62,6 @@
 import { SkillKind, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   value: string
   label: string

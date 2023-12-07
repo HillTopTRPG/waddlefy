@@ -274,7 +274,6 @@ export class NechronicaHelper {
     return this.urlRegExp.test(this.url)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getData(): Promise<{
     jsons: any[] | null
     data: Nechronica | null
@@ -294,17 +293,12 @@ export class NechronicaHelper {
    * @protected
    * @return JSONPの生データ
    */
-  private async getJsonData(
-    type: 'jsonp' | 'get' = 'jsonp',
-    url: string = this.url
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<any[] | null> {
+  private async getJsonData(type: 'jsonp' | 'get' = 'jsonp', url: string = this.url): Promise<any[] | null> {
     try {
       const matchResult = url.match(this.urlRegExp)
       const key = matchResult ? matchResult[1] : null
       const jsonUrl = this.jsonpUrlFormat.replace('{key}', key || '')
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const results: any[] = []
       results.push(type === 'jsonp' ? await getJsonByJsonp(jsonUrl) : await getJsonByGet(jsonUrl))
       return results
@@ -318,7 +312,6 @@ export class NechronicaHelper {
    * @param jsons JSONPから取得した生データ
    * @protected
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
   private createData(jsons: any[] | null): Nechronica | null {
     if (!jsons || !jsons.length) return null
     const json = jsons[0]

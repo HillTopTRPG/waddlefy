@@ -18,7 +18,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   lost: boolean
 }>()

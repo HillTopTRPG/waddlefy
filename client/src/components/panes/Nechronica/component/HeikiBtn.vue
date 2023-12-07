@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
 defineProps<{
   ignoreHeiki: boolean | undefined
 }>()

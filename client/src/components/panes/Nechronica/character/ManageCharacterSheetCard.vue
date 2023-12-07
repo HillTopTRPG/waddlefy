@@ -102,7 +102,6 @@
 </template>
 
 <script setup lang="ts">
-import { Layout } from '@/components/panes'
 import { inject } from 'vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
@@ -119,16 +118,9 @@ import LinkBtn from '@/components/parts/LinkBtn.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   character: { id: string; data: NechronicaWrap }
   perspective: string
-}>()
-
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
-  (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 
 async function onCopyCharacter() {

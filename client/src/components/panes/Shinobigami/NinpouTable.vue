@@ -62,7 +62,6 @@
 import { NinjaArts, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
 import { computed } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list: NinjaArts[] | undefined
   mode?: 'secret'

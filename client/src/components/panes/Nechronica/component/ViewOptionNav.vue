@@ -106,13 +106,11 @@ export type NechronicaViewOption = {
   selectedTypes: number[]
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   nav: boolean
   option: NechronicaViewOption
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const emits = defineEmits<{
   (e: 'update:option', modelValue: NechronicaViewOption): void
   (e: 'update:nav', nav: boolean): void

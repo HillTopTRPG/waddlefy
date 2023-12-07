@@ -59,7 +59,6 @@ import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   roice: NechronicaRoice
 }>()

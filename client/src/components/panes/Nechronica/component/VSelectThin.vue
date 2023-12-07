@@ -15,8 +15,7 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   modelValue: string
   prefix: string
   items: { value: string; text: string }[]

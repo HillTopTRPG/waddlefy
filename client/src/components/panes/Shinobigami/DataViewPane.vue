@@ -89,14 +89,12 @@ import DataViewPaneHelp from '@/components/panes/Shinobigami/DataViewPaneHelp.vu
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
+defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
   (e: 'change-layout', newLayout: Layout): void
 }>()

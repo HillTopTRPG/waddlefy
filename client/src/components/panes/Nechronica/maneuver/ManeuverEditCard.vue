@@ -140,7 +140,6 @@ const vSelectDefaults = {
 
 const width = 20
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   maneuver: NechronicaManeuver
   mode: 'view' | 'edit'

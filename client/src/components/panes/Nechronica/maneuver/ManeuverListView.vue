@@ -37,7 +37,6 @@ import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   character: Nechronica
   columns: number

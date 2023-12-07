@@ -88,10 +88,14 @@ import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
+}>()
+
+defineEmits<{
+  (e: 'change-component', componentGroup: string, component: string): void
+  (e: 'change-layout', newLayout: Layout): void
 }>()
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
@@ -101,12 +105,6 @@ const perspectiveList = computed(() => [
   { value: '', name: '主催者' },
   ...(graphQlStore?.state.players.map(p => ({ value: p.id, name: p.name })) || [])
 ])
-
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
-  (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
-}>()
 
 type Info = {
   value: string

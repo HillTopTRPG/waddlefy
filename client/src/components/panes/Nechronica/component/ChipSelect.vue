@@ -34,8 +34,7 @@
 </template>
 
 <script setup lang="ts">
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   modelValue: number
   prefix: string
   selections: { value: number; text: string; subTitle: string; color: string }[]

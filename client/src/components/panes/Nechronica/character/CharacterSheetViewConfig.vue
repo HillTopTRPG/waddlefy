@@ -27,7 +27,6 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   characterId: string
   name: string

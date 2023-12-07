@@ -123,7 +123,6 @@ import { clone } from '@/components/panes/PrimaryDataUtility'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   characterId: string
   viewOption: NechronicaViewOption

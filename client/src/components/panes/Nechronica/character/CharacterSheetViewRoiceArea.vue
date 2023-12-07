@@ -19,8 +19,7 @@
 import { NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
 import RoiceBadge from '@/components/panes/Nechronica/roice/RoiceBadge.vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   characterId: string
   roiceList: NechronicaRoice[]
 }>()

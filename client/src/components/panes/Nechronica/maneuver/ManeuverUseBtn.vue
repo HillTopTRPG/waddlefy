@@ -40,7 +40,6 @@
 import { getActionValueNum } from '@/components/panes/Nechronica/nechronica'
 import { computed, ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   used: boolean
   cost: string

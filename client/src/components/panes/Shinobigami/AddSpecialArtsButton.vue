@@ -38,8 +38,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   buttonText: string
   buttonIcon: string
   confirmText: string

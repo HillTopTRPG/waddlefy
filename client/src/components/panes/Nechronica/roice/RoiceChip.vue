@@ -14,8 +14,7 @@
 <script setup lang="ts">
 import { NechronicaRoice } from '@/components/panes/Nechronica/nechronica'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   roice: NechronicaRoice
   color: string
   bindProps?: any

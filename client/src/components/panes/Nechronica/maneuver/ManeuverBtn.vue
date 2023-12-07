@@ -16,7 +16,6 @@ import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import { NechronicaManeuver, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   maneuver: NechronicaManeuver
   disableButton?: boolean
