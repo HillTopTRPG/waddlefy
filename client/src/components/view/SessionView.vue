@@ -304,8 +304,6 @@ watch(
 async function updateSessionName(value: string) {
   const session = graphQlStore?.state.session
   if (!session) return
-  console.log(session.sessionType)
-  console.log(session.defaultDashboardId)
   await graphQlStore?.updateSession(value, session.sessionType, session.defaultDashboardId)
   editSessionName.value = false
 }

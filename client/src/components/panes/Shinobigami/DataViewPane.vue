@@ -171,9 +171,6 @@ const selectSkill = ref('')
 watch(selectSkill, v => {
   if (v) navigationDrawer.value = false
 })
-
-const tokugiTableEditing = ref(false)
-watch(tokugiTableEditing, v => console.log(v))
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

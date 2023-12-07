@@ -113,7 +113,7 @@ async function confirm() {
       await graphQlStore?.updateNechronicaCharacterHelper(dataObj.value.id, c => {
         c.character = mergeNechronica(dataObj.value!.data.character, data, targets.value!)
       })
-      console.log('再読込完了！！！！')
+      window.logger.info('再読込完了！！！！')
     }
   }
   close()

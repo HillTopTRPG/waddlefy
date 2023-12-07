@@ -11,7 +11,7 @@ export async function getJsonByGet<T>(url: string, authorization?: string): Prom
   const status = result.status
   if (status !== 200) {
     const errMsg = await result.text()
-    console.log(`${status}: ${errMsg} [GET] ${url}`)
+    window.logger.error(`${status}: ${errMsg} [GET] ${url}`)
     throw new Error(`${status}: ${errMsg} [GET] ${url}`)
   }
 

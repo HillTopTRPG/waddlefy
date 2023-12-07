@@ -101,7 +101,7 @@ async function onLoadCharacterSheet(url: string, type: NechronicaType) {
       graphQlStore?.addNotification('キャラクターシートの読込に失敗しました。', 'mdi-alert-circle-outline', 'error')
       return
     }
-    console.log(JSON.stringify(data, null, 2))
+    window.logger.info(JSON.stringify(data, null, 2))
     await graphQlStore?.addNechronicaCharacter(perspective.value, type, data, {})
   }
 }

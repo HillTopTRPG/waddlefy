@@ -153,7 +153,7 @@ export class ShinobigamiScenarioHelper {
   private createData(jsons: any[] | null): ShinobiGamiScenario | null {
     if (!jsons) return null
     const json = jsons[0]
-    console.log(JSON.stringify(json, null, 2))
+    window.logger.info(JSON.stringify(json, null, 2))
     if (json.error) return null
     const textFilter = (text: string | null) => {
       if (!text) return ''

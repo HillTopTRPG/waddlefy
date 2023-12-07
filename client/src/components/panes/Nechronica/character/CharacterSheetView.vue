@@ -159,7 +159,6 @@ async function addManeuverStack(characterId: string, maneuverIndex: number, type
     const maneuverStack = singleton.value?.data.maneuverStack || []
     const cloned = clone(maneuverStack)!
     const idx = cloned.findIndex(c => !c.status)
-    console.log(idx)
     cloned.splice(idx, 0, { characterId, maneuverIndex, type, cost, status: '', start: 0, end: 0 })
     const result: NechronicaSingleton = {
       ...d,

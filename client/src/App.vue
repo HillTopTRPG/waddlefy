@@ -8,11 +8,13 @@
 const images: HTMLImageElement[] = []
 function preload(...args: string[]) {
   for (let i = 0; i < args.length; i++) {
-    images[i] = new Image()
-    images[i].onload = () => {
-      // console.log(arguments[i])
+    const imgElm = new Image()
+    const src = arguments[i]
+    imgElm.onload = () => {
+      window.logger.info(`preloaded '${src}'`)
     }
-    images[i].src = arguments[i]
+    imgElm.src = src
+    images.push(imgElm)
   }
 }
 

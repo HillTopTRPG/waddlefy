@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const emits = defineEmits<{
   (e: 'submit', sessionType: string): void
@@ -48,13 +48,6 @@ const items = [
 ]
 
 const sessionType = ref('Shinobigami')
-watch(
-  sessionType,
-  v => {
-    console.log(v)
-  },
-  { immediate: true }
-)
 
 const vAlertDefault = {
   border: 'start',

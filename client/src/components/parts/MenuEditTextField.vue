@@ -102,9 +102,8 @@ watch(opened, v => {
 })
 
 function onSave() {
-  console.log(typeof editingText.value)
-  emits('update', editingText.value)
   opened.value = false
+  emits('update', editingText.value)
 }
 </script>
 

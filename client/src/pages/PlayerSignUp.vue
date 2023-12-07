@@ -92,18 +92,6 @@ const props = defineProps<{
   playerId?: string
 }>()
 
-console.log(
-  JSON.stringify(
-    {
-      sessionToken: props.sessionToken,
-      signUpToken: props.signUpToken,
-      playerId: props.playerId
-    },
-    null,
-    2
-  )
-)
-
 const playerName = ref('')
 const password = ref('')
 const resetCode = ref('')
@@ -126,7 +114,6 @@ function getAuthToken() {
   if (props.signUpToken) {
     result = `si/${props.signUpToken}`
   }
-  console.log(result)
   return result
 }
 
@@ -135,7 +122,7 @@ async function init() {
   appSyncClient = makeGraphQlClient(graphql, region, getAuthToken)
 
   if (props.playerId) {
-    console.log('Queries.getSessionPlayer')
+    window.logger.info('Queries.getSessionPlayer')
     const result = await appSyncClient?.mutate<QueryResult.GetSessionPlayer>({
       mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
@@ -146,7 +133,7 @@ async function init() {
       player.value = getSessionPlayer
     }
   } else {
-    console.log('Queries.getSessionPlayers')
+    window.logger.info('Queries.getSessionPlayers')
     const result = await appSyncClient?.mutate<QueryResult.GetSessionPlayers>({
       mutation: Queries.getSessionPlayers
     })

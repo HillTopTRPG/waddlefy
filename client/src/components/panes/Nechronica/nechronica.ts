@@ -380,7 +380,7 @@ export class NechronicaHelper {
         return data
       })
       .filter(r => Boolean(r.name))
-    console.log(JSON.stringify(json, null, 2))
+    window.logger.info(JSON.stringify(json, null, 2))
     return {
       url: this.url,
       basic: {
