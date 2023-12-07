@@ -27,6 +27,7 @@ services:
     ports:
       - "82:82"
       - "83:83"
+      - "6006:6006"
     volumes:
       - './client:/app/waddlefy'
     command: bash -c "npm i && npm run dev"
