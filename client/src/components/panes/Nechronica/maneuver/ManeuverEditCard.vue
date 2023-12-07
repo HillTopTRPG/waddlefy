@@ -6,7 +6,8 @@
     variant="flat"
     v-if="mode === 'edit'"
   >
-    <v-card-text class="d-flex flex-row py-1 px-2">
+    <v-card-text class="d-flex flex-row align-center py-1 px-2">
+      <span class="text-body-1">マニューバ編集</span>
       <v-spacer />
       <v-btn
         icon="mdi-eye-outline"
