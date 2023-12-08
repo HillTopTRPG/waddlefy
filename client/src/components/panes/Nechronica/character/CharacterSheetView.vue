@@ -3,7 +3,7 @@
     <template v-if="character">
       <v-card
         variant="outlined"
-        class="d-flex flex-column pa-2 rounded-xl"
+        class="d-flex flex-column px-2 pb-2 rounded-xl"
         :class="isCurrent ? '' : 'bg-grey-lighten-2'"
         style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${

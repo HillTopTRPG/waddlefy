@@ -1,4 +1,10 @@
-import type { Preview } from '@storybook/vue3'
+import {Preview, setup} from '@storybook/vue3'
+import {registerPlugins} from '../src/plugins'
+import {withVuetifyTheme} from './withVuetifyTheme.decorator'
+
+setup((app) => {
+  registerPlugins(app);
+});
 
 const preview: Preview = {
   parameters: {
@@ -9,7 +15,8 @@ const preview: Preview = {
         date: /Date$/i
       }
     }
-  }
+  },
+  decorators: [withVuetifyTheme]
 }
 
 export default preview

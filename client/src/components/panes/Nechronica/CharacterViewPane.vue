@@ -14,73 +14,51 @@
       />
     </template>
     <template #default>
-      <v-sheet class="w-100">
-        <maneuver-stack-list />
-      </v-sheet>
-      <v-sheet class="w-100">
-        <v-list-item-subtitle
-          class="bg-lime-lighten-2 flex-grow-1 position-sticky text-body-1 px-2"
-          style="top: 0; z-index: 100; opacity: 1"
-          v-text="'ドール・サヴァント'"
-        />
-        <v-sheet
-          class="d-flex flex-row flex-wrap align-start pa-2 overflow-auto"
-          style="gap: 0.5rem"
-          :style="nav ? 'padding-right: 250px !important;' : ''"
-        >
-          <template v-for="data in dolls" :key="data.id">
-            <character-sheet-view
-              :character-id="data.id"
-              :battle-count="singleton?.data.battleCount || 0"
-              :battle-timing="battleTiming"
-              :view-option="viewOption"
-              :perspective="perspective"
-            />
-          </template>
-          <template v-for="data in servents" :key="data.id">
-            <character-sheet-view
-              v-if="!perspective || !data.data.hide"
-              :character-id="data.id"
-              :battle-count="singleton?.data.battleCount || 0"
-              :battle-timing="battleTiming"
-              :view-option="viewOption"
-              :perspective="perspective"
-            />
-          </template>
-        </v-sheet>
-      </v-sheet>
-      <v-sheet class="w-100">
-        <v-list-item-subtitle
-          class="bg-teal-lighten-3 flex-grow-1 position-sticky text-body-1 px-2"
-          style="top: 0; z-index: 100; opacity: 1"
-          v-text="'レギオン・ホラー'"
-        />
-        <v-sheet
-          class="d-flex flex-row flex-wrap align-start pa-2 overflow-auto"
-          style="gap: 0.5rem"
-          :style="nav ? 'padding-right: 250px !important;' : ''"
-        >
-          <template v-for="data in legions" :key="data.id">
-            <character-sheet-view
-              v-if="!perspective || !data.data.hide"
-              :character-id="data.id"
-              :battle-count="singleton?.data.battleCount || 0"
-              :battle-timing="battleTiming"
-              :view-option="viewOption"
-              :perspective="perspective"
-            />
-          </template>
-          <template v-for="data in horrors" :key="data.id">
-            <character-sheet-view
-              v-if="!perspective || !data.data.hide"
-              :character-id="data.id"
-              :battle-count="singleton?.data.battleCount || 0"
-              :battle-timing="battleTiming"
-              :view-option="viewOption"
-              :perspective="perspective"
-            />
-          </template>
-        </v-sheet>
+      <maneuver-stack-list />
+      <v-sheet
+        class="d-flex flex-row flex-wrap align-start px-2 pt-1 pb-2 overflow-auto"
+        style="gap: 0.5rem"
+        :style="nav ? 'padding-right: 250px !important;' : ''"
+      >
+        <template v-for="data in dolls" :key="data.id">
+          <character-sheet-view
+            :character-id="data.id"
+            :battle-count="singleton?.data.battleCount || 0"
+            :battle-timing="battleTiming"
+            :view-option="viewOption"
+            :perspective="perspective"
+          />
+        </template>
+        <template v-for="data in servents" :key="data.id">
+          <character-sheet-view
+            v-if="!perspective || !data.data.hide"
+            :character-id="data.id"
+            :battle-count="singleton?.data.battleCount || 0"
+            :battle-timing="battleTiming"
+            :view-option="viewOption"
+            :perspective="perspective"
+          />
+        </template>
+        <template v-for="data in legions" :key="data.id">
+          <character-sheet-view
+            v-if="!perspective || !data.data.hide"
+            :character-id="data.id"
+            :battle-count="singleton?.data.battleCount || 0"
+            :battle-timing="battleTiming"
+            :view-option="viewOption"
+            :perspective="perspective"
+          />
+        </template>
+        <template v-for="data in horrors" :key="data.id">
+          <character-sheet-view
+            v-if="!perspective || !data.data.hide"
+            :character-id="data.id"
+            :battle-count="singleton?.data.battleCount || 0"
+            :battle-timing="battleTiming"
+            :view-option="viewOption"
+            :perspective="perspective"
+          />
+        </template>
       </v-sheet>
     </template>
     <template #nav>

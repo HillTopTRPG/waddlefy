@@ -27,7 +27,6 @@
         </v-sheet>
       </v-sheet>
     </template>
-    <v-divider />
   </v-sheet>
 </template>
 
