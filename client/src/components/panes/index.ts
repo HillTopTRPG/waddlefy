@@ -1,13 +1,11 @@
 import nechronicaPanes from './Nechronica'
 import noGroupPanes from './NoGroup'
 import shinobigamiPanes from './Shinobigami'
-// import generalPanes from './General'
 
 const panes = [
   ...noGroupPanes,
   ...shinobigamiPanes,
   ...nechronicaPanes
-  // ...generalPanes
 ]
 
 export interface Layout {

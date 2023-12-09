@@ -7,12 +7,10 @@
     "dev": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
     "test": "vitest",
-    "test:unit": "vue-cli-service test:unit",
     "preview": "vite preview --host --port=83",
     "lint": "eslint . --fix",
     "format": "prettier --write src",
     "storybook": "storybook dev -p 6006",
-    "test-storybook": "test-storybook",
     "build-storybook": "storybook build"
   },
   "dependencies": {
