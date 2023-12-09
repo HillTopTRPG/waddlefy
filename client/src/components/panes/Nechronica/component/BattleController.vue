@@ -19,7 +19,7 @@
       :model-value="battleTiming"
       @update:model-value="v => emits('update:battle-timing', v)"
     />
-    <span class="d-flex flex-row align-end h-100 pb-1">
+    <span class="d-flex flex-row align-end pb-1">
       <span class="text-caption" style="line-height: 1em">カウント:</span>
       <span class="text-h5" style="line-height: 1em">{{ singleton?.data.battleCount || 0 }}</span>
     </span>
