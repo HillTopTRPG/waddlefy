@@ -84,10 +84,10 @@
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import {
+  calcTargetValue,
   SkillKind,
   SkillTable,
-  TargetValueCalcResult,
-  calcTargetValue
+  TargetValueCalcResult
 } from '@/components/panes/Shinobigami/shinobigami'
 import { ref, watch } from 'vue'
 

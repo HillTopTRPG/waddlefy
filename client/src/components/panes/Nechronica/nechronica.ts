@@ -1,5 +1,5 @@
-import { clone, convertNumberZero } from '../PrimaryDataUtility'
 import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
+import { clone, convertNumberZero } from '../PrimaryDataUtility'
 
 export type NechronicaManeuver = {
   lost: boolean

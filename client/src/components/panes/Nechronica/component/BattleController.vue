@@ -44,7 +44,7 @@
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import MultiSelectMenu from '@/components/panes/Nechronica/component/MultiSelectMenu.vue'
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
-import { NechronicaSingleton, NechronicaWrap, getActionValueNum } from '@/components/panes/Nechronica/nechronica'
+import { getActionValueNum, NechronicaSingleton, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { computed, inject } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

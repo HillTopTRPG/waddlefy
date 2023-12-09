@@ -1,3 +1,5 @@
+import { GraphQlStore } from '@/components/graphql/graphql'
+import { DashboardOption } from '@/components/graphql/schema'
 import DefaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import CharacterManagePaneLayout from '@/PaneLayoutTemplate/Nechronica/CharacterManagePaneLayout'
 import CharacterViewPaneLayout from '@/PaneLayoutTemplate/Nechronica/CharacterViewPaneLayout'
@@ -6,8 +8,6 @@ import CharacterSheetManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/Cha
 import DataViewPaneLayout from '@/PaneLayoutTemplate/Shinobigami/DataViewPaneLayout'
 import ScenarioDataManagePaneLayout from '@/PaneLayoutTemplate/Shinobigami/ScenarioDataManagePaneLayout'
 import SpecialityTableDiffPaneLayout from '@/PaneLayoutTemplate/Shinobigami/SpecialityTableDiffPaneLayout'
-import { GraphQlStore } from '@/components/graphql/graphql'
-import { DashboardOption } from '@/components/graphql/schema'
 
 export default [
   {

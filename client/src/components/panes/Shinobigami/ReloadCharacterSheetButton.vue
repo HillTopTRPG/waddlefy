@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { DataType, ShinobigamiHelper, fullDataType, mergeShinobigami } from '@/components/panes/Shinobigami/shinobigami'
+import { DataType, fullDataType, mergeShinobigami, ShinobigamiHelper } from '@/components/panes/Shinobigami/shinobigami'
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
