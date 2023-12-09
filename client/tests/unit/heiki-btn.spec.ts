@@ -32,7 +32,7 @@ describe('HeikiBtn.vue', (): void => {
       { title: '文字サイズがcaptionであること', selector: '.v-btn', containClass: 'text-caption' },
       { title: 'densityがcomfortableであること', selector: '.v-btn', containClass: 'v-btn--density-comfortable' },
       { title: 'sizeがdefaultであること', selector: '.v-btn', containClass: 'v-btn--size-default' },
-      { title: 'variantがelevatedであること', selector: '.v-btn', containClass: 'v-btn--size-default' },
+      { title: 'variantがelevatedであること', selector: '.v-btn', containClass: 'v-btn--variant-elevated' },
       { title: 'パディングがpx-1であること', selector: '.v-btn', containClass: 'px-1' }
     ]
     patterns.forEach(createSimpleClassTest.bind(null, wrapper))
@@ -40,6 +40,10 @@ describe('HeikiBtn.vue', (): void => {
 
   describe('ignoreHeiki: trueの場合', () => {
     const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
+
+    it('スナップショットテスト', (): void => {
+      expect(wrapper.element).toMatchSnapshot()
+    })
 
     it('propsの確認', (): void => {
       expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeTruthy()
@@ -59,6 +63,10 @@ describe('HeikiBtn.vue', (): void => {
 
   describe('ignoreHeik: falseの場合', () => {
     const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: false })
+
+    it('スナップショットテスト', (): void => {
+      expect(wrapper.element).toMatchSnapshot()
+    })
 
     it('propsの確認', (): void => {
       expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeFalsy()

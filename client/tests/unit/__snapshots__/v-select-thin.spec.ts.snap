@@ -1,0 +1,319 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場合 > スナップショットテスト 1`] = `
+<div
+  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg"
+  data-v-014df6f2=""
+>
+  <!---->
+  <div
+    class="v-input__control"
+  >
+    
+    <div
+      aria-expanded="false"
+      aria-haspopup="menu"
+      aria-owns="v-menu-2"
+      class="v-field v-field--active v-field--appended v-field--center-affix v-field--dirty v-field--no-label v-field--variant-outlined v-theme--light v-locale--is-ltr"
+      role="button"
+    >
+      <div
+        class="v-field__overlay"
+      />
+      <div
+        class="v-field__loader"
+      >
+        <div
+          aria-hidden="true"
+          aria-valuemax="100"
+          aria-valuemin="0"
+          class="v-progress-linear v-theme--light v-locale--is-ltr"
+          role="progressbar"
+          style="top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);"
+        >
+          <!---->
+          <div
+            class="v-progress-linear__background bg-primary"
+            style="width: 100%;"
+          />
+          <transition-stub
+            appear="false"
+            css="true"
+            name="fade-transition"
+            persisted="false"
+          >
+            <div
+              class="v-progress-linear__indeterminate"
+            >
+              
+              <div
+                class="v-progress-linear__indeterminate long bg-primary"
+              />
+              <div
+                class="v-progress-linear__indeterminate short bg-primary"
+              />
+              
+            </div>
+          </transition-stub>
+          <!---->
+        </div>
+      </div>
+      <!---->
+      <div
+        class="v-field__field"
+        data-no-activator=""
+      >
+        <!---->
+        <label
+          class="v-label v-field-label"
+          for="input-0"
+        >
+          <!---->
+          
+          <!---->
+          
+        </label>
+        
+        
+        <span
+          class="v-text-field__prefix"
+        >
+          <span
+            class="v-text-field__prefix__text"
+          >
+            テスト選択肢: 
+          </span>
+        </span>
+        <div
+          class="v-field__input"
+          data-no-activator=""
+        >
+          
+          
+          
+          <!---->
+          <!---->
+          
+          
+          <div
+            class="v-select__selection"
+          >
+            <span
+              class="v-select__selection-text"
+            >
+              無選択
+              <!---->
+            </span>
+          </div>
+          
+          
+          
+          <input
+            aria-describedby="input-0-messages"
+            aria-label="Open"
+            id="input-0"
+            inputmode="none"
+            size="1"
+            title="Open"
+            type="text"
+          />
+        </div>
+        <!---->
+        
+        
+      </div>
+      <!---->
+      <div
+        class="v-field__append-inner"
+      >
+        
+        
+        <!---->
+        <i
+          aria-hidden="true"
+          class="mdi-menu-down mdi v-icon notranslate v-theme--light v-icon--size-default v-select__menu-icon"
+        />
+        
+        
+        <!---->
+      </div>
+      <div
+        class="v-field__outline"
+      >
+        
+        <div
+          class="v-field__outline__start"
+        />
+        <!---->
+        <div
+          class="v-field__outline__end"
+        />
+        
+        <!---->
+      </div>
+    </div>
+    
+  </div>
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`VSelectThin.vue > コンテンツの確認 > 選択肢が2番目から3番目に変わった場合 > スナップショットテスト 1`] = `
+<div
+  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-input--dirty v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg"
+  data-v-014df6f2=""
+>
+  <!---->
+  <div
+    class="v-input__control"
+  >
+    
+    <div
+      aria-expanded="false"
+      aria-haspopup="menu"
+      aria-owns="v-menu-2"
+      class="v-field v-field--active v-field--appended v-field--center-affix v-field--dirty v-field--no-label v-field--variant-outlined v-theme--light v-locale--is-ltr"
+      role="button"
+    >
+      <div
+        class="v-field__overlay"
+      />
+      <div
+        class="v-field__loader"
+      >
+        <div
+          aria-hidden="true"
+          aria-valuemax="100"
+          aria-valuemin="0"
+          class="v-progress-linear v-theme--light v-locale--is-ltr"
+          role="progressbar"
+          style="top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);"
+        >
+          <!---->
+          <div
+            class="v-progress-linear__background bg-primary"
+            style="width: 100%;"
+          />
+          <transition-stub
+            appear="false"
+            css="true"
+            name="fade-transition"
+            persisted="false"
+          >
+            <div
+              class="v-progress-linear__indeterminate"
+            >
+              
+              <div
+                class="v-progress-linear__indeterminate long bg-primary"
+              />
+              <div
+                class="v-progress-linear__indeterminate short bg-primary"
+              />
+              
+            </div>
+          </transition-stub>
+          <!---->
+        </div>
+      </div>
+      <!---->
+      <div
+        class="v-field__field"
+        data-no-activator=""
+      >
+        <!---->
+        <label
+          class="v-label v-field-label"
+          for="input-0"
+        >
+          <!---->
+          
+          <!---->
+          
+        </label>
+        
+        
+        <span
+          class="v-text-field__prefix"
+        >
+          <span
+            class="v-text-field__prefix__text"
+          >
+            テスト選択肢: 
+          </span>
+        </span>
+        <div
+          class="v-field__input"
+          data-no-activator=""
+        >
+          
+          
+          
+          <!---->
+          <!---->
+          
+          
+          <div
+            class="v-select__selection"
+          >
+            <span
+              class="v-select__selection-text"
+            >
+              選択肢1
+              <!---->
+            </span>
+          </div>
+          
+          
+          
+          <input
+            aria-describedby="input-0-messages"
+            aria-label="Open"
+            id="input-0"
+            inputmode="none"
+            size="1"
+            title="Open"
+            type="text"
+          />
+        </div>
+        <!---->
+        
+        
+      </div>
+      <!---->
+      <div
+        class="v-field__append-inner"
+      >
+        
+        
+        <!---->
+        <i
+          aria-hidden="true"
+          class="mdi-menu-down mdi v-icon notranslate v-theme--light v-icon--size-default v-select__menu-icon"
+        />
+        
+        
+        <!---->
+      </div>
+      <div
+        class="v-field__outline"
+      >
+        
+        <div
+          class="v-field__outline__start"
+        />
+        <!---->
+        <div
+          class="v-field__outline__end"
+        />
+        
+        <!---->
+      </div>
+    </div>
+    
+  </div>
+  <!---->
+  <!---->
+</div>
+`;
