@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="px-0 d-flex flex-column" :class="battleTargetClass[isBattleTarget]">
+  <v-sheet class="px-0 d-flex flex-column" :class="battleTargetClass.at(isBattleTarget) || ''">
     <icon-btn
       :class="classText"
       :size="size"

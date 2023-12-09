@@ -111,9 +111,8 @@ const characters = computed((): ({ id: string; data: NechronicaWrap } | undefine
 
 const maneuvers = computed((): (NechronicaManeuver | undefined)[] => {
   return props.dataList.map((data, idx) => {
-    const maneuverList = characters.value[idx]?.data.character.maneuverList || []
-    if (maneuverList.length <= data.maneuverIndex) return undefined
-    return maneuverList[data.maneuverIndex]
+    const maneuverList = characters.value.at(idx)?.data.character.maneuverList || []
+    return maneuverList.at(data.maneuverIndex)
   })
 })
 

@@ -249,9 +249,8 @@ export const NechronicaClassList = [
 
 export function getActionValueNum(text: string): number {
   const matchResult = text.match(/-?[0-9０-９]+/)
-  if (!matchResult || !matchResult.length) return 0
-  const numText = matchResult[0].replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-  return parseInt(numText, 10)
+  const numText = matchResult?.at(0)?.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+  return numText ? parseInt(numText, 10) : 0
 }
 
 export class NechronicaHelper {

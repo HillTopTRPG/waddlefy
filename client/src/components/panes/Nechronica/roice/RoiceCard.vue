@@ -88,14 +88,17 @@ watch(
 const selectedPos = ref(props.roice.id)
 watch(selectedPos, idx => {
   emitUpdateCloneRoice(c => {
-    const rawData = roiceList[idx]
-    let execute = c.id !== idx || c.pos !== rawData.pos
-    execute = execute || !(c.neg === rawData.neg && c.breakEffect === rawData.breakEffect)
-    if (execute) {
-      c.id = idx
-      c.pos = rawData.pos
-      c.neg = rawData.neg
-      c.breakEffect = rawData.breakEffect
+    const rawData = roiceList.at(idx)
+    let execute = false
+    if (rawData) {
+      execute = c.id !== idx || c.pos !== rawData.pos
+      execute = execute || !(c.neg === rawData.neg && c.breakEffect === rawData.breakEffect)
+      if (execute) {
+        c.id = idx
+        c.pos = rawData.pos
+        c.neg = rawData.neg
+        c.breakEffect = rawData.breakEffect
+      }
     }
     return execute
   })

@@ -1,6 +1,6 @@
 <template>
   <v-chip
-    :color="selections[modelValue].color"
+    :color="selections.at(modelValue)?.color"
     class="pa-0"
     density="default"
     style="line-height: 1.7em; min-height: 3em"
@@ -8,7 +8,7 @@
   >
     <v-select
       class="chip-select"
-      :color="selections[modelValue].color"
+      :color="selections.at(modelValue)?.color"
       :flat="true"
       :hide-details="true"
       density="compact"

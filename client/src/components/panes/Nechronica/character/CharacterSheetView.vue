@@ -170,7 +170,8 @@ async function addManeuverStack(characterId: string, maneuverIndex: number, type
 
 async function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, cost: number) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
-    const maneuver = c.character.maneuverList[idx]
+    const maneuver = c.character.maneuverList.at(idx)
+    if (!maneuver) return
     maneuver.used = used
     if (used) c.actionValue -= cost
   })
@@ -179,8 +180,10 @@ async function onUpdateManeuverUsed(characterId: string, idx: number, used: bool
 
 async function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
-    c.character.maneuverList[idx].lost = lost
-    c.character.maneuverList[idx].ignoreHeiki = undefined
+    const maneuver = c.character.maneuverList.at(idx)
+    if (!maneuver) return
+    maneuver.lost = lost
+    maneuver.ignoreHeiki = undefined
   })
   if (lost) {
     await addManeuverStack(characterId, idx, 'lost', 0)
@@ -189,18 +192,22 @@ async function onUpdateManeuverLost(characterId: string, idx: number, lost: bool
 
 async function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
-    c.character.maneuverList[idx].ignoreHeiki = value || undefined
+    const maneuver = c.character.maneuverList.at(idx)
+    if (!maneuver) return
+    maneuver.ignoreHeiki = value || undefined
   })
 }
 
 async function onUpdateManeuver(characterId: string, idx: number, maneuver: NechronicaManeuver) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
+    if (!c.character.maneuverList.at(idx)) return
     c.character.maneuverList[idx] = maneuver
   })
 }
 
 async function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
+    if (!c.character.roiceList.at(idx)) return
     c.character.roiceList[idx] = roice
   })
 }
