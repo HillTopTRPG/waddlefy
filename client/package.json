@@ -9,7 +9,8 @@
     "test": "vitest",
     "preview": "vite preview --host --port=83",
     "lint": "eslint . --fix",
-    "format": "prettier --write src",
+    "format": "prettier --write 'src/**/{*.vue,*.js,*.ts}'",
+    "format:test": "prettier --write 'tests/**/{*.vue,*.js,*.ts}'",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

@@ -1,6 +1,6 @@
-import { VueWrapper } from '@vue/test-utils'
-import {createSimpleClassTest, factory, SimpleClassTestInfo} from '../common'
 import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import { VueWrapper } from '@vue/test-utils'
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface HeikiBtnProps {
   ignoreHeiki: boolean
@@ -33,7 +33,7 @@ describe('HeikiBtn.vue', (): void => {
       { title: 'densityがcomfortableであること', selector: '.v-btn', containClass: 'v-btn--density-comfortable' },
       { title: 'sizeがdefaultであること', selector: '.v-btn', containClass: 'v-btn--size-default' },
       { title: 'variantがelevatedであること', selector: '.v-btn', containClass: 'v-btn--size-default' },
-      { title: 'パディングがpx-1であること', selector: '.v-btn', containClass: 'px-1' },
+      { title: 'パディングがpx-1であること', selector: '.v-btn', containClass: 'px-1' }
     ]
     patterns.forEach(createSimpleClassTest.bind(null, wrapper))
   })
@@ -48,7 +48,11 @@ describe('HeikiBtn.vue', (): void => {
     const patterns: SimpleClassTestInfo[] = [
       { title: '背景色がgreyであること', selector: '.v-btn', containClass: 'bg-grey' },
       { title: 'iconがmdi-skullとなること', selector: '.v-icon', containClass: 'mdi-skull' },
-      { title: 'テキストに取り消し線がつくこと', selector: '.v-btn__content span', containClass: 'text-decoration-line-through' },
+      {
+        title: 'テキストに取り消し線がつくこと',
+        selector: '.v-btn__content [data-cy=label]',
+        containClass: 'text-decoration-line-through'
+      }
     ]
     patterns.forEach(createSimpleClassTest.bind(null, wrapper))
   })
@@ -63,7 +67,12 @@ describe('HeikiBtn.vue', (): void => {
     const patterns: SimpleClassTestInfo[] = [
       { title: '背景色がinfoであること', selector: '.v-btn', containClass: 'bg-info' },
       { title: 'iconがmdi-emoticon-tongueとなること', selector: '.v-icon', containClass: 'mdi-emoticon-tongue' },
-      { title: 'テキストに取り消し線がつかないこと', selector: '.v-btn__content span', not: true, containClass: 'text-decoration-line-through' },
+      {
+        title: 'テキストに取り消し線がつかないこと',
+        selector: '.v-btn__content [data-cy=label]',
+        not: true,
+        containClass: 'text-decoration-line-through'
+      }
     ]
     patterns.forEach(createSimpleClassTest.bind(null, wrapper))
   })
