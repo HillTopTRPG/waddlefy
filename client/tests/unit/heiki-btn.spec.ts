@@ -1,16 +1,15 @@
 import {mount, VueWrapper} from '@vue/test-utils'
-import { expect, describe, it } from 'vitest'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import HeikiBtn from '../../src/components/panes/Nechronica/component/HeikiBtn.vue'
+import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
 
 const vuetify = createVuetify({
   components,
   directives,
 })
 
-function factory(props): VueWrapper {
+function factory(props: { ignoreHeiki: boolean }): VueWrapper {
   return mount(HeikiBtn, {
     props,
     global: {
