@@ -1,6 +1,6 @@
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '@/components/common'
 import NavDialog from '@/components/NavDialog.vue'
 import { VueWrapper } from '@vue/test-utils'
-import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface NavDialogProps {
   modelValue: boolean

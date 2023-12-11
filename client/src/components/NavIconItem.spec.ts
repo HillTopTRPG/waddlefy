@@ -1,7 +1,6 @@
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '@/components/common'
 import NavIconItem from '@/components/NavIconItem.vue'
-import { expect } from '@storybook/test'
 import { VueWrapper } from '@vue/test-utils'
-import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface NavIconItemProps {
   title: string
@@ -39,6 +38,14 @@ function testNonElement(selector: string, props: Partial<NavIconItemProps>) {
   })
 }
 
+function testSnapShot(props: Partial<NavIconItemProps>) {
+  it('スナップショットテスト', () => {
+    const wrapper: VueWrapper = factoryWrap(props)
+    expect(wrapper.element).toMatchSnapshot()
+    wrapper.unmount()
+  })
+}
+
 describe('NavIconItem.vue', (): void => {
   describe('classの確認', (): void => {
     const patterns: SimpleClassTestInfo[] = [
@@ -49,6 +56,7 @@ describe('NavIconItem.vue', (): void => {
       }
     ]
     patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, {})))
+    testSnapShot({})
   })
 
   describe('toggle=trueの場合', (): void => {
@@ -58,6 +66,7 @@ describe('NavIconItem.vue', (): void => {
       expect(classes).toContain('radius-border')
       wrapper.unmount()
     })
+    testSnapShot({ toggle: true })
   })
 
   describe('toggle=falseの場合', (): void => {
@@ -67,9 +76,12 @@ describe('NavIconItem.vue', (): void => {
       expect(classes).not.toContain('radius-border')
       wrapper.unmount()
     })
+    testSnapShot({ toggle: false })
   })
 
-  describe('rail=trueの場合', (): void => {
+  describe('rail=falseの場合', (): void => {
+    testSnapShot({ rail: false })
+
     describe('v-list-item-titleの確認', (): void => {
       const selector: string = '.v-list-item-title'
 
@@ -82,12 +94,14 @@ describe('NavIconItem.vue', (): void => {
       const testNonExists = testNonElement.bind(null, selector)
 
       describe('subtitleが設定されている場合', () => testExistsText(selector, 'Subtitle', { subtitle: 'Subtitle' }))
-      describe('subtitleが空文字の場合', () => testNonExists({ subtitle: '', rail: false }))
-      describe('subtitleが未指定の場合', () => testNonExists({ rail: false }))
+      describe('subtitleが空文字の場合', () => testNonExists({ subtitle: '' }))
+      describe('subtitleが未指定の場合', () => testNonExists({}))
     })
   })
 
   describe('rail=trueの場合', (): void => {
+    testSnapShot({ rail: true })
+
     interface Pattern {
       name: string
       selector: string

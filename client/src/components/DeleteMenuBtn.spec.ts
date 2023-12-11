@@ -1,6 +1,6 @@
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '@/components/common'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { VueWrapper } from '@vue/test-utils'
-import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface DeleteMenuBtnProps {
   type: string

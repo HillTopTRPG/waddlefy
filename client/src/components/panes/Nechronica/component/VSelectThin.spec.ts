@@ -1,6 +1,6 @@
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '@/components/common'
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
 import { VueWrapper } from '@vue/test-utils'
-import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface VSelectThinProps {
   modelValue: string

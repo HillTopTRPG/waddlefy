@@ -1,6 +1,6 @@
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '@/components/common'
 import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
 import { VueWrapper } from '@vue/test-utils'
-import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface HeikiBtnProps {
   ignoreHeiki: boolean
