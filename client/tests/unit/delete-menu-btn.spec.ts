@@ -65,6 +65,15 @@ describe('DeleteMenuBtn.vue', (): void => {
     })
   })
 
+  describe('初期状態の確認', (): void => {
+    let wrapper: VueWrapper
+    beforeEach(() => (wrapper = factoryWrap({})))
+    afterEach(() => wrapper.unmount())
+
+    it('openedがfalseであること', (): void => expect(wrapper.vm.opened).toBe(false))
+    it('inputTargetNameが空文字であること', (): void => expect(wrapper.vm.inputTargetName).toBe(''))
+  })
+
   describe('deleteExecuteメソッドの確認', (): void => {
     let wrapper: VueWrapper
     beforeEach(() => (wrapper = factoryWrap({})))
@@ -85,16 +94,6 @@ describe('DeleteMenuBtn.vue', (): void => {
       wrapper.vm.inputTargetName = 'test'
       await wrapper.vm.deleteExecute()
       expect(wrapper.vm.inputTargetName).toBe('')
-    })
-  })
-
-  describe('menuの表示/非表示の確認', (): void => {
-    let wrapper: VueWrapper
-    beforeEach(() => (wrapper = factoryWrap({})))
-
-    it('初期状態ではmenuが非表示であること', (): void => {
-      expect(wrapper.vm.opened).toBe(false)
-      wrapper.unmount()
     })
   })
 })
