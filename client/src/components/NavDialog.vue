@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :model-value="modalValue"
+    :model-value="modelValue"
     :contained="true"
     :fullscreen="true"
     :scrim="false"
@@ -11,7 +11,7 @@
   >
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center py-1">
-        <span>{{ title }}</span>
+        <span data-cy="title-text">{{ title }}</span>
         <v-btn icon="mdi-close" variant="text" size="small" style="font-size: 0.8em" @click="emits('close')"></v-btn>
       </v-card-title>
       <slot />
@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 defineProps<{
-  modalValue: boolean
+  modelValue: boolean
   title: string
 }>()
 

@@ -1,0 +1,254 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HeikiBtn.vue > ignoreHeik: falseの場合 > スナップショットテスト 1`] = `
+<button
+  class="v-btn v-btn--elevated v-theme--light bg-info v-btn--density-comfortable v-btn--size-default v-btn--variant-elevated text-caption px-1"
+  hide-details="true"
+  style="min-width: auto;"
+  type="button"
+>
+  
+  <span
+    class="v-btn__overlay"
+  />
+  <span
+    class="v-btn__underlay"
+  />
+  
+  <!---->
+  <span
+    class="v-btn__content"
+    data-no-activator=""
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-emoticon-tongue mdi v-icon notranslate v-theme--light v-icon--size-default"
+    />
+    <span
+      class=""
+      data-cy="text"
+    >
+      平気
+    </span>
+    
+    
+  </span>
+  <!---->
+  <!---->
+</button>
+`;
+
+exports[`HeikiBtn.vue > ignoreHeiki: trueの場合 > スナップショットテスト 1`] = `
+<button
+  class="v-btn v-btn--elevated v-theme--light bg-grey v-btn--density-comfortable v-btn--size-default v-btn--variant-elevated text-caption px-1"
+  hide-details="true"
+  style="min-width: auto;"
+  type="button"
+>
+  
+  <span
+    class="v-btn__overlay"
+  />
+  <span
+    class="v-btn__underlay"
+  />
+  
+  <!---->
+  <span
+    class="v-btn__content"
+    data-no-activator=""
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-skull mdi v-icon notranslate v-theme--light v-icon--size-default"
+    />
+    <span
+      class="text-decoration-line-through"
+      data-cy="text"
+    >
+      平気
+    </span>
+    
+    
+  </span>
+  <!---->
+  <!---->
+</button>
+`;
+
+exports[`NavDialog.vue > ignoreHeik: falseの場合 > スナップショットテスト 1`] = `
+<div
+  data-v-app=""
+>
+  
+  <!---->
+  <!---->
+  
+</div>
+`;
+
+exports[`NavDialog.vue > ignoreHeiki: trueの場合 > スナップショットテスト 1`] = `
+<div
+  data-v-app=""
+>
+  
+  <!---->
+  <!---->
+  
+</div>
+`;
+
+exports[`NavDialog.vue > ダイアログの開閉制御の確認 > modelValueがfalseの場合 > スナップショットテスト 1`] = `
+<div
+  data-v-app=""
+>
+  
+  <!---->
+  <!---->
+  
+</div>
+`;
+
+exports[`NavDialog.vue > ダイアログの開閉制御の確認 > modelValueがtrueの場合 > スナップショットテスト 1`] = `
+<div
+  data-v-app=""
+>
+  
+  <!---->
+  <!--teleport start-->
+  <div
+    aria-modal="true"
+    class="v-overlay v-overlay--absolute v-overlay--active v-overlay--contained v-theme--light v-locale--is-ltr v-dialog v-dialog--fullscreen my-16 nav-dialog"
+    data-v-d9f6f61e=""
+    role="dialog"
+    style="z-index: 2400;"
+  >
+    <transition-stub
+      appear="true"
+      css="true"
+      name="fade-transition"
+      persisted="false"
+    >
+      <!---->
+    </transition-stub>
+    <transition-stub
+      appear="true"
+      css="true"
+      name="slide-y-reverse-transition"
+      persisted="true"
+    >
+      <div
+        class="v-overlay__content"
+      >
+        
+        
+        
+        <div
+          class="v-card v-theme--light v-card--density-default v-card--variant-elevated"
+          data-v-d9f6f61e=""
+        >
+          <!---->
+          <div
+            class="v-card__loader"
+          >
+            <div
+              aria-hidden="true"
+              aria-valuemax="100"
+              aria-valuemin="0"
+              class="v-progress-linear v-theme--light v-locale--is-ltr"
+              role="progressbar"
+              style="top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);"
+            >
+              <!---->
+              <div
+                class="v-progress-linear__background"
+                style="width: 100%;"
+              />
+              <transition-stub
+                appear="false"
+                css="true"
+                name="fade-transition"
+                persisted="false"
+              >
+                <div
+                  class="v-progress-linear__indeterminate"
+                >
+                  
+                  <div
+                    class="v-progress-linear__indeterminate long"
+                  />
+                  <div
+                    class="v-progress-linear__indeterminate short"
+                  />
+                  
+                </div>
+              </transition-stub>
+              <!---->
+            </div>
+          </div>
+          <!---->
+          <!---->
+          
+          <div
+            class="v-card-title d-flex justify-space-between align-center py-1"
+            data-v-d9f6f61e=""
+          >
+            <span
+              data-cy="title-text"
+              data-v-d9f6f61e=""
+            >
+              Sample Title
+            </span>
+            <button
+              class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-small v-btn--variant-text"
+              data-v-d9f6f61e=""
+              style="font-size: 0.8em;"
+              type="button"
+            >
+              
+              <span
+                class="v-btn__overlay"
+              />
+              <span
+                class="v-btn__underlay"
+              />
+              
+              <!---->
+              <span
+                class="v-btn__content"
+                data-no-activator=""
+              >
+                <i
+                  aria-hidden="true"
+                  class="mdi-close mdi v-icon notranslate v-theme--light v-icon--size-default"
+                />
+              </span>
+              <!---->
+              <!---->
+            </button>
+          </div>
+          
+          
+          
+          <!---->
+          
+          <!---->
+          <span
+            class="v-card__underlay"
+          />
+          
+        </div>
+        
+        
+        
+      </div>
+    </transition-stub>
+  </div>
+  <!--teleport end-->
+  
+</div>
+`;

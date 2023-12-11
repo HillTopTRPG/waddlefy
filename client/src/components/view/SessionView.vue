@@ -1,10 +1,10 @@
 <template>
-  <progress-circular-overlay :modal-value="!graphQlStore?.state.session" color="primary" />
-  <share-overlay :modal-value="dialog === 'share'" @close="dialog = ''" />
-  <owner-overlay :modal-value="dialog === 'owner'" @close="dialog = ''" />
-  <setting-overlay :modal-value="dialog === 'setting'" @close="dialog = ''" />
+  <progress-circular-overlay :model-value="!graphQlStore?.state.session" color="primary" />
+  <share-overlay :model-value="dialog === 'share'" @close="dialog = ''" />
+  <owner-overlay :model-value="dialog === 'owner'" @close="dialog = ''" />
+  <setting-overlay :model-value="dialog === 'setting'" @close="dialog = ''" />
   <player-overlay
-    :modal-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog"
+    :model-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog"
     @close="dialog = ''"
   />
 
@@ -120,7 +120,7 @@
 
     <nav-dialog
       title="セッションの設定"
-      :modal-value="dialogInNav === 'setting'"
+      :model-value="dialogInNav === 'setting'"
       @close="dialogInNav = ''"
       class="mb-11 mt-12 session-setting-nav-dialog"
       v-if="isReady"

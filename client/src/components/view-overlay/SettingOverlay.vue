@@ -2,7 +2,7 @@
   <contents-overlay
     title="画面の設定"
     color="bg-light-green"
-    :modal-value="modalValue"
+    :model-value="modelValue"
     image="paint_00019.jpg"
     @close="emits('close')"
   >
@@ -87,7 +87,7 @@ import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{
-  modalValue: boolean
+  modelValue: boolean
 }>()
 
 const emits = defineEmits<{
