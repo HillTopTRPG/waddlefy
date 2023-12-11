@@ -70,8 +70,8 @@ describe('DeleteMenuBtn.vue', (): void => {
     beforeEach(() => (wrapper = factoryWrap({})))
     afterEach(() => wrapper.unmount())
 
-    it('openedがfalseであること', (): void => expect(wrapper.vm.opened).toBe(false))
-    it('inputTargetNameが空文字であること', (): void => expect(wrapper.vm.inputTargetName).toBe(''))
+    it('openedがfalseであること', () => expect(wrapper.vm.opened).toBe(false))
+    it('inputTargetNameが空文字であること', () => expect(wrapper.vm.inputTargetName).toBe(''))
   })
 
   describe('deleteExecuteメソッドの確認', (): void => {
@@ -79,18 +79,18 @@ describe('DeleteMenuBtn.vue', (): void => {
     beforeEach(() => (wrapper = factoryWrap({})))
     afterEach(() => wrapper.unmount())
 
-    it('実行時にopenedがfalseになること', async (): Promise<void> => {
+    it('実行時にopenedがfalseになること', async () => {
       wrapper.vm.opened = true
       await wrapper.vm.deleteExecute()
       expect(wrapper.vm.opened).toBe(false)
     })
 
-    it('実行時にexecuteイベントがemitされること', async (): Promise<void> => {
+    it('実行時にexecuteイベントがemitされること', async () => {
       await wrapper.vm.deleteExecute()
       expect(wrapper.emitted()).toHaveProperty('execute')
     })
 
-    it('実行時にinputTargetNameが空になること', async (): Promise<void> => {
+    it('実行時にinputTargetNameが空になること', async () => {
       wrapper.vm.inputTargetName = 'test'
       await wrapper.vm.deleteExecute()
       expect(wrapper.vm.inputTargetName).toBe('')

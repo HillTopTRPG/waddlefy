@@ -6,28 +6,27 @@ interface HeikiBtnProps {
   ignoreHeiki: boolean
 }
 
-function factoryWrap(props: HeikiBtnProps) {
-  return factory(HeikiBtn, props)
-}
+const factoryWrap = factory.bind(null, HeikiBtn)
 
 describe('HeikiBtn.vue', (): void => {
   describe('コンテンツの確認', (): void => {
     it('テキストの確認', () => {
       const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
       expect(wrapper.text()).toContain('平気')
+      wrapper.unmount()
     })
   })
 
   describe('emitsの確認', (): void => {
-    it('clickイベントでclickが発火されること', async (): Promise<void> => {
+    it('clickイベントでclickが発火されること', async () => {
       const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
       await wrapper.trigger('click')
       expect(wrapper.emitted()).toHaveProperty('click')
+      wrapper.unmount()
     })
   })
 
   describe('classの確認', (): void => {
-    const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
     const patterns: SimpleClassTestInfo[] = [
       { title: '文字サイズがcaptionであること', selector: '.v-btn', containClass: 'text-caption' },
       { title: 'densityがcomfortableであること', selector: '.v-btn', containClass: 'v-btn--density-comfortable' },
@@ -39,15 +38,12 @@ describe('HeikiBtn.vue', (): void => {
   })
 
   describe('ignoreHeiki: trueの場合', () => {
-    const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
+    let wrapper: VueWrapper
+    beforeEach(() => (wrapper = factoryWrap({ ignoreHeiki: true })))
+    afterEach(() => wrapper.unmount())
 
-    it('スナップショットテスト', (): void => {
-      expect(wrapper.element).toMatchSnapshot()
-    })
-
-    it('propsの確認', (): void => {
-      expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeTruthy()
-    })
+    it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
+    it('propsの確認', () => expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeTruthy())
 
     const patterns: SimpleClassTestInfo[] = [
       { title: '背景色がgreyであること', selector: '.v-btn', containClass: 'bg-grey' },
@@ -62,15 +58,12 @@ describe('HeikiBtn.vue', (): void => {
   })
 
   describe('ignoreHeik: falseの場合', () => {
-    const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: false })
+    let wrapper: VueWrapper
+    beforeEach(() => (wrapper = factoryWrap({ ignoreHeiki: false })))
+    afterEach(() => wrapper.unmount())
 
-    it('スナップショットテスト', (): void => {
-      expect(wrapper.element).toMatchSnapshot()
-    })
-
-    it('propsの確認', (): void => {
-      expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeFalsy()
-    })
+    it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
+    it('propsの確認', () => expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeFalsy())
 
     const patterns: SimpleClassTestInfo[] = [
       { title: '背景色がinfoであること', selector: '.v-btn', containClass: 'bg-info' },

@@ -25,22 +25,20 @@ function factoryWrap(partialProps: Partial<VSelectThinProps>) {
 describe('VSelectThin.vue', (): void => {
   describe('コンテンツの確認', (): void => {
     describe('最初の選択肢の場合', (): void => {
-      const wrapper: VueWrapper = factoryWrap({ modelValue: '' })
+      let wrapper: VueWrapper
+      beforeEach(() => (wrapper = factoryWrap({ modelValue: '' })))
+      afterEach(() => wrapper.unmount())
 
-      it('スナップショットテスト', (): void => {
-        expect(wrapper.element).toMatchSnapshot()
-      })
-      it('テキストの確認', () => {
-        expect(wrapper.text()).toEqual('テスト選択肢: 無選択')
-      })
+      it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
+      it('テキストの確認', () => expect(wrapper.text()).toEqual('テスト選択肢: 無選択'))
     })
 
     describe('選択肢が2番目から3番目に変わった場合', (): void => {
-      const wrapper: VueWrapper = factoryWrap({ modelValue: 'val1' })
+      let wrapper: VueWrapper
+      beforeEach(() => (wrapper = factoryWrap({ modelValue: 'val1' })))
+      afterEach(() => wrapper.unmount())
 
-      it('スナップショットテスト', (): void => {
-        expect(wrapper.element).toMatchSnapshot()
-      })
+      it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
       it('テキストの確認', async () => {
         expect(wrapper.text()).toEqual('テスト選択肢: 選択肢1')
         await wrapper.setProps({ modelValue: 'val2' })
@@ -50,13 +48,14 @@ describe('VSelectThin.vue', (): void => {
   })
 
   describe('emitsの確認', (): void => {
-    it('選択されるとupdate:model-valueが発火されること', async (): Promise<void> => {
+    it('選択されるとupdate:model-valueが発火されること', async () => {
       const wrapper: VueWrapper = factoryWrap({ modelValue: '' })
       const select = wrapper.findComponent({ name: 'v-select' })
       await select.vm.select({ value: 'val1' })
       expect(wrapper.emitted('update:model-value')).toEqual([['val1']])
       // 選択肢はまだ変わらない
       expect(wrapper.text()).toEqual('テスト選択肢: 無選択')
+      wrapper.unmount()
     })
   })
 
