@@ -8,7 +8,7 @@
     @click="emits('click')"
   >
     <v-icon :icon="ignoreHeiki ? 'mdi-skull' : 'mdi-emoticon-tongue'" />
-    <span data-cy="label" :class="ignoreHeiki ? 'text-decoration-line-through' : ''">平気</span>
+    <span data-cy="text" :class="ignoreHeiki ? 'text-decoration-line-through' : ''">平気</span>
   </v-btn>
 </template>
 

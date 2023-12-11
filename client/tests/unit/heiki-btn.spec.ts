@@ -35,7 +35,7 @@ describe('HeikiBtn.vue', (): void => {
       { title: 'variantがelevatedであること', selector: '.v-btn', containClass: 'v-btn--variant-elevated' },
       { title: 'パディングがpx-1であること', selector: '.v-btn', containClass: 'px-1' }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, wrapper))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreHeiki: true })))
   })
 
   describe('ignoreHeiki: trueの場合', () => {
@@ -54,11 +54,11 @@ describe('HeikiBtn.vue', (): void => {
       { title: 'iconがmdi-skullとなること', selector: '.v-icon', containClass: 'mdi-skull' },
       {
         title: 'テキストに取り消し線がつくこと',
-        selector: '.v-btn__content [data-cy=label]',
+        selector: '.v-btn__content [data-cy=text]',
         containClass: 'text-decoration-line-through'
       }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, wrapper))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreHeiki: true })))
   })
 
   describe('ignoreHeik: falseの場合', () => {
@@ -77,11 +77,11 @@ describe('HeikiBtn.vue', (): void => {
       { title: 'iconがmdi-emoticon-tongueとなること', selector: '.v-icon', containClass: 'mdi-emoticon-tongue' },
       {
         title: 'テキストに取り消し線がつかないこと',
-        selector: '.v-btn__content [data-cy=label]',
+        selector: '.v-btn__content [data-cy=text]',
         not: true,
         containClass: 'text-decoration-line-through'
       }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, wrapper))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreHeiki: false })))
   })
 })

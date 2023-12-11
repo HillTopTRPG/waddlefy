@@ -28,7 +28,7 @@ exports[`HeikiBtn.vue > ignoreHeik: falseの場合 > スナップショットテ
     />
     <span
       class=""
-      data-cy="label"
+      data-cy="text"
     >
       平気
     </span>
@@ -68,7 +68,7 @@ exports[`HeikiBtn.vue > ignoreHeiki: trueの場合 > スナップショットテ
     />
     <span
       class="text-decoration-line-through"
-      data-cy="label"
+      data-cy="text"
     >
       平気
     </span>

@@ -1,0 +1,52 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DeleteMenuBtn.vue > ボタンの確認 > コンテンツの確認 > スナップショットテスト 1`] = `
+<div
+  data-v-app=""
+>
+  
+  
+  <button
+    aria-expanded="false"
+    aria-haspopup="menu"
+    aria-owns="v-menu-0"
+    class="v-btn v-theme--light text-error v-btn--density-default v-btn--size-default v-btn--variant-text additional-class"
+    data-cy="open-btn"
+    type="button"
+  >
+    
+    <span
+      class="v-btn__overlay"
+    />
+    <span
+      class="v-btn__underlay"
+    />
+    
+    <!---->
+    <span
+      class="v-btn__content"
+      data-no-activator=""
+    >
+      
+      
+      <i
+        aria-hidden="true"
+        class="mdi-delete-outline mdi v-icon notranslate v-theme--light v-icon--size-default"
+      />
+      <span
+        class="text-decoration-underline"
+        data-cy="text"
+      >
+        この種別を削除
+      </span>
+      
+      
+    </span>
+    <!---->
+    <!---->
+  </button>
+  
+  <!---->
+  
+</div>
+`;

@@ -25,15 +25,17 @@ export interface SimpleClassTestInfo {
 }
 
 export function createSimpleClassTest(
-  wrapper: VueWrapper,
+  factoryWrap: () => VueWrapper,
   { title, selector, containClass, not }: SimpleClassTestInfo
 ) {
   it(title, () => {
+    const wrapper = factoryWrap()
     const expectObj = expect(wrapper.find(selector).classes())
     if (not) {
       expectObj.not.toContain(containClass)
     } else {
       expectObj.toContain(containClass)
     }
+    wrapper.unmount()
   })
 }

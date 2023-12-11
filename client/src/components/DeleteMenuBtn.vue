@@ -1,9 +1,9 @@
 <template>
   <v-menu width="auto" v-model="opened" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn :color="color || 'error'" variant="text" :class="classText || ''" v-bind="props">
+      <v-btn data-cy="open-btn" :color="color || 'error'" variant="text" :class="classText || ''" v-bind="props">
         <v-icon icon="mdi-delete-outline" />
-        <span class="text-decoration-underline">この{{ type }}を削除</span>
+        <span data-cy="text" class="text-decoration-underline">この{{ type }}を削除</span>
       </v-btn>
     </template>
     <v-card>
@@ -29,10 +29,10 @@
           color="warning"
           class="flex-0-1-100"
           variant="flat"
+          text="完全に削除"
           :disabled="inputTargetName !== targetName"
           @click="deleteExecute()"
-          >完全に削除</v-btn
-        >
+        />
       </v-card-actions>
     </v-card>
   </v-menu>

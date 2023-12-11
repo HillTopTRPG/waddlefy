@@ -1,6 +1,6 @@
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
 import { VueWrapper } from '@vue/test-utils'
-import {createSimpleClassTest, factory, SimpleClassTestInfo} from '../common'
+import { createSimpleClassTest, factory, SimpleClassTestInfo } from '../common'
 
 interface VSelectThinProps {
   modelValue: string
@@ -61,12 +61,15 @@ describe('VSelectThin.vue', (): void => {
   })
 
   describe('classの確認', (): void => {
-    const wrapper: VueWrapper = factoryWrap({ modelValue: '' })
     const patterns: SimpleClassTestInfo[] = [
       { title: '角丸がlgであること', selector: '.v-select', containClass: 'rounded-lg' },
       { title: 'decsityがdefaultであること', selector: '.v-select', containClass: 'v-input--density-default' },
-      { title: 'variantがoutlinedであること', selector: '.v-select .v-field', containClass: 'v-field--variant-outlined' }
+      {
+        title: 'variantがoutlinedであること',
+        selector: '.v-select .v-field',
+        containClass: 'v-field--variant-outlined'
+      }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, wrapper))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { modelValue: '' })))
   })
 })
