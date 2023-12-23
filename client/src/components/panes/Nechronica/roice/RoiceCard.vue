@@ -2,7 +2,7 @@
   <v-card
     class="pa-2 overflow-hidden"
     variant="elevated"
-    :style="`outline: rgb(var(--v-theme-${roiceDamages[roice.damage].color})) solid 3px`"
+    :style="`outline: rgb(var(--v-theme-${mapping.roiceDamages[roice.damage].color})) solid 3px`"
     style="box-sizing: content-box; outline-offset: -3px"
     :min-width="`${width}rem`"
     :max-width="`${width}rem`"
@@ -22,7 +22,7 @@
     </v-card-text>
     <v-card-text class="px-0 py-1 d-flex flex-row" style="gap: 0.3rem">
       <chip-select prefix="" :selections="posSelections" v-model="selectedPos" />
-      <chip-select prefix="狂気度" :selections="roiceDamages" v-model="roiceDamage" />
+      <chip-select prefix="狂気度" :selections="mapping.roiceDamages" v-model="roiceDamage" />
     </v-card-text>
     <v-card-subtitle class="px-0">発狂効果</v-card-subtitle>
     <v-card-text class="px-0 py-1 d-flex flex-row align-stretch">
@@ -53,7 +53,8 @@
 <script setup lang="ts">
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import ChipSelect from '@/components/panes/Nechronica/component/ChipSelect.vue'
-import { NechronicaRoice, posSelections, roiceDamages, roiceList } from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaRoice, posSelections } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
@@ -88,7 +89,7 @@ watch(
 const selectedPos = ref(props.roice.id)
 watch(selectedPos, idx => {
   emitUpdateCloneRoice(c => {
-    const rawData = roiceList.at(idx)
+    const rawData = mapping.roiceList.at(idx)
     let execute = false
     if (rawData) {
       execute = c.id !== idx || c.pos !== rawData.pos

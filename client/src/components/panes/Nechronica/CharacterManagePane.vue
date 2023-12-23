@@ -8,8 +8,8 @@
         <template v-for="type in nechronicaTypes" :key="type">
           <url-form-menu
             v-if="!perspective || type === 'doll'"
-            :text="`${NechronicaTypeColorMap.find(t => t.type === type)?.text || ''}読込`"
-            :color="NechronicaTypeColorMap.find(t => t.type === type)?.color || ''"
+            :text="`${mapping.NechronicaTypeColorMap.find(t => t.type === type)?.text || ''}読込`"
+            :color="mapping.NechronicaTypeColorMap.find(t => t.type === type)?.color || ''"
             @execute="url => onLoadCharacterSheet(url, type)"
             :tips="[]"
           />
@@ -67,12 +67,8 @@ import { computed, inject, ref } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ManageCharacterSheetCard from '@/components/panes/Nechronica/character/ManageCharacterSheetCard.vue'
 import UrlFormMenu from '@/components/panes/Nechronica/component/UrlFormMenu.vue'
-import {
-  NechronicaHelper,
-  NechronicaType,
-  NechronicaTypeColorMap,
-  NechronicaWrap
-} from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaHelper, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))

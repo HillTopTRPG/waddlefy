@@ -104,13 +104,8 @@ import CharacterSheetView from '@/components/panes/Nechronica/character/Characte
 import BattleController from '@/components/panes/Nechronica/component/BattleController.vue'
 import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import ManeuverStackList from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackList.vue'
-import {
-  NechronicaPowerList,
-  NechronicaSingleton,
-  NechronicaTimingList,
-  NechronicaType,
-  NechronicaWrap
-} from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaSingleton, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
@@ -137,8 +132,8 @@ const viewOption = ref<NechronicaViewOption>({
   viewLost: true,
   viewUsed: true,
   viewLabel: '',
-  selectedTypes: NechronicaPowerList.map((_, idx) => idx),
-  selectedTimings: NechronicaTimingList.map((_, idx) => idx)
+  selectedTypes: mapping.NechronicaPowerList.map((_, idx) => idx),
+  selectedTimings: mapping.NechronicaTimingList.map((_, idx) => idx)
 })
 
 function getCharacters(type: NechronicaType): { id: string; data: NechronicaWrap }[] {

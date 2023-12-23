@@ -7,7 +7,7 @@
         :class="isCurrent ? '' : 'bg-grey-lighten-2'"
         style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${
-          NechronicaTypeColorMap.find(nc => nc.type === character?.data.type)?.color || 'black'
+          mapping.NechronicaTypeColorMap.find(nc => nc.type === character?.data.type)?.color || 'black'
         }`"
       >
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
@@ -105,9 +105,7 @@ import {
   NechronicaManeuver,
   NechronicaRoice,
   NechronicaSingleton,
-  NechronicaTypeColorMap,
-  NechronicaWrap,
-  roiceList
+  NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 
@@ -119,6 +117,7 @@ import CharacterSheetViewConfig from '@/components/panes/Nechronica/character/Ch
 import CharacterSheetViewRoiceArea from '@/components/panes/Nechronica/character/CharacterSheetViewRoiceArea.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
+import mapping from '@/components/panes/Nechronica/mapping.json'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
@@ -238,7 +237,7 @@ async function onUpdatePosition(position: number) {
 
 async function onAddRoice() {
   await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
-    const rawRoice = roiceList[1]
+    const rawRoice = mapping.roiceList[1]
     c.character.roiceList.push({
       id: 1,
       name: `未練${c.character.roiceList.length + 1}`,

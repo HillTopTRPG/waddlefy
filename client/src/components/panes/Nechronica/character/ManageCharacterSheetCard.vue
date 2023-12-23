@@ -3,14 +3,14 @@
     variant="elevated"
     rounded="lg"
     class="pb-2"
-    :color="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
+    :color="mapping.NechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
   >
     <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
       <icon-btn
         class="mr-1"
         :class="
           character.data.type === 'doll'
-            ? NechronicaPositionList[character.data.character.basic.position].val
+            ? mapping.NechronicaPositionList[character.data.character.basic.position].val
             : character.data.type
         "
         size="x-small"
@@ -27,7 +27,7 @@
         :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
         :width="18"
         icon="mdi-tag-text-outline"
-        :label="`${NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''}名`"
+        :label="`${mapping.NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''}名`"
         :text="character.data.character.basic.characterName"
         @update="v => onUpdateCharacterName(character.id, v)"
       />
@@ -92,7 +92,7 @@
         <reload-character-sheet-btn :character-id="character.id" />
         <delete-menu-btn
           :target-name="character.data.character.basic.characterName"
-          :type="NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
+          :type="mapping.NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
           location="bottom center"
           @execute="() => graphQlStore?.deleteSessionData(character.id)"
         />
@@ -108,12 +108,8 @@ import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
-import {
-  NechronicaCopiableWrap,
-  NechronicaPositionList,
-  NechronicaTypeColorMap,
-  NechronicaWrap
-} from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaCopiableWrap, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

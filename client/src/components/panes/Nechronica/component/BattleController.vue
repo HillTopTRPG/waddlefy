@@ -12,7 +12,7 @@
     />
     <v-select-thin
       prefix="T"
-      :items="battleTimingSelection"
+      :items="mapping.battleTimingSelection"
       item-value="value"
       item-title="text"
       style="max-width: 9.5em"
@@ -44,6 +44,7 @@
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import MultiSelectMenu from '@/components/panes/Nechronica/component/MultiSelectMenu.vue'
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
+import mapping from '@/components/panes/Nechronica/mapping.json'
 import { getActionValueNum, NechronicaSingleton, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { computed, inject } from 'vue'
@@ -58,14 +59,6 @@ const emits = defineEmits<{
   (e: 'update:progress', progress: number): void
   (e: 'update:battle-timing', battleTiming: string): void
 }>()
-
-const battleTimingSelection = [
-  { value: '', text: '無指定' },
-  { value: 'action', text: 'アクション' },
-  { value: 'rapid', text: 'ラピッド' },
-  { value: 'judge', text: 'ジャッジ' },
-  { value: 'damage', text: 'ダメージ' }
-]
 
 const singleton = computed(
   (): { id: string; data: NechronicaSingleton } | undefined =>

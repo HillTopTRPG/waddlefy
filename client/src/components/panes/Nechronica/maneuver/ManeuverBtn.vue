@@ -13,7 +13,8 @@
 
 <script setup lang="ts">
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
-import { NechronicaManeuver, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -31,7 +32,7 @@ const text = computed(() => {
   if (!props.viewLabel) return ''
   const value = props.maneuver[props.viewLabel]
   if (props.viewLabel === 'timing') {
-    return NechronicaTimingList[value as number].text
+    return mapping.NechronicaTimingList[value as number].text
   }
   return value?.toString() || ''
 })

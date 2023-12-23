@@ -73,7 +73,7 @@
         <v-sheet>
           <multi-switch-list-items
             label="表示カテゴリ"
-            :texts="NechronicaPowerList"
+            :texts="mapping.NechronicaPowerList"
             :model-value="option.selectedTypes"
             @update:model-value="updateSelectedTypes"
           />
@@ -81,7 +81,7 @@
         <v-sheet>
           <multi-switch-list-items
             label="表示タイミング"
-            :texts="NechronicaTimingList"
+            :texts="mapping.NechronicaTimingList"
             :model-value="option.selectedTimings"
             @update:model-value="updateSelectedTimings"
           />
@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import MultiSwitchListItems from '@/components/panes/Nechronica/component/MultiSwitchListItems.vue'
-import { NechronicaPowerList, NechronicaTimingList } from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
 

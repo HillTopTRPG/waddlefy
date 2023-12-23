@@ -4,7 +4,7 @@
     :class="mode === 'view' ? '' : 'pb-2'"
     v-if="mode.startsWith('view')"
     style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
-    :style="`outline-color: ${NechronicaPowerList[maneuver.type].color}`"
+    :style="`outline-color: ${mapping.NechronicaPowerList[maneuver.type].color}`"
   >
     <v-card-text class="px-2 pt-2 pb-0">
       <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
@@ -12,7 +12,7 @@
           <v-chip class="font-weight-bold" color="error" variant="flat" v-if="maneuver.lost">損傷</v-chip>
           <v-chip class="font-weight-bold" color="secondary" variant="flat" v-if="maneuver.used">使用済</v-chip>
           <v-chip :class="`type${maneuver.type}`">{{
-            NechronicaPowerList[maneuver.type]?.text || 'カテゴリなし'
+            mapping.NechronicaPowerList[maneuver.type]?.text || 'カテゴリなし'
           }}</v-chip>
           <v-chip variant="outlined" v-if="maneuver.shozoku">{{ maneuver.shozoku }}</v-chip>
         </v-defaults-provider>
@@ -38,7 +38,9 @@
           <v-row :no-gutters="true">
             <v-defaults-provider :defaults="{ VCol: { class: 'text-no-wrap text-center text-body-1 flex-column' } }">
               <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">T</v-col>
-              <v-col class="v-col-3 d-flex justify-center">{{ NechronicaTimingList[maneuver.timing].text }}</v-col>
+              <v-col class="v-col-3 d-flex justify-center">{{
+                mapping.NechronicaTimingList[maneuver.timing].text
+              }}</v-col>
               <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">C</v-col>
               <v-col class="v-col-3 d-flex justify-space-around">
                 <span v-if="overCostWrap === undefined">{{ costWrap }}</span>
@@ -78,13 +80,8 @@
 import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
 import ManeuverLostBtn from '@/components/panes/Nechronica/maneuver/ManeuverLostBtn.vue'
 import ManeuverUseBtn from '@/components/panes/Nechronica/maneuver/ManeuverUseBtn.vue'
-import {
-  getActionValueNum,
-  NechronicaManeuver,
-  NechronicaPowerList,
-  NechronicaTimingList,
-  NechronicaType
-} from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { getActionValueNum, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 
 const props = defineProps<{

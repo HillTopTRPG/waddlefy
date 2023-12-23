@@ -2,7 +2,7 @@
   <v-card
     class="px-0 py-1 rounded-lg"
     style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
-    :style="`outline-color: ${NechronicaPowerList[maneuver.type].color}`"
+    :style="`outline-color: ${mapping.NechronicaPowerList[maneuver.type].color}`"
     variant="flat"
     v-if="mode === 'edit'"
   >
@@ -21,7 +21,7 @@
       <v-card-actions class="py-0" style="gap: 0.5rem">
         <v-select
           :items="typeSelection"
-          :color="NechronicaPowerList[maneuver.type].color"
+          :color="mapping.NechronicaPowerList[maneuver.type].color"
           :model-value="maneuver.type"
           @update:model-value="v => onUpdateType(v)"
         >
@@ -120,12 +120,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  NechronicaManeuver,
-  NechronicaPartsList,
-  NechronicaPowerList,
-  NechronicaTimingList
-} from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
+
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
@@ -151,17 +148,17 @@ const emits = defineEmits<{
   (e: 'update:mode', mode: 'view' | 'edit'): void
 }>()
 
-const partsSelection = NechronicaPartsList.map((p, idx) => ({
+const partsSelection = mapping.NechronicaPartsList.map((p, idx) => ({
   value: idx,
   text: p
 }))
 
-const typeSelection = NechronicaPowerList.map((p, idx) => ({
+const typeSelection = mapping.NechronicaPowerList.map((p, idx) => ({
   value: idx,
   text: p.text
 }))
 
-const timingSelection = NechronicaTimingList.map((t, idx) => ({
+const timingSelection = mapping.NechronicaTimingList.map((t, idx) => ({
   value: idx,
   text: t.text
 }))

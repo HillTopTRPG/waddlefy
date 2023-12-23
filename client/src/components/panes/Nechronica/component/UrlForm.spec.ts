@@ -15,7 +15,7 @@ declare module '@vue/runtime-core' {
 function factoryWrap(props?: Partial<UrlFormProps>) {
   const propsWrap: UrlFormProps = {
     url: '',
-    ...props || {}
+    ...(props || {})
   }
   return factory(UrlForm, propsWrap)
 }

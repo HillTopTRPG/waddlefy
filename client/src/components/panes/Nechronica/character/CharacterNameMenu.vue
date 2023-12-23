@@ -32,23 +32,23 @@
             <icon-btn
               :disable-button="true"
               size="normal"
-              :under-text="NechronicaPositionList[character.data.character.basic.position]?.text || ''"
-              :class="NechronicaPositionList[character.data.character.basic.position].val || ''"
+              :under-text="mapping.NechronicaPositionList[character.data.character.basic.position]?.text || ''"
+              :class="mapping.NechronicaPositionList[character.data.character.basic.position].val || ''"
             />
             <span style="font-size: 11px; line-height: 1.2em">/</span>
             <icon-btn
               :disable-button="true"
-              :under-text="NechronicaClassList[character.data.character.basic.mainClass]?.text || ''"
+              :under-text="mapping.NechronicaClassList[character.data.character.basic.mainClass]?.text || ''"
               size="small"
-              :class="NechronicaClassList[character.data.character.basic.mainClass].val || ''"
+              :class="mapping.NechronicaClassList[character.data.character.basic.mainClass].val || ''"
             />
             <template v-if="character.data.character.basic.mainClass !== character.data.character.basic.subClass">
               <span style="font-size: 11px; line-height: 1.2em">/</span>
               <icon-btn
                 :disable-button="true"
-                :under-text="NechronicaClassList[character.data.character.basic.subClass]?.text || ''"
+                :under-text="mapping.NechronicaClassList[character.data.character.basic.subClass]?.text || ''"
                 size="small"
-                :class="NechronicaClassList[character.data.character.basic.subClass].val || ''"
+                :class="mapping.NechronicaClassList[character.data.character.basic.subClass].val || ''"
               />
             </template>
             <template v-else>
@@ -71,7 +71,8 @@
 
 <script setup lang="ts">
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
-import { NechronicaClassList, NechronicaPositionList, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import { NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -106,7 +107,7 @@ const positionSelection = [
 const icon = computed(() => {
   if (!character.value) return ''
   if (character.value?.data.type === 'doll') {
-    return NechronicaPositionList[character.value?.data.character.basic.position].val
+    return mapping.NechronicaPositionList[character.value?.data.character.basic.position].val
   }
   return character.value?.data.type
 })
