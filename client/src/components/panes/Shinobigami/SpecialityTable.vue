@@ -10,7 +10,7 @@
                 :hide-details="true"
                 v-if="editing"
                 :model-value="info?.spaceList.some(s => s === idx)"
-                @update:model-value="v => onChangeBlank(idx, v)"
+                @update:model-value="v => onChangeBlank(idx, v || false)"
               />
             </th>
             <th>
@@ -20,7 +20,7 @@
                   density="compact"
                   :hide-details="true"
                   :model-value="info?.damagedColList.some(c => c === idx)"
-                  @update:model-value="v => onChangeDamaged(idx, v)"
+                  @update:model-value="v => onChangeDamaged(idx, v || false)"
                 />
               </span>
             </th>
@@ -59,7 +59,7 @@
               density="compact"
               :hide-details="true"
               :model-value="info?.outRow"
-              @update:model-value="onChangeOutRow"
+              @update:model-value="v => onChangeOutRow(v || false)"
             />
           </td>
         </tr>
@@ -71,7 +71,7 @@
       direction="horizontal"
       :inline="true"
       :model-value="editing"
-      @update:model-value="v => emits('update:editing', v)"
+      @update:model-value="v => emits('update:editing', v || false)"
       v-if="editable"
     >
       <v-radio :value="true" label="設定" density="compact" />

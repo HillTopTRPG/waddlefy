@@ -19,7 +19,7 @@
             <v-radio-group
               class="flex-grow-0 mr-2"
               :model-value="option.roicePosition"
-              @update:model-value="v => updateRoicePosition(v)"
+              @update:model-value="v => updateRoicePosition(v || 'none')"
             >
               <template v-for="select in roicePositionSelections" :key="select.value">
                 <v-radio :value="select.value">
@@ -41,7 +41,7 @@
               <v-radio-group
                 class="flex-grow-0 mr-2"
                 :model-value="option.viewLabel"
-                @update:model-value="v => updateViewLabel(v)"
+                @update:model-value="v => updateViewLabel(v || '')"
               >
                 <template v-for="select in viewLabelSelections" :key="select.value">
                   <v-radio :value="select.value">

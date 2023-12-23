@@ -12,7 +12,7 @@
       v =>
         emits(
           'update',
-          [v].flat().map(v => v.toString())
+          [v].flat().map(v => v?.toString() || '')
         )
     "
   >
