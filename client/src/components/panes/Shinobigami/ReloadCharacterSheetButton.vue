@@ -55,7 +55,12 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="close()" text="キャンセル" />
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="close()"
+          :text="$t('label.cancel')"
+        />
         <v-btn
           color="primary"
           class="flex-0-1-100"

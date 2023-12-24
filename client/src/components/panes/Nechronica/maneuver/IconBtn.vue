@@ -11,7 +11,7 @@
       :style="`cursor: ${disableButton ? 'auto' : 'pointer'}`"
       v-bind="activateProps || {}"
     />
-    <span v-if="underText" class="maneuver-label text-center">{{ underText }}</span>
+    <span v-if="underText" class="maneuver-label text-center" :class="size">{{ underText }}</span>
   </v-sheet>
 </template>
 

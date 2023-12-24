@@ -28,7 +28,7 @@
         :width="18"
         icon="mdi-tag-text-outline"
         :label="
-          $t('Nechronica.label.name-of').replace(
+          $t('label.name-of').replace(
             '$$',
             $t(
               mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.text || 'Nechronica.CHARACTER_TYPE.none'

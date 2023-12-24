@@ -11,7 +11,12 @@
     "setting": "設定",
     "execute": "実行",
     "loading": "読込",
-    "empty": "空"
+    "empty": "空",
+    "save": "保存",
+    "name-of": "$$の名前",
+    "delete-completely": "完全に削除",
+    "delete-for-message": "削除するにはこの$$の名前を入力してください",
+    "delete-this": "この$$を削除"
   },
   "Nechronica": {
     "label": {
@@ -74,7 +79,6 @@
       "roice-break-effect": "発狂効果",
       "treat-as-bravado": "【平気】として扱う",
       "row-max-maneuver-num": "１行の最大マニューバ数",
-      "name-of": "$$名",
       "revoke": "取り消す",
       "open-underling": "$$体の手駒を公開する",
       "exempt-damaged-maneuvers-from-the-bravado": "$$体の損傷済マニューバを【平気】の対象外化にする",
