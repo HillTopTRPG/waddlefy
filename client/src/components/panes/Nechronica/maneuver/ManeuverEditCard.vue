@@ -30,7 +30,7 @@
             {{ $t('Nechronica.label.category') }}
           </template>
           <template #selection="{ item }">
-            <v-list-item density="compact" class="pa-0" :title="$t(item.title)"/>
+            <v-list-item density="compact" class="pa-0" :title="$t(item.title)" />
           </template>
           <template #item="{ item, props }">
             <v-list-item v-bind="props" :title="$t(item.title)" />
