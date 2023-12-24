@@ -30,7 +30,7 @@
           <v-switch
             class="justify-center flex-grow-0 flex-shrink-1"
             style="flex-basis: auto !important"
-            label="全て"
+            :label="$t('label.all')"
             :indeterminate="[0, fullDataType.length].every(l => l !== targets?.length)"
             :model-value="targets?.length === fullDataType.length"
             @update:model-value="v => (targets = v ? clone(fullDataType) : [])"
@@ -62,7 +62,7 @@
           variant="flat"
           :disabled="!targets?.length"
           @click="confirm()"
-          text="決定"
+          :text="$t('label.decision')"
         />
       </v-card-actions>
     </v-card>

@@ -16,6 +16,7 @@ import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   maneuver: NechronicaManeuver
@@ -27,12 +28,14 @@ const props = defineProps<{
   battleTiming?: string
 }>()
 
+const { t } = useI18n()
+
 const battleTargetClass = ['bg-transparent', 'bg-cyan-lighten-4', 'bg-yellow-accent-2']
 const text = computed(() => {
   if (!props.viewLabel) return ''
   const value = props.maneuver[props.viewLabel]
   if (props.viewLabel === 'timing') {
-    return mapping.NechronicaTimingList[value as number].text
+    return t(mapping.MANEUVER_TIMING[value as number].text)
   }
   return value?.toString() || ''
 })
@@ -56,54 +59,6 @@ const isBattleTarget = computed((): number => {
   return props.maneuver.timing === 0 ? 1 : 0
 })
 
-const shozokuClassMap = [
-  { text: '武装', class: 'armed' },
-  { text: '変異', class: 'mutation' },
-  { text: '改造', class: 'modification' },
-  { text: 'アリス', class: 'alice' },
-  { text: 'ｱﾘｽ', class: 'alice' },
-  { text: 'ホリック', class: 'holic' },
-  { text: 'ﾎﾘｯｸ', class: 'holic' },
-  { text: 'オートマトン', class: 'automaton' },
-  { text: 'ｵｰﾄﾏﾄﾝ', class: 'automaton' },
-  { text: 'ジャンク', class: 'junk' },
-  { text: 'ｼﾞｬﾝｸ', class: 'junk' },
-  { text: 'コート', class: 'coat' },
-  { text: 'ｺｰﾄ', class: 'coat' },
-  { text: 'ソロリティ', class: 'sorority' },
-  { text: 'ｿﾛﾘﾃｨ', class: 'sorority' },
-  { text: 'サイケデリック', class: 'psychedelic' },
-  { text: 'ｻｲｹﾃﾞﾘｯｸ', class: 'psychedelic' },
-  { text: 'ステーシー', class: 'stacy' },
-  { text: 'ｽﾃｰｼｰ', class: 'stacy' },
-  { text: 'タナトス', class: 'thanatos' },
-  { text: 'ﾀﾅﾄｽ', class: 'thanatos' },
-  { text: 'ゴシック', class: 'gothic' },
-  { text: 'ｺﾞｼｯｸ', class: 'gothic' },
-  { text: 'レクイエム', class: 'requiem' },
-  { text: 'ﾚｸｲｴﾑ', class: 'requiem' },
-  { text: 'バロック', class: 'baroque' },
-  { text: 'ﾊﾞﾛｯｸ', class: 'baroque' },
-  { text: 'ロマネスク', class: 'romanesque' },
-  { text: 'ﾛﾏﾈｽｸ', class: 'romanesque' },
-  { text: 'たからもの', class: 'treasure' },
-  { text: 'タカラモノ', class: 'treasure' },
-  { text: 'ﾀｶﾗﾓﾉ', class: 'treasure' }
-]
-
-const basicPartsClassMap = [
-  { text: 'のうみそ', class: 'basic-brain' },
-  { text: 'めだま', class: 'basic-eye' },
-  { text: 'あご', class: 'basic-jaw' },
-  { text: 'こぶし', class: 'basic-fist' },
-  { text: 'うで', class: 'basic-arm' },
-  { text: 'かた', class: 'basic-shoulder' },
-  { text: 'せぼね', class: 'basic-backbone' },
-  { text: 'はらわた', class: 'basic-viscera' },
-  { text: 'ほね', class: 'basic-bone' },
-  { text: 'あし', class: 'basic-leg' }
-]
-
 const partClassMap = ['', 'skill', 'skill', 'skill', 'head', 'arm', 'body', 'leg']
 
 const classText = computed(() => {
@@ -114,11 +69,11 @@ const classText = computed(() => {
     result.push(partsClass)
   }
 
-  const basicClass = basicPartsClassMap.find(b => b.text === props.maneuver.name)?.class || ''
+  const basicClass = mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.text === props.maneuver.name)?.class || ''
   if (basicClass) {
     result.push(basicClass)
   } else {
-    const shozokuClass = shozokuClassMap.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
+    const shozokuClass = mapping.ICON_CLASS_MAP.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
     if (shozokuClass) {
       result.push(shozokuClass)
     }

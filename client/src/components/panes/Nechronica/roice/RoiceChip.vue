@@ -2,10 +2,10 @@
   <v-chip class="roice-chip overflow-visible" :color="color" variant="tonal" border v-bind="bindProps || {}">
     <div class="text-wrap text-caption d-flex flex-column">
       <span class="roice-name ellipsis mb-1">{{ roice.name }}</span>
-      <span v-if="roice.damage < 4">{{ roice.pos }}</span>
+      <span v-if="roice.damage < 4">{{ $t(roice.pos) }}</span>
       <ruby v-else class="font-weight-normal" style="line-height: 1em">
-        {{ roice.neg }}
-        <rt style="font-size: 8px">{{ roice.pos }}</rt>
+        {{ $t(roice.neg) }}
+        <rt style="font-size: 8px">{{ $t(roice.pos) }}</rt>
       </ruby>
     </div>
   </v-chip>

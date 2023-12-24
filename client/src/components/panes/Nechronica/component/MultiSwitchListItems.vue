@@ -3,7 +3,7 @@
     <v-sheet class="d-flex flex-row align-center bg-transparent">
       <span>{{ label }}</span>
       <v-switch-compact
-        label="全部"
+        :label="$t('label.all')"
         :indeterminate="allStatus === 1"
         :model-value="allStatus === 2"
         @update:model-value="updateAll()"
@@ -17,6 +17,7 @@
         :value="select.value"
         :color="select.color"
         :model-value="modelValue"
+        :i18n="i18n"
         @update:model-value="v => emits('update:model-value', v)"
       />
     </template>
@@ -27,11 +28,13 @@
 import { computed, ref, watch } from 'vue'
 
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   label: string
   modelValue: number[]
   texts: { text: string; color: string }[]
+  i18n?: boolean
 }>()
 
 const emits = defineEmits<{
@@ -58,8 +61,10 @@ function updateAll() {
   emits('update:model-value', allStatus.value < 2 ? props.texts.map((_, idx) => idx) : [])
 }
 
+const { t } = useI18n()
+
 const selection = computed((): { value: number; text: string; color: string }[] => {
-  return props.texts.map((t, idx) => ({ value: idx, text: t.text || '空欄', color: t.color }))
+  return props.texts.map((text, idx) => ({ value: idx, text: text.text || t('label.empty'), color: text.color }))
 })
 </script>
 

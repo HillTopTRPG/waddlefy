@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <v-btn variant="text" v-bind="props">
         <v-icon icon="mdi-reload" />
-        <span class="text-decoration-underline">キャラクターシートから再読込</span>
+        <span class="text-decoration-underline">{{ $t('Nechronica.label.reload-character-sheet') }}</span>
       </v-btn>
     </template>
     <v-card>
@@ -26,32 +26,37 @@
         }"
       >
         <v-sheet class="pa-3 w-100 align-center justify-space-between py-0">
-          <span class="text-subtitle-2 flex-grow-0 flex-shrink-1">読込対象</span>
+          <span class="text-subtitle-2 flex-grow-0 flex-shrink-1">{{ $t('Nechronica.label.loading-target') }}</span>
           <v-switch
             class="justify-center flex-grow-0 flex-shrink-1"
             style="flex-basis: auto !important"
-            label="全て"
+            :label="$t('label.all')"
             :indeterminate="[0, fullDataType.length].every(l => l !== targets?.length)"
             :model-value="targets?.length === fullDataType.length"
             @update:model-value="v => (targets = v ? clone(fullDataType) : [])"
           />
         </v-sheet>
         <v-card-text class="px-2 py-0">
-          <v-switch label="マニューバ" value="maneuver" v-model="targets" />
-          <v-switch label="未練" value="roice" v-model="targets" />
-          <v-switch label="パーソナルデータ" value="basic" v-model="targets" />
+          <v-switch :label="$t('Nechronica.label.maneuver')" value="maneuver" v-model="targets" />
+          <v-switch :label="$t('Nechronica.label.roice')" value="roice" v-model="targets" />
+          <v-switch :label="$t('Nechronica.label.personal-data')" value="basic" v-model="targets" />
         </v-card-text>
       </v-defaults-provider>
       <v-divider />
       <v-card-actions>
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="close()" text="キャンセル" />
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="close()"
+          :text="$t('label.cancel')"
+        />
         <v-btn
           color="primary"
           class="flex-0-1-100"
           variant="flat"
           :disabled="!targets?.length"
           @click="confirm()"
-          text="決定"
+          :text="$t('label.decision')"
         />
       </v-card-actions>
     </v-card>
@@ -59,8 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
-
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import UrlForm from '@/components/panes/Nechronica/component/UrlForm.vue'
 import {
@@ -71,7 +74,11 @@ import {
   NechronicaWrap
 } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
+import { computed, inject, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+const { t } = useI18n()
 
 const props = defineProps<{
   characterId: string
@@ -106,7 +113,7 @@ function close() {
 
 async function confirm() {
   if (!dataObj.value || !targets.value) return
-  const helper = new NechronicaHelper(url.value)
+  const helper = new NechronicaHelper(url.value, t)
   if (helper.isThis()) {
     const { data } = await helper.getData()
     if (data) {

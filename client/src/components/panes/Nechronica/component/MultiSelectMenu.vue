@@ -12,7 +12,7 @@
     </template>
     <v-card>
       <v-card-title v-text="title" class="pb-0" />
-      <v-card-subtitle v-text="'上から順番にチェックが入っている処理を行います。'" class="pb-0" />
+      <v-card-subtitle v-text="$t('Nechronica.label.multi-process-description')" class="pb-0" />
       <v-card-text class="py-1">
         <template v-for="item in items" :key="item.value">
           <v-switch
@@ -27,7 +27,7 @@
         </template>
       </v-card-text>
       <v-card-text class="pt-1 d-flex flex-row justify-end">
-        <v-btn text="実行" color="primary" @click="execute" />
+        <v-btn :text="$t('label.execute')" color="primary" @click="execute" />
       </v-card-text>
     </v-card>
   </v-menu>

@@ -7,7 +7,7 @@
         :class="isCurrent ? '' : 'bg-grey-lighten-2'"
         style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${
-          mapping.NechronicaTypeColorMap.find(nc => nc.type === character?.data.type)?.color || 'black'
+          mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color || 'black'
         }`"
       >
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
@@ -119,6 +119,7 @@ import { NechronicaViewOption } from '@/components/panes/Nechronica/component/Vi
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { clone } from '@/components/panes/PrimaryDataUtility'
+import { useI18n } from 'vue-i18n'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -235,16 +236,17 @@ async function onUpdatePosition(position: number) {
   })
 }
 
+const { t } = useI18n()
+
 async function onAddRoice() {
   await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
-    const rawRoice = mapping.roiceList[1]
     c.character.roiceList.push({
       id: 1,
-      name: `未練${c.character.roiceList.length + 1}`,
-      pos: rawRoice.pos,
+      name: `${t('Nechronica.label.roice')}${c.character.roiceList.length + 1}`,
+      pos: `Nechronica.ROICE.${mapping.ROICE[1].pos}`,
       damage: 3,
-      neg: rawRoice.neg,
-      breakEffect: rawRoice.breakEffect,
+      neg: `Nechronica.ROICE.${mapping.ROICE[1].neg}`,
+      breakEffect: `Nechronica.ROICE.${mapping.ROICE[1].breakEffect}`,
       memo: ''
     })
   })

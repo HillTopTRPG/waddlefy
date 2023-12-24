@@ -2,12 +2,12 @@
   <v-card
     class="px-0 py-1 rounded-lg"
     style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
-    :style="`outline-color: ${mapping.NechronicaPowerList[maneuver.type].color}`"
+    :style="`outline-color: ${mapping.MANEUVER_TYPE[maneuver.type].color}`"
     variant="flat"
     v-if="mode === 'edit'"
   >
     <v-card-text class="d-flex flex-row align-center py-1 px-2">
-      <span class="text-body-1">マニューバ編集</span>
+      <span class="text-body-1">{{ $t('Nechronica.label.edit-maneuver') }}</span>
       <v-spacer />
       <v-btn
         icon="mdi-eye-outline"
@@ -21,19 +21,25 @@
       <v-card-actions class="py-0" style="gap: 0.5rem">
         <v-select
           :items="typeSelection"
-          :color="mapping.NechronicaPowerList[maneuver.type].color"
+          :color="mapping.MANEUVER_TYPE[maneuver.type].color"
           :model-value="maneuver.type"
           @update:model-value="v => onUpdateType(v)"
         >
           <template #label>
             <v-icon icon="mdi-cards-spade-outline" class="mr-1" />
-            カテゴリ
+            {{ $t('Nechronica.label.category') }}
+          </template>
+          <template #selection="{ item }">
+            <v-list-item density="compact" class="pa-0" :title="$t(item.title)"/>
+          </template>
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props" :title="$t(item.title)" />
           </template>
         </v-select>
         <v-select :items="partsSelection" :model-value="maneuver.parts" @update:model-value="v => onUpdateParts(v)">
           <template #label>
             <v-icon icon="mdi-hand-back-right-outline" class="mr-1" />
-            部位
+            {{ $t('Nechronica.label.parts-position') }}
           </template>
         </v-select>
       </v-card-actions>
@@ -43,7 +49,7 @@
           variant="solo-filled"
           :width="width"
           icon="mdi-puzzle"
-          label="マニューバ"
+          :label="$t('Nechronica.label.maneuver')"
           :text="maneuver.name"
           @update="onUpdateName"
         />
@@ -57,7 +63,13 @@
         >
           <template #label>
             <v-icon icon="mdi-timer-outline" class="mr-1" />
-            タイミング
+            {{ $t('Nechronica.label.timing') }}
+          </template>
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props" density="compact" class="py-0" :title="$t(item.title)" />
+          </template>
+          <template #selection="{ item }">
+            <v-list-item density="compact" class="pa-0" :title="$t(item.title)" />
           </template>
         </v-select>
         <menu-edit-text-field
@@ -65,7 +77,7 @@
           variant="solo-filled"
           :width="5"
           icon="mdi-run"
-          label="コスト"
+          :label="$t('Nechronica.label.cost')"
           :text="maneuver.cost"
           @update="onUpdateCost"
         />
@@ -74,7 +86,7 @@
           variant="solo-filled"
           :width="5"
           icon="mdi-arrow-expand-vertical"
-          label="射程"
+          :label="$t('Nechronica.label.range')"
           :text="maneuver.range"
           @update="onUpdateRange"
         />
@@ -86,7 +98,7 @@
           variant="solo-filled"
           :text-rows="3"
           :width="width"
-          label="効果"
+          :label="$t('Nechronica.label.effect')"
           :text="maneuver.memo"
           :offset="-2 * 24"
           @update="onUpdateMemo"
@@ -98,14 +110,14 @@
           variant="solo-filled"
           :width="width"
           icon="mdi-package-variant"
-          label="取得先"
+          :label="$t('Nechronica.label.source')"
           :text="maneuver.shozoku"
           @update="onUpdateShozoku"
         />
       </v-card-text>
       <v-card-text class="px-2 py-0">
         <v-switch
-          label="【平気】として扱う"
+          :label="$t('Nechronica.label.treat-as-bravado')"
           color="primary"
           true-icon="mdi-emoticon-tongue"
           :hide-details="true"
@@ -148,17 +160,17 @@ const emits = defineEmits<{
   (e: 'update:mode', mode: 'view' | 'edit'): void
 }>()
 
-const partsSelection = mapping.NechronicaPartsList.map((p, idx) => ({
+const partsSelection = mapping.MANEUVER_PARTS.map((p, idx) => ({
   value: idx,
   text: p
 }))
 
-const typeSelection = mapping.NechronicaPowerList.map((p, idx) => ({
+const typeSelection = mapping.MANEUVER_TYPE.map((p, idx) => ({
   value: idx,
   text: p.text
 }))
 
-const timingSelection = mapping.NechronicaTimingList.map((t, idx) => ({
+const timingSelection = mapping.MANEUVER_TIMING.map((t, idx) => ({
   value: idx,
   text: t.text
 }))

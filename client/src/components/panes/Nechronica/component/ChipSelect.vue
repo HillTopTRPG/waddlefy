@@ -21,12 +21,17 @@
       @update:model-value="v => emits('update:model-value', v)"
     >
       <template #item="{ item, props }">
-        <v-list-item v-bind="props" :text="item.title" :subtitle="item.raw.subTitle"></v-list-item>
+        <v-list-item v-bind="props">
+          <template #title>{{ i18n ? $t(item.title) : item.title }}</template>
+          <template #subtitle>{{ i18n ? $t(item.raw.subTitle) : item.raw.subTitle }}</template>
+        </v-list-item>
       </template>
       <template #selection="{ item }">
         <div class="d-flex flex-row align-baseline">
-          <span style="font-size: 20px">{{ item.title }}</span>
-          <span class="text-body-2" v-if="item.raw.subTitle">:{{ item.raw.subTitle }}</span>
+          <span style="font-size: 20px">{{ i18n ? $t(item.title) : item.title }}</span>
+          <span class="text-body-2" v-if="item.raw.subTitle"
+            >:{{ i18n ? $t(item.raw.subTitle) : item.raw.subTitle }}</span
+          >
         </div>
       </template>
     </v-select>
@@ -38,6 +43,7 @@ defineProps<{
   modelValue: number
   prefix: string
   selections: { value: number; text: string; subTitle: string; color: string }[]
+  i18n?: boolean
 }>()
 
 const emits = defineEmits<{

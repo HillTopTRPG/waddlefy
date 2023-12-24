@@ -3,14 +3,14 @@
     variant="elevated"
     rounded="lg"
     class="pb-2"
-    :color="mapping.NechronicaTypeColorMap.find(t => t.type === character.data.type)?.color || ''"
+    :color="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.color || ''"
   >
     <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
       <icon-btn
         class="mr-1"
         :class="
           character.data.type === 'doll'
-            ? mapping.NechronicaPositionList[character.data.character.basic.position].val
+            ? mapping.CHARACTER_POSITION[character.data.character.basic.position].val
             : character.data.type
         "
         size="x-small"
@@ -27,7 +27,14 @@
         :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
         :width="18"
         icon="mdi-tag-text-outline"
-        :label="`${mapping.NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''}名`"
+        :label="
+          $t('Nechronica.label.name-of').replace(
+            '$$',
+            $t(
+              mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.text || 'Nechronica.CHARACTER_TYPE.none'
+            )
+          )
+        "
         :text="character.data.character.basic.characterName"
         @update="v => onUpdateCharacterName(character.id, v)"
       />
@@ -37,7 +44,7 @@
       >
         <v-select
           style="max-width: 8em"
-          :items="positionSelection"
+          :items="mapping.CHARACTER_LOCATION.map(d => ({ value: d['init-pos-value'], text: d.text }))"
           :readonly="Boolean(perspective) && character.data.type !== 'doll'"
           item-title="text"
           item-value="value"
@@ -49,7 +56,13 @@
         >
           <template #label>
             <v-icon icon="mdi-map-marker-outline" />
-            <span>初期配置</span>
+            <span>{{ $t('Nechronica.label.init-placement') }}</span>
+          </template>
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props" :title="$t(item.title)" />
+          </template>
+          <template #selection="{ item }">
+            <v-list-item density="compact" class="pa-0" :title="$t(item.title)" />
           </template>
         </v-select>
         <template v-if="character.data.type === 'legion'">
@@ -60,7 +73,7 @@
             :min="-99"
             :variant="perspective ? 'outlined' : 'solo-filled'"
             icon="mdi-chess-pawn"
-            label="数"
+            :label="$t('Nechronica.label.legion-health')"
             type="number"
             :text="character?.data.health?.toString() || '0'"
             @update="v => onUpdateCharacterHealth(character.id, parseInt(v, 10))"
@@ -75,7 +88,7 @@
             class="ml-2"
             true-icon="mdi-eye-outline"
             false-icon="mdi-eye-off-outline"
-            label="参加者に見せる"
+            :label="$t('Nechronica.label.view-to-player')"
             :hide-details="true"
             density="compact"
             :model-value="!character.data.hide"
@@ -84,7 +97,7 @@
           <v-spacer />
           <v-btn v-if="['legion', 'horror'].includes(character.data.type)" variant="text" @click="onCopyCharacter()">
             <v-icon icon="mdi-content-copy" />
-            <span class="text-decoration-underline">複製する</span>
+            <span class="text-decoration-underline">{{ $t('Nechronica.label.duplicate') }}</span>
           </v-btn>
         </v-sheet>
       </template>
@@ -92,8 +105,9 @@
         <reload-character-sheet-btn :character-id="character.id" />
         <delete-menu-btn
           :target-name="character.data.character.basic.characterName"
-          :type="mapping.NechronicaTypeColorMap.find(t => t.type === character.data.type)?.text || ''"
+          :type="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.text || ''"
           location="bottom center"
+          :i18n="true"
           @execute="() => graphQlStore?.deleteSessionData(character.id)"
         />
       </template>
@@ -162,15 +176,6 @@ async function onUpdateCharacterBasePosition(characterId: string, position: numb
     cloned.character.basic.basePosition = position
   })
 }
-
-const positionSelection = [
-  { value: '-3', text: '' },
-  { value: '-2', text: '奈落' },
-  { value: '-1', text: '地獄' },
-  { value: '0', text: '煉獄' },
-  { value: '1', text: '花園' },
-  { value: '2', text: '楽園' }
-]
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

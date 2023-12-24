@@ -1,6 +1,6 @@
 <template>
   <v-card-text class="pt-1 pb-0 px-2 d-flex flex-row align-baseline">
-    <span class="text-h6">{{ data.type === 'use' ? '使用' : '損傷' }}&nbsp;</span>
+    <span class="text-h6">{{ $t(data.type === 'use' ? 'Nechronica.label.use' : 'Nechronica.label.lost') }}&nbsp;</span>
     <v-sheet class="text-body-2 ellipsis" style="width: 1em; flex-grow: 1">{{
       character?.data.character.basic.characterName
     }}</v-sheet>

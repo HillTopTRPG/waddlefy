@@ -5,14 +5,14 @@
   >
     <multi-select-menu
       v-if="!perspective"
-      title="戦闘開始"
+      :title="$t('Nechronica.label.start-battle')"
       :items="battleOption.battleStart"
       :color="battleOption.battleStartColor"
       @execute="onBattleStart"
     />
     <v-select-thin
       prefix="T"
-      :items="mapping.battleTimingSelection"
+      :items="mapping.BATTLE_TIMING.map(d => ({ value: d.value, text: $t(d.text) }))"
       item-value="value"
       item-title="text"
       style="max-width: 9.5em"
@@ -20,19 +20,19 @@
       @update:model-value="v => emits('update:battle-timing', v)"
     />
     <span class="d-flex flex-row align-end pb-1">
-      <span class="text-caption" style="line-height: 1em">カウント:</span>
+      <span class="text-caption" style="line-height: 1em">{{ $t('Nechronica.label.count') }}:</span>
       <span class="text-h5" style="line-height: 1em">{{ singleton?.data.battleCount || 0 }}</span>
     </span>
     <multi-select-menu
       v-if="!perspective && singleton?.data.battleCount"
-      title="カウント減少"
+      :title="$t('Nechronica.label.down-count')"
       :color="battleOption.countDownColor"
       :items="battleOption.countDown"
       @execute="onCountDown"
     />
     <multi-select-menu
       v-if="!perspective"
-      title="次ターン開始"
+      :title="$t('Nechronica.label.next-turn')"
       :items="battleOption.nextTurn"
       :color="battleOption.nextTurnColor"
       @execute="onNextTurn"
@@ -48,7 +48,10 @@ import mapping from '@/components/panes/Nechronica/mapping.json'
 import { getActionValueNum, NechronicaSingleton, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { computed, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+
+const { t } = useI18n()
 
 defineProps<{
   battleTiming: string
@@ -186,62 +189,96 @@ const battleOption = computed(
       unOpenPawns.length
         ? {
             value: 'open-pawns',
-            text: `${unOpenPawns.length}体の手駒を公開する`,
+            text: t('Nechronica.label.open-underling').replace('$$', unOpenPawns.length.toString()),
             color: 'warning'
           }
         : null,
       ignoreHeikiCharacterNum
         ? {
             value: 'ignore-heiki',
-            text: `${ignoreHeikiCharacterNum}体の損傷済マニューバを【平気】の対象外化にする`,
+            text: t('Nechronica.label.exempt-damaged-maneuvers-from-the-bravado').replace(
+              '$$',
+              ignoreHeikiCharacterNum.toString()
+            ),
             color: 'warning'
           }
         : null,
-      { value: 'init-action-value', text: '全員の行動値の初期化', color: 'primary' },
-      { value: 'init-position', text: '全員を初期配置に移動', color: 'primary' },
-      { value: 'init-count', text: 'カウントの初期化', color: 'primary' },
+      { value: 'init-action-value', text: t('Nechronica.label.init-everybody-action-value'), color: 'primary' },
+      { value: 'init-position', text: t('Nechronica.label.move-everybody-init-location'), color: 'primary' },
+      { value: 'init-count', text: t('Nechronica.label.init-battle-count'), color: 'primary' },
       usedManeuverCharacterNum
-        ? { value: 'init-maneuver-used', text: `${usedManeuverCharacterNum}体のマニューバの未使用化`, color: 'warning' }
+        ? {
+            value: 'init-maneuver-used',
+            text: t('Nechronica.label.all-maneuver-to-unused').replace('$$', usedManeuverCharacterNum.toString()),
+            color: 'warning'
+          }
         : null,
-      maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null
+      maneuverStackLength
+        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-maneuver-history'), color: 'primary' }
+        : null
     ].filter((item): item is OptionItem => Boolean(item))
 
     const countDown = [
-      { value: 'count-down', text: `カウントを${downBattleCount}減らす`, color: 'primary' },
+      {
+        value: 'count-down',
+        text: t('Nechronica.label.down-count-of').replace('$$', downBattleCount.toString()),
+        color: 'primary'
+      },
       usedActionManeuverCharacterNum
         ? {
             value: 'recovery-action-maneuver',
-            text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
+            text: t('Nechronica.label.all-action-maneuver-to-unused').replace(
+              '$$',
+              usedActionManeuverCharacterNum.toString()
+            ),
             color: 'primary'
           }
         : null,
-      maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
+      maneuverStackLength
+        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-maneuver-history'), color: 'primary' }
+        : null,
       overCountNum
-        ? { value: 'character-count-down', text: `${overCountNum}体の未行動者の行動値を減らす`, color: 'error' }
+        ? {
+            value: 'Nechronica.label.character-count-down',
+            text: t('Nechronica.label.down-un-action-character-action-value').replace('$$', overCountNum.toString()),
+            color: 'error'
+          }
         : null
     ].filter((item): item is OptionItem => Boolean(item))
 
     const nextTurn = [
       maxAllCurrentActionValue > 0
-        ? { value: 'reset-action-value', text: '0を超える行動値を全て0にする', color: 'error' }
+        ? { value: 'reset-action-value', text: t('Nechronica.label.all-action-values-above-0-to-0'), color: 'error' }
         : null,
       ignoreHeikiCharacterNum
         ? {
             value: 'ignore-heiki',
-            text: `${ignoreHeikiCharacterNum}体の損傷済マニューバを【平気】の対象外化にする`,
+            text: t('Nechronica.label.exempt-damaged-maneuvers-from-the-bravado').replace(
+              '$$',
+              ignoreHeikiCharacterNum.toString()
+            ),
             color: 'warning'
           }
         : null,
       usedActionManeuverCharacterNum
         ? {
             value: 'recovery-action-maneuver',
-            text: `${usedActionManeuverCharacterNum}体のアクションマニューバの未使用化`,
+            text: t('Nechronica.label.all-action-maneuver-to-unused').replace(
+              '$$',
+              usedActionManeuverCharacterNum.toString()
+            ),
             color: 'primary'
           }
         : null,
-      { value: 'action-value-recovery', text: '全員の行動値を最大値分回復する', color: 'primary' },
-      maneuverStackLength ? { value: 'clear-maneuver-stack', text: 'マニューバ履歴の削除', color: 'primary' } : null,
-      { value: 'reset-count', text: 'カウントの再設定', color: 'primary' }
+      {
+        value: 'action-value-recovery',
+        text: t('Nechronica.label.recover-action-value-by-max-action-value'),
+        color: 'primary'
+      },
+      maneuverStackLength
+        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-maneuver-history'), color: 'primary' }
+        : null,
+      { value: 'reset-count', text: t('Nechronica.label.reset-battle-count'), color: 'primary' }
     ].filter((item): item is OptionItem => Boolean(item))
 
     return {

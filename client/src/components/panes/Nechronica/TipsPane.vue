@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="ネクロニカ専用機能のTips">
+  <pane-frame :title="$t('Nechronica.label.tips-pane-title')">
     <template #title-action></template>
     <template #layout></template>
     <template #nav></template>
@@ -125,7 +125,7 @@
               </ul>
             </v-sheet>
           </v-card-text>
-          <v-card-subtitle>特殊処理：【平気】</v-card-subtitle>
+          <v-card-subtitle>特殊処理: 【平気】</v-card-subtitle>
           <v-card-text>
             キャラクターシートの読み込み時にマニューバの名前が「平気」「自動制御装置」のいずれかだった場合、<br />
             <v-switch
@@ -141,12 +141,11 @@
             「【平気】として扱う」が ON のマニューバがあると、損傷したマニューバに下記のボタンが表示されます。<br />
             <v-sheet class="bg-indigo-lighten-5 pa-2 my-1 d-flex flex-column" style="gap: 0.5rem">
               <v-sheet class="bg-transparent">
-                <heiki-btn :ignore-heiki="false" />：このターンに損傷したため平気。最大行動値に含まれる状態。
+                <heiki-btn :ignore-heiki="false" />: このターンに損傷したため平気。最大行動値に含まれる状態。
               </v-sheet>
               <v-sheet class="bg-transparent">
-                <heiki-btn
-                  :ignore-heiki="true"
-                />：以前のターンに損傷していたため平気ではない。最大行動値には含まれない状態。
+                <heiki-btn :ignore-heiki="true" />:
+                以前のターンに損傷していたため平気ではない。最大行動値には含まれない状態。
               </v-sheet>
             </v-sheet>
             「戦闘開始」や「次ターン開始」をすると、全ての損傷したマニューバは平気の対象から外されます。<br />

@@ -1,9 +1,9 @@
 <template>
-  <pane-frame title="キャラクター閲覧ツール">
+  <pane-frame :title="$t('Nechronica.label.character-view-pane-title')">
     <template #title-action>
       <perspective-select v-model="perspective" />
       <v-btn :append-icon="nav ? 'mdi-menu-close' : 'mdi-menu-open'" size="small" variant="text" @click="onChangeNav">
-        <span class="text-decoration-underline">表示制御</span>
+        <span class="text-decoration-underline">{{ $t('label.display-control') }}</span>
       </v-btn>
     </template>
     <template #layout>
@@ -73,7 +73,7 @@
     style="backdrop-filter: blur(2px)"
   >
     <v-card rounded="xl">
-      <v-card-title>データ更新中</v-card-title>
+      <v-card-title>{{ $t('Nechronica.label.updating-data') }}</v-card-title>
       <v-card-text class="text-center">
         <v-progress-circular size="150" color="primary" width="15" class="" :model-value="progress">
           <span class="text-h4">{{ progress }}%</span>
@@ -132,8 +132,8 @@ const viewOption = ref<NechronicaViewOption>({
   viewLost: true,
   viewUsed: true,
   viewLabel: '',
-  selectedTypes: mapping.NechronicaPowerList.map((_, idx) => idx),
-  selectedTimings: mapping.NechronicaTimingList.map((_, idx) => idx)
+  selectedTypes: mapping.MANEUVER_TYPE.map((_, idx) => idx),
+  selectedTimings: mapping.MANEUVER_TIMING.map((_, idx) => idx)
 })
 
 function getCharacters(type: NechronicaType): { id: string; data: NechronicaWrap }[] {

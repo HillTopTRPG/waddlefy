@@ -17,9 +17,9 @@
               </v-sheet>
             </v-sheet>
             <v-select-thin
-              prefix="配置"
+              :prefix="$t('Nechronica.label.placement')"
               style="max-width: 8em"
-              :items="positionSelection"
+              :items="mapping.CHARACTER_LOCATION.map(d => ({ value: d['pos-value'], text: $t(d.text) }))"
               :model-value="character?.data.position.toString() || '0'"
               @update:model-value="v => emits('update:position', parseInt(v, 10))"
             />
@@ -32,23 +32,23 @@
             <icon-btn
               :disable-button="true"
               size="normal"
-              :under-text="mapping.NechronicaPositionList[character.data.character.basic.position]?.text || ''"
-              :class="mapping.NechronicaPositionList[character.data.character.basic.position].val || ''"
+              :under-text="mapping.CHARACTER_POSITION[character.data.character.basic.position]?.text || ''"
+              :class="mapping.CHARACTER_POSITION[character.data.character.basic.position].val || ''"
             />
             <span style="font-size: 11px; line-height: 1.2em">/</span>
             <icon-btn
               :disable-button="true"
-              :under-text="mapping.NechronicaClassList[character.data.character.basic.mainClass]?.text || ''"
+              :under-text="mapping.CHARACTER_CLASS[character.data.character.basic.mainClass]?.text || ''"
               size="small"
-              :class="mapping.NechronicaClassList[character.data.character.basic.mainClass].val || ''"
+              :class="mapping.CHARACTER_CLASS[character.data.character.basic.mainClass].val || ''"
             />
             <template v-if="character.data.character.basic.mainClass !== character.data.character.basic.subClass">
               <span style="font-size: 11px; line-height: 1.2em">/</span>
               <icon-btn
                 :disable-button="true"
-                :under-text="mapping.NechronicaClassList[character.data.character.basic.subClass]?.text || ''"
+                :under-text="mapping.CHARACTER_CLASS[character.data.character.basic.subClass]?.text || ''"
                 size="small"
-                :class="mapping.NechronicaClassList[character.data.character.basic.subClass].val || ''"
+                :class="mapping.CHARACTER_CLASS[character.data.character.basic.subClass].val || ''"
               />
             </template>
             <template v-else>
@@ -95,19 +95,10 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
-const positionSelection = [
-  { value: '0', text: '' },
-  { value: '1', text: '奈落' },
-  { value: '2', text: '地獄' },
-  { value: '3', text: '煉獄' },
-  { value: '4', text: '花園' },
-  { value: '5', text: '楽園' }
-]
-
 const icon = computed(() => {
   if (!character.value) return ''
   if (character.value?.data.type === 'doll') {
-    return mapping.NechronicaPositionList[character.value?.data.character.basic.position].val
+    return mapping.CHARACTER_POSITION[character.value?.data.character.basic.position].val
   }
   return character.value?.data.type
 })

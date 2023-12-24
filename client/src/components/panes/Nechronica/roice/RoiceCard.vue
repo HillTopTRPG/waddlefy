@@ -2,7 +2,7 @@
   <v-card
     class="pa-2 overflow-hidden"
     variant="elevated"
-    :style="`outline: rgb(var(--v-theme-${mapping.roiceDamages[roice.damage].color})) solid 3px`"
+    :style="`outline: rgb(var(--v-theme-${mapping.ROICE_DAMAGE[roice.damage].color})) solid 3px`"
     style="box-sizing: content-box; outline-offset: -3px"
     :min-width="`${width}rem`"
     :max-width="`${width}rem`"
@@ -10,7 +10,7 @@
     <v-card-text class="pa-0 d-flex flex-column flex-grow-0 align-self-start">
       <v-sheet class="d-flex flex-column" style="max-height: 10em">
         <menu-edit-text-field
-          label="対象"
+          :label="$t('Nechronica.label.target')"
           icon="mdi-hand-pointing-right"
           :editable="true"
           variant="solo-filled"
@@ -21,14 +21,18 @@
       </v-sheet>
     </v-card-text>
     <v-card-text class="px-0 py-1 d-flex flex-row" style="gap: 0.3rem">
-      <chip-select prefix="" :selections="posSelections" v-model="selectedPos" />
-      <chip-select prefix="狂気度" :selections="mapping.roiceDamages" v-model="roiceDamage" />
+      <chip-select prefix="" :selections="posSelections" v-model="selectedPos" :i18n="true" />
+      <chip-select
+        :prefix="$t('Nechronica.label.roice-damage')"
+        :selections="mapping.ROICE_DAMAGE"
+        v-model="roiceDamage"
+      />
     </v-card-text>
-    <v-card-subtitle class="px-0">発狂効果</v-card-subtitle>
+    <v-card-subtitle class="px-0">{{ $t('Nechronica.label.roice-break-effect') }}</v-card-subtitle>
     <v-card-text class="px-0 py-1 d-flex flex-row align-stretch">
       <v-sheet class="pa-0 d-flex flex-row justify-start bg-transparent" style="gap: 0.5rem">
-        <span class="d-flex font-weight-bold text-no-wrap">{{ roice.neg }}</span>
-        <span class="d-flex justify-start align-start">{{ roice.breakEffect }}</span>
+        <span class="d-flex font-weight-bold text-no-wrap">{{ $t(roice.neg) }}</span>
+        <span class="d-flex justify-start align-start">{{ $t(roice.breakEffect) }}</span>
       </v-sheet>
     </v-card-text>
     <v-card-text class="px-0 py-1 d-flex flex-row">
@@ -39,13 +43,13 @@
         :text-rows="3"
         :width="width"
         :offset="-2 * 24"
-        label="備考など"
+        :label="$t('Nechronica.label.remarks')"
         :text="roice.memo"
         @update="onUpdateRoiceMemo"
       />
     </v-card-text>
     <v-card-actions class="py-0 d-flex flex-row justify-end" style="min-height: auto">
-      <delete-menu-btn type="未練" :target-name="roice.name" @execute="emits('delete')" />
+      <delete-menu-btn :type="$t('Nechronica.label.roice')" :target-name="roice.name" @execute="emits('delete')" />
     </v-card-actions>
   </v-card>
 </template>
@@ -89,7 +93,15 @@ watch(
 const selectedPos = ref(props.roice.id)
 watch(selectedPos, idx => {
   emitUpdateCloneRoice(c => {
-    const rawData = mapping.roiceList.at(idx)
+    const r = mapping.ROICE.at(idx)
+    const rawData = r
+      ? {
+          pos: `Nechronica.ROICE.${r.pos}`,
+          neg: `Nechronica.ROICE.${r.neg}`,
+          target: `Nechronica.ROICE.${r.target}`,
+          breakEffect: `Nechronica.ROICE.${r.breakEffect}`
+        }
+      : null
     let execute = false
     if (rawData) {
       execute = c.id !== idx || c.pos !== rawData.pos

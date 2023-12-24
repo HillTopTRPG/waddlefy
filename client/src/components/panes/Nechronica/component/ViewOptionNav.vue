@@ -11,9 +11,9 @@
       <v-defaults-provider
         :defaults="{ VListSubheader: { class: 'bg-amber-lighten-4', style: 'height: 1.5rem; min-height:1.5rem' } }"
       >
-        <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2">
-          未練
-        </v-list-item-title>
+        <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2">{{
+          $t('Nechronica.label.roice')
+        }}</v-list-item-title>
         <v-list-item class="py-1">
           <v-defaults-provider :defaults="{ VRadioGroup: { density: 'compact', hideDetails: true } }">
             <v-radio-group
@@ -21,21 +21,23 @@
               :model-value="option.roicePosition"
               @update:model-value="v => updateRoicePosition(v || 'none')"
             >
-              <template v-for="select in roicePositionSelections" :key="select.value">
+              <template v-for="select in mapping.ROICE_VIEW_POSITION" :key="select.value">
                 <v-radio :value="select.value">
                   <template #label>
-                    <span class="text-body-1 font-weight-bold">{{ select.label }}</span>
+                    <span class="text-body-1 font-weight-bold">{{ $t(select.label) }}</span>
                   </template>
                 </v-radio>
               </template>
             </v-radio-group>
           </v-defaults-provider>
         </v-list-item>
-        <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2"
-          >マニューバ</v-list-item-title
-        >
+        <v-list-item-title class="position-sticky bg-amber-lighten-1 pl-2" style="top: 0; z-index: 2">{{
+          $t('Nechronica.label.maneuver')
+        }}</v-list-item-title>
         <v-sheet>
-          <v-list-subheader class="position-sticky" style="top: 1.5rem; z-index: 1">下部ラベル</v-list-subheader>
+          <v-list-subheader class="position-sticky" style="top: 1.5rem; z-index: 1">{{
+            $t('Nechronica.label.under-label')
+          }}</v-list-subheader>
           <v-list-item class="py-1">
             <v-defaults-provider :defaults="{ VRadioGroup: { density: 'compact', hideDetails: true } }">
               <v-radio-group
@@ -43,10 +45,10 @@
                 :model-value="option.viewLabel"
                 @update:model-value="v => updateViewLabel(v || '')"
               >
-                <template v-for="select in viewLabelSelections" :key="select.value">
+                <template v-for="select in mapping.MANEUVER_UNDER_TEXT" :key="select.value">
                   <v-radio :value="select.value">
                     <template #label>
-                      <span class="text-body-1 font-weight-bold">{{ select.label }}</span>
+                      <span class="text-body-1 font-weight-bold">{{ $t(select.label) }}</span>
                     </template>
                   </v-radio>
                 </template>
@@ -55,16 +57,18 @@
           </v-list-item>
         </v-sheet>
         <v-sheet>
-          <v-list-subheader class="position-sticky" style="top: 1.5rem; z-index: 1">状態</v-list-subheader>
+          <v-list-subheader class="position-sticky" style="top: 1.5rem; z-index: 1">{{
+            $t('Nechronica.label.status')
+          }}</v-list-subheader>
           <v-list-item class="py-1">
             <v-switch-compact
-              label="損傷"
+              :label="$t('Nechronica.label.lost')"
               color="error"
               :model-value="option.viewLost"
               @update:model-value="v => updateViewLost(v)"
             />
             <v-switch-compact
-              label="使用済"
+              :label="$t('Nechronica.label.used')"
               :model-value="option.viewUsed"
               @update:model-value="v => updateViewUsed(v)"
             />
@@ -72,17 +76,19 @@
         </v-sheet>
         <v-sheet>
           <multi-switch-list-items
-            label="表示カテゴリ"
-            :texts="mapping.NechronicaPowerList"
+            :label="$t('Nechronica.label.view-category')"
+            :texts="mapping.MANEUVER_TYPE"
             :model-value="option.selectedTypes"
+            :i18n="true"
             @update:model-value="updateSelectedTypes"
           />
         </v-sheet>
         <v-sheet>
           <multi-switch-list-items
-            label="表示タイミング"
-            :texts="mapping.NechronicaTimingList"
+            :label="$t('Nechronica.label.view-timing')"
+            :texts="mapping.MANEUVER_TIMING"
             :model-value="option.selectedTimings"
+            :i18n="true"
             @update:model-value="updateSelectedTimings"
           />
         </v-sheet>
@@ -115,19 +121,6 @@ const emits = defineEmits<{
   (e: 'update:option', modelValue: NechronicaViewOption): void
   (e: 'update:nav', nav: boolean): void
 }>()
-
-const roicePositionSelections = [
-  { value: 'before', label: 'マニューバの上' },
-  { value: 'after', label: 'マニューバの下' },
-  { value: 'none', label: '表示しない' }
-]
-
-const viewLabelSelections = [
-  { value: '', label: 'なし' },
-  { value: 'timing', label: 'タイミング' },
-  { value: 'cost', label: 'コスト' },
-  { value: 'range', label: '射程' }
-]
 
 function updateViewLabel(v: NechronicaViewOption['viewLabel']) {
   const opt = clone(props.option)!

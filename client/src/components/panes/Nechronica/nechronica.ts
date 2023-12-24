@@ -27,10 +27,10 @@ export type NechronicaRoice = {
   memo: string // 備考など
 }
 
-export const posSelections = mapping.roiceList.map((r, idx) => ({
+export const posSelections = mapping.ROICE.map((r, idx) => ({
   value: idx,
-  text: r.pos,
-  subTitle: r.target,
+  text: `Nechronica.ROICE.${r.pos}`,
+  subTitle: `Nechronica.ROICE.${r.target}`,
   color: 'black'
 }))
 
@@ -94,12 +94,14 @@ export class NechronicaHelper {
   protected readonly url: string
   protected readonly urlRegExp: RegExp
   protected readonly jsonpUrlFormat: string
+  protected readonly t: (r: string) => string
 
-  public constructor(url: string) {
+  public constructor(url: string, t: (r: string) => string) {
     this.url = url
     // https://charasheet.vampire-blood.net/1713315
     this.urlRegExp = /https?:\/\/charasheet\.vampire-blood\.net\/([^&]+)/
     this.jsonpUrlFormat = 'https://charasheet.vampire-blood.net/{key}.js?callback=getJson'
+    this.t = t
   }
 
   /**
@@ -195,14 +197,16 @@ export class NechronicaHelper {
       json['roice_break'],
       json['roice_memo']
     ]
+    const test = this.t('Nechronica.ROICE.1.pos')
+    console.log(test)
     const roiceList: NechronicaRoice[] = transpose(roice)
       .map(list => {
         const name: string = textFilter(list[0])
-        const pos: string = textFilter(list[1])
-        const id: number = convertNumberZero(list[2])
         const damage: number = convertNumberZero(list[3])
-        const neg: string = textFilter(list[4])
-        const breakEffect: string = textFilter(list[5])
+        const id: number = convertNumberZero(list[2])
+        const pos: string = `Nechronica.ROICE.${id}.pos`
+        const neg: string = `Nechronica.ROICE.${id}.neg`
+        const breakEffect: string = `Nechronica.ROICE.${id}.breakEffect`
         const memo: string = textFilter(list[6])
         const data: NechronicaRoice = {
           id,

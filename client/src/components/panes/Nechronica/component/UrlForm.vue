@@ -1,9 +1,15 @@
 <template>
   <v-defaults-provider :defaults="{ VTextField: { color: 'primary', persistentPlaceholder: true, flat: true } }">
-    <v-text-field placeholder="必須" :hide-details="true" variant="solo-filled" v-model="inputUrl" ref="urlElm">
+    <v-text-field
+      :placeholder="$t('label.required')"
+      :hide-details="true"
+      variant="solo-filled"
+      v-model="inputUrl"
+      ref="urlElm"
+    >
       <template #label>
         <v-icon icon="mdi-link-variant" class="mr-1" />
-        キャラクター保管所のURL
+        {{ $t('Nechronica.label.character-vault-url') }}
       </template>
     </v-text-field>
   </v-defaults-provider>

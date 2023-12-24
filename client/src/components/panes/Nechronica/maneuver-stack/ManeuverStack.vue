@@ -24,7 +24,9 @@
           v-bind="props"
         >
           <v-sheet class="d-flex flex-column bg-transparent">
-            <span class="">{{ currentData?.type === 'use' ? '使用' : '損傷' }}</span>
+            <span class="">{{
+              $t(currentData?.type === 'use' ? 'Nechronica.label.use' : 'Nechronica.label.lost')
+            }}</span>
             <span class="ellipsis text">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
             <span class="ellipsis text">{{ currentManeuver?.name || '' }}</span>
           </v-sheet>
@@ -52,7 +54,7 @@
       :model-value="!isResolvedStack && Boolean(currentData?.status)"
       class="eventless"
     >
-      <span class="contents px-1">処理済</span>
+      <span class="contents px-1">{{ $t('Nechronica.label.processed') }}</span>
     </v-overlay>
   </v-card>
 </template>

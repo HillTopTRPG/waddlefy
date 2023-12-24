@@ -9,7 +9,7 @@
             @delete="onDeleteRoice(characterId, idx)"
           />
         </template>
-        <v-btn variant="tonal" rounded="xl" class="" size="small" text="追加" @click="emits('add')" />
+        <v-btn variant="tonal" rounded="xl" class="" size="small" :text="$t('label.add')" @click="emits('add')" />
       </v-sheet>
     </v-sheet>
   </v-card-text>

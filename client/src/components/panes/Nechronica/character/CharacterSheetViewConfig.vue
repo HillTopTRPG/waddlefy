@@ -5,10 +5,10 @@
     </template>
     <v-card>
       <v-card-title class="d-flex">
-        <span class="ellipsis" style="width: 10em !important">{{ name }}</span>
-        <span class="text-no-wrap">の設定</span>
+        <span class="text-no-wrap">{{ $t('label.setting') }}: </span>
+        <span class="ellipsis" style="width: 12em !important">{{ name }}</span>
       </v-card-title>
-      <v-card-subtitle>１行の最大マニューバ数</v-card-subtitle>
+      <v-card-subtitle>{{ $t('Nechronica.label.row-max-maneuver-num') }}</v-card-subtitle>
       <v-defaults-provider :defaults="{ VSlider: vSliderDefault }">
         <v-slider show-ticks="always" v-model="useColumns" :min="4" :max="10">
           <template #prepend>

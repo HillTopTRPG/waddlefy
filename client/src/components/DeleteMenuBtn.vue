@@ -3,14 +3,14 @@
     <template #activator="{ props }">
       <v-btn data-cy="open-btn" :color="color || 'error'" variant="text" :class="classText || ''" v-bind="props">
         <v-icon icon="mdi-delete-outline" />
-        <span data-cy="text" class="text-decoration-underline">この{{ type }}を削除</span>
+        <span data-cy="text" class="text-decoration-underline">この{{ i18n ? $t(type) : type }}を削除</span>
       </v-btn>
     </template>
     <v-card>
-      <v-card-text class="pb-1">削除するにはこの{{ type }}の名前を入力してください</v-card-text>
+      <v-card-text class="pb-1">削除するにはこの{{ i18n ? $t(type) : type }}の名前を入力してください</v-card-text>
       <v-card-item class="pa-2">
         <v-text-field
-          :label="`${type}の名前`"
+          :label="`${i18n ? $t(type) : type}の名前`"
           v-model="inputTargetName"
           :autofocus="true"
           variant="solo-filled"
@@ -47,6 +47,7 @@ defineProps<{
   targetName: string
   classText?: string
   color?: string
+  i18n?: boolean
 }>()
 
 const emits = defineEmits<{

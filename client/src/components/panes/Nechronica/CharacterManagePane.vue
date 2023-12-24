@@ -1,5 +1,5 @@
 <template>
-  <pane-frame title="キャラクター管理ツール">
+  <pane-frame :title="$t('Nechronica.label.character-manage-tool-pane-title')">
     <template #title-action>
       <perspective-select v-model="perspective" />
     </template>
@@ -8,8 +8,13 @@
         <template v-for="type in nechronicaTypes" :key="type">
           <url-form-menu
             v-if="!perspective || type === 'doll'"
-            :text="`${mapping.NechronicaTypeColorMap.find(t => t.type === type)?.text || ''}読込`"
-            :color="mapping.NechronicaTypeColorMap.find(t => t.type === type)?.color || ''"
+            :text="
+              $t('Nechronica.label.loading-of').replace(
+                '$$',
+                $t(mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.text || 'Nechronica.CHARACTER_TYPE.none')
+              )
+            "
+            :color="mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color || ''"
             @execute="url => onLoadCharacterSheet(url, type)"
             :tips="[]"
           />
@@ -70,8 +75,11 @@ import UrlFormMenu from '@/components/panes/Nechronica/component/UrlFormMenu.vue
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaHelper, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
+import { useI18n } from 'vue-i18n'
+
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
+const { t } = useI18n()
 
 defineProps<{
   layout: Layout
@@ -90,11 +98,15 @@ const characters = computed((): { id: string; data: NechronicaWrap }[] => {
 })
 
 async function onLoadCharacterSheet(url: string, type: NechronicaType) {
-  const helper = new NechronicaHelper(url)
+  const helper = new NechronicaHelper(url, t)
   if (helper.isThis()) {
     const { data } = await helper.getData()
     if (!data) {
-      graphQlStore?.addNotification('キャラクターシートの読込に失敗しました。', 'mdi-alert-circle-outline', 'error')
+      graphQlStore?.addNotification(
+        t('Nechronica.label.failed-loading-character-sheet'),
+        'mdi-alert-circle-outline',
+        'error'
+      )
       return
     }
     window.logger.info(JSON.stringify(data, null, 2))

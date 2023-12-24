@@ -1,7 +1,6 @@
 <template>
   <v-select
     v-if="isUserControl"
-    prefix="視点:"
     variant="plain"
     :hide-details="true"
     class="menu-select"
@@ -12,7 +11,20 @@
     @update:model-value="v => emits('update:model-value', v)"
   >
     <template #prepend-inner>
-      <v-icon icon="mdi-triangle-small-down" />
+      <div class="d-flex flex-row align-center h-100 text-body-2">
+        <v-icon icon="mdi-triangle-small-down" class="ma-0" />
+        <span class="text-no-wrap">{{ $t('label.perspective') }}:</span>
+      </div>
+    </template>
+    <template #item="{ item, props }">
+      <v-list-item v-bind="props" :title="$t(item.title)" />
+    </template>
+    <template #selection="{ item }">
+      <v-list-item density="compact" class="pa-0">
+        <template #title>
+          <span class="text-body-2">{{ $t(item.title) }}</span>
+        </template>
+      </v-list-item>
     </template>
   </v-select>
 </template>
@@ -25,8 +37,8 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
 const perspectiveList = [
-  { value: '', name: '主催者' },
-  { value: 'player', name: '参加者' }
+  { value: '', name: 'Nechronica.label.organizer' },
+  { value: 'player', name: 'Nechronica.label.player' }
 ]
 
 defineProps<{

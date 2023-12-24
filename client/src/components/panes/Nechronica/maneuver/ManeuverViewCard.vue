@@ -4,15 +4,19 @@
     :class="mode === 'view' ? '' : 'pb-2'"
     v-if="mode.startsWith('view')"
     style="outline-width: 3px; outline-offset: -3px; outline-style: solid"
-    :style="`outline-color: ${mapping.NechronicaPowerList[maneuver.type].color}`"
+    :style="`outline-color: ${mapping.MANEUVER_TYPE[maneuver.type].color}`"
   >
     <v-card-text class="px-2 pt-2 pb-0">
       <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
         <v-defaults-provider :defaults="{ VChip: { size: 'small' } }">
-          <v-chip class="font-weight-bold" color="error" variant="flat" v-if="maneuver.lost">損傷</v-chip>
-          <v-chip class="font-weight-bold" color="secondary" variant="flat" v-if="maneuver.used">使用済</v-chip>
+          <v-chip class="font-weight-bold" color="error" variant="flat" v-if="maneuver.lost">{{
+            $t('Nechronica.label.lost')
+          }}</v-chip>
+          <v-chip class="font-weight-bold" color="secondary" variant="flat" v-if="maneuver.used">{{
+            $t('Nechronica.label.used')
+          }}</v-chip>
           <v-chip :class="`type${maneuver.type}`">{{
-            mapping.NechronicaPowerList[maneuver.type]?.text || 'カテゴリなし'
+            $t(mapping.MANEUVER_TYPE[maneuver.type]?.text || 'Nechronica.MANEUVER_TYPE.none')
           }}</v-chip>
           <v-chip variant="outlined" v-if="maneuver.shozoku">{{ maneuver.shozoku }}</v-chip>
         </v-defaults-provider>
@@ -39,7 +43,7 @@
             <v-defaults-provider :defaults="{ VCol: { class: 'text-no-wrap text-center text-body-1 flex-column' } }">
               <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">T</v-col>
               <v-col class="v-col-3 d-flex justify-center">{{
-                mapping.NechronicaTimingList[maneuver.timing].text
+                $t(mapping.MANEUVER_TIMING[maneuver.timing].text)
               }}</v-col>
               <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">C</v-col>
               <v-col class="v-col-3 d-flex justify-space-around">
@@ -54,7 +58,9 @@
             </v-defaults-provider>
           </v-row>
           <v-row class="" :no-gutters="true" style="min-height: 5em">
-            <v-col class="v-col-2 py-2 text-no-wrap text-center bg-grey-darken-3">効果</v-col>
+            <v-col class="v-col-2 py-2 text-no-wrap text-center bg-grey-darken-3">{{
+              $t('Nechronica.label.effect')
+            }}</v-col>
             <v-col class="v-col-10 text-wrap pa-2">{{ maneuver.memo }}</v-col>
           </v-row>
         </v-defaults-provider>
@@ -83,6 +89,7 @@ import ManeuverUseBtn from '@/components/panes/Nechronica/maneuver/ManeuverUseBt
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { getActionValueNum, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   maneuver: NechronicaManeuver
@@ -99,8 +106,10 @@ const emits = defineEmits<{
   (e: 'update:ignoreHeiki', value: boolean): Promise<void>
 }>()
 
+const { t } = useI18n()
+
 const costWrap = computed(() => {
-  if (overCostWrap.value !== undefined && props.maneuver.cost === '') return 'なし'
+  if (overCostWrap.value !== undefined && props.maneuver.cost === '') return t('label.none')
   return props.maneuver.cost
 })
 
