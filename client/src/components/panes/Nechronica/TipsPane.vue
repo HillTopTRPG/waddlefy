@@ -213,7 +213,6 @@ defineProps<{
 
 defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 </script>
 

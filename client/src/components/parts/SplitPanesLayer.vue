@@ -15,7 +15,6 @@ interface Props {
 }
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
   (e: 'change-root-layout', newLayout: Layout): void
 }>()
 
@@ -421,7 +420,6 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
               cLayout.component = componentObj
             }
           "
-          @change-layout="(newLayout: any) => emits('change-layout', newLayout)"
           ref="childLayer"
         />
       </div>
@@ -446,7 +444,6 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
           cLayout.component = componentObj
         }
       "
-      @change-layout="(newLayout: any) => emits('change-layout', newLayout)"
       ref="component"
     />
   </keep-alive>

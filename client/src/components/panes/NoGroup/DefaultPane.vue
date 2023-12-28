@@ -30,7 +30,6 @@ const isEqualLayout = (layout: Layout): boolean => {
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 </script>
 
@@ -48,12 +47,12 @@ const emits = defineEmits<{
       <template v-for="g in componentMap" :key="g.group">
         <v-list-group v-if="g.group">
           <template #activator="{ props }">
-            <v-list-item v-bind="props" :title="g.group" @keydown.enter.stop="$event.target.click()" />
+            <v-list-item v-bind="props" :title="$t(`pane.${g.group}.group`)" @keydown.enter.stop="$event.target.click()" />
           </template>
 
           <v-list-item
             v-for="n in Object.keys(g.items)"
-            :title="n"
+            :title="$t(`pane.${g.group}.${n}`)"
             :value="n"
             :key="n"
             @click="emits('change-component', g.group, n)"
@@ -63,25 +62,13 @@ const emits = defineEmits<{
         <template v-else>
           <v-list-item
             v-for="n in Object.keys(g.items).filter(m => m !== '初期画面')"
-            :title="n"
+            :title="$t(n)"
             :value="n"
             :key="n"
             @click="emits('change-component', g.group, n)"
             @keydown.enter.stop="$event.target.click()"
           />
         </template>
-      </template>
-    </v-list>
-    <p class="mx-5 mt-5">または...</p>
-    <p class="mx-5 mt-5">構成済みレイアウトのプリセットを選ぶ</p>
-    <v-list density="compact" class="mx-5 mb-5" open-strategy="multiple">
-      <template v-for="l in layouts" :key="l.title">
-        <v-list-item
-          @click="emits('change-layout', l.layout)"
-          v-if="!isEqualLayout(l.layout)"
-          @keydown.enter.stop="$event.target.click()"
-          >{{ l.title }}
-        </v-list-item>
       </template>
     </v-list>
   </div>

@@ -88,7 +88,6 @@ defineProps<{
 
 defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 
 const perspective = ref<string>(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')

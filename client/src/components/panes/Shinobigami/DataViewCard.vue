@@ -175,7 +175,6 @@ const player = computed(() => graphQlStore?.state.players.find(p => p.id === cha
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
   (e: 'update:select-skill', selectSkill: string): void
 }>()
 
