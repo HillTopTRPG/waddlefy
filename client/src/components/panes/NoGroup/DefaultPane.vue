@@ -11,22 +11,12 @@ export const componentInfo = {
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
-import layouts from '@/PaneLayoutTemplate'
 import { componentMap } from '../index'
 
 const props = defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
-
-const isEqualLayout = (layout: Layout): boolean => {
-  const replaceFunc = (str: string) =>
-    str
-      .replace(/"uuid": ?".+?"/g, '')
-      .replace(/"payload": ?[^,}]+/g, '')
-      .replace(/"size": ?[^,}]+/g, '')
-  return replaceFunc(JSON.stringify(layout)) === replaceFunc(JSON.stringify(props.rootLayout))
-}
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
@@ -47,7 +37,11 @@ const emits = defineEmits<{
       <template v-for="g in componentMap" :key="g.group">
         <v-list-group v-if="g.group">
           <template #activator="{ props }">
-            <v-list-item v-bind="props" :title="$t(`pane.${g.group}.group`)" @keydown.enter.stop="$event.target.click()" />
+            <v-list-item
+              v-bind="props"
+              :title="$t(`pane.${g.group}.group`)"
+              @keydown.enter.stop="$event.target.click()"
+            />
           </template>
 
           <v-list-item

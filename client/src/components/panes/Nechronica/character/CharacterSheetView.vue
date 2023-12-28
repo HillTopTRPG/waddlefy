@@ -145,8 +145,8 @@ function judgeView(maneuver: NechronicaManeuver) {
   if (!props.viewOption) return true
   if (maneuver.lost && !props.viewOption.viewLost) return false
   if (maneuver.used && !props.viewOption.viewUsed) return false
-  if (props.viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
-  return props.viewOption.selectedTypes.some(t => t === maneuver.type)
+  if (props.viewOption.selectedTimings.every((timing: number) => timing !== maneuver.timing)) return false
+  return props.viewOption.selectedTypes.some((timing: number) => timing === maneuver.type)
 }
 
 const singleton = computed(
@@ -243,10 +243,7 @@ async function onAddRoice() {
     c.character.roiceList.push({
       id: 1,
       name: `${t('Nechronica.label.roice')}${c.character.roiceList.length + 1}`,
-      pos: `Nechronica.ROICE.${mapping.ROICE[1].pos}`,
       damage: 3,
-      neg: `Nechronica.ROICE.${mapping.ROICE[1].neg}`,
-      breakEffect: `Nechronica.ROICE.${mapping.ROICE[1].breakEffect}`,
       memo: ''
     })
   })

@@ -1,6 +1,5 @@
 import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
 import { clone, convertNumberZero } from '../PrimaryDataUtility'
-import mapping from './mapping.json'
 
 export type NechronicaManeuver = {
   lost: boolean
@@ -20,17 +19,14 @@ export type NechronicaManeuver = {
 export type NechronicaRoice = {
   id: number
   name: string // 対象
-  pos: string // 種類
   damage: number // 狂気度
-  neg: string // 発狂
-  breakEffect: string // 発狂効果
   memo: string // 備考など
 }
 
-export const posSelections = mapping.ROICE.map((r, idx) => ({
+export const posSelections = new Array(31).fill(null).map((_, idx) => ({
   value: idx,
-  text: `Nechronica.ROICE.${r.pos}`,
-  subTitle: `Nechronica.ROICE.${r.target}`,
+  text: `Nechronica.ROICE.${idx}.pos`,
+  subTitle: `Nechronica.ROICE.${idx}.target`,
   color: 'black'
 }))
 
@@ -197,24 +193,16 @@ export class NechronicaHelper {
       json['roice_break'],
       json['roice_memo']
     ]
-    const test = this.t('Nechronica.ROICE.1.pos')
-    console.log(test)
     const roiceList: NechronicaRoice[] = transpose(roice)
       .map(list => {
         const name: string = textFilter(list[0])
         const damage: number = convertNumberZero(list[3])
         const id: number = convertNumberZero(list[2])
-        const pos: string = `Nechronica.ROICE.${id}.pos`
-        const neg: string = `Nechronica.ROICE.${id}.neg`
-        const breakEffect: string = `Nechronica.ROICE.${id}.breakEffect`
         const memo: string = textFilter(list[6])
         const data: NechronicaRoice = {
           id,
           name,
-          pos,
           damage,
-          neg,
-          breakEffect,
           memo
         }
         return data

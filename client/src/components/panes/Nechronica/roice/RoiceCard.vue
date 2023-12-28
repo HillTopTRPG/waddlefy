@@ -31,8 +31,8 @@
     <v-card-subtitle class="px-0">{{ $t('Nechronica.label.roice-break-effect') }}</v-card-subtitle>
     <v-card-text class="px-0 py-1 d-flex flex-row align-stretch">
       <v-sheet class="pa-0 d-flex flex-row justify-start bg-transparent" style="gap: 0.5rem">
-        <span class="d-flex font-weight-bold text-no-wrap">{{ $t(roice.neg) }}</span>
-        <span class="d-flex justify-start align-start">{{ $t(roice.breakEffect) }}</span>
+        <span class="d-flex font-weight-bold text-no-wrap">{{ $t(`Nechronica.ROICE.${roice.id}.neg`) }}</span>
+        <span class="d-flex justify-start align-start">{{ $t(`Nechronica.ROICE.${roice.id}.breakEffect`) }}</span>
       </v-sheet>
     </v-card-text>
     <v-card-text class="px-0 py-1 d-flex flex-row">
@@ -93,26 +93,8 @@ watch(
 const selectedPos = ref(props.roice.id)
 watch(selectedPos, idx => {
   emitUpdateCloneRoice(c => {
-    const r = mapping.ROICE.at(idx)
-    const rawData = r
-      ? {
-          pos: `Nechronica.ROICE.${r.pos}`,
-          neg: `Nechronica.ROICE.${r.neg}`,
-          target: `Nechronica.ROICE.${r.target}`,
-          breakEffect: `Nechronica.ROICE.${r.breakEffect}`
-        }
-      : null
-    let execute = false
-    if (rawData) {
-      execute = c.id !== idx || c.pos !== rawData.pos
-      execute = execute || !(c.neg === rawData.neg && c.breakEffect === rawData.breakEffect)
-      if (execute) {
-        c.id = idx
-        c.pos = rawData.pos
-        c.neg = rawData.neg
-        c.breakEffect = rawData.breakEffect
-      }
-    }
+    const execute = idx >= 0 && idx <= 30 && c.id !== idx
+    if (execute) c.id = idx
     return execute
   })
 })

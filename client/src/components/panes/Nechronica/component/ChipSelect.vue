@@ -1,6 +1,6 @@
 <template>
   <v-chip
-    :color="selections.at(modelValue)?.color"
+    :color="selections.at(modelValue)?.color || 'default'"
     class="pa-0"
     density="default"
     style="line-height: 1.7em; min-height: 3em"
@@ -8,7 +8,7 @@
   >
     <v-select
       class="chip-select"
-      :color="selections.at(modelValue)?.color"
+      :color="selections.at(modelValue)?.color || 'default'"
       :flat="true"
       :hide-details="true"
       density="compact"
@@ -22,16 +22,14 @@
     >
       <template #item="{ item, props }">
         <v-list-item v-bind="props">
-          <template #title>{{ i18n ? $t(item.title) : item.title }}</template>
-          <template #subtitle>{{ i18n ? $t(item.raw.subTitle) : item.raw.subTitle }}</template>
+          <template #title>{{ textWrap(item.title) }}</template>
+          <template #subtitle>{{ textWrap(item.raw['subTitle']) }}</template>
         </v-list-item>
       </template>
       <template #selection="{ item }">
         <div class="d-flex flex-row align-baseline">
-          <span style="font-size: 20px">{{ i18n ? $t(item.title) : item.title }}</span>
-          <span class="text-body-2" v-if="item.raw.subTitle"
-            >:{{ i18n ? $t(item.raw.subTitle) : item.raw.subTitle }}</span
-          >
+          <span style="font-size: 20px">{{ textWrap(item.title) }}</span>
+          <span class="text-body-2" v-if="textWrap(item.raw.subTitle)">:{{ textWrap(item.raw['subTitle']) }}</span>
         </div>
       </template>
     </v-select>
@@ -39,7 +37,10 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
+const props = defineProps<{
   modelValue: number
   prefix: string
   selections: { value: number; text: string; subTitle: string; color: string }[]
@@ -49,6 +50,10 @@ defineProps<{
 const emits = defineEmits<{
   (e: 'update:model-value', modelValue: number): void
 }>()
+
+function textWrap(text: string) {
+  return props.i18n ? t(text) : text
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

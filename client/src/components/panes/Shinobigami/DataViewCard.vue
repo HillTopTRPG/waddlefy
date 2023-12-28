@@ -11,9 +11,7 @@
           </template>
           <basic-info-card :character-sheet="characterSheet" />
         </v-menu>
-        <v-defaults-provider :defaults="{ VBtn: { size: 'small', variant: 'flat' } }">
-          <v-btn icon="mdi-open-in-new" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
-        </v-defaults-provider>
+        <link-btn :href="characterSheet.url" />
         <span class="text-body-2">({{ handoutCharacterPlayerName }})</span>
       </template>
     </v-card-title>
@@ -26,12 +24,10 @@
       <template v-for="prize in prizeList" :key="prize.id">
         <v-menu :close-on-content-click="false">
           <template #activator="{ props }">
-            <v-defaults-provider :defaults="{ VChip: { label: true, border: true, elevation: 3 } }">
-              <v-chip variant="flat" size="small" color="lime" v-bind="props">
-                <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />
-                <span>{{ prize.data.name }}</span>
-              </v-chip>
-            </v-defaults-provider>
+            <v-chip :label="true" border :elevation="3" variant="flat" size="small" color="lime" v-bind="props">
+              <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />
+              <span>{{ prize.data.name }}</span>
+            </v-chip>
           </template>
           <prize-chip :prize="prize.data" :perspective="perspective" />
         </v-menu>
@@ -84,7 +80,6 @@
 </template>
 
 <script setup lang="ts">
-import { Layout } from '@/components/panes'
 import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
@@ -99,6 +94,7 @@ import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vu
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import BasicInfoCard from '@/components/panes/Shinobigami/BasicInfoCard.vue'
 import PrizeChip from '@/components/panes/Shinobigami/PrizeChip.vue'
+import LinkBtn from '@/components/parts/LinkBtn.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
