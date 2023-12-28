@@ -19,7 +19,7 @@
                 :battle-timing="battleTiming"
                 @update:lost="v => emits('update:lost', mIdx, v)"
                 @update:used="(v, cost) => emits('update:used', mIdx, v, cost)"
-                @update:ignore-heiki="v => emits('update:ignore-heiki', mIdx, v)"
+                @update:ignore-bravado="v => emits('update:ignore-bravado', mIdx, v)"
                 @update="v => emits('update', mIdx, v)"
               />
             </template>
@@ -47,7 +47,7 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'update:used', idx: number, value: boolean, cost: number): Promise<void>
   (e: 'update:lost', idx: number, value: boolean): Promise<void>
-  (e: 'update:ignore-heiki', idx: number, value: boolean): Promise<void>
+  (e: 'update:ignore-bravado', idx: number, value: boolean): Promise<void>
   (e: 'update', idx: number, maneuver: NechronicaManeuver): Promise<void>
 }>()
 

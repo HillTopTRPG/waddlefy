@@ -1,17 +1,17 @@
 import { createSimpleClassTest, factory, SimpleClassTestInfo } from '@/components/common'
-import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
 import { VueWrapper } from '@vue/test-utils'
 
-interface HeikiBtnProps {
-  ignoreHeiki: boolean
+interface BravadoBtnProps {
+  ignoreBravado: boolean
 }
 
-const factoryWrap = factory.bind(null, HeikiBtn)
+const factoryWrap = factory.bind(null, BravadoBtn)
 
-describe('HeikiBtn.vue', (): void => {
+describe('BravadoBtn.vue', (): void => {
   describe('コンテンツの確認', (): void => {
     it('テキストの確認', () => {
-      const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
+      const wrapper: VueWrapper = factoryWrap({ ignoreBravado: true })
       expect(wrapper.text()).toContain('平気')
       wrapper.unmount()
     })
@@ -19,7 +19,7 @@ describe('HeikiBtn.vue', (): void => {
 
   describe('emitsの確認', (): void => {
     it('clickイベントでclickが発火されること', async () => {
-      const wrapper: VueWrapper = factoryWrap({ ignoreHeiki: true })
+      const wrapper: VueWrapper = factoryWrap({ ignoreBravado: true })
       await wrapper.trigger('click')
       expect(wrapper.emitted()).toHaveProperty('click')
       wrapper.unmount()
@@ -34,16 +34,16 @@ describe('HeikiBtn.vue', (): void => {
       { title: 'variantがelevatedであること', selector: '.v-btn', containClass: 'v-btn--variant-elevated' },
       { title: 'パディングがpx-1であること', selector: '.v-btn', containClass: 'px-1' }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreHeiki: true })))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreBravado: true })))
   })
 
-  describe('ignoreHeiki: trueの場合', () => {
+  describe('ignoreBravado: trueの場合', () => {
     let wrapper: VueWrapper
-    beforeEach(() => (wrapper = factoryWrap({ ignoreHeiki: true })))
+    beforeEach(() => (wrapper = factoryWrap({ ignoreBravado: true })))
     afterEach(() => wrapper.unmount())
 
     it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
-    it('propsの確認', () => expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeTruthy())
+    it('propsの確認', () => expect((wrapper.props() as BravadoBtnProps).ignoreBravado).toBeTruthy())
 
     const patterns: SimpleClassTestInfo[] = [
       { title: '背景色がgreyであること', selector: '.v-btn', containClass: 'bg-grey' },
@@ -54,16 +54,16 @@ describe('HeikiBtn.vue', (): void => {
         containClass: 'text-decoration-line-through'
       }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreHeiki: true })))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreBravado: true })))
   })
 
   describe('ignoreHeik: falseの場合', () => {
     let wrapper: VueWrapper
-    beforeEach(() => (wrapper = factoryWrap({ ignoreHeiki: false })))
+    beforeEach(() => (wrapper = factoryWrap({ ignoreBravado: false })))
     afterEach(() => wrapper.unmount())
 
     it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
-    it('propsの確認', () => expect((wrapper.props() as HeikiBtnProps).ignoreHeiki).toBeFalsy())
+    it('propsの確認', () => expect((wrapper.props() as BravadoBtnProps).ignoreBravado).toBeFalsy())
 
     const patterns: SimpleClassTestInfo[] = [
       { title: '背景色がinfoであること', selector: '.v-btn', containClass: 'bg-info' },
@@ -75,6 +75,6 @@ describe('HeikiBtn.vue', (): void => {
         containClass: 'text-decoration-line-through'
       }
     ]
-    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreHeiki: false })))
+    patterns.forEach(createSimpleClassTest.bind(null, factoryWrap.bind(null, { ignoreBravado: false })))
   })
 })

@@ -13,7 +13,7 @@ export const componentInfo = {
 import { Layout } from '@/components/panes'
 import { componentMap } from '../index'
 
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()

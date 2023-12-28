@@ -12,10 +12,10 @@ exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場�
     
     <div
       aria-expanded="false"
-      aria-haspopup="menu"
+      aria-haspopup="listbox"
       aria-owns="v-menu-2"
       class="v-field v-field--active v-field--appended v-field--center-affix v-field--dirty v-field--no-label v-field--variant-outlined v-theme--light v-locale--is-ltr"
-      role="button"
+      role="combobox"
     >
       <div
         class="v-field__overlay"
@@ -171,10 +171,10 @@ exports[`VSelectThin.vue > コンテンツの確認 > 選択肢が2番目から3
     
     <div
       aria-expanded="false"
-      aria-haspopup="menu"
+      aria-haspopup="listbox"
       aria-owns="v-menu-2"
       class="v-field v-field--active v-field--appended v-field--center-affix v-field--dirty v-field--no-label v-field--variant-outlined v-theme--light v-locale--is-ltr"
-      role="button"
+      role="combobox"
     >
       <div
         class="v-field__overlay"

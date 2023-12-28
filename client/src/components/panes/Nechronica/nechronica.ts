@@ -12,8 +12,8 @@ export type NechronicaManeuver = {
   range: string
   memo: string
   shozoku: string
-  ignoreHeiki?: boolean
-  isHeiki?: boolean
+  ignoreBravado?: boolean
+  isBravado?: boolean
 }
 
 export type NechronicaRoice = {
@@ -180,7 +180,7 @@ export class NechronicaHelper {
         range: textFilter(list[7]),
         memo: textFilter(list[8]),
         shozoku: textFilter(list[9]),
-        isHeiki: ['平気', '自動制御装置'].includes(name)
+        isBravado: ['平気', '自動制御装置'].includes(name)
       }
       return data
     })

@@ -17,7 +17,7 @@
             @update:action-value="onUpdateActionValue"
             @update:maneuver-used="onUpdateManeuverUsed"
             @update:maneuver-lost="onUpdateManeuverLost"
-            @update:maneuver-ignore-heiki="onUpdateManeuverIgnoreHeiki"
+            @update:maneuver-ignore-bravado="onUpdateManeuverIgnoreBravado"
             @update:roice="onUpdateRoice"
           />
           <action-value-menu-legion
@@ -61,7 +61,9 @@
             :type="character.data.type"
             @update:used="(idx, used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
-            @update:ignore-heiki="(idx, ignoreHeiki) => onUpdateManeuverIgnoreHeiki(characterId, idx, ignoreHeiki)"
+            @update:ignore-bravado="
+              (idx, ignoreBravado) => onUpdateManeuverIgnoreBravado(characterId, idx, ignoreBravado)
+            "
             @update="(idx, maneuver) => onUpdateManeuver(characterId, idx, maneuver)"
           />
         </v-card-text>
@@ -81,7 +83,7 @@
               :battle-timing="battleTiming"
               @update:lost="lost => onUpdateManeuverLost(characterId, idx, lost)"
               @update:used="(used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
-              @update:ignore-heiki="ignoreHeiki => onUpdateManeuverIgnoreHeiki(characterId, idx, ignoreHeiki)"
+              @update:ignore-bravado="ignoreBravado => onUpdateManeuverIgnoreBravado(characterId, idx, ignoreBravado)"
               @update="updateManeuver => onUpdateManeuver(characterId, idx, updateManeuver)"
             />
           </template>
@@ -183,18 +185,18 @@ async function onUpdateManeuverLost(characterId: string, idx: number, lost: bool
     const maneuver = c.character.maneuverList.at(idx)
     if (!maneuver) return
     maneuver.lost = lost
-    maneuver.ignoreHeiki = undefined
+    maneuver.ignoreBravado = undefined
   })
   if (lost) {
     await addManeuverStack(characterId, idx, 'lost', 0)
   }
 }
 
-async function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
+async function onUpdateManeuverIgnoreBravado(characterId: string, idx: number, value: boolean) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     const maneuver = c.character.maneuverList.at(idx)
     if (!maneuver) return
-    maneuver.ignoreHeiki = value || undefined
+    maneuver.ignoreBravado = value || undefined
   })
 }
 

@@ -14,11 +14,11 @@
     <maneuver-view-card
       v-model:mode="mode"
       :maneuver="maneuver"
-      :has-heiki="hasHeiki"
+      :has-bravado="hasBravado"
       :type="type"
       @update:used="(v, cost) => emits('update:used', v, cost)"
       @update:lost="v => emits('update:lost', v)"
-      @update:ignore-heiki="v => emits('update:ignore-heiki', v)"
+      @update:ignore-bravado="v => emits('update:ignore-bravado', v)"
     />
   </v-menu>
 </template>
@@ -43,7 +43,7 @@ const mode = ref<'view' | 'edit'>('view')
 const emits = defineEmits<{
   (e: 'update:used', value: boolean, cost: number): Promise<void>
   (e: 'update:lost', value: boolean): Promise<void>
-  (e: 'update:ignore-heiki', value: boolean): Promise<void>
+  (e: 'update:ignore-bravado', value: boolean): Promise<void>
   (e: 'update', maneuver: NechronicaManeuver): Promise<void>
 }>()
 
@@ -52,8 +52,8 @@ watch(opened, v => {
   if (v) mode.value = 'view'
 })
 
-const hasHeiki = computed(() => {
-  return props.character.maneuverList.some(m => m.isHeiki)
+const hasBravado = computed(() => {
+  return props.character.maneuverList.some(m => m.isBravado)
 })
 </script>
 

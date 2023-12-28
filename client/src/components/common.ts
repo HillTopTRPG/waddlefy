@@ -12,7 +12,10 @@ export function factory<T extends any>(component: any, props?: T): VueWrapper {
   return mount(component, {
     props: props || undefined,
     global: {
-      plugins: [vuetify]
+      plugins: [vuetify],
+      mocks: {
+        $t: (text: string) => text
+      }
     }
   })
 }

@@ -10,6 +10,10 @@
       :color="battleOption.battleStartColor"
       @execute="onBattleStart"
     />
+    <span class="d-flex flex-row align-end pb-1">
+      <span class="text-caption" style="line-height: 1em">{{ $t('Nechronica.label.count') }}:</span>
+      <span class="text-h5" style="line-height: 1em">{{ singleton?.data.battleCount || 0 }}</span>
+    </span>
     <v-select-thin
       prefix="T"
       :items="mapping.BATTLE_TIMING.map(d => ({ value: d.value, text: $t(d.text) }))"
@@ -19,10 +23,6 @@
       :model-value="battleTiming"
       @update:model-value="v => emits('update:battle-timing', v)"
     />
-    <span class="d-flex flex-row align-end pb-1">
-      <span class="text-caption" style="line-height: 1em">{{ $t('Nechronica.label.count') }}:</span>
-      <span class="text-h5" style="line-height: 1em">{{ singleton?.data.battleCount || 0 }}</span>
-    </span>
     <multi-select-menu
       v-if="!perspective && singleton?.data.battleCount"
       :title="$t('Nechronica.label.down-count')"
@@ -74,7 +74,7 @@ function updateProgress(total: number, current: number) {
 
 function getMaxActionValues(characterId: string, data: NechronicaWrap): number[] {
   if (data.type === 'legion') return [data.maxActionValue, data.maxActionValue]
-  const hasHeiki = data.character.maneuverList.some(m => m.isHeiki)
+  const hasBravado = data.character.maneuverList.some(m => m.isBravado)
   const dependenceRoiceNum = data.character.roiceList.filter(r => r.damage === 4 && r.id % 10 === 3).length
   const characterType = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)?.data.type
   const otherInsanityRoice: number =
@@ -86,12 +86,12 @@ function getMaxActionValues(characterId: string, data: NechronicaWrap): number[]
       .reduce((p, c) => p + c, 0) || 0
   const minusValue = characterType === 'doll' ? dependenceRoiceNum * 2 + otherInsanityRoice : 0
 
-  function getManeuverValue(ignoreHeikiFlg: boolean) {
+  function getManeuverValue(ignoreBravadoFlg: boolean) {
     return data.character.maneuverList.reduce((p, c) => {
       if (c.type !== 3) return p
       const actionValue = getActionValueNum(c.memo)
       if (!c.lost) return p + actionValue
-      if (ignoreHeikiFlg || !hasHeiki || c.ignoreHeiki) return p
+      if (ignoreBravadoFlg || !hasBravado || c.ignoreBravado) return p
       return p + actionValue
     }, 6)
   }
@@ -105,7 +105,7 @@ type BattleDataWrap = {
   usedActionManeuverNum: number
   maxActionValues: number[]
   usedManeuverNum: number
-  ignoreHeikiManeuverNum: number
+  ignoreBravadoManeuverNum: number
   afterPosition: number | null
   data: NechronicaWrap
 }
@@ -115,7 +115,7 @@ function getBattleDataInfo() {
   const battleCount = singleton.value?.data.battleCount || 0
   let maxAllActionValues = [0, 0]
   let usedManeuverCharacterNum = 0
-  let ignoreHeikiCharacterNum = 0
+  let ignoreBravadoCharacterNum = 0
   let afterBattleCount = 0
   let overCountNum = 0
   let usedActionManeuverCharacterNum = 0
@@ -124,7 +124,7 @@ function getBattleDataInfo() {
     if (sd.type !== 'nechronica-character') return
     const nechronicaWrap: NechronicaWrap = sd.data
     const maneuverList = nechronicaWrap.character.maneuverList
-    const hasHeiki = maneuverList.some(m => m.isHeiki)
+    const hasBravado = maneuverList.some(m => m.isBravado)
     const position = nechronicaWrap.position
     const afterPosition = nechronicaWrap.character.basic.basePosition + 3
     const nextActionValue = Math.min(nechronicaWrap.actionValue, battleCount - 1)
@@ -137,13 +137,13 @@ function getBattleDataInfo() {
       usedActionManeuverNum: nechronicaWrap.character.maneuverList.filter(m => m.timing === 1 && m.used).length,
       maxActionValues: getMaxActionValues(sd.id, nechronicaWrap),
       usedManeuverNum: maneuverList.filter(m => m.used).length,
-      ignoreHeikiManeuverNum: hasHeiki ? maneuverList.filter(m => m.lost && !m.ignoreHeiki).length : 0,
+      ignoreBravadoManeuverNum: hasBravado ? maneuverList.filter(m => m.lost && !m.ignoreBravado).length : 0,
       afterPosition: position === afterPosition ? null : afterPosition
     }
     maxAllActionValues[0] = Math.max(maxAllActionValues[0], pushObj.maxActionValues[0])
     maxAllActionValues[1] = Math.max(maxAllActionValues[1], pushObj.maxActionValues[1])
     if (pushObj.usedManeuverNum) usedManeuverCharacterNum++
-    if (pushObj.ignoreHeikiManeuverNum) ignoreHeikiCharacterNum++
+    if (pushObj.ignoreBravadoManeuverNum) ignoreBravadoCharacterNum++
     if (pushObj.isOverCount) overCountNum++
     if (pushObj.usedActionManeuverNum) usedActionManeuverCharacterNum++
     maxAllCurrentActionValue = Math.max(maxAllCurrentActionValue, nechronicaWrap.actionValue)
@@ -151,7 +151,7 @@ function getBattleDataInfo() {
   })
   return {
     usedManeuverCharacterNum,
-    ignoreHeikiCharacterNum,
+    ignoreBravadoCharacterNum,
     targets,
     battleCount,
     maxAllActionValues,
@@ -175,7 +175,7 @@ const battleOption = computed(
   } => {
     const {
       targets,
-      ignoreHeikiCharacterNum,
+      ignoreBravadoCharacterNum,
       usedManeuverCharacterNum,
       downBattleCount,
       usedActionManeuverCharacterNum,
@@ -193,12 +193,12 @@ const battleOption = computed(
             color: 'warning'
           }
         : null,
-      ignoreHeikiCharacterNum
+      ignoreBravadoCharacterNum
         ? {
-            value: 'ignore-heiki',
+            value: 'ignore-bravado',
             text: t('Nechronica.label.exempt-damaged-maneuvers-from-the-bravado').replace(
               '$$',
-              ignoreHeikiCharacterNum.toString()
+              ignoreBravadoCharacterNum.toString()
             ),
             color: 'warning'
           }
@@ -250,12 +250,12 @@ const battleOption = computed(
       maxAllCurrentActionValue > 0
         ? { value: 'reset-action-value', text: t('Nechronica.label.all-action-values-above-0-to-0'), color: 'error' }
         : null,
-      ignoreHeikiCharacterNum
+      ignoreBravadoCharacterNum
         ? {
-            value: 'ignore-heiki',
+            value: 'ignore-bravado',
             text: t('Nechronica.label.exempt-damaged-maneuvers-from-the-bravado').replace(
               '$$',
-              ignoreHeikiCharacterNum.toString()
+              ignoreBravadoCharacterNum.toString()
             ),
             color: 'warning'
           }
@@ -299,18 +299,18 @@ async function onBattleStart(option: string[]) {
   const execInitActionValue = option.includes('init-action-value')
   const execInitPosition = option.includes('init-position')
   const execInitManeuverUsed = option.includes('init-maneuver-used')
-  const execIgnoreHeiki = option.includes('ignore-heiki')
+  const execIgnoreBravado = option.includes('ignore-bravado')
   const execInitCount = option.includes('init-count')
   const execClearManeuverStack = option.includes('clear-maneuver-stack')
 
-  const acIdx = execIgnoreHeiki ? 0 : 1
+  const acIdx = execIgnoreBravado ? 0 : 1
 
   const updateList = targets.filter(target => {
     if (execOpenPawns && target.data.type !== 'doll' && target.data.hide) return true
     if (execInitActionValue && target.data.actionValue !== target.maxActionValues[acIdx]) return true
     if (execInitPosition && target.afterPosition !== null) return true
     if (execInitManeuverUsed && target.usedManeuverNum) return true
-    return execIgnoreHeiki && target.ignoreHeikiManeuverNum > 0
+    return execIgnoreBravado && target.ignoreBravadoManeuverNum > 0
   })
 
   const total = updateList.length + (execInitCount || execClearManeuverStack ? 1 : 0)
@@ -324,10 +324,10 @@ async function onBattleStart(option: string[]) {
       if (execOpenPawns && cloned.type !== 'doll' && cloned.hide) cloned.hide = false
       if (execInitActionValue) cloned.actionValue = c.maxActionValues[acIdx]
       if (execInitPosition && c.afterPosition !== null) cloned.position = c.afterPosition
-      if (execInitManeuverUsed || execIgnoreHeiki) {
+      if (execInitManeuverUsed || execIgnoreBravado) {
         cloned.character.maneuverList.forEach(m => {
           if (execInitManeuverUsed) m.used = false
-          if (execIgnoreHeiki && m.lost && !m.ignoreHeiki) m.ignoreHeiki = true
+          if (execIgnoreBravado && m.lost && !m.ignoreBravado) m.ignoreBravado = true
         })
       }
     })
@@ -397,17 +397,17 @@ async function onCountDown(option: string[]) {
 async function onNextTurn(option: string[]) {
   const { targets } = getBattleDataInfo()
   const execResetActionValue = option.includes('reset-action-value')
-  const execIgnoreHeiki = option.includes('ignore-heiki')
+  const execIgnoreBravado = option.includes('ignore-bravado')
   const execRecoveryActionManeuver = option.includes('recovery-action-maneuver')
   const execActionValueRecovery = option.includes('action-value-recovery')
   const execClearManeuverStack = option.includes('clear-maneuver-stack')
   const execResetCount = option.includes('reset-count')
 
-  const acIdx = execIgnoreHeiki ? 0 : 1
+  const acIdx = execIgnoreBravado ? 0 : 1
 
   const updateList = targets.filter(t => {
     if (execResetActionValue && t.data.actionValue > 0) return true
-    if (execIgnoreHeiki && t.ignoreHeikiManeuverNum) return true
+    if (execIgnoreBravado && t.ignoreBravadoManeuverNum) return true
     if (execRecoveryActionManeuver && t.usedActionManeuverNum) return true
     return execActionValueRecovery
   })
@@ -423,8 +423,8 @@ async function onNextTurn(option: string[]) {
 
     await graphQlStore?.updateNechronicaCharacterHelper(c.id, cloned => {
       if (execResetActionValue && cloned.actionValue > 0) cloned.actionValue = 0
-      if (execIgnoreHeiki && c.ignoreHeikiManeuverNum) {
-        cloned.character.maneuverList.filter(m => m.lost && !m.ignoreHeiki).forEach(m => (m.ignoreHeiki = true))
+      if (execIgnoreBravado && c.ignoreBravadoManeuverNum) {
+        cloned.character.maneuverList.filter(m => m.lost && !m.ignoreBravado).forEach(m => (m.ignoreBravado = true))
       }
       if (execRecoveryActionManeuver) {
         cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))

@@ -35,7 +35,7 @@ describe('DeleteMenuBtn.vue', (): void => {
       afterEach(() => wrapper.unmount())
 
       it('スナップショットテスト', () => expect(wrapper.element).toMatchSnapshot())
-      it('テキストの確認', () => expect(wrapper.text()).toEqual('この種別を削除'))
+      it('テキストの確認', () => expect(wrapper.text()).toEqual('label.delete-this'))
     })
 
     describe('classの確認', (): void => {

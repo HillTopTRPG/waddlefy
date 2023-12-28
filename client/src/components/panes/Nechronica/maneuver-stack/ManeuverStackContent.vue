@@ -10,7 +10,7 @@
     <maneuver-view-card
       v-if="character && maneuver"
       mode="view-simple"
-      :has-heiki="false"
+      :has-bravado="false"
       :over-cost="data.cost"
       :type="character?.data.type!"
       :maneuver="maneuver!"

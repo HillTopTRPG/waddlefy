@@ -141,10 +141,10 @@
             「【平気】として扱う」が ON のマニューバがあると、損傷したマニューバに下記のボタンが表示されます。<br />
             <v-sheet class="bg-indigo-lighten-5 pa-2 my-1 d-flex flex-column" style="gap: 0.5rem">
               <v-sheet class="bg-transparent">
-                <heiki-btn :ignore-heiki="false" />: このターンに損傷したため平気。最大行動値に含まれる状態。
+                <bravado-btn :ignore-bravado="false" />: このターンに損傷したため平気。最大行動値に含まれる状態。
               </v-sheet>
               <v-sheet class="bg-transparent">
-                <heiki-btn :ignore-heiki="true" />:
+                <bravado-btn :ignore-bravado="true" />:
                 以前のターンに損傷していたため平気ではない。最大行動値には含まれない状態。
               </v-sheet>
             </v-sheet>
@@ -202,7 +202,7 @@ export const componentInfo = {
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
-import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
 

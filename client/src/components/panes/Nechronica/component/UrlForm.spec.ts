@@ -24,7 +24,7 @@ describe('UrlForm.vue', (): void => {
   describe('コンテンツの確認', (): void => {
     it('テキストの確認', () => {
       const wrapper: VueWrapper = factoryWrap()
-      expect(wrapper.text()).toContain('キャラクター保管所のURL')
+      expect(wrapper.text()).toContain('Nechronica.label.character-vault-url')
       wrapper.unmount()
     })
   })

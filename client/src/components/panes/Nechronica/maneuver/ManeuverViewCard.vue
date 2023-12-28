@@ -72,10 +72,10 @@
       v-if="mode === 'view'"
     >
       <maneuver-lost-btn v-if="type !== 'legion'" :lost="maneuver.lost" @execute="onManeuverLost" />
-      <heiki-btn
-        :ignore-heiki="maneuver.ignoreHeiki"
-        v-if="hasHeiki && maneuver.lost"
-        @click="emits('update:ignoreHeiki', !maneuver.ignoreHeiki)"
+      <bravado-btn
+        :ignore-bravado="maneuver.ignoreBravado"
+        v-if="hasBravado && maneuver.lost"
+        @click="emits('update:ignoreBravado', !maneuver.ignoreBravado)"
       />
       <maneuver-use-btn :used="maneuver.used" :cost="maneuver.cost" @execute="onManeuverUse" />
     </v-card-text>
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
 import ManeuverLostBtn from '@/components/panes/Nechronica/maneuver/ManeuverLostBtn.vue'
 import ManeuverUseBtn from '@/components/panes/Nechronica/maneuver/ManeuverUseBtn.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
@@ -95,7 +95,7 @@ const props = defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
   overCost?: number
-  hasHeiki: boolean
+  hasBravado: boolean
   mode: 'view' | 'view-simple' | 'edit'
 }>()
 
@@ -103,7 +103,7 @@ const emits = defineEmits<{
   (e: 'update:used', value: boolean, cost: number): Promise<void>
   (e: 'update:lost', value: boolean): Promise<void>
   (e: 'update:mode', value: 'view' | 'edit'): Promise<void>
-  (e: 'update:ignoreHeiki', value: boolean): Promise<void>
+  (e: 'update:ignoreBravado', value: boolean): Promise<void>
 }>()
 
 const { t } = useI18n()

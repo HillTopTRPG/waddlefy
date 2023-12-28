@@ -47,7 +47,7 @@
         <span class="pb-1 d-flex flex-column align-center" style="line-height: 20px; font-size: 13px">
           <span style="opacity: 0.6">{{ $t('Nechronica.label.action-value-start-value') }}</span>
           <span class="text-body-1 text-info font-weight-bold">6</span>
-          <v-spacer v-if="hasHeiki && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
+          <v-spacer v-if="hasBravado && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
         </span>
         <template v-for="(maneuver, idx) in character?.data.character.maneuverList || []" :key="idx">
           <v-sheet v-if="maneuver.type === 3" class="d-flex flex-column align-center pa-1">
@@ -58,21 +58,21 @@
               :type="character!.data.type"
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="(v, cost) => onUpdateManeuverUsed(characterId, idx, v, cost)"
-              @update:ignore-heiki="v => onUpdateManeuverIgnoreHeiki(characterId, idx, v)"
+              @update:ignore-bravado="v => onUpdateManeuverIgnoreBravado(characterId, idx, v)"
             />
             <span
               class="text-body-1 font-weight-bold"
-              :class="!maneuver.lost || (hasHeiki && !maneuver.ignoreHeiki) ? 'text-info' : 'text-grey'"
+              :class="!maneuver.lost || (hasBravado && !maneuver.ignoreBravado) ? 'text-info' : 'text-grey'"
             >
               {{ `+${getActionValueNum(maneuver.memo)}` }}
             </span>
-            <heiki-btn
-              :ignore-heiki="maneuver.ignoreHeiki"
-              v-if="hasHeiki && maneuver.lost"
-              @click="onUpdateManeuverIgnoreHeiki(characterId, idx, !maneuver.ignoreHeiki)"
+            <bravado-btn
+              :ignore-bravado="maneuver.ignoreBravado"
+              v-if="hasBravado && maneuver.lost"
+              @click="onUpdateManeuverIgnoreBravado(characterId, idx, !maneuver.ignoreBravado)"
             />
             <template v-else>
-              <v-spacer v-if="hasHeiki && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
+              <v-spacer v-if="hasBravado && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
             </template>
           </v-sheet>
         </template>
@@ -122,7 +122,7 @@ import {
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import HeikiBtn from '@/components/panes/Nechronica/component/HeikiBtn.vue'
+import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import RoiceBadge from '@/components/panes/Nechronica/roice/RoiceBadge.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
@@ -136,7 +136,7 @@ const emits = defineEmits<{
   (e: 'update:action-value', value: number): Promise<void>
   (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean, cost: number): Promise<void>
   (e: 'update:maneuver-lost', characterId: string, idx: number, value: boolean): Promise<void>
-  (e: 'update:maneuver-ignore-heiki', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'update:maneuver-ignore-bravado', characterId: string, idx: number, value: boolean): Promise<void>
   (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
@@ -144,8 +144,8 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
-const hasHeiki = computed(() => {
-  return character.value?.data.character.maneuverList.some(m => m.isHeiki)
+const hasBravado = computed(() => {
+  return character.value?.data.character.maneuverList.some(m => m.isBravado)
 })
 
 const actionValueManeuvers = computed((): NechronicaManeuver[] => {
@@ -157,7 +157,7 @@ const maneuverActionValue = computed((): number => {
 const maneuverLostActionValue = computed((): number => {
   return (
     -actionValueManeuvers.value.reduce(
-      (p, c) => (!c.lost || (hasHeiki.value && !c.ignoreHeiki) ? p : p + getActionValueNum(c.memo)),
+      (p, c) => (!c.lost || (hasBravado.value && !c.ignoreBravado) ? p : p + getActionValueNum(c.memo)),
       0
     ) || 0
   )
@@ -216,8 +216,8 @@ function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   emits('update:maneuver-lost', characterId, idx, lost)
 }
 
-function onUpdateManeuverIgnoreHeiki(characterId: string, idx: number, value: boolean) {
-  emits('update:maneuver-ignore-heiki', characterId, idx, value)
+function onUpdateManeuverIgnoreBravado(characterId: string, idx: number, value: boolean) {
+  emits('update:maneuver-ignore-bravado', characterId, idx, value)
 }
 
 function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice) {

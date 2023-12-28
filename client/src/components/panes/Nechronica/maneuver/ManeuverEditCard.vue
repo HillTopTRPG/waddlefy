@@ -123,8 +123,8 @@
           :hide-details="true"
           density="compact"
           class="ml-2"
-          :model-value="maneuver.isHeiki || false"
-          @update:model-value="(v: any) => onUpdateIsHeiki(v as boolean)"
+          :model-value="maneuver.isBravado || false"
+          @update:model-value="(v: any) => onUpdateIsBravado(v as boolean)"
         />
       </v-card-text>
     </v-defaults-provider>
@@ -245,10 +245,10 @@ function onUpdateShozoku(shozoku: string) {
   })
 }
 
-function onUpdateIsHeiki(isHeiki: boolean) {
+function onUpdateIsBravado(isBravado: boolean) {
   updateHelper(m => {
-    if (m.isHeiki === isHeiki) return false
-    m.isHeiki = isHeiki
+    if (m.isBravado === isBravado) return false
+    m.isBravado = isBravado
     return true
   })
 }
