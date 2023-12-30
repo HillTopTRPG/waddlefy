@@ -120,13 +120,6 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
 
 const isDoll = computed(() => character.value?.data.type === 'doll')
 
-const initPosString = computed(
-  () =>
-    mapping.CHARACTER_LOCATION.find(
-      l => l['init-pos-value'] === (character.value?.data.character.basic.basePosition.toString(10) || '0')
-    )?.text || ''
-)
-
 const icon = computed(() => {
   if (!character.value) return ''
   if (character.value?.data.type === 'doll') {

@@ -1,32 +1,45 @@
 <template>
-  <v-card-text class="pt-1 pb-0 px-2 d-flex flex-row align-baseline">
-    <span class="text-h6">{{ $t(data.type === 'use' ? 'Nechronica.label.use' : 'Nechronica.label.lost') }}&nbsp;</span>
-    <v-sheet class="text-body-2 ellipsis" style="width: 1em; flex-grow: 1">{{
-      character?.data.character.basic.characterName
-    }}</v-sheet>
-    <maneuver-stack-cancel-btn v-if="!data.status" @execute="emits('cancel')" />
-  </v-card-text>
-  <v-card-text class="pt-0 pb-1 px-2">
-    <maneuver-view-card
-      v-if="character && maneuver"
-      mode="view-simple"
-      :has-bravado="false"
-      :over-cost="data.cost"
-      :type="character?.data.type!"
-      :maneuver="maneuver!"
-    />
-  </v-card-text>
+  <v-timeline-item icon="mdi-chevron-up" :dot-color="data.type === 'use' ? 'info' : 'error'">
+    <template #opposite>
+      <v-card class="text-left pr-2" variant="flat">
+        <v-card-title class="pa-0" :class="data.type === 'use' ? 'text-info' : 'text-error'">
+          {{ index }}. {{ $t(data.type === 'use' ? 'Nechronica.label.use' : 'Nechronica.label.lost') }}
+        </v-card-title>
+        <maneuver-stack-cancel-btn v-if="!data.status" @execute="emits('cancel')" />
+      </v-card>
+    </template>
+    <template #default>
+      <v-card-text class="pt-1 pb-0 px-2 d-flex flex-row align-baseline">
+        <v-sheet class="text-body-2 ellipsis" style="width: 1em; flex-grow: 1"
+          >{{ character?.data.character.basic.characterName }}({{ characterLocationText }})</v-sheet
+        >
+      </v-card-text>
+      <v-card-text class="pt-0 pb-1 px-2">
+        <maneuver-view-card
+          v-if="character && maneuver"
+          mode="view-simple"
+          :has-bravado="false"
+          :over-cost="data.cost"
+          :type="character?.data.type!"
+          :maneuver="maneuver!"
+        />
+      </v-card-text>
+    </template>
+  </v-timeline-item>
 </template>
 
 <script setup lang="ts">
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ManeuverStackCancelBtn from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackCancelBtn.vue'
 import ManeuverViewCard from '@/components/panes/Nechronica/maneuver/ManeuverViewCard.vue'
+import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaManeuver, NechronicaManeuverStack, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
+  index: number
   data: NechronicaManeuverStack
 }>()
 
@@ -36,6 +49,14 @@ const emits = defineEmits<{
 
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.data.characterId)
+})
+
+const { t } = useI18n()
+
+const characterLocationText = computed(() => {
+  const position = character.value?.data.position.toString(10) || '0'
+  const raw = mapping.CHARACTER_LOCATION.find(cl => cl['pos-value'] === position)?.text
+  return raw ? t(raw) : ''
 })
 
 const maneuver = computed((): NechronicaManeuver | undefined => {
@@ -51,6 +72,14 @@ const maneuver = computed((): NechronicaManeuver | undefined => {
 .text {
   font-size: 11px;
   max-width: 4em;
+}
+
+:deep(.v-timeline-item__body) {
+  padding-inline-start: 0 !important;
+}
+
+:deep(.v-timeline-item__opposite) {
+  padding-inline-end: 0 !important;
 }
 
 .eventless {

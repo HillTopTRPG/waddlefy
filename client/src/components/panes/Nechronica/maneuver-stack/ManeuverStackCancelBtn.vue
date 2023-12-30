@@ -1,7 +1,16 @@
 <template>
   <v-menu :close-on-content-click="false" v-model="opened" location="bottom right">
     <template #activator="{ props }">
-      <v-btn :text="$t('Nechronica.label.revoke')" density="compact" variant="outlined" color="error" v-bind="props" />
+      <v-btn
+        :text="$t('Nechronica.label.revoke')"
+        density="compact"
+        variant="text"
+        size="small"
+        class="text-decoration-underline px-1"
+        style="min-width: auto !important"
+        color=""
+        v-bind="props"
+      />
     </template>
     <v-card class="pa-2">
       <v-card-text class="px-1 py-1">{{ $t('Nechronica.label.delete-maneuver-history-confirm-message') }}</v-card-text>

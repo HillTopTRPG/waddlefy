@@ -39,12 +39,15 @@
           <v-spacer />
           <maneuver-stack-resolve-btn v-if="!currentData?.status" @execute="onResolved" />
         </v-card-text>
-        <template v-for="(data, idx) in viewDataList" :key="idx">
-          <v-card-text v-if="idx" class="d-flex flex-row justify-space-around py-0">
-            <v-icon v-for="n in 7" :key="n" :icon="n % 2 === 0 ? 'mdi-arrow-up-bold' : 'mdi-arrow-up-bold-outline'" />
-          </v-card-text>
-          <maneuver-stack-content :data="data.data" @cancel="onCancel(data.index)" />
-        </template>
+        <v-timeline align="start" side="end" class="ml-2" density="comfortable">
+          <template v-for="(data, idx) in viewDataList" :key="idx">
+            <maneuver-stack-content
+              :index="viewDataList.length - idx"
+              :data="data.data"
+              @cancel="onCancel(data.index)"
+            />
+          </template>
+        </v-timeline>
       </v-card>
     </v-dialog>
     <v-overlay
