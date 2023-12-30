@@ -112,7 +112,15 @@
       "all-action-values-above-0-to-0": "0を超える行動値を全て0にする",
       "multi-process-description": "上から順番にチェックが入っている処理を行います",
       "to-resolve": "処理済みにする",
-      "to-resolve-confirm-message": "このマニューバ履歴を処理済みにします"
+      "to-resolve-confirm-message": "このマニューバ履歴を処理済みにします",
+      "age": "享年",
+      "hair-color": "髪の色",
+      "eye-color": "瞳の色",
+      "skin-color": "肌の色",
+      "height": "身長",
+      "weight": "体重",
+      "shuzoku": "種族",
+      "carma": "暗示"
     },
     "CHARACTER_TYPE": {
       "none": "",

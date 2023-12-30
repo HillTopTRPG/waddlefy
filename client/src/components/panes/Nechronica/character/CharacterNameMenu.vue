@@ -27,8 +27,8 @@
         </v-sheet>
       </template>
       <v-card class="pb-1" max-width="20rem">
-        <v-card-text class="pt-2 pb-0 d-flex flex-row align-end">
-          <template v-if="character.data.type === 'doll'">
+        <v-card-text class="py-2 d-flex flex-row align-end">
+          <template v-if="isDoll">
             <icon-btn
               :disable-button="true"
               size="normal"
@@ -55,11 +55,32 @@
               <span style="font-size: 11px; line-height: 1.2em">×2</span>
             </template>
           </template>
+          <template v-else>
+            <icon-btn
+              :disable-button="true"
+              size="normal"
+              :under-text="$t(`Nechronica.CHARACTER_TYPE.${character.data.type}`)"
+              :class="character.data.type"
+            />
+          </template>
           <v-spacer />
-          <link-btn class="align-self-start" size="default" :href="character.data.character.url" />
+          <link-btn class="align-self-start" size="small" :href="character.data.character.url" />
         </v-card-text>
-        <v-card-text class="text-body-1 ellipsis" style="max-width: 20rem">
-          {{ character.data.character.basic.characterName }}
+        <v-card-text class="d-flex flex-row align-center py-0">
+          <span class="text-body-1 ellipsis" :style="`max-width: ${isDoll ? 20 : 18}rem`">{{
+            character.data.character.basic.characterName
+          }}</span>
+        </v-card-text>
+        <v-card-text v-if="isDoll" class="d-flex flex-column align-start py-0">
+          <span class="text-body-2">{{ wrapText('Nechronica.label.age', 'age') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.hair-color', 'hairColor') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.eye-color', 'eyeColor') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.skin-color', 'skinColor') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.height', 'height') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.weight', 'weight') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.shuzoku', 'shuzoku') }}</span>
+          <span class="text-body-2">{{ wrapText('Nechronica.label.carma', 'carma') }}</span>
+          <span class="text-body-2">{{ basePositionText }}</span>
         </v-card-text>
         <v-card-text class="py-1 px-2" v-if="character.data.type === 'doll' || !perspective">
           <reload-character-sheet-btn :character-id="characterId" />
@@ -78,7 +99,9 @@ import { computed, inject } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
+import { Nechronica } from '@/components/panes/Nechronica/nechronica'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
+import { useI18n } from 'vue-i18n'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -95,12 +118,35 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
 })
 
+const isDoll = computed(() => character.value?.data.type === 'doll')
+
+const initPosString = computed(
+  () =>
+    mapping.CHARACTER_LOCATION.find(
+      l => l['init-pos-value'] === (character.value?.data.character.basic.basePosition.toString(10) || '0')
+    )?.text || ''
+)
+
 const icon = computed(() => {
   if (!character.value) return ''
   if (character.value?.data.type === 'doll') {
     return mapping.CHARACTER_POSITION[character.value?.data.character.basic.position].val
   }
   return character.value?.data.type
+})
+
+const { t } = useI18n()
+
+function wrapText(target: string, property: keyof Nechronica['basic']) {
+  return `${t(target)}: ${character.value?.data.character.basic[property].toString() || ''}`
+}
+
+const basePositionText = computed(() => {
+  const label = t('Nechronica.label.init-placement')
+  const basePosition = character.value?.data.character.basic.basePosition.toString(10) || '0'
+  const contentRaw = mapping.CHARACTER_LOCATION.find((cp: any) => cp['init-pos-value'] === basePosition)?.text || ''
+  const content = t(contentRaw)
+  return `${label}: ${content}`
 })
 </script>
 
