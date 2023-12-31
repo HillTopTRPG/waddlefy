@@ -35,9 +35,9 @@
       </template>
       <v-card class="px-0 pt-1 pb-1 d-flex flex-column">
         <v-card-text class="py-1 d-flex flex-row align-center px-2">
-          <maneuver-stack-help-btn />
-          <v-spacer />
           <maneuver-stack-resolve-btn v-if="!currentData?.status" @execute="onResolved" />
+          <v-spacer />
+          <maneuver-stack-help-btn />
         </v-card-text>
         <v-timeline align="start" side="end" class="ml-2" density="comfortable">
           <template v-for="(data, idx) in viewDataList" :key="idx">

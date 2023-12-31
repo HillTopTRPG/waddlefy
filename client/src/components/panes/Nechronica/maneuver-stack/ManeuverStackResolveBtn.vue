@@ -4,7 +4,7 @@
       <v-btn
         :text="$t('Nechronica.label.to-resolve')"
         density="comfortable"
-        variant="outlined"
+        variant="elevated"
         color="primary"
         v-bind="props"
       />
