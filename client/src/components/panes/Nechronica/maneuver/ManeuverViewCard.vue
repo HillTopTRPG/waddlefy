@@ -8,18 +8,28 @@
   >
     <v-card-text class="px-2 pt-2 pb-0">
       <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
-        <v-defaults-provider :defaults="{ VChip: { size: 'small' } }">
-          <v-chip class="font-weight-bold" color="error" variant="flat" v-if="maneuver.lost">{{
-            $t('Nechronica.label.lost')
-          }}</v-chip>
-          <v-chip class="font-weight-bold" color="secondary" variant="flat" v-if="maneuver.used">{{
-            $t('Nechronica.label.used')
-          }}</v-chip>
-          <v-chip :class="`type${maneuver.type}`">{{
-            $t(mapping.MANEUVER_TYPE[maneuver.type]?.text || 'Nechronica.MANEUVER_TYPE.none')
-          }}</v-chip>
-          <v-chip variant="outlined" v-if="maneuver.shozoku">{{ maneuver.shozoku }}</v-chip>
-        </v-defaults-provider>
+        <v-chip
+          class="font-weight-bold"
+          size="small"
+          color="error"
+          variant="flat"
+          v-if="maneuver.lost"
+          :text="$t('Nechronica.label.lost')"
+        />
+        <v-chip
+          class="font-weight-bold"
+          size="small"
+          color="secondary"
+          variant="flat"
+          v-if="maneuver.used"
+          :text="$t('Nechronica.label.used')"
+        />
+        <v-chip
+          :class="`type${maneuver.type}`"
+          size="small"
+          :text="$t(mapping.MANEUVER_TYPE[maneuver.type]?.text || 'Nechronica.MANEUVER_TYPE.none')"
+        />
+        <v-chip size="small" variant="outlined" v-if="maneuver.shozoku" :text="maneuver.shozoku" />
         <v-spacer />
         <v-btn
           v-if="mode === 'view'"
@@ -31,39 +41,33 @@
         />
       </v-sheet>
       <v-container class="pa-0" style="min-width: 20rem; max-width: 20rem">
-        <v-defaults-provider :defaults="{ VCol: { class: 'overflow-hidden' } }">
-          <v-row :no-gutters="true">
-            <v-col class="v-col-12 text-no-wrap bg-grey-darken-3 font-weight-bold">
-              <p class="text-h6 ellipsis" style="width: 77%; transform: scale(1.3, 1); transform-origin: left">
-                【{{ maneuver.name }}】
-              </p>
-            </v-col>
-          </v-row>
-          <v-row :no-gutters="true">
-            <v-defaults-provider :defaults="{ VCol: { class: 'text-no-wrap text-center text-body-1 flex-column' } }">
-              <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">T</v-col>
-              <v-col class="v-col-3 d-flex justify-center">{{
-                $t(mapping.MANEUVER_TIMING[maneuver.timing].text)
-              }}</v-col>
-              <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">C</v-col>
-              <v-col class="v-col-3 d-flex justify-space-around">
-                <span v-if="overCostWrap === undefined">{{ costWrap }}</span>
-                <template v-else>
-                  <span class="text-decoration-line-through text-body-2" style="line-height: 1em">{{ costWrap }}</span>
-                  <span class="text-body-1" style="line-height: 1em">{{ overCostWrap }}</span>
-                </template>
-              </v-col>
-              <v-col class="v-col-1 d-flex justify-center py-2 bg-grey-lighten-1 edging">R</v-col>
-              <v-col class="v-col-3 d-flex justify-center">{{ maneuver.range }}</v-col>
-            </v-defaults-provider>
-          </v-row>
-          <v-row class="" :no-gutters="true" style="min-height: 5em">
-            <v-col class="v-col-2 py-2 text-no-wrap text-center bg-grey-darken-3">{{
-              $t('Nechronica.label.effect')
-            }}</v-col>
-            <v-col class="v-col-10 text-wrap pa-2">{{ maneuver.memo }}</v-col>
-          </v-row>
-        </v-defaults-provider>
+        <v-row :no-gutters="true">
+          <v-col class="v-col-12 text-no-wrap bg-grey-darken-3 font-weight-bold overflow-hidden">
+            <p class="text-h6 ellipsis" style="width: 77%; transform: scale(1.3, 1); transform-origin: left">
+              【{{ maneuver.name }}】
+            </p>
+          </v-col>
+        </v-row>
+        <v-row :no-gutters="true">
+          <v-col :class="maneuverSpecTitleClasses">T</v-col>
+          <v-col :class="maneuverSpecContentClasses">{{ $t(mapping.MANEUVER_TIMING[maneuver.timing].text) }}</v-col>
+          <v-col :class="maneuverSpecTitleClasses">C</v-col>
+          <v-col :class="maneuverSpecContentClasses">
+            <span v-if="overCostWrap === undefined">{{ costWrap }}</span>
+            <template v-else>
+              <span class="text-decoration-line-through text-body-2" style="line-height: 1em">{{ costWrap }}</span>
+              <span class="text-body-1" style="line-height: 1em">{{ overCostWrap }}</span>
+            </template>
+          </v-col>
+          <v-col :class="maneuverSpecTitleClasses">R</v-col>
+          <v-col :class="maneuverSpecContentClasses">{{ maneuver.range }}</v-col>
+        </v-row>
+        <v-row class="" :no-gutters="true" style="min-height: 5em">
+          <v-col class="v-col-2 py-2 text-no-wrap text-center overflow-hidden bg-grey-darken-3">{{
+            $t('Nechronica.label.effect')
+          }}</v-col>
+          <v-col class="v-col-10 text-wrap pa-2 overflow-hidden">{{ maneuver.memo }}</v-col>
+        </v-row>
       </v-container>
     </v-card-text>
     <v-card-text
@@ -87,14 +91,20 @@ import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
 import ManeuverLostBtn from '@/components/panes/Nechronica/maneuver/ManeuverLostBtn.vue'
 import ManeuverUseBtn from '@/components/panes/Nechronica/maneuver/ManeuverUseBtn.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
-import { getActionValueNum, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
+import {
+  getActionValueNum,
+  NechronicaManeuver,
+  NechronicaManeuverStackType,
+  NechronicaType
+} from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   maneuver: NechronicaManeuver
   type: NechronicaType
-  overCost?: number
+  historyType?: NechronicaManeuverStackType
+  overCost?: number | undefined
   hasBravado: boolean
   mode: 'view' | 'view-simple' | 'edit'
 }>()
@@ -106,6 +116,10 @@ const emits = defineEmits<{
   (e: 'update:ignoreBravado', value: boolean): Promise<void>
 }>()
 
+const maneuverSpecClasses = ['text-center', 'text-body-2', 'd-flex', 'flex-column', 'ellipsis', 'py-2']
+const maneuverSpecTitleClasses = [...maneuverSpecClasses, 'v-col-1', 'justify-center', 'bg-grey-lighten-1', 'edging']
+const maneuverSpecContentClasses = [...maneuverSpecClasses, 'v-col-3', 'justify-space-around']
+
 const { t } = useI18n()
 
 const costWrap = computed(() => {
@@ -114,7 +128,7 @@ const costWrap = computed(() => {
 })
 
 const overCostWrap = computed((): number | undefined => {
-  if (props.overCost === undefined) return undefined
+  if (props.historyType !== 'use' || props.overCost === undefined) return undefined
   const cost = getActionValueNum(props.maneuver.cost)
   return cost === props.overCost ? undefined : props.overCost
 })

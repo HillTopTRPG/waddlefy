@@ -43,9 +43,7 @@ const singleton = computed(
 function createDraggableStackWrap(draggable: boolean): (NechronicaManeuverStack & { id: string })[] {
   return (
     singleton.value?.data.maneuverStack
-      ?.map((ms: NechronicaManeuverStack, idx: number) => {
-        return { id: `${ms.characterId}-${ms.maneuverIndex}-${idx}`, ...ms }
-      })
+      ?.map((ms: NechronicaManeuverStack, idx: number) => ({ id: `${ms.characterId}-${idx}`, ...ms }))
       .filter(d => draggable === (d.status !== 'resolved')) || []
   )
 }
@@ -72,7 +70,7 @@ watch(
     await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
       const result: NechronicaSingleton = {
         ...d,
-        maneuverStack: allStackWrap.value.map(v => omit(v, 'id'))
+        maneuverStack: allStackWrap.value.map(v => omit(v, 'id') as NechronicaManeuverStack)
       }
       return result
     })
@@ -81,7 +79,9 @@ watch(
 )
 
 async function onResolveStack(index: number) {
-  const cloned = clone<NechronicaManeuverStack[]>(allStackWrap.value.map(ms => omit(ms, 'id')))!
+  const cloned = clone<NechronicaManeuverStack[]>(
+    allStackWrap.value.map(ms => omit(ms, 'id') as NechronicaManeuverStack)
+  )!
   new Array(index - startIndex.value + 1)
     .fill(null)
     .map((_, idx) => idx)
@@ -109,9 +109,13 @@ async function onCancelStack(index: number) {
       c.character.maneuverList[ms.maneuverIndex].used = false
       c.actionValue += ms.cost
     })
-  } else {
+  } else if (ms.type === 'lost') {
     await graphQlStore?.updateNechronicaCharacterHelper(ms.characterId, c => {
       c.character.maneuverList[ms.maneuverIndex].lost = false
+    })
+  } else if (ms.type === 'move') {
+    await graphQlStore?.updateNechronicaCharacterHelper(ms.characterId, c => {
+      c.position = ms.beforePlace
     })
   }
   await graphQlStore?.updateSingletonHelper(d => {

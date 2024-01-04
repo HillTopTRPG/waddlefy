@@ -53,15 +53,35 @@ export type Nechronica = {
   roiceList: NechronicaRoice[]
 }
 
+export type NechronicaManeuverStackType = 'use' | 'lost' | 'move'
+
 export type NechronicaManeuverStack = {
   characterId: string
-  maneuverIndex: number
-  type: 'use' | 'lost'
+  place: number
+  type: NechronicaManeuverStackType
   status: '' | 'resolved'
-  cost: number
   start: number
   end: number
-}
+} & (
+  | {
+      type: 'use'
+      maneuverIndex: number
+      cost: number
+    }
+  | {
+      type: 'lost'
+      maneuverIndex: number
+    }
+  | {
+      type: 'move'
+      beforePlace: number
+    }
+)
+
+export type NechronicaManeuverStackBase = Pick<
+  NechronicaManeuverStack,
+  'characterId' | 'place' | 'status' | 'start' | 'end'
+>
 
 export type NechronicaSingleton = { battleCount?: number; maneuverStack?: NechronicaManeuverStack[] }
 

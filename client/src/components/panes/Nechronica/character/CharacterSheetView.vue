@@ -105,6 +105,8 @@
 import ManeuverListView from '@/components/panes/Nechronica/maneuver/ManeuverListView.vue'
 import {
   NechronicaManeuver,
+  NechronicaManeuverStack,
+  NechronicaManeuverStackBase,
   NechronicaRoice,
   NechronicaSingleton,
   NechronicaWrap
@@ -156,17 +158,62 @@ const singleton = computed(
     graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
-async function addManeuverStack(characterId: string, maneuverIndex: number, type: 'use' | 'lost', cost: number) {
+async function addManeuverStack(
+  characterId: string,
+  callback: (base: NechronicaManeuverStackBase) => NechronicaManeuverStack
+) {
   await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
     const maneuverStack = singleton.value?.data.maneuverStack || []
     const cloned = clone(maneuverStack)!
     const idx = cloned.findIndex(c => !c.status)
-    cloned.splice(idx, 0, { characterId, maneuverIndex, type, cost, status: '', start: 0, end: 0 })
+    const character: { id: string; data: NechronicaWrap } | undefined = graphQlStore?.state.sessionDataList.find(
+      sd => sd.id === characterId
+    )
+    const base: NechronicaManeuverStackBase = {
+      characterId,
+      place: character?.data.position || 0,
+      status: '',
+      start: 0,
+      end: 0
+    }
+    cloned.splice(idx, 0, callback(base))
     const result: NechronicaSingleton = {
       ...d,
       maneuverStack: cloned
     }
     return result
+  })
+}
+
+async function addManeuverStackUse(characterId: string, maneuverIndex: number, cost: number) {
+  await addManeuverStack(characterId, base => {
+    return {
+      ...base,
+      type: 'use',
+      maneuverIndex,
+      cost
+    }
+  })
+}
+
+async function addManeuverStackLost(characterId: string, maneuverIndex: number) {
+  await addManeuverStack(characterId, base => {
+    return {
+      ...base,
+      type: 'lost',
+      maneuverIndex
+    }
+  })
+}
+
+async function addManeuverStackMove(characterId: string, beforePlace: number, afterPlace: number) {
+  await addManeuverStack(characterId, base => {
+    return {
+      ...base,
+      type: 'move',
+      beforePlace,
+      place: afterPlace
+    }
   })
 }
 
@@ -177,7 +224,7 @@ async function onUpdateManeuverUsed(characterId: string, idx: number, used: bool
     maneuver.used = used
     if (used) c.actionValue -= cost
   })
-  if (used) await addManeuverStack(characterId, idx, 'use', cost)
+  if (used) await addManeuverStackUse(characterId, idx, cost)
 }
 
 async function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
@@ -188,7 +235,7 @@ async function onUpdateManeuverLost(characterId: string, idx: number, lost: bool
     maneuver.ignoreBravado = undefined
   })
   if (lost) {
-    await addManeuverStack(characterId, idx, 'lost', 0)
+    await addManeuverStackLost(characterId, idx)
   }
 }
 
@@ -233,9 +280,13 @@ async function onUpdateMaxActionValue(maxActionValue: number) {
 }
 
 async function onUpdatePosition(position: number) {
+  let beforePlace = 0
   await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
+    beforePlace = c.position
     c.position = position
   })
+  console.log(beforePlace, position)
+  await addManeuverStackMove(props.characterId, beforePlace, position)
 }
 
 const { t } = useI18n()

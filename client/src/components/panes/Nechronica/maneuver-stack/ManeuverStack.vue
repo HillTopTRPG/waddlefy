@@ -1,10 +1,11 @@
 <template>
   <v-card
     class="maneuver-stack d-flex flex-row align-center my-0 pr-1"
-    style="outline-offset: -3px"
+    style="outline-offset: -3px; min-width: 8rem"
     :style="isResolvedStack ? 'margin-right: -7rem;' : ''"
     rounded="xl"
-    :color="currentData?.type === 'use' ? 'blue-lighten-3' : 'deep-orange-lighten-2'"
+    v-if="currentData"
+    :color="typeMapping[currentData?.type]"
   >
     <v-btn
       icon="mdi-drag-vertical"
@@ -12,25 +13,36 @@
       density="comfortable"
       variant="text"
       size="small"
-      v-if="!currentData?.status"
+      :style="currentData?.status ? 'opacity: 0; cursor: default' : ''"
       :class="dataList.length ? 'drag-thumb' : ''"
     />
     <v-dialog width="auto" :close-on-content-click="false" :disabled="false">
       <template #activator="{ props }">
-        <v-sheet
-          class="d-flex flex-row bg-transparent align-center"
-          style="cursor: pointer"
-          :style="currentData?.status ? 'padding-left: 15px' : ''"
-          v-bind="props"
-        >
-          <v-sheet class="d-flex flex-column bg-transparent">
-            <span class="">{{
-              $t(currentData?.type === 'use' ? 'Nechronica.label.use' : 'Nechronica.label.lost')
-            }}</span>
-            <span class="ellipsis text">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
-            <span class="ellipsis text">{{ currentManeuver?.name || '' }}</span>
+        <v-sheet class="d-flex flex-row bg-transparent align-start h-100" style="cursor: pointer" v-bind="props">
+          <v-sheet class="d-flex flex-column justify-start bg-transparent">
+            <template v-if="currentData?.type === 'use'">
+              <span>{{ $t('Nechronica.label.use') }}</span>
+              <span class="ellipsis text thin">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
+              <span class="ellipsis text thin">{{ currentManeuver?.name || '' }}</span>
+            </template>
+            <template v-if="currentData?.type === 'lost'">
+              <span>{{ $t('Nechronica.label.lost') }}</span>
+              <span class="ellipsis text thin">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
+              <span class="ellipsis text thin">{{ currentManeuver?.name || '' }}</span>
+            </template>
+            <template v-if="currentData?.type === 'move'">
+              <span>{{ $t('Nechronica.label.move') }}</span>
+              <span class="ellipsis text wide">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
+              <span class="ellipsis text wide">{{ moveText }}</span>
+            </template>
           </v-sheet>
-          <maneuver-btn v-if="currentManeuver" mode="icon" size="small" :maneuver="currentManeuver" />
+          <maneuver-btn
+            v-if="currentManeuver"
+            mode="icon"
+            size="small"
+            class="align-self-center"
+            :maneuver="currentManeuver"
+          />
         </v-sheet>
       </template>
       <v-card class="px-0 pt-1 pb-1 d-flex flex-column">
@@ -68,8 +80,15 @@ import ManeuverStackContent from '@/components/panes/Nechronica/maneuver-stack/M
 import ManeuverStackHelpBtn from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackHelpBtn.vue'
 import ManeuverStackResolveBtn from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackResolveBtn.vue'
 import ManeuverBtn from '@/components/panes/Nechronica/maneuver/ManeuverBtn.vue'
-import { NechronicaManeuver, NechronicaManeuverStack, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import mapping from '@/components/panes/Nechronica/mapping.json'
+import {
+  NechronicaManeuver,
+  NechronicaManeuverStack,
+  NechronicaManeuverStackType,
+  NechronicaWrap
+} from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -81,6 +100,12 @@ const emits = defineEmits<{
   (e: 'resolve'): void
   (e: 'cancel', idx: number): void
 }>()
+
+const typeMapping: { [type in NechronicaManeuverStackType]: string } = {
+  use: 'blue-lighten-3',
+  lost: 'deep-orange-lighten-2',
+  move: 'green-lighten-2'
+}
 
 const viewDataList = computed(() => {
   const c = props.dataList[props.index]
@@ -108,6 +133,19 @@ const currentData = computed(() => {
   return props.dataList[props.index]
 })
 
+const { t } = useI18n()
+
+function getLocationText(location: number | undefined) {
+  const positionStr = location?.toString(10) || '0'
+  const locationRaw = mapping.CHARACTER_LOCATION.find(cl => cl['pos-value'] === positionStr)?.text
+  return locationRaw ? t(locationRaw) : ''
+}
+
+const moveText = computed(() => {
+  if (!currentData.value || currentData.value?.type !== 'move') return undefined
+  return `${getLocationText(currentData.value?.beforePlace)} → ${getLocationText(currentData.value?.place)}`
+})
+
 const characters = computed((): ({ id: string; data: NechronicaWrap } | undefined)[] => {
   return props.dataList.map(data => {
     return graphQlStore?.state.sessionDataList.find(sd => sd.id === data.characterId)
@@ -117,7 +155,7 @@ const characters = computed((): ({ id: string; data: NechronicaWrap } | undefine
 const maneuvers = computed((): (NechronicaManeuver | undefined)[] => {
   return props.dataList.map((data, idx) => {
     const maneuverList = characters.value.at(idx)?.data.character.maneuverList || []
-    return maneuverList.at(data.maneuverIndex)
+    return data.type === 'use' || data.type === 'lost' ? maneuverList.at(data.maneuverIndex) : undefined
   })
 })
 
@@ -144,7 +182,13 @@ function onCancel(idx: number) {
 <style lang="scss" scoped>
 .text {
   font-size: 11px;
-  max-width: 4em;
+
+  &.wide {
+    max-width: 8em;
+  }
+  &.thin {
+    max-width: 4em;
+  }
 }
 
 .eventless {
@@ -153,6 +197,7 @@ function onCancel(idx: number) {
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-end;
+  font-size: 12px;
 
   :deep(.v-overlay__content) {
     pointer-events: none;
@@ -163,12 +208,14 @@ function onCancel(idx: number) {
   $bg-color: #c51162;
   .contents {
     position: relative;
-    height: 1.5em;
-    display: block;
+    height: 2em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     background-color: $bg-color;
     opacity: 0.8;
     color: white;
-    transform: rotate(15deg) translate(-1.5rem, 0.8rem);
+    transform: rotate(15deg) translate(-0.6rem, 0.8rem);
     transform-origin: center;
     padding: 0;
 

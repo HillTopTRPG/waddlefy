@@ -120,7 +120,10 @@
       "height": "身長",
       "weight": "体重",
       "shuzoku": "種族",
-      "carma": "暗示"
+      "carma": "暗示",
+      "move": "移動",
+      "place-now": "配置(現在)　",
+      "place-at-the-time": "配置(宣言時)"
     },
     "CHARACTER_TYPE": {
       "none": "",
