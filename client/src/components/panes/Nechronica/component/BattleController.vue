@@ -214,7 +214,7 @@ const battleOption = computed(
           }
         : null,
       maneuverStackLength
-        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-maneuver-history'), color: 'primary' }
+        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-character-history'), color: 'primary' }
         : null
     ].filter((item): item is OptionItem => Boolean(item))
 
@@ -235,7 +235,7 @@ const battleOption = computed(
           }
         : null,
       maneuverStackLength
-        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-maneuver-history'), color: 'primary' }
+        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-character-history'), color: 'primary' }
         : null,
       overCountNum
         ? {
@@ -276,7 +276,7 @@ const battleOption = computed(
         color: 'primary'
       },
       maneuverStackLength
-        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-maneuver-history'), color: 'primary' }
+        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-character-history'), color: 'primary' }
         : null,
       { value: 'reset-count', text: t('Nechronica.label.reset-battle-count'), color: 'primary' }
     ].filter((item): item is OptionItem => Boolean(item))

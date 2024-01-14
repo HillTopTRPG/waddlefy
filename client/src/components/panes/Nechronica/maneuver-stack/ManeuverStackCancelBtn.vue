@@ -13,7 +13,7 @@
       />
     </template>
     <v-card class="pa-2">
-      <v-card-text class="px-1 py-1">{{ $t('Nechronica.label.delete-maneuver-history-confirm-message') }}</v-card-text>
+      <v-card-text class="px-1 py-1">{{ $t('Nechronica.label.delete-character-history-confirm-message') }}</v-card-text>
       <v-card-text class="pa-1 d-flex flex-row">
         <v-spacer />
         <v-btn
