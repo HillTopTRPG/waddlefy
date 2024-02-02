@@ -9,9 +9,9 @@
     "preview": "vite preview --host --port=83",
     "lint:v": "eslint -v",
     "lint": "eslint . --fix",
-    "format": "prettier --write src --config .prettierrc.yaml",
+    "format": "prettier --write src",
     "format:v": "prettier -v",
-    "format:ci": "prettier --debug-check src --config .prettierrc.yaml"
+    "format:ci": "prettier --check src"
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
