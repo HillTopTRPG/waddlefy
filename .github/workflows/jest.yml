@@ -1,9 +1,9 @@
-name: Prettier
+name: Jest
 
 on: push
 
 jobs:
-  prettier:
+  jest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
@@ -16,6 +16,6 @@ jobs:
       - name: npm install
         working-directory: ./client
         run: npm i --force
-      - name: Run Prettier
+      - name: Run Jest
         working-directory: ./client
-        run: npm run format:ci
+        run: npm run test
