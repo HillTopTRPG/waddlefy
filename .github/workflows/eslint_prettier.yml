@@ -10,7 +10,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: 20
+          node-version: 18
           cache: npm
           cache-dependency-path: ./client/package-lock.json
       - name: npm install
@@ -25,4 +25,4 @@ jobs:
         working-directory: ./client
         run: |
           npm run format:v
-          npm run format:ci3
+          npm run format:ci
