@@ -17,7 +17,7 @@ import {
 } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
 import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
+import { getCharacterDiffMessages, ShinobiGami, ShinobigamiEmotion } from '@/components/panes/Shinobigami/shinobigami'
 import router from '@/router'
 import { Observable } from '@apollo/client'
 import { ApolloClient, ApolloLink, FetchResult, InMemoryCache, NormalizedCacheObject } from '@apollo/client/core'

@@ -102,8 +102,8 @@ import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
-import ShinobigamiUrlFormMenu from '@/components/panes/Shinobigami/ShinobigamiUrlFormMenu.vue'
 import { ShinobigamiScenarioHelper } from '@/components/panes/Shinobigami/shinobigami-scenario'
+import ShinobigamiUrlFormMenu from '@/components/panes/Shinobigami/ShinobigamiUrlFormMenu.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))

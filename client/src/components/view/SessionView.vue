@@ -263,13 +263,13 @@ import { computed, inject, onMounted, ref, watch } from 'vue'
 import { DEFAULT_DASHBOARD_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-import { addDashboards } from '@/PaneLayoutTemplate'
-import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { DashboardOption } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
+import { addDashboards } from '@/PaneLayoutTemplate'
+import defaultLayout from '@/PaneLayoutTemplate/DefaultLayout'
 
 const props = defineProps<{
   rail: boolean
