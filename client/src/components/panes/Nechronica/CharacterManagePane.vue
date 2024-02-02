@@ -59,7 +59,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({})
 //noinspection JSUnusedGlobalSymbols
 export const componentInfo = {
-  name: 'ActorManagePane',
+  name: 'CharacterManagePane',
   label: 'キャラクター管理'
 }
 </script>
