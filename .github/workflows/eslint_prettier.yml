@@ -18,7 +18,11 @@ jobs:
         run: npm i
       - name: Run ESLint
         working-directory: ./client
-        run: npm run lint
+        run: |
+          eslint -v
+          npm run lint
       - name: Run Prettier
         working-directory: ./client
-        run: npm run format:ci
+        run: |
+          prettier -v
+          npm run format:ci
