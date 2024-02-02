@@ -21,6 +21,19 @@ jobs:
         run: |
           npm run lint:v
           npm run lint
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: ./client/package-lock.json
+      - name: npm install
+        working-directory: ./client
+        run: npm i
       - name: Run Prettier
         working-directory: ./client
         run: |
