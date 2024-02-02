@@ -45,7 +45,7 @@ jobs:
 
       - name: Run ESLint
         working-directory: ./client
-        run: eslint .
+        run: npm run lint .
           --config .eslintrc.yml
           --format @microsoft/eslint-formatter-sarif
           --output-file eslint-results.sarif
