@@ -4,14 +4,12 @@ import { uuid } from 'vue-uuid'
 import { clone, convertNumberZero } from './PrimaryDataUtility'
 import { Personality, SaikoroFictionTokugi, TokugiInfo, createEmotion, createTokugi } from './SaikoroFiction'
 import { getJsonByGet, getJsonByJsonp } from './fetch-util'
-
 export type Background = {
   name: string
   type: string
   point: string
   effect: string
 }
-
 export type SpecialArts = {
   _id: string
   name: string
@@ -19,13 +17,11 @@ export type SpecialArts = {
   effect: string
   direction: string
 }
-
 export type NinjaTool = {
   name: string
   count: number
   effect: string
 }
-
 export type NinjaArts = {
   secret: boolean
   name: string
@@ -36,7 +32,6 @@ export type NinjaArts = {
   effect: string
   page: string
 }
-
 export type ShinobiGami = {
   url: string
   playerName: string
@@ -67,7 +62,6 @@ export type ShinobiGami = {
   ninjaToolList: NinjaTool[] // 忍具
   skill: SaikoroFictionTokugi // 特技
 }
-
 export type DiffType = {
   op: 'replace' | 'add' | 'delete'
   path: string
@@ -75,7 +69,6 @@ export type DiffType = {
   before: string | number
   after: string | number
 }
-
 const basicParams: {
   path: keyof Pick<
     ShinobiGami,
@@ -115,10 +108,8 @@ const basicParams: {
   { path: 'belief', label: '信念' },
   { path: 'stylerule', label: '流儀' }
 ]
-
 export type DataType = 'basic' | 'tokugi' | 'ninpou' | 'background' | 'specialArts'
 export const fullDataType: DataType[] = ['basic', 'tokugi', 'ninpou', 'background', 'specialArts']
-
 export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, targets: DataType[]): ShinobiGami {
   const result: ShinobiGami = clone<ShinobiGami>(oldData)!
   if (targets.some(t => t === 'basic')) {
@@ -140,7 +131,6 @@ export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, t
   }
   return result
 }
-
 export function getCharacterDiffMessages(
   wrapOne: CharacterWrap,
   wrapTwo: CharacterWrap,
@@ -150,13 +140,11 @@ export function getCharacterDiffMessages(
   const diffs: DiffType[] = []
   const cOne: any = wrapOne.character
   const cTwo: any = wrapTwo.character
-
   function getName(player: string) {
     if (player === 'user') return '主催者'
     if (!player) return 'なし'
     return players.find(p => p.id === player)?.name || '不明'
   }
-
   basicParams.forEach(p => {
     if (cOne[p.path] === cTwo[p.path]) return
     diffs.push({
@@ -167,7 +155,6 @@ export function getCharacterDiffMessages(
       after: cTwo[p.path]?.toString() || ''
     })
   })
-
   function getDiffTokugiInfo(
     tokugiListOne: TokugiInfo[],
     tokugiListTwo: TokugiInfo[],
@@ -188,7 +175,6 @@ export function getCharacterDiffMessages(
   diffs.push(...getDiffTokugiInfo(cTwo.skill.learnedList, cOne.skill.learnedList, 'add', 'skill.learnedList'))
   diffs.push(...getDiffTokugiInfo(cOne.skill.damagedList, cTwo.skill.damagedList, 'delete', 'skill.damagedList'))
   diffs.push(...getDiffTokugiInfo(cTwo.skill.damagedList, cOne.skill.damagedList, 'add', 'skill.damagedList'))
-
   function getDiffSpace(
     spaceListOne: number[],
     spaceListTwo: number[],
@@ -231,7 +217,6 @@ export function getCharacterDiffMessages(
       after: '特技表の下辺ギャップ'
     })
   }
-
   if (wrapOne.player !== wrapTwo.player) {
     diffs.push({
       op: 'replace',
@@ -241,7 +226,6 @@ export function getCharacterDiffMessages(
       after: getName(wrapTwo.player)
     })
   }
-
   return diffs.map(diff => {
     const deleteMap: any = {
       'skill.damagedColList': {
@@ -307,14 +291,12 @@ export function getCharacterDiffMessages(
     }
   })
 }
-
 export class ShinobigamiHelper {
   protected readonly url: string
   protected readonly sheetViewPass: string
   protected readonly urlRegExp: RegExp
   protected readonly jsonpUrlFormat: string
   protected readonly jsonpUrlSecretFormat: string
-
   public constructor(url: string, sheetViewPass: string) {
     this.url = url
     this.sheetViewPass = sheetViewPass
@@ -323,7 +305,6 @@ export class ShinobigamiHelper {
     this.jsonpUrlSecretFormat =
       'https://character-sheets.appspot.com/shinobigami/openSecret?ajax=1&key={key}&pass={sheetViewPass}'
   }
-
   /**
    * このシステムに対応しているキャラシのURLかどうかを判定する
    * @return true: 対応したキャラシである, false: 対応したキャラシではない
@@ -331,7 +312,6 @@ export class ShinobigamiHelper {
   public isThis(): boolean {
     return this.urlRegExp.test(this.url)
   }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getData(): Promise<{
     jsons: any[] | null
@@ -344,7 +324,6 @@ export class ShinobigamiHelper {
       data
     }
   }
-
   /**
    * JSONPで対象のURLのデータを取得する
    * @param url 省略された場合はコンストラクタに引き渡されたURLが利用される
@@ -364,7 +343,6 @@ export class ShinobigamiHelper {
       const jsonSecretUrl = this.jsonpUrlSecretFormat
         .replace('{key}', key || '')
         .replace('{sheetViewPass}', this.sheetViewPass || '')
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const results: any[] = []
       results.push(type === 'jsonp' ? await getJsonByJsonp(jsonUrl) : await getJsonByGet(jsonUrl))
@@ -374,7 +352,6 @@ export class ShinobigamiHelper {
       return null
     }
   }
-
   /**
    * JSONPから取得した生データから処理用のデータを生成する
    * @param jsons JSONPから取得した生データ
@@ -450,7 +427,6 @@ export class ShinobigamiHelper {
     }
   }
 }
-
 const upperStyleDict: { [key: string]: string } = {
   a: '斜歯忍軍',
   ab: '鞍馬神流',
@@ -459,9 +435,7 @@ const upperStyleDict: { [key: string]: string } = {
   de: '私立御斎学園',
   e: '隠忍の血統'
 }
-
 export const SkillKind: string[] = ['器術', '体術', '忍術', '謀術', '戦術', '妖術']
-
 export const SkillTable: string[][] = [
   ['絡繰術', '騎乗術', '生存術', '医術', '兵糧術', '異形化'],
   ['火術', '砲術', '潜伏術', '毒術', '鳥獣術', '召喚術'],
@@ -475,7 +449,6 @@ export const SkillTable: string[][] = [
   ['壊器術', '刀術', '隠蔽術', '流言の術', '伝達術', '憑依術'],
   ['掘削術', '怪力', '第六感', '経済力', '人脈', '呪術']
 ]
-
 export function getRowCol(name: string): { r: number; c: number } {
   let r = -1
   let c = -1
@@ -488,14 +461,12 @@ export function getRowCol(name: string): { r: number; c: number } {
   })
   return { r, c }
 }
-
 export type TargetValueCalcResult = {
   r: number
   c: number
   name: string
   targetValue: number
 }
-
 export function calcTargetValue(name: string, skill: SaikoroFictionTokugi): TargetValueCalcResult[] {
   const { r, c } = getRowCol(name)
   if (r === -1 || c === -1) return []
@@ -532,7 +503,6 @@ export function calcTargetValue(name: string, skill: SaikoroFictionTokugi): Targ
       if (skill.outRow) {
         rMove = Math.min(rMove, Math.min(t.row, r) + 11 - Math.max(t.row, r))
       }
-
       return {
         r: t.row,
         c: t.column,
@@ -545,7 +515,6 @@ export function calcTargetValue(name: string, skill: SaikoroFictionTokugi): Targ
       return v2.targetValue < v1.targetValue ? 1 : 0
     })
 }
-
 // このツールの人物欄としてはハンドアウトのみを対象とする。
 // ハンドアウト以外との関係についてはそちら側からハンドアウトを対象とする形で表現する
 export type ShinobigamiEmotion =
@@ -561,7 +530,6 @@ export type ShinobigamiEmotion =
   | 4 // 忠誠
   | 5 // 憧憬
   | 6 // 狂信
-
 export type ShinobigamiPrize = {
   name: string
   description: string
