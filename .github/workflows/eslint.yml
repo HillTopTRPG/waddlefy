@@ -44,7 +44,7 @@ jobs:
 
       - name: Run ESLint
         working-directory: ./client
-        run: npm run lint .
+        run: eslint .
           --config .eslintrc.yml
           --output-file eslint-results.sarif
         continue-on-error: true
