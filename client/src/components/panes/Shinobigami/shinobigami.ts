@@ -1,9 +1,9 @@
 import { CharacterWrap } from '@/components/graphql/graphql'
 import { Player } from '@/components/graphql/schema'
 import { uuid } from 'vue-uuid'
-import { clone, convertNumberZero } from '../PrimaryDataUtility'
-import { Personality, SaikoroFictionTokugi, TokugiInfo, createEmotion, createTokugi } from '../SaikoroFiction'
-import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
+import { getJsonByGet, getJsonByJsonp } from './fetch-util'
+import { clone, convertNumberZero } from './PrimaryDataUtility'
+import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi, TokugiInfo } from './SaikoroFiction'
 
 export type Background = {
   name: string
@@ -123,8 +123,7 @@ export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, t
   const result: ShinobiGami = clone<ShinobiGami>(oldData)!
   if (targets.some(t => t === 'basic')) {
     basicParams.forEach(p => {
-      const resultData: any = result
-      resultData[p.path] = (mergeData as any)[p.path]
+      ;(result as any)[p.path] = (mergeData as any)[p.path]
     })
   }
   if (targets.some(t => t === 'tokugi')) {
@@ -333,6 +332,7 @@ export class ShinobigamiHelper {
     return this.urlRegExp.test(this.url)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getData(): Promise<{
     jsons: any[] | null
     data: ShinobiGami | null
@@ -352,7 +352,11 @@ export class ShinobigamiHelper {
    * @protected
    * @return JSONPの生データ
    */
-  private async getJsonData(type: 'jsonp' | 'get' = 'jsonp', url: string = this.url): Promise<any[] | null> {
+  private async getJsonData(
+    type: 'jsonp' | 'get' = 'jsonp',
+    url: string = this.url
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any[] | null> {
     try {
       const matchResult = url.match(this.urlRegExp)
       const key = matchResult ? matchResult[1] : null
@@ -361,6 +365,7 @@ export class ShinobigamiHelper {
         .replace('{key}', key || '')
         .replace('{sheetViewPass}', this.sheetViewPass || '')
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const results: any[] = []
       results.push(type === 'jsonp' ? await getJsonByJsonp(jsonUrl) : await getJsonByGet(jsonUrl))
       results.push(type === 'jsonp' ? await getJsonByJsonp(jsonSecretUrl) : await getJsonByGet(jsonSecretUrl))
@@ -375,6 +380,7 @@ export class ShinobigamiHelper {
    * @param jsons JSONPから取得した生データ
    * @protected
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
   private createData(jsons: any[] | null): ShinobiGami | null {
     if (!jsons) return null
     const textFilter = (text: string | null) => {
@@ -398,6 +404,7 @@ export class ShinobigamiHelper {
       cover: textFilter(jsons[0].base.cover),
       belief: textFilter(jsons[0].base.belief),
       stylerule: textFilter(jsons[0].base.stylerule),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ninjaArtsList:
         (jsons[1].ninpou || jsons[0].ninpou)?.map((n: any) => ({
           secret: !!n.secret,
@@ -416,6 +423,7 @@ export class ShinobigamiHelper {
         name: textFilter(jsons[0].scenario.name),
         pcno: textFilter(jsons[0].scenario.pcno)
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       backgroundList: (jsons[0].background as any[]).map(b => ({
         name: textFilter(b.name),
         type: textFilter(b.type),
@@ -423,6 +431,7 @@ export class ShinobigamiHelper {
         effect: textFilter(b.effect)
       })),
       skill: createTokugi(jsons[0], SkillTable, true, false, false),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       specialArtsList:
         jsons[1].specialEffect?.map((s: any) => ({
           _id: uuid.v4(),
@@ -431,6 +440,7 @@ export class ShinobigamiHelper {
           effect: textFilter(s.effect),
           direction: textFilter(s.explain)
         })) || [],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ninjaToolList:
         jsons[1].item?.map((t: any) => ({
           name: textFilter(t.name),

@@ -11,7 +11,9 @@
           </template>
           <basic-info-card :character-sheet="characterSheet" />
         </v-menu>
-        <link-btn :href="characterSheet.url" />
+        <v-defaults-provider :defaults="{ VBtn: { size: 'small', variant: 'flat' } }">
+          <v-btn icon="mdi-open-in-new" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
+        </v-defaults-provider>
         <span class="text-body-2">({{ handoutCharacterPlayerName }})</span>
       </template>
     </v-card-title>
@@ -24,10 +26,12 @@
       <template v-for="prize in prizeList" :key="prize.id">
         <v-menu :close-on-content-click="false">
           <template #activator="{ props }">
-            <v-chip :label="true" border :elevation="3" variant="flat" size="small" color="lime" v-bind="props">
-              <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />
-              <span>{{ prize.data.name }}</span>
-            </v-chip>
+            <v-defaults-provider :defaults="{ VChip: { label: true, border: true, elevation: 3 } }">
+              <v-chip variant="flat" size="small" color="lime" v-bind="props">
+                <v-icon icon="mdi-treasure-chest-outline" class="mr-1" />
+                <span>{{ prize.data.name }}</span>
+              </v-chip>
+            </v-defaults-provider>
           </template>
           <prize-chip :prize="prize.data" :perspective="perspective" />
         </v-menu>
@@ -80,21 +84,21 @@
 </template>
 
 <script setup lang="ts">
-import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
+import { Layout } from '@/components/panes'
 import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
+import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import { computed, inject, ref, watch } from 'vue'
 
-import { clone } from '@/components/panes/PrimaryDataUtility'
 import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCardTabContainer.vue'
+import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import BasicInfoCard from '@/components/panes/Shinobigami/BasicInfoCard.vue'
 import PrizeChip from '@/components/panes/Shinobigami/PrizeChip.vue'
-import LinkBtn from '@/components/parts/LinkBtn.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
@@ -158,10 +162,11 @@ const prizeList = computed(() => {
 const characterSheet = computed(() => character.value?.data.character as ShinobiGami | undefined)
 const computedSkills = computed(() => clone(characterSheet.value?.skill) || undefined)
 
-const characterHandout = computed(() =>
-  graphQlStore?.state.sessionDataList.find(
-    sd => sd.type === 'shinobigami-handout' && sd.data?.person === props.characterId
-  )
+const characterHandout = computed(
+  () =>
+    graphQlStore?.state.sessionDataList.find(
+      sd => sd.type === 'shinobigami-handout' && sd.data?.person === props.characterId
+    )
 )
 
 const handoutId = computed(() => props.scenarioDataId || characterHandout.value?.id)
@@ -170,6 +175,7 @@ const player = computed(() => graphQlStore?.state.players.find(p => p.id === cha
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
+  (e: 'change-layout', newLayout: Layout): void
   (e: 'update:select-skill', selectSkill: string): void
 }>()
 

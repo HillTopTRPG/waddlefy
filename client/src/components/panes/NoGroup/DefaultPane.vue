@@ -11,6 +11,7 @@ export const componentInfo = {
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
+import layouts from '@/PaneLayoutTemplate'
 import { componentMap } from '../index'
 
 defineProps<{
