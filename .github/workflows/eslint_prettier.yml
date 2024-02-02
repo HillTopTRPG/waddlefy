@@ -15,7 +15,7 @@ jobs:
           cache-dependency-path: ./client/package-lock.json
       - name: npm install
         working-directory: ./client
-        run: npm i
+        run: npm i --force
       - name: Run ESLint
         working-directory: ./client
         run: npm run lint
@@ -31,7 +31,7 @@ jobs:
           cache-dependency-path: ./client/package-lock.json
       - name: npm install
         working-directory: ./client
-        run: npm i
+        run: npm i --force
       - name: Run ESLint
         working-directory: ./client
         run: npm run format:ci
