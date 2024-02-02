@@ -37,11 +37,11 @@ jobs:
           cache: npm
           cache-dependency-path: ./client/package-lock.json
 
-#      - name: Install ESLint
-#        working-directory: ./client
-#        run: |
-#          npm install eslint@8.10.0
-#          npm install @microsoft/eslint-formatter-sarif@2.1.7
+      - name: Install ESLint
+        working-directory: ./client
+        run: |
+          npm install eslint@8.10.0
+          npm install @microsoft/eslint-formatter-sarif@2.1.7
 
       - name: Run ESLint
         working-directory: ./client
