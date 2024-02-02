@@ -40,7 +40,7 @@ jobs:
       - name: Install ESLint
         working-directory: ./client
         run: |
-          npm install eslint@8.10.0
+          npm i -g eslint@8.10.0
 
       - name: Run ESLint
         working-directory: ./client
