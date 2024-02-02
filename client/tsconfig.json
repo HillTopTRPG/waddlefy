@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "strictNullChecks": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",

@@ -4,7 +4,7 @@
  * @param list
  */
 export function sum(list: number[]): number {
-  return list.reduce((accumlator, current) => accumlator + current, 0)
+  return list.reduce((accumulator, current) => accumulator + current, 0)
 }
 
 /**
@@ -34,10 +34,10 @@ export function clone<T>(obj: T | null): T | null {
  */
 export function convertNumberNull(str: string | null, radix = 10): number | null {
   if (!str) return null
-  str = str.trim().replace(/^\+/, '')
-  if (radix === 16 && /^-?[0-9a-fA-F]+$/.test(str)) return parseInt(str, 16)
-  if (radix === 10 && /^-?[0-9]+$/.test(str)) return parseInt(str, radix)
-  if (radix === 10 && /^-?[0-9]*\.[0-9]+$/.test(str)) return parseFloat(str)
+  const text = str.trim().replace(/^\+/, '')
+  if (radix === 16 && /^-?[0-9a-fA-F]+$/.test(text)) return parseInt(text, radix)
+  if (radix === 10 && /^-?[0-9]+$/.test(text)) return parseInt(text, radix)
+  if (radix === 10 && /^-?[0-9]*\.[0-9]+$/.test(text)) return parseFloat(text)
   return null
 }
 
@@ -57,13 +57,11 @@ export function convertNumberZero(str: string | null, radix = 10): number {
  * @param str
  */
 export function convertBooleanFalse(str: string | null): boolean {
-  if (str === null) return false
-  return str.toLowerCase() === 'true'
+  return str?.toLowerCase() === 'true'
 }
 export function convertBooleanNull(str: string | null): boolean | null {
-  if (str === null) return null
-  if (str.toLowerCase() === 'true') return true
-  if (str.toLowerCase() === 'false') return false
+  if (str?.toLowerCase() === 'true') return true
+  if (str?.toLowerCase() === 'false') return false
   return null
 }
 
@@ -74,16 +72,10 @@ export function convertBooleanNull(str: string | null): boolean | null {
  * @param filterFunc
  */
 export function listDelete<T>(list: T[], filterFunc: (item: T, idx: number) => boolean): void {
-  const deleteIndexList = list
-    .map((item, idx) => ({ item, idx }))
-    .filter(info => filterFunc(info.item, info.idx))
-    .map(info => info.idx)
-  deleteIndexList.sort((n1, n2) => {
-    if (n1 > n2) return -1
-    if (n1 < n2) return 1
-    return 0
-  })
-  deleteIndexList.forEach(deleteIndex => list.splice(deleteIndex, 1))
+  list
+    .flatMap((item, idx) => (filterFunc(item, idx) ? idx : []))
+    .reverse()
+    .forEach(deleteIndex => list.splice(deleteIndex, 1))
 }
 
 /**
@@ -112,8 +104,7 @@ export function removeExt(fileName: string): string {
  * @param fileName
  */
 export function getExt(fileName: string): string {
-  const matchExt: string[] | null = fileName.match(/[^.]+$/)
-  return matchExt ? matchExt[0] : ''
+  return fileName.match(/[^.]+$/)?.at(0) || ''
 }
 
 /**
@@ -122,10 +113,15 @@ export function getExt(fileName: string): string {
  * @param url
  */
 export function getFileName(url: string): string {
-  const matchExt: string[] | null = url.match(/[^/]+$/)
-  return matchExt ? matchExt[0] : ''
+  return url.match(/[^/]+$/)?.at(0) || ''
 }
 
 export function hoseiStr(n: number): string {
   return n > 0 ? `+${n}` : n.toString(10)
+}
+
+function assertExists<T>(val: T): NonNullable<T> {
+  if (val === null || val === undefined) {
+    throw new AssertionError()
+  }
 }

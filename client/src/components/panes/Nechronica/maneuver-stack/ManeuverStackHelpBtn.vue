@@ -31,8 +31,7 @@
   </v-menu>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

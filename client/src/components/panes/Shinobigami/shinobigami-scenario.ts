@@ -149,10 +149,7 @@ export class ShinobigamiScenarioHelper {
     const json = jsons[0]
     window.logger.info(JSON.stringify(json, null, 2))
     if (json.error) return null
-    const textFilter = (text: string | null) => {
-      if (!text) return ''
-      return text.trim().replace(/\r?\n/g, '\n')
-    }
+    const textFilter = (text: string | null): string => text?.trim().replace(/\r?\n/g, '\n') || ''
     const boolFilter = (text: string | null): boolean => text === '1'
     return {
       base: {
