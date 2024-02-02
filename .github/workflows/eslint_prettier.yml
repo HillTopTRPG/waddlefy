@@ -19,10 +19,10 @@ jobs:
       - name: Run ESLint
         working-directory: ./client
         run: |
-          eslint -v
+          npm run lint:v
           npm run lint
       - name: Run Prettier
         working-directory: ./client
         run: |
-          prettier -v
+          npm run format:v
           npm run format:ci
