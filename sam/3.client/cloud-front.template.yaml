@@ -3,11 +3,11 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy CloudFront
 
 Parameters:
+  ProjectName:
+    Type: String
   RESTApiDomainName:
     Type: String
   StaticBucketDomainName:
-    Type: String
-  RoomBucketDomainName:
     Type: String
   OAI:
     Type: String
@@ -17,6 +17,7 @@ Resources:
     Type: "AWS::CloudFront::Distribution"
     Properties:
       DistributionConfig:
+        Comment: !Sub ${ProjectName}-cloud-front
         CacheBehaviors:
           - AllowedMethods:
               - GET
@@ -29,18 +30,8 @@ Resources:
             CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
             Compress: true
             OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac" # Managed-AllViewerExceptHostHeader
-            PathPattern: "/api/*"
+            PathPattern: "/api"
             TargetOriginId: api
-            ViewerProtocolPolicy: redirect-to-https
-          - AllowedMethods:
-              - GET
-              - HEAD
-              - OPTIONS
-            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
-            Compress: true
-            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac" # Managed-AllViewerExceptHostHeader
-            PathPattern: "/asset/*"
-            TargetOriginId: asset
             ViewerProtocolPolicy: redirect-to-https
         CustomErrorResponses:
           - ErrorCachingMinTTL: 5
@@ -83,12 +74,6 @@ Resources:
             ConnectionAttempts: 3 # default
             ConnectionTimeout: 10 # seconds
             DomainName: !Ref StaticBucketDomainName
-            S3OriginConfig:
-              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OAI}
-          - Id: asset
-            ConnectionAttempts: 3 # default
-            ConnectionTimeout: 10 # seconds
-            DomainName: !Ref RoomBucketDomainName
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OAI}
         ViewerCertificate:

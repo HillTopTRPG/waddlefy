@@ -1,0 +1,81 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BravadoBtn.vue > ignoreBravado: trueの場合 > スナップショットテスト 1`] = `
+<button
+  class="v-btn v-btn--elevated v-theme--light bg-grey v-btn--density-comfortable v-btn--size-default v-btn--variant-elevated text-caption px-1"
+  hide-details="true"
+  style="min-width: auto;"
+  type="button"
+>
+  
+  <span
+    class="v-btn__overlay"
+  />
+  <span
+    class="v-btn__underlay"
+  />
+  
+  <!---->
+  <span
+    class="v-btn__content"
+    data-no-activator=""
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-skull mdi v-icon notranslate v-theme--light v-icon--size-default"
+    />
+    <span
+      class="text-decoration-line-through"
+      data-cy="text"
+    >
+      平気
+    </span>
+    
+    
+  </span>
+  <!---->
+  <!---->
+</button>
+`;
+
+exports[`BravadoBtn.vue > ignoreHeik: falseの場合 > スナップショットテスト 1`] = `
+<button
+  class="v-btn v-btn--elevated v-theme--light bg-info v-btn--density-comfortable v-btn--size-default v-btn--variant-elevated text-caption px-1"
+  hide-details="true"
+  style="min-width: auto;"
+  type="button"
+>
+  
+  <span
+    class="v-btn__overlay"
+  />
+  <span
+    class="v-btn__underlay"
+  />
+  
+  <!---->
+  <span
+    class="v-btn__content"
+    data-no-activator=""
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-emoticon-tongue mdi v-icon notranslate v-theme--light v-icon--size-default"
+    />
+    <span
+      class=""
+      data-cy="text"
+    >
+      平気
+    </span>
+    
+    
+  </span>
+  <!---->
+  <!---->
+</button>
+`;

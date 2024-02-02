@@ -1,0 +1,124 @@
+{
+  "BATTLE_TIMING": [
+    { "value": "", "text": "Nechronica.BATTLE_TIMING.none" },
+    { "value": "action", "text": "Nechronica.BATTLE_TIMING.action" },
+    { "value": "rapid", "text": "Nechronica.BATTLE_TIMING.rapid" },
+    { "value": "judge", "text": "Nechronica.BATTLE_TIMING.judge" },
+    { "value": "damage", "text": "Nechronica.BATTLE_TIMING.damage" }
+  ],
+  "ROICE_DAMAGE": [
+    { "value": 0, "label": "０", "text": "０", "subTitle": "", "color": "success" },
+    { "value": 1, "label": "１", "text": "１", "subTitle": "", "color": "success" },
+    { "value": 2, "label": "２", "text": "２", "subTitle": "", "color": "success" },
+    { "value": 3, "label": "３", "text": "３", "subTitle": "", "color": "warning" },
+    { "value": 4, "label": "狂", "text": "発狂", "subTitle": "", "color": "error" }
+  ],
+  "CHARACTER_TYPE": [
+    { "type": "doll", "text": "Nechronica.CHARACTER_TYPE.doll", "color": "#DCE775" },
+    { "type": "legion", "text": "Nechronica.CHARACTER_TYPE.legion", "color": "#80CBC4" },
+    { "type": "horror", "text": "Nechronica.CHARACTER_TYPE.horror", "color": "#C5CAE9" },
+    { "type": "servent", "text": "Nechronica.CHARACTER_TYPE.servent", "color": "#FFAB91" }
+  ],
+  "CHARACTER_LOCATION": [
+    { "key": "none", "text": "Nechronica.CHARACTER_LOCATION.none", "init-pos-value": "-3", "pos-value": "0" },
+    { "key": "abyss", "text": "Nechronica.CHARACTER_LOCATION.abyss", "init-pos-value": "-2", "pos-value": "1" },
+    { "key": "hell", "text": "Nechronica.CHARACTER_LOCATION.hell", "init-pos-value": "-1", "pos-value": "2" },
+    { "key": "purgatory", "text": "Nechronica.CHARACTER_LOCATION.purgatory", "init-pos-value": "0", "pos-value": "3" },
+    { "key": "garden", "text": "Nechronica.CHARACTER_LOCATION.garden", "init-pos-value": "1", "pos-value": "4" },
+    { "key": "paradise", "text": "Nechronica.CHARACTER_LOCATION.paradise", "init-pos-value": "2", "pos-value": "5" }
+  ],
+  "CHARACTER_POSITION": [
+    { "val": "", "text": "" },
+    { "val": "alice", "text": "アリス" },
+    { "val": "holic", "text": "ホリック" },
+    { "val": "automaton", "text": "オートマトン" },
+    { "val": "junk", "text": "ジャンク" },
+    { "val": "coat", "text": "コート" },
+    { "val": "sorority", "text": "ソロリティ" }
+  ],
+  "CHARACTER_CLASS": [
+    { "val": "", "text": "" },
+    { "val": "stacy", "text": "ステーシー" },
+    { "val": "thanatos", "text": "タナトス" },
+    { "val": "gothic", "text": "ゴシック" },
+    { "val": "requiem", "text": "レクイエム" },
+    { "val": "baroque", "text": "バロック" },
+    { "val": "romanesque", "text": "ロマネスク" },
+    { "val": "psychedelic", "text": "サイケデリック" }
+  ],
+  "BASIC_PARTS_ICON_CLASS_MAP": [
+    { "text": "のうみそ", "class": "basic-brain" },
+    { "text": "めだま", "class": "basic-eye" },
+    { "text": "あご", "class": "basic-jaw" },
+    { "text": "こぶし", "class": "basic-fist" },
+    { "text": "うで", "class": "basic-arm" },
+    { "text": "かた", "class": "basic-shoulder" },
+    { "text": "せぼね", "class": "basic-backbone" },
+    { "text": "はらわた", "class": "basic-viscera" },
+    { "text": "ほね", "class": "basic-bone" },
+    { "text": "あし", "class": "basic-leg" }
+  ],
+  "ICON_CLASS_MAP": [
+    { "text": "武装", "class": "armed" },
+    { "text": "変異", "class": "mutation" },
+    { "text": "改造", "class": "modification" },
+    { "text": "アリス", "class": "alice" },
+    { "text": "ｱﾘｽ", "class": "alice" },
+    { "text": "ホリック", "class": "holic" },
+    { "text": "ﾎﾘｯｸ", "class": "holic" },
+    { "text": "オートマトン", "class": "automaton" },
+    { "text": "ｵｰﾄﾏﾄﾝ", "class": "automaton" },
+    { "text": "ジャンク", "class": "junk" },
+    { "text": "ｼﾞｬﾝｸ", "class": "junk" },
+    { "text": "コート", "class": "coat" },
+    { "text": "ｺｰﾄ", "class": "coat" },
+    { "text": "ソロリティ", "class": "sorority" },
+    { "text": "ｿﾛﾘﾃｨ", "class": "sorority" },
+    { "text": "サイケデリック", "class": "psychedelic" },
+    { "text": "ｻｲｹﾃﾞﾘｯｸ", "class": "psychedelic" },
+    { "text": "ステーシー", "class": "stacy" },
+    { "text": "ｽﾃｰｼｰ", "class": "stacy" },
+    { "text": "タナトス", "class": "thanatos" },
+    { "text": "ﾀﾅﾄｽ", "class": "thanatos" },
+    { "text": "ゴシック", "class": "gothic" },
+    { "text": "ｺﾞｼｯｸ", "class": "gothic" },
+    { "text": "レクイエム", "class": "requiem" },
+    { "text": "ﾚｸｲｴﾑ", "class": "requiem" },
+    { "text": "バロック", "class": "baroque" },
+    { "text": "ﾊﾞﾛｯｸ", "class": "baroque" },
+    { "text": "ロマネスク", "class": "romanesque" },
+    { "text": "ﾛﾏﾈｽｸ", "class": "romanesque" },
+    { "text": "たからもの", "class": "treasure" },
+    { "text": "タカラモノ", "class": "treasure" },
+    { "text": "ﾀｶﾗﾓﾉ", "class": "treasure" }
+  ],
+  "ROICE_VIEW_POSITION": [
+    { "value": "before", "label": "Nechronica.ROICE_VIEW_POSITION.before" },
+    { "value": "after", "label": "Nechronica.ROICE_VIEW_POSITION.after" },
+    { "value": "none", "label": "Nechronica.ROICE_VIEW_POSITION.none" }
+  ],
+  "MANEUVER_TYPE": [
+    { "text": "Nechronica.MANEUVER_TYPE.none", "color": "#ffffff" },
+    { "text": "Nechronica.MANEUVER_TYPE.normal", "color": "#008001" },
+    { "text": "Nechronica.MANEUVER_TYPE.special", "color": "#8b0000" },
+    { "text": "Nechronica.MANEUVER_TYPE.stamina", "color": "#d99626" },
+    { "text": "Nechronica.MANEUVER_TYPE.support", "color": "#8080ff" },
+    { "text": "Nechronica.MANEUVER_TYPE.sabotage", "color": "#ff8080" },
+    { "text": "Nechronica.MANEUVER_TYPE.defence_victim", "color": "#bf80ff" },
+    { "text": "Nechronica.MANEUVER_TYPE.movement", "color": "#dfdf80" }
+  ],
+  "MANEUVER_TIMING": [
+    { "text": "Nechronica.MANEUVER_TIMING.auto", "color": "primary" },
+    { "text": "Nechronica.MANEUVER_TIMING.action", "color": "primary" },
+    { "text": "Nechronica.MANEUVER_TIMING.judge", "color": "primary" },
+    { "text": "Nechronica.MANEUVER_TIMING.damage", "color": "primary" },
+    { "text": "Nechronica.MANEUVER_TIMING.rapid", "color": "primary" }
+  ],
+  "MANEUVER_UNDER_TEXT": [
+    { "value": "", "label": "label.none" },
+    { "value": "timing", "label": "Nechronica.label.timing" },
+    { "value": "cost", "label": "Nechronica.label.cost" },
+    { "value": "range", "label": "Nechronica.label.range" }
+  ],
+  "MANEUVER_PARTS": ["", "ﾎﾟｼﾞｼｮﾝ", "ﾒｲﾝｸﾗｽ", "ｻﾌﾞｸﾗｽ", "頭", "腕", "胴", "足"]
+}

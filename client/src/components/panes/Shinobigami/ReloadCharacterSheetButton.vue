@@ -1,12 +1,10 @@
 <template>
   <v-menu :close-on-content-click="false" width="auto" location="bottom left" v-model="opened">
     <template #activator="{ props }">
-      <v-btn
-        variant="text"
-        class="text-decoration-underline align-self-start"
-        text="キャラクターシートから再読込"
-        v-bind="props"
-      />
+      <v-btn variant="text" class="align-self-start" v-bind="props">
+        <v-icon icon="mdi-reload" />
+        <span class="text-decoration-underline">キャラクターシートから再読込</span>
+      </v-btn>
     </template>
     <v-card>
       <v-card-text class="d-flex flex-column px-2 pt-2 pb-0" style="gap: 0.5rem">
@@ -32,7 +30,7 @@
           <v-switch
             class="justify-center flex-grow-0 flex-shrink-1"
             style="flex-basis: auto !important"
-            label="全て"
+            :label="$t('label.all')"
             :indeterminate="[0, fullDataType.length].every(l => l !== targets?.length)"
             :model-value="targets?.length === fullDataType.length"
             @update:model-value="v => (targets = v ? clone(fullDataType) : [])"
@@ -57,14 +55,19 @@
       </v-card-text>
       <v-divider />
       <v-card-actions>
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="close()" text="キャンセル" />
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="close()"
+          :text="$t('label.cancel')"
+        />
         <v-btn
           color="primary"
           class="flex-0-1-100"
           variant="flat"
           :disabled="!targets?.length"
           @click="confirm()"
-          text="決定"
+          :text="$t('label.decision')"
         />
       </v-card-actions>
     </v-card>
@@ -76,7 +79,7 @@ import { DataType, fullDataType, mergeShinobigami, ShinobigamiHelper } from '@/c
 import { computed, inject, ref, watch } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import ShinobigamiUrlForm from '@/components/panes/Shinobigami/ShinobigamiUrlForm.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -125,7 +128,7 @@ async function confirm() {
         viewPass.value,
         mergeShinobigami(dataObj.value.data.character, data, targets.value)
       )
-      console.log('再読込完了！！！！')
+      window.logger.info('再読込完了！！！！')
     }
   }
   close()

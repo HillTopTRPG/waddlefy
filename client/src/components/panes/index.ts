@@ -1,12 +1,8 @@
+import nechronicaPanes from './Nechronica'
 import noGroupPanes from './NoGroup'
 import shinobigamiPanes from './Shinobigami'
-// import generalPanes from './General'
 
-const panes = [
-  ...noGroupPanes,
-  ...shinobigamiPanes
-  // ...generalPanes
-]
+const panes = [...noGroupPanes, ...shinobigamiPanes, ...nechronicaPanes]
 
 export interface Layout {
   type: string

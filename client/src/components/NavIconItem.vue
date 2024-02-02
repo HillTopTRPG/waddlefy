@@ -1,5 +1,5 @@
 <template>
-  <v-list-item :style="toggle ? 'border-radius: 10px 0 0 10px;' : ''">
+  <v-list-item :class="toggle ? 'radius-border' : ''">
     <template #prepend>
       <v-icon :icon="`mdi-${icon}`" class="mr-6" />
     </template>
@@ -17,3 +17,9 @@ defineProps<{
   toggle: boolean
 }>()
 </script>
+
+<style scoped lang="scss">
+.radius-border {
+  border-radius: 10px 0 0 10px;
+}
+</style>

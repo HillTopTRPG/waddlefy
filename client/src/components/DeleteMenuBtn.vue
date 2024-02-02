@@ -1,15 +1,18 @@
 <template>
   <v-menu width="auto" v-model="opened" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn color="error" variant="text" class="text-decoration-underline" :class="classText || ''" v-bind="props"
-        >この{{ type }}を削除</v-btn
-      >
+      <v-btn data-cy="open-btn" :color="color || 'error'" variant="text" :class="classText || ''" v-bind="props">
+        <v-icon icon="mdi-delete-outline" />
+        <span data-cy="text" class="text-decoration-underline">{{
+          $t('label.delete-this').replace('$$', i18n ? $t(type) : type)
+        }}</span>
+      </v-btn>
     </template>
     <v-card>
-      <v-card-text class="pb-1">削除するにはこの{{ type }}の名前を入力してください</v-card-text>
+      <v-card-text class="pb-1">{{ $t('label.delete-for-message').replace('$$', i18n ? $t(type) : type) }}</v-card-text>
       <v-card-item class="pa-2">
         <v-text-field
-          :label="`${type}の名前`"
+          :label="$t('label.name-of').replace('$$', i18n ? $t(type) : type)"
           v-model="inputTargetName"
           :autofocus="true"
           variant="solo-filled"
@@ -23,15 +26,20 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="opened = false"
+          :text="$t('label.cancel')"
+        />
         <v-btn
           color="warning"
           class="flex-0-1-100"
           variant="flat"
+          :text="$t('label.delete-completely')"
           :disabled="inputTargetName !== targetName"
           @click="deleteExecute()"
-          >完全に削除</v-btn
-        >
+        />
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -41,24 +49,17 @@
 import 'splitpanes/dist/splitpanes.css'
 import { ref, watch } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   type: string
   targetName: string
-  sessionId: string
   classText?: string
+  color?: string
+  i18n?: boolean
 }>()
 
 const emits = defineEmits<{
   (e: 'execute'): Promise<void>
 }>()
-
-watch(
-  () => props.sessionId,
-  () => {
-    opened.value = false
-    inputTargetName.value = ''
-  }
-)
 
 const opened = ref(false)
 const inputTargetName = ref('')

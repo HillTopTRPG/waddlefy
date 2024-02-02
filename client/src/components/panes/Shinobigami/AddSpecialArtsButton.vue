@@ -26,7 +26,12 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="opened = false"
+          :text="$t('label.cancel')"
+        />
         <v-btn color="primary" class="flex-0-1-100" variant="flat" :disabled="!name" @click="onSubmit()">{{
           confirmText
         }}</v-btn>
@@ -38,8 +43,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   buttonText: string
   buttonIcon: string
   confirmText: string

@@ -82,16 +82,19 @@ import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import { computed, inject, ref, watch } from 'vue'
 
 import { CharacterWrap, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import { clone } from '@/components/panes/PrimaryDataUtility'
+import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
+}>()
+
+defineEmits<{
+  (e: 'change-component', componentGroup: string, component: string): void
 }>()
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
@@ -101,12 +104,6 @@ const perspectiveList = computed(() => [
   { value: '', name: '主催者' },
   ...(graphQlStore?.state.players.map(p => ({ value: p.id, name: p.name })) || [])
 ])
-
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
-  (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
-}>()
 
 type Info = {
   value: string

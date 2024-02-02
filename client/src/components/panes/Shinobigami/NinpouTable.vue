@@ -20,7 +20,7 @@
           <td class="secret">
             <v-checkbox
               :model-value="arts.secret"
-              @update:model-value="v => onChangeSecret(idx, v)"
+              @update:model-value="v => onChangeSecret(idx, v || false)"
               density="compact"
               :hide-details="true"
             />
@@ -62,7 +62,6 @@
 import { NinjaArts, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
 import { computed } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list: NinjaArts[] | undefined
   mode?: 'secret'
