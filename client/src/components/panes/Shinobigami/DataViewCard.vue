@@ -158,11 +158,10 @@ const prizeList = computed(() => {
 const characterSheet = computed(() => character.value?.data.character as ShinobiGami | undefined)
 const computedSkills = computed(() => clone(characterSheet.value?.skill) || undefined)
 
-const characterHandout = computed(
-  () =>
-    graphQlStore?.state.sessionDataList.find(
-      sd => sd.type === 'shinobigami-handout' && sd.data?.person === props.characterId
-    )
+const characterHandout = computed(() =>
+  graphQlStore?.state.sessionDataList.find(
+    sd => sd.type === 'shinobigami-handout' && sd.data?.person === props.characterId
+  )
 )
 
 const handoutId = computed(() => props.scenarioDataId || characterHandout.value?.id)

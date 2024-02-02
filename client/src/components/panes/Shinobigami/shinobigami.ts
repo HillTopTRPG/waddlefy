@@ -1,9 +1,9 @@
 import { CharacterWrap } from '@/components/graphql/graphql'
 import { Player } from '@/components/graphql/schema'
 import { uuid } from 'vue-uuid'
-import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
 import { clone, convertNumberZero } from '../PrimaryDataUtility'
-import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi, TokugiInfo } from '../SaikoroFiction'
+import { Personality, SaikoroFictionTokugi, TokugiInfo, createEmotion, createTokugi } from '../SaikoroFiction'
+import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
 
 export type Background = {
   name: string

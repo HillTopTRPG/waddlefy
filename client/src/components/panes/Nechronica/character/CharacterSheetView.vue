@@ -153,9 +153,8 @@ function judgeView(maneuver: NechronicaManeuver) {
   return props.viewOption.selectedTypes.some((timing: number) => timing === maneuver.type)
 }
 
-const singleton = computed(
-  (): { id: string; data: NechronicaSingleton } | undefined =>
-    graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
+  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
 async function addManeuverStack(

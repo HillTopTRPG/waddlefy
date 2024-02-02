@@ -68,10 +68,10 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import UrlForm from '@/components/panes/Nechronica/component/UrlForm.vue'
 import {
   DataType,
-  fullDataType,
-  mergeNechronica,
   NechronicaHelper,
-  NechronicaWrap
+  NechronicaWrap,
+  fullDataType,
+  mergeNechronica
 } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { computed, inject, ref, watch } from 'vue'

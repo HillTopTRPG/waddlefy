@@ -119,9 +119,3 @@ export function getFileName(url: string): string {
 export function hoseiStr(n: number): string {
   return n > 0 ? `+${n}` : n.toString(10)
 }
-
-function assertExists<T>(val: T): NonNullable<T> {
-  if (val === null || val === undefined) {
-    throw new AssertionError()
-  }
-}

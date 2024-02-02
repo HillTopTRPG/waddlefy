@@ -35,9 +35,8 @@ import { computed, inject, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-const singleton = computed(
-  (): { id: string; data: NechronicaSingleton } | undefined =>
-    graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
+  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
 function createDraggableStackWrap(draggable: boolean): (NechronicaManeuverStack & { id: string })[] {

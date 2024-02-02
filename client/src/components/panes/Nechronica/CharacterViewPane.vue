@@ -121,9 +121,8 @@ defineEmits<{
 
 const perspective = ref<string>(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
 
-const singleton = computed(
-  (): { id: string; data: NechronicaSingleton } | undefined =>
-    graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
+  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
 )
 
 const viewOption = ref<NechronicaViewOption>({
