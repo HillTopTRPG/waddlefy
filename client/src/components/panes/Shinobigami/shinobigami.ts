@@ -562,15 +562,6 @@ export type ShinobigamiEmotion =
   | 5 // 憧憬
   | 6 // 狂信
 
-export type ShinobigamiHandout = {
-  name: string
-  objective: string
-  secret: string
-  person: string
-  published: boolean
-  knowSelfSecret: boolean
-}
-
 export type ShinobigamiPrize = {
   name: string
   description: string
