@@ -11,7 +11,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src --config .prettierrc.yaml",
     "format:v": "prettier -v",
-    "format:ci": "prettier --check src --config .prettierrc.yaml"
+    "format:ci": "prettier --debug-check src --config .prettierrc.yaml"
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
