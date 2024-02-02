@@ -1,9 +1,9 @@
 import { CharacterWrap } from '@/components/graphql/graphql'
 import { Player } from '@/components/graphql/schema'
 import { uuid } from 'vue-uuid'
-import { clone, convertNumberZero } from './PrimaryDataUtility'
-import { Personality, SaikoroFictionTokugi, TokugiInfo, createEmotion, createTokugi } from './SaikoroFiction'
 import { getJsonByGet, getJsonByJsonp } from './fetch-util'
+import { clone, convertNumberZero } from './PrimaryDataUtility'
+import { createEmotion, createTokugi, Personality, SaikoroFictionTokugi, TokugiInfo } from './SaikoroFiction'
 
 export type Background = {
   name: string
@@ -123,7 +123,7 @@ export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, t
   const result: ShinobiGami = clone<ShinobiGami>(oldData)!
   if (targets.some(t => t === 'basic')) {
     basicParams.forEach(p => {
-      (result as any)[p.path] = (mergeData as any)[p.path]
+      ;(result as any)[p.path] = (mergeData as any)[p.path]
     })
   }
   if (targets.some(t => t === 'tokugi')) {
