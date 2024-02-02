@@ -25,4 +25,4 @@ jobs:
         working-directory: ./client
         run: |
           npm run format:v
-          npm run format:ci2
+          npm run format:ci
