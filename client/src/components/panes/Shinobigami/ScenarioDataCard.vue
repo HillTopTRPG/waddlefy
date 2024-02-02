@@ -550,8 +550,8 @@ const otherHandouts = computed(() => {
 const prizeKnow = computed(() => {
   if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return true
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(
-      sd => dataObj.value?.data.readableList.some((r: string) => r === sd.id)
+    graphQlStore?.state.sessionDataList.filter(sd =>
+      dataObj.value?.data.readableList.some((r: string) => r === sd.id)
     ) || []
   const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
   return characters.some(c => c?.data.player === props.perspective)

@@ -10,8 +10,8 @@ export const componentInfo = {
 </script>
 
 <script setup lang="ts">
-import { Layout } from '@/components/panes'
 import layouts from '@/PaneLayoutTemplate'
+import { Layout } from '@/components/panes'
 import { componentMap } from '../index'
 
 const props = defineProps<{

@@ -3,7 +3,7 @@ import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
 import { ref, watch } from 'vue'
 import { uuid } from 'vue-uuid'
-import { componentMap, Layout } from '../panes'
+import { Layout, componentMap } from '../panes'
 
 interface Props {
   layout: Layout
