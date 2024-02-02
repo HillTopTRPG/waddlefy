@@ -1,6 +1,6 @@
 <template>
   <v-overlay
-    :model-value="modalValue"
+    :model-value="modelValue"
     @update:model-value="emits('close')"
     :contained="true"
     transition="slide-x-transition"
@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 // noinspection TypeScriptValidateTypes
 defineProps<{
-  modalValue: boolean
+  modelValue: boolean
   color: string
   title: string
   image: string

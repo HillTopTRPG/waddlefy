@@ -9,7 +9,7 @@ type UserData = {
 }
 type PlayerData = UserData // 同じ構造
 
-async function getTokenData<T>(tableName: string, token: string, tokenName: string): Promise<T | undefined> {
+async function getTokenData<T>(tableName: string, token: string, tokenName: string): Promise<T | null> {
   try {
     const data: QueryCommandOutput = await ddbDocClient.send(new QueryCommand({
       TableName : tableName,
@@ -22,27 +22,25 @@ async function getTokenData<T>(tableName: string, token: string, tokenName: stri
         ':token': token
       }
     }))
-    if (!data || data.Items.length !== 1 || !data.Items[0]) {
-      return undefined
+    if (data && data.Items.length === 1 && Boolean(data.Items[0])) {
+      return data.Items[0] as T
     }
-    return data.Items[0] as T
   } catch (err) {
     // do nothing
   }
-  return undefined
+  return null
 }
 
-async function getTokenSecretData<T extends { secret: string }>(tableName: string, token: string, secret: string): Promise<T | undefined> {
+async function getTokenSecretData<T extends { secret: string }>(tableName: string, token: string, secret: string): Promise<T | null> {
   try {
     const data = await getTokenData<T>(tableName, token, 'token')
-    if (data.secret !== secret) {
-      return undefined
+    if (data?.secret === secret) {
+      return data
     }
-    return data
   } catch (err) {
     // do nothing
   }
-  return undefined
+  return null
 }
 
 const ALL_OPERATIONS = [
@@ -134,7 +132,7 @@ export const handler = async event => {
       if (split[0] === 's') {
         // Player
         const sessionData = await getTokenData<{ id: string }>(process.env.SESSION_TABLE_NAME, split[1], 'token')
-        if (sessionData) {
+        if (Boolean(sessionData)) {
           isAuthorized = true
           id = sessionData.id
           admitFields.push('Mutation.addPlayerByPlayer')

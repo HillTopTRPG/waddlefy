@@ -1,0 +1,231 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NavIconItem.vue > classの確認 > スナップショットテスト 1`] = `
+<div
+  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  data-v-29e98768=""
+>
+  
+  <!---->
+  <span
+    class="v-list-item__underlay"
+  />
+  
+  <div
+    class="v-list-item__prepend"
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-circle mdi v-icon notranslate v-theme--light v-icon--size-default mr-6"
+      data-v-29e98768=""
+    />
+    
+    
+    <div
+      class="v-list-item__spacer"
+    />
+  </div>
+  <div
+    class="v-list-item__content"
+    data-no-activator=""
+  >
+    <!---->
+    <!---->
+    
+    <div
+      class="v-list-item-title"
+      data-v-29e98768=""
+    >
+      
+    </div>
+    <!--v-if-->
+    
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`NavIconItem.vue > rail=falseの場合 > スナップショットテスト 1`] = `
+<div
+  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  data-v-29e98768=""
+>
+  
+  <!---->
+  <span
+    class="v-list-item__underlay"
+  />
+  
+  <div
+    class="v-list-item__prepend"
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-circle mdi v-icon notranslate v-theme--light v-icon--size-default mr-6"
+      data-v-29e98768=""
+    />
+    
+    
+    <div
+      class="v-list-item__spacer"
+    />
+  </div>
+  <div
+    class="v-list-item__content"
+    data-no-activator=""
+  >
+    <!---->
+    <!---->
+    
+    <div
+      class="v-list-item-title"
+      data-v-29e98768=""
+    >
+      
+    </div>
+    <!--v-if-->
+    
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`NavIconItem.vue > rail=trueの場合 > スナップショットテスト 1`] = `
+<div
+  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  data-v-29e98768=""
+>
+  
+  <!---->
+  <span
+    class="v-list-item__underlay"
+  />
+  
+  <div
+    class="v-list-item__prepend"
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-circle mdi v-icon notranslate v-theme--light v-icon--size-default mr-6"
+      data-v-29e98768=""
+    />
+    
+    
+    <div
+      class="v-list-item__spacer"
+    />
+  </div>
+  <div
+    class="v-list-item__content"
+    data-no-activator=""
+  >
+    <!---->
+    <!---->
+    
+    <!--v-if-->
+    <!--v-if-->
+    
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`NavIconItem.vue > toggle=falseの場合 > スナップショットテスト 1`] = `
+<div
+  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  data-v-29e98768=""
+>
+  
+  <!---->
+  <span
+    class="v-list-item__underlay"
+  />
+  
+  <div
+    class="v-list-item__prepend"
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-circle mdi v-icon notranslate v-theme--light v-icon--size-default mr-6"
+      data-v-29e98768=""
+    />
+    
+    
+    <div
+      class="v-list-item__spacer"
+    />
+  </div>
+  <div
+    class="v-list-item__content"
+    data-no-activator=""
+  >
+    <!---->
+    <!---->
+    
+    <div
+      class="v-list-item-title"
+      data-v-29e98768=""
+    >
+      
+    </div>
+    <!--v-if-->
+    
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`NavIconItem.vue > toggle=trueの場合 > スナップショットテスト 1`] = `
+<div
+  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text radius-border"
+  data-v-29e98768=""
+>
+  
+  <!---->
+  <span
+    class="v-list-item__underlay"
+  />
+  
+  <div
+    class="v-list-item__prepend"
+  >
+    
+    
+    <i
+      aria-hidden="true"
+      class="mdi-circle mdi v-icon notranslate v-theme--light v-icon--size-default mr-6"
+      data-v-29e98768=""
+    />
+    
+    
+    <div
+      class="v-list-item__spacer"
+    />
+  </div>
+  <div
+    class="v-list-item__content"
+    data-no-activator=""
+  >
+    <!---->
+    <!---->
+    
+    <div
+      class="v-list-item-title"
+      data-v-29e98768=""
+    >
+      
+    </div>
+    <!--v-if-->
+    
+  </div>
+  <!---->
+</div>
+`;

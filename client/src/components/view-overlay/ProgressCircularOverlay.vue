@@ -1,6 +1,6 @@
 <template>
   <v-overlay
-    :model-value="modalValue"
+    :model-value="modelValue"
     :persistent="true"
     :contained="true"
     :scrim="false"
@@ -15,7 +15,7 @@
 // noinspection TypeScriptValidateTypes
 withDefaults(
   defineProps<{
-    modalValue: boolean
+    modelValue: boolean
     size?: number
     width?: number
     color?: string

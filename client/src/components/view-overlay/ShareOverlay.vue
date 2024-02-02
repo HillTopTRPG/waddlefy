@@ -2,7 +2,7 @@
   <contents-overlay
     title="参加してもらう"
     color="bg-orange-lighten-1"
-    :modal-value="modalValue"
+    :model-value="modelValue"
     image="paint_00022.jpg"
     @close="emits('close')"
   >
@@ -75,7 +75,7 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{
-  modalValue: boolean
+  modelValue: boolean
 }>()
 
 const emits = defineEmits<{

@@ -3,7 +3,7 @@
     title="主催者の設定"
     color="bg-cyan-lighten-1"
     class="contents-overlay"
-    :modal-value="modalValue"
+    :model-value="modelValue"
     image="paint_00005.jpg"
     @close="emits('close')"
   >
@@ -42,7 +42,7 @@ import { inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{
-  modalValue: boolean
+  modelValue: boolean
 }>()
 
 const emits = defineEmits<{

@@ -34,7 +34,7 @@
       <v-divider />
       <v-card-actions>
         <v-defaults-provider :defaults="{ VBtn: { color: 'primary', class: 'flex-0-1-100' } }">
-          <v-btn text="キャンセル" variant="text" class="text-decoration-underline" @click="opened = false" />
+          <v-btn variant="text" class="text-decoration-underline" @click="opened = false" :text="$t('label.cancel')" />
           <v-btn variant="flat" @click="onExecute()" :disabled="!addUrl" text="読込" />
         </v-defaults-provider>
       </v-card-actions>

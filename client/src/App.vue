@@ -8,11 +8,13 @@
 const images: HTMLImageElement[] = []
 function preload(...args: string[]) {
   for (let i = 0; i < args.length; i++) {
-    images[i] = new Image()
-    images[i].onload = () => {
-      // console.log(arguments[i])
+    const imgElm = new Image()
+    const src = arguments[i]
+    imgElm.onload = () => {
+      window.logger.info(`preloaded '${src}'`)
     }
-    images[i].src = arguments[i]
+    imgElm.src = src
+    images.push(imgElm)
   }
 }
 
@@ -67,5 +69,11 @@ $htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, sm
 
 textarea {
   font-family: 'M PLUS Rounded 1c', sans-serif !important;
+}
+
+.ellipsis {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

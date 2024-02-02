@@ -2,7 +2,7 @@
   <contents-overlay
     :title="(player?.name || '') + (player?.token ? '(あなた)' : '')"
     color="bg-light-green"
-    :modal-value="Boolean(modalValue)"
+    :model-value="Boolean(modelValue)"
     image="white_00053.jpg"
     @close="emits('close')"
   >
@@ -27,12 +27,7 @@
           />
         </v-list-item>
         <v-list-item class="mt-2" v-if="isUserControl && player">
-          <delete-menu-btn
-            :target-name="player.name || ''"
-            type="参加者"
-            :sessionId="graphQlStore?.state.session?.id || ''"
-            @execute="onDeletePlayer()"
-          />
+          <delete-menu-btn :target-name="player.name || ''" type="参加者" @execute="onDeletePlayer()" />
         </v-list-item>
       </v-list>
     </v-card-text>
@@ -49,7 +44,7 @@ import { computed, inject, ref, watch } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
-  modalValue: string
+  modelValue: string
 }>()
 
 const emits = defineEmits<{
@@ -60,8 +55,8 @@ const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
 const player = computed(() => {
   if (!graphQlStore) return null
-  if (graphQlStore.state.player?.id === props.modalValue) return graphQlStore.state.player
-  return graphQlStore.state.players.find(p => p.id === props.modalValue)
+  if (graphQlStore.state.player?.id === props.modelValue) return graphQlStore.state.player
+  return graphQlStore.state.players.find(p => p.id === props.modelValue)
 })
 
 const isLoading = ref(false)
@@ -75,7 +70,7 @@ watch(
 
 function onChangeIcon() {
   isLoading.value = true
-  graphQlStore?.updatePlayerIcon(props.modalValue)
+  graphQlStore?.updatePlayerIcon(props.modelValue)
 }
 
 async function onDeletePlayer() {

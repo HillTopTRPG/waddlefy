@@ -92,7 +92,7 @@
 
         <nav-dialog
           title="あなたの設定"
-          :modal-value="dialogInNav === 'profile'"
+          :model-value="dialogInNav === 'profile'"
           @close="dialogInNav = ''"
           class="my-16"
           v-if="isReady"
@@ -162,6 +162,7 @@
 
 <script lang="ts" setup>
 import NavDialog from '@/components/NavDialog.vue'
+import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import UserAvatar from '@/components/parts/UserAvatar.vue'
 import UserNavItem from '@/components/parts/UserNavItem.vue'
 import { computed, inject, onMounted, ref, watch } from 'vue'
@@ -169,7 +170,6 @@ import { computed, inject, onMounted, ref, watch } from 'vue'
 import { DEFAULT_SESSION_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 

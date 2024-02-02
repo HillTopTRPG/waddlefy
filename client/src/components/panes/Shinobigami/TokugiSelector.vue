@@ -51,8 +51,13 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
-        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSubmit()">保存</v-btn>
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="opened = false"
+          :text="$t('label.cancel')"
+        />
+        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSubmit()" :text="$t('label.save')" />
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -62,7 +67,6 @@
 import { SkillKind, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   value: string
   label: string
