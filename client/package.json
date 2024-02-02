@@ -12,7 +12,8 @@
     "format": "prettier --write src",
     "format:v": "prettier -v",
     "format:ci": "prettier --check src",
-    "format:ci2": "prettier src/components/panes/Shinobigami/shinobigami.ts"
+    "format:ci2": "prettier src/components/panes/Shinobigami/shinobigami.ts",
+    "format:ci3": "prettier src/components/panes/Shinobigami/shinobigami-scenario.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
