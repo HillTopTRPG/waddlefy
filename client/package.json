@@ -8,7 +8,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --host --port=83",
     "lint": "eslint . --fix",
-    "format": "prettier --write src",
+    "format": "prettier --write src --config .prettierrc.yaml",
     "format:ci": "prettier --check src --config .prettierrc.yaml"
   },
   "dependencies": {
