@@ -11,7 +11,8 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src",
     "format:v": "prettier -v",
-    "format:ci": "prettier --check src"
+    "format:ci": "prettier --check src",
+    "format:ci2": "prettier src/components/panes/Shinobigami/shinobigami.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
