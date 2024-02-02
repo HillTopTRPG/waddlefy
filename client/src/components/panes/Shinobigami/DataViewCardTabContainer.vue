@@ -215,25 +215,23 @@ const otherHandouts = computed(() => {
 const tab = ref('session-memo')
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
-const privateMemo = computed(
-  () =>
-    graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'shinobigami-handout-private-memo') return false
-      if (sd.data.handoutId !== props.handoutId) return false
-      if (isUserControl.value) {
-        if (sd.data.ownerType === 'user') return true
-      } else {
-        if (sd.data.ownerType === 'player' && sd.data.ownerId !== graphQlStore?.state.player?.id) return true
-      }
-      return false
-    })
+const privateMemo = computed(() =>
+  graphQlStore?.state.sessionDataList.find(sd => {
+    if (sd.type !== 'shinobigami-handout-private-memo') return false
+    if (sd.data.handoutId !== props.handoutId) return false
+    if (isUserControl.value) {
+      if (sd.data.ownerType === 'user') return true
+    } else {
+      if (sd.data.ownerType === 'player' && sd.data.ownerId !== graphQlStore?.state.player?.id) return true
+    }
+    return false
+  })
 )
-const sessionMemo = computed(
-  () =>
-    graphQlStore?.state.sessionDataList.find(sd => {
-      if (sd.type !== 'shinobigami-handout-session-memo') return false
-      return sd.data.handoutId === props.handoutId
-    })
+const sessionMemo = computed(() =>
+  graphQlStore?.state.sessionDataList.find(sd => {
+    if (sd.type !== 'shinobigami-handout-session-memo') return false
+    return sd.data.handoutId === props.handoutId
+  })
 )
 
 async function updateSessionMemo(text: string) {
