@@ -28,12 +28,7 @@ Resources:
     Properties:
       Location: s3-static.template.yaml
       Parameters:
-        OAI: !GetAtt CloudFrontOriginAccessIdentity.Id
-  RoomBucketStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: s3-room.template.yaml
-      Parameters:
+        ProjectName: !Ref ProjectName
         OAI: !GetAtt CloudFrontOriginAccessIdentity.Id
 
   # CloudFront
@@ -42,9 +37,9 @@ Resources:
     Properties:
       Location: cloud-front.template.yaml
       Parameters:
+        ProjectName: !Ref ProjectName
         RESTApiDomainName: !GetAtt ApiGatewayRESTApiStack.Outputs.DomainName
         StaticBucketDomainName: !GetAtt StaticBucketStack.Outputs.RegionalDomainName
-        RoomBucketDomainName: !GetAtt RoomBucketStack.Outputs.RegionalDomainName
         OAI: !GetAtt CloudFrontOriginAccessIdentity.Id
 
   # API Gateway
@@ -53,6 +48,7 @@ Resources:
     Properties:
       Location: gateway.template.yaml
       Parameters:
+        ProjectName: !Ref ProjectName
         AppSyncConnectInfoFunctionArn: !GetAtt AppSyncConnectInfoFunctionStack.Outputs.FunctionArn
 
   # Lambda

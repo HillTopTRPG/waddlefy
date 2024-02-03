@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy S3 Bucket static
 
 Parameters:
+  ProjectName:
+    Type: String
   OAI:
     Type: String
 
@@ -12,13 +14,13 @@ Resources:
     DeletionPolicy: Delete
     UpdateReplacePolicy: Delete
     Properties:
-      BucketName: !Sub 'waddlefy-${AWS::AccountId}-static'
+      BucketName: !Sub '${ProjectName}-${AWS::AccountId}-static'
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
       Tags:
         - Key: CloudFormationArn
-          Value: !Sub 'waddlefy-${AWS::AccountId}-static'
+          Value: !Sub '${ProjectName}-${AWS::AccountId}-static'
 
   StaticBucketPolicy:
     Type: AWS::S3::BucketPolicy
