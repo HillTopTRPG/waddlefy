@@ -183,6 +183,7 @@
         />
 
         <user-nav-item
+          v-if="isUserControl"
           title="セッションの設定"
           :rail="rail"
           icon="home"
