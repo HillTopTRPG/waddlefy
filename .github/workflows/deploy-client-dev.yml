@@ -36,7 +36,6 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: upload files to S3
         working-directory: ./client
-        run: |
-          aws s3 cp --recursive ${{env.SOURCE_DIR}} s3://${{secrets.AWS_S3_BUCKET_DEV}}/ --exclude '.*git*'
+        run: aws s3 cp --recursive ${{env.SOURCE_DIR}} s3://${{secrets.AWS_S3_BUCKET_DEV}}/ --exclude '.*git*'
       - name: cloud front cache clear
         run: aws cloudfront create-invalidation --distribution-id ${{secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV}} --paths "/*"
