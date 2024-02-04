@@ -1,72 +1,66 @@
 <template>
-  <v-main class="bg-transparent">
-    <v-container class="px-0 px-sm-16">
-      <div class="position-fixed" style="left: 0; bottom: 0; z-index: 0">
-        <logo-component color="#aaa" height="90vh" class="ml-md-16" />
-      </div>
-      <v-row class="pt-0 pt-md-16 align-md-end">
-        <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-end position-relative">
-          <v-list>
-            <v-list-subheader v-if="players.length">他の参加者</v-list-subheader>
-            <template v-for="p in players" :key="p.id">
-              <v-list-item>
-                <v-list-item-title>{{ p.name }}</v-list-item-title>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-col>
-        <v-col cols="12" md="6" class="px-0 d-flex justify-center justify-md-start position-relative">
-          <v-card
-            elevation="5"
-            class="d-inline-block text-left pa-4"
-            :class="signUpFailure ? 'failure' : undefined"
-            style="background-color: rgba(255, 255, 255, 0.5)"
-          >
-            <v-card-title v-if="player"
-              >ようこそ <span class="text-h4">{{ player?.name }}</span> さん</v-card-title
-            >
-            <v-card-text class="ma-0 pa-0">
-              <v-text-field
-                v-if="!player"
-                label="なまえ*"
-                :rules="[x => !!x || '必須項目']"
-                variant="solo-filled"
-                v-model="playerName"
-                @keydown.enter="$event.keyCode === 13 && playerName && passwordElm.focus()"
-                ref="userNameElm"
-              />
-              <v-text-field
-                label="パスワード"
-                type="password"
-                :hide-details="true"
-                class="mb-1"
-                variant="solo-filled"
-                v-model="password"
-                @keydown.enter="$event.keyCode === 13 && callSignUp()"
-                ref="passwordElm"
-              />
-            </v-card-text>
-            <v-card-actions class="justify-center">
-              <v-btn
-                variant="elevated"
-                size="large"
-                rounded
-                color="primary"
-                class="px-5"
-                text="参加"
-                :disabled="!ready || (player ? false : !playerName)"
-                :loading="!ready"
-                @click="callSignUp()"
-              />
-            </v-card-actions>
-            <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
-              参加に失敗しました
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+  <top-page-layout>
+    <v-list v-if="players.length">
+      <v-list-subheader>他の参加者</v-list-subheader>
+      <template v-for="p in players" :key="p.id">
+        <v-list-item>
+          <v-list-item-title>{{ p.name }}</v-list-item-title>
+        </v-list-item>
+      </template>
+    </v-list>
+
+    <h1 class="text-primary">
+      ようこそ <span class="text-h4">{{ player?.name }}</span> さん
+    </h1>
+    <v-card
+      elevation="3"
+      class="pa-3"
+      min-width="18em"
+      :class="signUpFailure ? 'failure' : undefined"
+      style="background-color: rgba(255, 255, 255, 0.5)"
+    >
+      <v-card-item class="pb-0" v-if="!player">
+        <v-text-field
+          label="なまえ*"
+          :rules="[x => !!x || '必須項目']"
+          hint="必須項目"
+          persistent-hint
+          class="ma-1"
+          variant="solo-filled"
+          v-model="playerName"
+          @keydown.enter="$event.keyCode === 13 && playerName && passwordElm.focus()"
+          ref="userNameElm"
+        />
+      </v-card-item>
+      <v-card-item class="pb-0">
+        <v-text-field
+          label="パスワード"
+          type="password"
+          class="ma-1"
+          variant="solo-filled"
+          v-model="password"
+          @keydown.enter="$event.keyCode === 13 && callSignUp()"
+          ref="passwordElm"
+        />
+      </v-card-item>
+      <v-card-actions>
+        <v-btn
+          variant="elevated"
+          size="large"
+          block
+          color="primary"
+          class="px-5"
+          text="参加"
+          :disabled="!ready || (player ? false : !playerName)"
+          :loading="!ready"
+          @click="callSignUp()"
+        />
+      </v-card-actions>
+      <v-card-actions class="justify-center pa-0 font-weight-bold" v-if="signUpFailure">
+        参加に失敗しました
+      </v-card-actions>
+    </v-card>
+  </top-page-layout>
 </template>
 
 <script lang="ts" setup>
@@ -79,10 +73,10 @@ import {
   resetPlayerPassword
 } from '@/components/graphql/graphql'
 import { AbstractPlayer, Queries, QueryResult } from '@/components/graphql/schema'
-import LogoComponent from '@/components/parts/LogoComponent.vue'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { ref } from 'vue'
 
+import TopPageLayout from '@/pages/TopPageLayout.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -127,6 +121,7 @@ async function init() {
       mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
     })
+    console.log(JSON.stringify(result, null, 2))
     const getSessionPlayer = result?.data?.getSessionPlayer
     if (getSessionPlayer) {
       players.value = []

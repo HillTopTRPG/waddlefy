@@ -3,6 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: Waddlefy API Gateway
 
 Parameters:
+  ProjectName:
+    Type: String
   AppSyncConnectInfoFunctionArn:
     Type: String
 
@@ -10,7 +12,7 @@ Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
-      Name: waddlefy-REST-API
+      Name: !Sub ${ProjectName}-REST-API
       StageName: Prod
       DefinitionBody:
         openapi: '3.0'
