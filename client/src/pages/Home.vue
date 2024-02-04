@@ -66,11 +66,8 @@
 import { fetchGraphQlConnectionInfo, makeGraphQlClient, userSignIn } from '@/components/graphql/graphql'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { ref } from 'vue'
-import { useDisplay } from 'vuetify'
 
 import TopPageLayout from '@/pages/TopPageLayout.vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
 
 const defaultUserId = localStorage.getItem('userId') || ''
 const userId = ref(defaultUserId)
@@ -84,8 +81,6 @@ const loginFailure = ref(false)
 
 const graphqlRef = ref('')
 const regionRef = ref('')
-
-const { xs } = useDisplay()
 
 async function init() {
   const { graphql, region } = await fetchGraphQlConnectionInfo()
