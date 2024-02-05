@@ -13,7 +13,7 @@ runs:
   steps:
     - id: diff
       env:
-        TARGET_BRANCH: ${{ github.base_ref }}
+        TARGET_BRANCH: ${{ github.ref_name }}
       run: |
         git fetch origin ${TARGET_BRANCH}
         count=`git diff origin/${TARGET_BRANCH} HEAD --name-only --relative=${{ inputs.subdir }} | wc -l`
