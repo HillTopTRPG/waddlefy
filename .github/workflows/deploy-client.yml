@@ -1,20 +1,17 @@
-name: Deploy
+name: Deploy client
 
 on:
   push:
-    branches:
-      - '*'
-      - '*/*'
-      - '**'
-      - '!main'
     paths:
       - 'client/**'
 
 env:
-  SOURCE_DIR: dist/
+  AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/main' && ${{secrets.AWS_S3_BUCKET}} || ${{secrets.AWS_S3_BUCKET_DEV}} }}
+  AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV: ${{ github.ref == 'refs/heads/main' && ${{secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID}} || ${{secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV}} }}
 
 jobs:
-  dev:
+  execute:
+    name: Deploy client to ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
@@ -38,6 +35,6 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: upload files to S3
         working-directory: ./client
-        run: aws s3 cp --recursive ${{env.SOURCE_DIR}} s3://${{secrets.AWS_S3_BUCKET_DEV}}/ --exclude '.*git*'
+        run: aws s3 cp --recursive dist/ s3://${{env.AWS_S3_BUCKET}}/ --exclude '.*git*'
       - name: cloud front cache clear
-        run: aws cloudfront create-invalidation --distribution-id ${{secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV}} --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{env.AWS_CLOUD_FRONT_DISTRIBUTION_ID}} --paths "/*"
