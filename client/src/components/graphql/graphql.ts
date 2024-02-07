@@ -1183,12 +1183,17 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             option: JSON.parse(data.option) as DashboardOption
           }
           state.dashboards.push(dashboard)
-          state.dashboard = {
-            ...dashboard,
-            layout: JSON.parse(data.layout) as Layout,
-            option: JSON.parse(data.option) as DashboardOption
+          if (state.dashboard) {
+            state.dashboard.layout = null
           }
-          state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
+          setTimeout(() => {
+            state.dashboard = {
+              ...dashboard,
+              layout: JSON.parse(data.layout) as Layout,
+              option: JSON.parse(data.option) as DashboardOption
+            }
+            state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
+          })
         }
       },
       error(errorValue: any) {

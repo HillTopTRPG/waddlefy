@@ -145,13 +145,12 @@ export function createTokugi(
     isOutputSingleDamage
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(json.learned as any[])
-    .filter(t => t.id)
-    .forEach(t => {
-      const id = t.id
-
-      const row = parseInt(id.match(/row([0-9]+)/)[1])
-      const column = parseInt(id.match(/name([0-9]+)/)[1])
+  const learned: any = json.learned
+  learned
+    .filter(({ id }: { id: string | undefined }) => Boolean(id))
+    .forEach(({ id }: { id: string }) => {
+      const row = parseInt(id.match(/row([0-9]+)/)?.at(1) || '0')
+      const column = parseInt(id.match(/name([0-9]+)/)?.at(1) || '0')
       const name = SkillTable[row][column]
 
       tokugi.learnedList.push({ column, row, name })
