@@ -1,0 +1,49 @@
+name: Deploy AppSync
+
+on:
+  push:
+    paths:
+      - 'sam/2.app-sync'
+
+env:
+  SOURCE_DIR: dist/
+  PROJECT_NAME: ${{ github.ref == 'refs/heads/main' && 'waddlefy' || 'dev-waddlefy' }}
+  SERVICE_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_SERVICE_ROLE_ARN || secrets.AWS_SERVICE_ROLE_ARN_DEV }}
+
+jobs:
+  deploy:
+    name: Deploy AppSync to ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: setup python
+        uses: actions/setup-python@v5.0.0
+      - name: setup Node.js
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: ./sam/lambda/nodejs/package-lock.json
+      - run: npm i
+        working-directory: ./sam/lambda/nodejs
+      - run: npm i -g esbuild wscat
+      - name: setup sam
+        uses: aws-actions/setup-sam@v2
+      - name: aws config
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: build
+        run: sam build
+        working-directory: ./sam/2.app-sync
+      - name: deploy
+        run: |
+          sam deploy --stack-name ${{ env.PROJECT_NAME }}-app-sync \
+          --s3-bucket sam-deploy-source-waddlefy \
+          --force-upload \
+          --s3-prefix ${{ env.PROJECT_NAME }} \
+          --parameter-overrides ProjectName=${{ env.PROJECT_NAME }} ServiceRoleArn=${{ env.SERVICE_ROLE_ARN }} \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+        working-directory: ./sam/2.app-sync
