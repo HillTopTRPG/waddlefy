@@ -1,7 +1,7 @@
 <template>
   <v-app-bar density="default" color="primary" class="text-center">
     <v-spacer />
-    <v-app-bar-nav-icon flat :ripple="false" class="bg-white pa-1 align-self-center">
+    <v-app-bar-nav-icon :flat="true" :ripple="false" class="bg-white pa-1 align-self-center" style="pointer-events: none">
       <logo-component color="#333" width="35px" height="35px" :stroke-width="0.7" />
     </v-app-bar-nav-icon>
     <ruby class="text-h5 ml-2" style="ruby-position: over">Waddlefy<rt>ワドルフィ</rt></ruby>
