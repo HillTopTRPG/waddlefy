@@ -184,6 +184,7 @@
         <user-nav-item
           v-if="isUserControl"
           title="セッションの設定"
+          subtitle="主催者専用"
           :rail="rail"
           icon="home"
           :toggle="false"
