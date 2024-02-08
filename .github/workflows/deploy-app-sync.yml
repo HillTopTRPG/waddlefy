@@ -5,6 +5,7 @@ on:
     paths:
       - 'sam/2.app-sync/**'
       - 'sam/lambda/**'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: ${{ github.ref == 'refs/heads/main' && 'waddlefy' || 'dev-waddlefy' }}
