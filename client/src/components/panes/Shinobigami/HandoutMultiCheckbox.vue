@@ -12,7 +12,7 @@
       v =>
         emits(
           'update',
-          [v].flat().map(v => v?.toString() || '')
+          [v].flat().map(v => v?.toString() || 'false')
         )
     "
   >
@@ -30,6 +30,7 @@ import { computed, inject } from 'vue'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list: string[]
   exclude?: string

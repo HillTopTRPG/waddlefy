@@ -3,10 +3,11 @@ name: Deploy AppSync
 on:
   push:
     paths:
-      - 'sam/2.app-sync'
+      - 'sam/2.app-sync/**'
+      - 'sam/lambda/**'
+  workflow_dispatch:
 
 env:
-  SOURCE_DIR: dist/
   PROJECT_NAME: ${{ github.ref == 'refs/heads/main' && 'waddlefy' || 'dev-waddlefy' }}
   SERVICE_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_SERVICE_ROLE_ARN || secrets.AWS_SERVICE_ROLE_ARN_DEV }}
 
@@ -19,7 +20,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v5.0.0
       - name: setup Node.js
-        uses: actions/setup-node@v4.0.1
+        uses: actions/setup-node@v4.0.2
         with:
           node-version: 18
           cache: npm
@@ -34,7 +35,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ap-northeast-1
       - name: build
         run: sam build
         working-directory: ./sam/2.app-sync

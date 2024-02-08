@@ -1,11 +1,45 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
-  - package-ecosystem: "github-actions" # See documentation for possible values
-    directory: "./client" # Location of package manifests
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: "dependabot/github-actions/main"
     schedule:
-      interval: "daily"
+      interval: daily
+  - package-ecosystem: npm
+    directory: ./sam/lambda/nodejs
+    schedule:
+      interval: daily
+    target-branch: "dependabot/npm/sam/main"
+  - package-ecosystem: npm
+    directory: ./client
+    schedule:
+      interval: daily
+    target-branch: "dependabot/npm/client/main"
+    groups:
+      aws-appsync:
+        patterns:
+          - "aws-appsync-*"
+          - "@apollo/client"
+          - "@aws-sdk/client-appsync"
+      dotenv:
+        patterns:
+          - "dotenv*"
+      vue:
+        patterns:
+          - "vue*"
+          - "@vue*"
+          - "@volar/vue-typescript"
+        exclude-patterns:
+          - "@vue/eslint-config-prettier"
+
+      vite:
+        patterns:
+          - "vite*"
+          - "@vitejs*"
+      prettier:
+        patterns:
+          - "prettier*"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@typescript-eslint*"

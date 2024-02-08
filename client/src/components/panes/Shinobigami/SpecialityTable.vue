@@ -200,9 +200,9 @@ function onChangeBlank(col: number, value: boolean) {
   }
 }
 
-function onChangeOutRow(outRow: boolean) {
+function onChangeOutRow(outRow: boolean | null) {
   if (!tokugi.value) return
-  tokugi.value.outRow = outRow
+  tokugi.value.outRow = outRow || false
   changeHandler(true)
 }
 </script>
