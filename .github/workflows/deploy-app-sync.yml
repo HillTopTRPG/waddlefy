@@ -3,8 +3,8 @@ name: Deploy AppSync
 on:
   push:
     paths:
-      - 'sam/2.app-sync'
-      - 'sam/lambda'
+      - 'sam/2.app-sync/**'
+      - 'sam/lambda/**'
 
 env:
   PROJECT_NAME: ${{ github.ref == 'refs/heads/main' && 'waddlefy' || 'dev-waddlefy' }}
