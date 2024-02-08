@@ -22,7 +22,7 @@ jobs:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
           GIT_PR_RELEASE_BRANCH_STAGING: dependabot/npm/sam/main
-        run:
+        run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "error<<$EOF" >> $GITHUB_OUTPUT
           git-pr-release --squashed >> $GITHUB_OUTPUT || true
