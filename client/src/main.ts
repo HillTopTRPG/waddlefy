@@ -65,12 +65,6 @@ const i18n = createI18n({
 
 const app = createApp(App)
 
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
-app.component('DynamicScroller', DynamicScroller)
-app.component('DynamicScrollerItem', DynamicScrollerItem)
-
 register(app)
 registerPlugins(app)
 
