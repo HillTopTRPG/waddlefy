@@ -15,7 +15,7 @@
     "@apollo/client": "^3.9.4",
     "@aws-sdk/client-appsync": "^3.509.0",
     "@mdi/font": "7.3.67",
-    "@types/lodash": "^4.14.200",
+    "@types/lodash": "^4.14.202",
     "@types/splitpanes": "^2.2.4",
     "aws-appsync-auth-link": "^3.0.7",
     "aws-appsync-subscription-link": "^3.1.3",
