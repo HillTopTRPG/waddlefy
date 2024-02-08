@@ -4,9 +4,9 @@ on:
   push:
     paths:
       - 'sam/2.app-sync'
+      - 'sam/lambda'
 
 env:
-  SOURCE_DIR: dist/
   PROJECT_NAME: ${{ github.ref == 'refs/heads/main' && 'waddlefy' || 'dev-waddlefy' }}
   SERVICE_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_SERVICE_ROLE_ARN || secrets.AWS_SERVICE_ROLE_ARN_DEV }}
 
