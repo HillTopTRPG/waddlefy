@@ -6,8 +6,8 @@ on:
       - 'client/**'
 
 env:
-  AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/main' && ${{secrets.AWS_S3_BUCKET}} || ${{secrets.AWS_S3_BUCKET_DEV}} }}
-  AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV: ${{ github.ref == 'refs/heads/main' && ${{secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID}} || ${{secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV}} }}
+  AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/main' && secrets.AWS_S3_BUCKET || secrets.AWS_S3_BUCKET_DEV }}
+  AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV: ${{ github.ref == 'refs/heads/main' && secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID || secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV }}
 
 jobs:
   execute:
