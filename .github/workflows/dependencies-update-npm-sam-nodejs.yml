@@ -16,9 +16,19 @@ jobs:
           ruby-version: 3.0.6
       - name: Install git-pr-release
         run: gem install --no-document git-pr-release
-      - name: Run git-pr-release
-        run: git-pr-release --squashed
+      - id: git-pr-release
+        name: Run git-pr-release
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
           GIT_PR_RELEASE_BRANCH_STAGING: dependabot/npm/sam/main
+        run:
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "error<<$EOF" >> $GITHUB_OUTPUT
+          git-pr-release --squashed >> $GITHUB_OUTPUT || true
+          echo "$EOF" >> $GITHUB_OUTPUT
+        continue-on-error: true
+      - if: ${{ steps.git-pr-release.outputs.error != '' && !contains(steps.git-pr-release.outputs.error, 'No pull requests to be released') }}
+        run: |
+          echo '::error ::git-pr-release failed with "${{ steps.git-pr-release.outputs.error }}"'
+          exit 1
