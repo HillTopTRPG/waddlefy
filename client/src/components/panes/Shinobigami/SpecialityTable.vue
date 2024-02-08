@@ -10,7 +10,7 @@
                 :hide-details="true"
                 v-if="editing"
                 :model-value="info?.spaceList.some(s => s === idx)"
-                @update:model-value="v => onChangeBlank(idx, v)"
+                @update:model-value="v => onChangeBlank(idx, v || false)"
               />
             </th>
             <th>
@@ -20,7 +20,7 @@
                   density="compact"
                   :hide-details="true"
                   :model-value="info?.damagedColList.some(c => c === idx)"
-                  @update:model-value="v => onChangeDamaged(idx, v)"
+                  @update:model-value="v => onChangeDamaged(idx, v || false)"
                 />
               </span>
             </th>
@@ -71,7 +71,7 @@
       direction="horizontal"
       :inline="true"
       :model-value="editing"
-      @update:model-value="v => emits('update:editing', v)"
+      @update:model-value="v => emits('update:editing', v || false)"
       v-if="editable"
     >
       <v-radio :value="true" label="設定" density="compact" />
@@ -200,9 +200,9 @@ function onChangeBlank(col: number, value: boolean) {
   }
 }
 
-function onChangeOutRow(outRow: boolean) {
+function onChangeOutRow(outRow: boolean | null) {
   if (!tokugi.value) return
-  tokugi.value.outRow = outRow
+  tokugi.value.outRow = outRow || false
   changeHandler(true)
 }
 </script>
