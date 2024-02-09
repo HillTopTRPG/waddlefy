@@ -2,7 +2,7 @@
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fwaddlefy.net&label=https://waddlefy.net)](https://waddlefy.net) [![GitHub Release](https://img.shields.io/github/v/release/HillTopTRPG/waddlefy?label=version)](https://github.com/HillTopTRPG/waddlefy/releases)
 
 For Developers  
-[![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/HillTopTRPG/waddlefy/dev/typescript?filename=client%2Fpackage.json)](https://github.com/Microsoft/TypeScript)
+[![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/HillTopTRPG/waddlefy/typescript?filename=client%2Fpackage.json)](https://github.com/Microsoft/TypeScript)
 [![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/HillTopTRPG/waddlefy/dev/vite?filename=client%2Fpackage.json)](https://github.com/vitejs/vite)
 [![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/HillTopTRPG/waddlefy/vuetify?filename=client%2Fpackage.json)](https://github.com/vuetifyjs/vuetify)
 [![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/HillTopTRPG/waddlefy/vue?filename=client%2Fpackage.json)](https://github.com/vuejs/core)
