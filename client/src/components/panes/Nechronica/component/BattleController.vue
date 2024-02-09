@@ -164,12 +164,12 @@ function getBattleDataInfo() {
 
 type OptionItem = { text: string; value: string; color: string }
 
-function makeUseOptionItem(base: string, num: number): OptionItem | null {
-  if (!num) return null
+function makeUseOptionItem(base: string, value: number | boolean): OptionItem | null {
+  if (!value) return null
   const optionItems: { [key: string]: OptionItem } = mapping.optionItems
   return {
     ...optionItems[base],
-    text: t(optionItems[base].text).replace('$$', num.toString())
+    text: t(optionItems[base].text).replace('$$', value.toString())
   }
 }
 
@@ -199,7 +199,7 @@ const battleOption = computed(
       overCountNum,
       maxAllCurrentActionValue
     } = getBattleDataInfo()
-    const maneuverStackLength = singleton.value?.data.maneuverStack?.length || 0
+    const deleteCharacterHistoryFlg = Boolean(singleton.value?.data.maneuverStack?.length)
     const unOpenPawns = targets.filter(t => t.data.type !== 'doll' && t.data.hide)
 
     const battleStart = [
@@ -209,22 +209,22 @@ const battleOption = computed(
       makeUseOptionItemSimple('move-everybody-init-location'),
       makeUseOptionItemSimple('init-battle-count'),
       makeUseOptionItem('all-maneuver-to-unused', usedManeuverCharacterNum),
-      makeUseOptionItem('delete-character-history', maneuverStackLength)
+      makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg)
     ].filter((item): item is OptionItem => Boolean(item))
 
     const countDown = [
       makeUseOptionItem('down-count-of', downBattleCount),
       makeUseOptionItem('all-action-maneuver-to-unused', usedActionManeuverCharacterNum),
-      makeUseOptionItem('delete-character-history', maneuverStackLength),
+      makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg),
       makeUseOptionItem('down-un-action-character-action-value', overCountNum)
     ].filter((item): item is OptionItem => Boolean(item))
 
     const nextTurn = [
-      makeUseOptionItem('all-action-values-above-0-to-0', maxAllCurrentActionValue),
+      makeUseOptionItem('all-action-values-above-0-to-0', maxAllCurrentActionValue > 0),
       makeUseOptionItem('exempt-damaged-maneuvers-from-the-bravado', ignoreBravadoCharacterNum),
       makeUseOptionItem('all-action-maneuver-to-unused', usedActionManeuverCharacterNum),
       makeUseOptionItemSimple('recover-action-value-by-max-action-value'),
-      makeUseOptionItem('delete-character-history', maneuverStackLength),
+      makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg),
       makeUseOptionItemSimple('reset-battle-count')
     ].filter((item): item is OptionItem => Boolean(item))
 
