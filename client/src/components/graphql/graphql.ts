@@ -556,10 +556,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     await updateNechronicaCharacter(characterId, cloned)
   }
 
-  async function updateSingleton(singletonId: string, dataObj: any) {
-    await updateSessionDataHelper(singletonId, JSON.stringify(dataObj))
-  }
-
   async function updateShinobigamiHandoutSessionMemo(sessionMemoId: string, handoutId: string, text: string) {
     await updateSessionDataHelper(
       sessionMemoId,
@@ -1078,8 +1074,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addSingleton(dataObj: any): Promise<void> {
-    await addSessionDataHelper('singleton', JSON.stringify(dataObj))
+  async function addNechronicaSingleton(dataObj: any): Promise<void> {
+    await addSessionDataHelper('nechronica-singleton', JSON.stringify(dataObj))
     // Subscriptionによってstateに登録される
   }
 
@@ -1618,19 +1614,20 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     }, 300)
   }
 
-  async function updateSingletonHelper<T>(makeData: (data: Partial<T>) => T | null) {
-    const singleton = state.sessionDataList.find(sd => sd.type === 'singleton')
+  async function updateNechronicaSingletonHelper<T>(makeData: (data: Partial<T>) => T | null) {
+    const singleton = state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
     if (singleton) {
       const cloned = clone(singleton.data)!
       const updateData = makeData(cloned)
       if (!updateData) return
-      if (JSON.stringify(singleton.data) !== JSON.stringify(updateData)) {
-        await updateSingleton(singleton.id, updateData)
+      const updateDataStr = JSON.stringify(updateData)
+      if (JSON.stringify(singleton.data) !== updateDataStr) {
+        await updateSessionDataHelper(singleton.id, updateDataStr)
       }
     } else {
       const data = makeData({})
       if (!data) return
-      await addSingleton(data)
+      await addNechronicaSingleton(data)
     }
   }
 
@@ -1679,7 +1676,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateShinobigamiPersona,
     updateShinobigamiPrize,
     updateNechronicaCharacterHelper,
-    updateSingletonHelper
+    updateNechronicaSingletonHelper
   }
 }
 

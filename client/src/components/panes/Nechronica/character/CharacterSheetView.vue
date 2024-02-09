@@ -154,14 +154,14 @@ function judgeView(maneuver: NechronicaManeuver) {
 }
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
-  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
 )
 
 async function addManeuverStack(
   characterId: string,
   callback: (base: NechronicaManeuverStackBase) => NechronicaManeuverStack
 ) {
-  await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+  await graphQlStore?.updateNechronicaSingletonHelper<NechronicaSingleton>(d => {
     const maneuverStack = singleton.value?.data.maneuverStack || []
     const cloned = clone(maneuverStack)!
     const idx = cloned.findIndex(c => !c.status)

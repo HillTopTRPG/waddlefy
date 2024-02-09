@@ -36,7 +36,7 @@ import draggable from 'vuedraggable'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
-  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
 )
 
 function createDraggableStackWrap(draggable: boolean): (NechronicaManeuverStack & { id: string })[] {
@@ -66,7 +66,7 @@ watch(
   async () => {
     const after = allStackWrap.value.map(v => omit(v, 'id'))
     if (JSON.stringify(singleton.value?.data.maneuverStack) === JSON.stringify(after)) return
-    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+    await graphQlStore?.updateNechronicaSingletonHelper<NechronicaSingleton>(d => {
       const result: NechronicaSingleton = {
         ...d,
         maneuverStack: allStackWrap.value.map(v => omit(v, 'id') as NechronicaManeuverStack)
@@ -90,7 +90,7 @@ async function onResolveStack(index: number) {
       ms.start = startIndex.value
       ms.end = index
     })
-  await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+  await graphQlStore?.updateNechronicaSingletonHelper<NechronicaSingleton>(d => {
     const result: NechronicaSingleton = {
       ...d,
       maneuverStack: cloned
@@ -117,7 +117,7 @@ async function onCancelStack(index: number) {
       c.position = ms.beforePlace
     })
   }
-  await graphQlStore?.updateSingletonHelper(d => {
+  await graphQlStore?.updateNechronicaSingletonHelper(d => {
     const maneuverStack = clone(singleton.value?.data.maneuverStack || [])!
     maneuverStack.splice(index, 1)
     const result: NechronicaSingleton = {

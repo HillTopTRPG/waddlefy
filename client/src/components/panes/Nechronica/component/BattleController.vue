@@ -64,7 +64,7 @@ const emits = defineEmits<{
 }>()
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
-  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'singleton')
+  graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
 )
 
 function updateProgress(total: number, current: number) {
