@@ -2,6 +2,7 @@
   <v-sheet
     class="w-100 d-flex flex-row flex-wrap align-end position-sticky pa-1"
     style="gap: 0.5rem; top: 0; z-index: 1"
+    v-if="battleOption.characters.length > 0"
   >
     <multi-select-menu
       v-if="!perspective"
@@ -10,7 +11,7 @@
       :color="battleOption.battleStartColor"
       @execute="onBattleStart"
     />
-    <span class="d-flex flex-row align-end pb-1">
+    <span class="d-flex flex-row align-end pb-1" v-if="battleCountStatus > NON_BATTLE_COUNT">
       <span class="text-caption" style="line-height: 1em">{{ $t('Nechronica.label.count') }}:</span>
       <span class="text-h5" style="line-height: 1em">{{ singleton?.data.battleCount || 0 }}</span>
     </span>
@@ -24,14 +25,14 @@
       @update:model-value="v => emits('update:battle-timing', v)"
     />
     <multi-select-menu
-      v-if="!perspective && singleton?.data.battleCount"
+      v-if="!perspective && battleCountStatus > 0"
       :title="$t('Nechronica.label.down-count')"
       :color="battleOption.countDownColor"
       :items="battleOption.countDown"
       @execute="onCountDown"
     />
     <multi-select-menu
-      v-if="!perspective"
+      v-if="!perspective && battleCountStatus > NON_BATTLE_COUNT"
       :title="$t('Nechronica.label.next-turn')"
       :items="battleOption.nextTurn"
       :color="battleOption.nextTurnColor"
@@ -47,7 +48,7 @@ import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaSingleton, NechronicaWrap, getActionValueNum } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
-import { computed, inject } from 'vue'
+import { computed, inject, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -65,6 +66,16 @@ const emits = defineEmits<{
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
   graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
+)
+
+watch(
+  singleton,
+  v => {
+    console.log(JSON.stringify(v, null, 2))
+  },
+  {
+    immediate: true
+  }
 )
 
 function updateProgress(total: number, current: number) {
@@ -108,6 +119,13 @@ type BattleDataWrap = {
   afterPosition: number | null
   data: NechronicaWrap
 }
+
+const NON_BATTLE_COUNT = Number.MIN_SAFE_INTEGER + 1
+
+const battleCountStatus = computed<number>(() => {
+  if (singleton.value?.data.battleCount === undefined) return NON_BATTLE_COUNT
+  return singleton.value?.data.battleCount || 0
+})
 
 function getBattleDataInfo() {
   const targets: BattleDataWrap[] = []
@@ -173,14 +191,6 @@ function makeUseOptionItem(base: string, value: number | boolean): OptionItem | 
   }
 }
 
-function makeUseOptionItemSimple(base: string): OptionItem {
-  const optionItems: { [key: string]: OptionItem } = mapping.optionItems
-  return {
-    ...optionItems[base],
-    text: t(optionItems[base].text)
-  }
-}
-
 const battleOption = computed(
   (): {
     battleStart: OptionItem[]
@@ -205,9 +215,9 @@ const battleOption = computed(
     const battleStart = [
       makeUseOptionItem('open-underling', unOpenPawns.length),
       makeUseOptionItem('exempt-damaged-maneuvers-from-the-bravado', ignoreBravadoCharacterNum),
-      makeUseOptionItemSimple('init-everybody-action-value'),
-      makeUseOptionItemSimple('move-everybody-init-location'),
-      makeUseOptionItemSimple('init-battle-count'),
+      makeUseOptionItem('init-everybody-action-value', targets.length > 0),
+      makeUseOptionItem('move-everybody-init-location', targets.length > 0),
+      makeUseOptionItem('init-battle-count', targets.length > 0),
       makeUseOptionItem('all-maneuver-to-unused', usedManeuverCharacterNum),
       makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg)
     ].filter((item): item is OptionItem => Boolean(item))
@@ -223,12 +233,13 @@ const battleOption = computed(
       makeUseOptionItem('all-action-values-above-0-to-0', maxAllCurrentActionValue > 0),
       makeUseOptionItem('exempt-damaged-maneuvers-from-the-bravado', ignoreBravadoCharacterNum),
       makeUseOptionItem('all-action-maneuver-to-unused', usedActionManeuverCharacterNum),
-      makeUseOptionItemSimple('recover-action-value-by-max-action-value'),
+      makeUseOptionItem('recover-action-value-by-max-action-value', targets.length > 0),
       makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg),
-      makeUseOptionItemSimple('reset-battle-count')
+      makeUseOptionItem('reset-battle-count', targets.length > 0)
     ].filter((item): item is OptionItem => Boolean(item))
 
     return {
+      characters: targets,
       battleStart,
       battleStartColor: 'secondary',
       countDown,
@@ -283,7 +294,7 @@ async function onBattleStart(option: string[]) {
   if (execInitCount || execClearManeuverStack) {
     updateProgress(total, count)
     count++
-    await graphQlStore?.updateSingletonHelper<NechronicaSingleton>(d => {
+    await graphQlStore?.updateNechronicaSingletonHelper<NechronicaSingleton>(d => {
       const result: NechronicaSingleton = {
         ...d
       }
@@ -315,7 +326,7 @@ async function onCountDown(option: string[]) {
     updateProgress(total, count)
     count++
 
-    graphQlStore?.updateSingletonHelper(d => {
+    graphQlStore?.updateNechronicaSingletonHelper(d => {
       const result: NechronicaSingleton = {
         ...d
       }
@@ -386,7 +397,7 @@ async function onNextTurn(option: string[]) {
     updateProgress(total, count)
     count++
 
-    graphQlStore?.updateSingletonHelper(d => {
+    graphQlStore?.updateNechronicaSingletonHelper(d => {
       const result: NechronicaSingleton = {
         ...d
       }
