@@ -36,7 +36,7 @@
     "splitpanes": "^3.1.5",
     "typescript": "^5.3.3",
     "vite-plugin-fonts": "^0.7.0",
-    "vue": "^3.4.16",
+    "vue": "^3.4.17",
     "vue-boring-avatars": "^1.4.0",
     "vue-i18n": "^9.9.1",
     "vue-router": "^4.2.5",
