@@ -193,6 +193,7 @@ function makeUseOptionItem(base: string, value: number | boolean): OptionItem | 
 
 const battleOption = computed(
   (): {
+    characters: BattleDataWrap[]
     battleStart: OptionItem[]
     battleStartColor: string
     countDown: OptionItem[]
