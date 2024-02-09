@@ -55,7 +55,7 @@
     "@storybook/vue3": "^7.6.12",
     "@storybook/vue3-vite": "^7.6.12",
     "@types/jsonp": "^0.2.3",
-    "@types/node": "^20.11.16",
+    "@types/node": "^20.11.17",
     "@types/webfontloader": "^1.6.38",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@vitejs/plugin-vue": "^5.0.3",
