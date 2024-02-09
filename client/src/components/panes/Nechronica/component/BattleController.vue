@@ -163,6 +163,24 @@ function getBattleDataInfo() {
 }
 
 type OptionItem = { text: string; value: string; color: string }
+
+function makeUseOptionItem(base: string, num: number): OptionItem | null {
+  if (!num) return null
+  const optionItems: { [key: string]: OptionItem } = mapping.optionItems
+  return {
+    ...optionItems[base],
+    text: t(optionItems[base].text).replace('$$', num.toString())
+  }
+}
+
+function makeUseOptionItemSimple(base: string): OptionItem {
+  const optionItems: { [key: string]: OptionItem } = mapping.optionItems
+  return {
+    ...optionItems[base],
+    text: t(optionItems[base].text)
+  }
+}
+
 const battleOption = computed(
   (): {
     battleStart: OptionItem[]
@@ -185,99 +203,29 @@ const battleOption = computed(
     const unOpenPawns = targets.filter(t => t.data.type !== 'doll' && t.data.hide)
 
     const battleStart = [
-      unOpenPawns.length
-        ? {
-            value: 'open-pawns',
-            text: t('Nechronica.label.open-underling').replace('$$', unOpenPawns.length.toString()),
-            color: 'warning'
-          }
-        : null,
-      ignoreBravadoCharacterNum
-        ? {
-            value: 'ignore-bravado',
-            text: t('Nechronica.label.exempt-damaged-maneuvers-from-the-bravado').replace(
-              '$$',
-              ignoreBravadoCharacterNum.toString()
-            ),
-            color: 'warning'
-          }
-        : null,
-      { value: 'init-action-value', text: t('Nechronica.label.init-everybody-action-value'), color: 'primary' },
-      { value: 'init-position', text: t('Nechronica.label.move-everybody-init-location'), color: 'primary' },
-      { value: 'init-count', text: t('Nechronica.label.init-battle-count'), color: 'primary' },
-      usedManeuverCharacterNum
-        ? {
-            value: 'init-maneuver-used',
-            text: t('Nechronica.label.all-maneuver-to-unused').replace('$$', usedManeuverCharacterNum.toString()),
-            color: 'warning'
-          }
-        : null,
-      maneuverStackLength
-        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-character-history'), color: 'primary' }
-        : null
+      makeUseOptionItem('open-underling', unOpenPawns.length),
+      makeUseOptionItem('exempt-damaged-maneuvers-from-the-bravado', ignoreBravadoCharacterNum),
+      makeUseOptionItemSimple('init-everybody-action-value'),
+      makeUseOptionItemSimple('move-everybody-init-location'),
+      makeUseOptionItemSimple('init-battle-count'),
+      makeUseOptionItem('all-maneuver-to-unused', usedManeuverCharacterNum),
+      makeUseOptionItem('delete-character-history', maneuverStackLength)
     ].filter((item): item is OptionItem => Boolean(item))
 
     const countDown = [
-      {
-        value: 'count-down',
-        text: t('Nechronica.label.down-count-of').replace('$$', downBattleCount.toString()),
-        color: 'primary'
-      },
-      usedActionManeuverCharacterNum
-        ? {
-            value: 'recovery-action-maneuver',
-            text: t('Nechronica.label.all-action-maneuver-to-unused').replace(
-              '$$',
-              usedActionManeuverCharacterNum.toString()
-            ),
-            color: 'primary'
-          }
-        : null,
-      maneuverStackLength
-        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-character-history'), color: 'primary' }
-        : null,
-      overCountNum
-        ? {
-            value: 'Nechronica.label.character-count-down',
-            text: t('Nechronica.label.down-un-action-character-action-value').replace('$$', overCountNum.toString()),
-            color: 'error'
-          }
-        : null
+      makeUseOptionItem('down-count-of', downBattleCount),
+      makeUseOptionItem('all-action-maneuver-to-unused', usedActionManeuverCharacterNum),
+      makeUseOptionItem('delete-character-history', maneuverStackLength),
+      makeUseOptionItem('down-un-action-character-action-value', overCountNum)
     ].filter((item): item is OptionItem => Boolean(item))
 
     const nextTurn = [
-      maxAllCurrentActionValue > 0
-        ? { value: 'reset-action-value', text: t('Nechronica.label.all-action-values-above-0-to-0'), color: 'error' }
-        : null,
-      ignoreBravadoCharacterNum
-        ? {
-            value: 'ignore-bravado',
-            text: t('Nechronica.label.exempt-damaged-maneuvers-from-the-bravado').replace(
-              '$$',
-              ignoreBravadoCharacterNum.toString()
-            ),
-            color: 'warning'
-          }
-        : null,
-      usedActionManeuverCharacterNum
-        ? {
-            value: 'recovery-action-maneuver',
-            text: t('Nechronica.label.all-action-maneuver-to-unused').replace(
-              '$$',
-              usedActionManeuverCharacterNum.toString()
-            ),
-            color: 'primary'
-          }
-        : null,
-      {
-        value: 'action-value-recovery',
-        text: t('Nechronica.label.recover-action-value-by-max-action-value'),
-        color: 'primary'
-      },
-      maneuverStackLength
-        ? { value: 'clear-maneuver-stack', text: t('Nechronica.label.delete-character-history'), color: 'primary' }
-        : null,
-      { value: 'reset-count', text: t('Nechronica.label.reset-battle-count'), color: 'primary' }
+      makeUseOptionItem('all-action-values-above-0-to-0', maxAllCurrentActionValue),
+      makeUseOptionItem('exempt-damaged-maneuvers-from-the-bravado', ignoreBravadoCharacterNum),
+      makeUseOptionItem('all-action-maneuver-to-unused', usedActionManeuverCharacterNum),
+      makeUseOptionItemSimple('recover-action-value-by-max-action-value'),
+      makeUseOptionItem('delete-character-history', maneuverStackLength),
+      makeUseOptionItemSimple('reset-battle-count')
     ].filter((item): item is OptionItem => Boolean(item))
 
     return {

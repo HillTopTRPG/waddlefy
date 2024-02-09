@@ -120,5 +120,72 @@
     { "value": "cost", "label": "Nechronica.label.cost" },
     { "value": "range", "label": "Nechronica.label.range" }
   ],
-  "MANEUVER_PARTS": ["", "ﾎﾟｼﾞｼｮﾝ", "ﾒｲﾝｸﾗｽ", "ｻﾌﾞｸﾗｽ", "頭", "腕", "胴", "足"]
+  "MANEUVER_PARTS": ["", "ﾎﾟｼﾞｼｮﾝ", "ﾒｲﾝｸﾗｽ", "ｻﾌﾞｸﾗｽ", "頭", "腕", "胴", "足"],
+  "optionItems": {
+    "open-underling": {
+      "value": "open-pawns",
+      "text": "Nechronica.label.open-underling",
+      "color": "warning"
+    },
+    "exempt-damaged-maneuvers-from-the-bravado": {
+      "value": "ignore-bravado",
+      "text": "Nechronica.label.exempt-damaged-maneuvers-from-the-bravado",
+      "color": "warning"
+    },
+    "all-maneuver-to-unused": {
+      "value": "init-maneuver-used",
+      "text": "Nechronica.label.all-maneuver-to-unused",
+      "color": "warning"
+    },
+    "delete-character-history": {
+      "value": "clear-maneuver-stack",
+      "text": "Nechronica.label.delete-character-history",
+      "color": "primary"
+    },
+    "down-un-action-character-action-value": {
+      "value": "Nechronica.label.character-count-down",
+      "text": "Nechronica.label.down-un-action-character-action-value",
+      "color": "error"
+    },
+    "down-count-of": {
+      "value": "count-down",
+      "text": "Nechronica.label.down-count-of",
+      "color": "primary"
+    },
+    "all-action-maneuver-to-unused": {
+      "value": "recovery-action-maneuver",
+      "text": "Nechronica.label.all-action-maneuver-to-unused",
+      "color": "primary"
+    },
+    "all-action-values-above-0-to-0": {
+      "value": "reset-action-value",
+      "text": "Nechronica.label.all-action-values-above-0-to-0",
+      "color": "error"
+    },
+    "init-everybody-action-value": {
+      "value": "init-action-value",
+      "text": "Nechronica.label.init-everybody-action-value",
+      "color": "primary"
+    },
+    "move-everybody-init-location": {
+      "value": "init-position",
+      "text": "Nechronica.label.move-everybody-init-location",
+      "color": "primary"
+    },
+    "init-battle-count": {
+      "value": "init-count",
+      "text": "Nechronica.label.init-battle-count",
+      "color": "primary"
+    },
+    "recover-action-value-by-max-action-value": {
+      "value": "action-value-recovery",
+      "text": "Nechronica.label.recover-action-value-by-max-action-value",
+      "color": "primary"
+    },
+    "reset-battle-count": {
+      "value": "reset-count",
+      "text": "Nechronica.label.reset-battle-count",
+      "color": "primary"
+    }
+  }
 }
