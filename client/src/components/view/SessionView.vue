@@ -341,10 +341,7 @@ onMounted(() => {
 
 async function onSubmitSessionType(sessionType: string): Promise<void> {
   if (!graphQlStore) return
-  const sessionName = graphQlStore?.state.session?.name || ''
-  const defaultDashboardId = graphQlStore?.state.session?.defaultDashboardId
-  const newDefaultDashboardId = await addDashboards(graphQlStore, sessionType)
-  await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId || newDefaultDashboardId)
+  await addDashboards(graphQlStore, sessionType)
 }
 
 async function addDashboard() {
