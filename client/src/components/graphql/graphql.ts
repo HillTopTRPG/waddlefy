@@ -825,7 +825,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         }
         state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
       } else {
-        await directDashboardAccess(dashboardId)
+        await directDashboardAccess(dashboardId || data.defaultDashboard.id)
       }
     } else {
       state.dashboard = null
