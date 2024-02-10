@@ -158,7 +158,6 @@
 </template>
 
 <script setup lang="ts">
-import ViewNameText from '@/components/panes/Shinobigami/ViewNameText.vue'
 import { ref } from 'vue'
 
 const currentTab = ref('features')
