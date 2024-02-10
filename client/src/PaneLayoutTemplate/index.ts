@@ -46,17 +46,16 @@ export async function addDashboards(graphQlStore: GraphQlStore, sessionType: str
     await graphQlStore.addDashboard('特技比較', SpecialityTableDiffPaneLayout, Scope.ALL)
     defaultDashboardId = await waitDashboard('データ閲覧')
   }
-  if (defaultDashboardId) {
-    const sessionName = graphQlStore?.state.session?.name || ''
-    await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId)
-    await graphQlStore.directDashboardAccess(defaultDashboardId)
-  }
   if (sessionType === 'Nechronica') {
     await graphQlStore.addDashboard('キャラクター管理', CharacterManagePaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('キャラクター閲覧', CharacterViewPaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('ネクロニカ専用機能のTips', TipsPaneLayout, Scope.ALL)
-    await waitDashboardNum(3)
-    return graphQlStore.state.dashboards.find(d => d.name === 'キャラクター管理')?.id || ''
+    defaultDashboardId = await waitDashboard('キャラクター閲覧')
+  }
+  if (defaultDashboardId) {
+    const sessionName = graphQlStore?.state.session?.name || ''
+    await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId)
+    await graphQlStore.directDashboardAccess(defaultDashboardId)
   }
   return ''
 }
