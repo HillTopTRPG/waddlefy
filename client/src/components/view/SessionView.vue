@@ -338,17 +338,28 @@ onMounted(() => {
 
 async function onSubmitSessionType(sessionType: string): Promise<void> {
   if (!graphQlStore) return
-  const sessionName = graphQlStore?.state.session?.name || ''
-  const defaultDashboardId = graphQlStore?.state.session?.defaultDashboardId
-  const newDefaultDashboardId = await addDashboards(graphQlStore, sessionType)
-  await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId || newDefaultDashboardId)
+  await addDashboards(graphQlStore, sessionType)
 }
 
 async function addDashboard() {
   if (!graphQlStore) return
+  const beforeDashboards = graphQlStore?.state.dashboards.map(d => d.id)
   await graphQlStore.addDashboard(addDashboardName.value, defaultLayout, { scope: 'all' })
+  const getNewDashboard = (): Promise<string> => {
+    return new Promise((resolve: (newDashboardId: string) => void) => {
+      const timerId = setInterval(() => {
+        const newDashboard = graphQlStore.state.dashboards.find(ad => !beforeDashboards?.includes(ad.id))
+        if (newDashboard) {
+          clearInterval(timerId)
+          resolve(newDashboard.id)
+        }
+      }, 100)
+    })
+  }
+  const newDashboardId = await getNewDashboard()
   addDashboardName.value = DEFAULT_DASHBOARD_NAME
   addDashboardMenu.value = false
+  await graphQlStore.directDashboardAccess(newDashboardId)
 }
 
 const addDashboardNameElm = ref()

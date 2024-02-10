@@ -27,24 +27,29 @@ module Scope {
 }
 
 export async function addDashboards(graphQlStore: GraphQlStore, sessionType: string): Promise<string> {
-  const waitDashboardNum = (num: number): Promise<void> => {
-    return new Promise((resolve: () => void) => {
+  const waitDashboard = (dashboardName: string): Promise<string> => {
+    return new Promise((resolve: (dashboardId: string) => void) => {
       const timerId = setInterval(() => {
-        const dashboardNum = graphQlStore.state.dashboards.length
-        if (dashboardNum === num) {
+        const dashboard = graphQlStore.state.dashboards.find(d => d.name === dashboardName)
+        if (dashboard) {
           clearInterval(timerId)
-          resolve()
+          resolve(dashboard.id)
         }
-      }, 200)
+      }, 100)
     })
   }
+  let defaultDashboardId: string | null = null
   if (sessionType === 'Shinobigami') {
     await graphQlStore.addDashboard('シナリオデータ管理', ScenarioDataManagePaneLayout, Scope.OWNER)
     await graphQlStore.addDashboard('キャラクターシート管理', CharacterSheetManagePaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('データ閲覧', DataViewPaneLayout, Scope.ALL)
     await graphQlStore.addDashboard('特技比較', SpecialityTableDiffPaneLayout, Scope.ALL)
-    await waitDashboardNum(4)
-    return graphQlStore.state.dashboards.find(d => d.name === 'データ閲覧')?.id || ''
+    defaultDashboardId = await waitDashboard('データ閲覧')
+  }
+  if (defaultDashboardId) {
+    const sessionName = graphQlStore?.state.session?.name || ''
+    await graphQlStore.updateSession(sessionName, sessionType, defaultDashboardId)
+    await graphQlStore.directDashboardAccess(defaultDashboardId)
   }
   if (sessionType === 'Nechronica') {
     await graphQlStore.addDashboard('キャラクター管理', CharacterManagePaneLayout, Scope.ALL)

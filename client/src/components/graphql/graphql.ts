@@ -856,7 +856,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         }
         state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
       } else {
-        await directDashboardAccess(dashboardId)
+        await directDashboardAccess(dashboardId || data.defaultDashboard.id)
       }
     } else {
       state.dashboard = null
@@ -1245,17 +1245,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
             option: JSON.parse(data.option) as DashboardOption
           }
           state.dashboards.push(dashboard)
-          if (state.dashboard) {
-            state.dashboard.layout = null
-          }
-          setTimeout(() => {
-            state.dashboard = {
-              ...dashboard,
-              layout: JSON.parse(data.layout) as Layout,
-              option: JSON.parse(data.option) as DashboardOption
-            }
-            state.dashboardCache.set(state.dashboard.id, clone<Dashboard>(state.dashboard)!)
-          })
         }
       },
       error(errorValue: any) {
