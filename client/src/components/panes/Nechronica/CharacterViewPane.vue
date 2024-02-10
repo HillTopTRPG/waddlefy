@@ -2,7 +2,13 @@
   <pane-frame :title="$t('Nechronica.label.character-view-pane-title')">
     <template #title-action>
       <perspective-select v-model="perspective" />
-      <v-btn :append-icon="nav ? 'mdi-menu-close' : 'mdi-menu-open'" size="small" variant="text" @click="onChangeNav">
+      <v-btn
+        :append-icon="nav ? 'mdi-menu-close' : 'mdi-menu-open'"
+        size="small"
+        variant="text"
+        @click="onChangeNav"
+        v-if="viewDataNum > 0"
+      >
         <span class="text-decoration-underline">{{ $t('label.display-control') }}</span>
       </v-btn>
     </template>
@@ -11,6 +17,7 @@
         :perspective="perspective"
         v-model:battle-timing="battleTiming"
         @update:progress="p => (progress = p)"
+        v-if="viewDataNum > 0"
       />
     </template>
     <template #default>
@@ -20,6 +27,7 @@
         style="gap: 0.5rem"
         :style="nav ? 'padding-right: 250px !important;' : ''"
       >
+        <character-view-pane-help v-if="viewDataNum === 0" class="ma-3" />
         <template v-for="data in dolls" :key="data.id">
           <character-sheet-view
             :character-id="data.id"
@@ -100,13 +108,14 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 import CharacterSheetView from '@/components/panes/Nechronica/character/CharacterSheetView.vue'
 import BattleController from '@/components/panes/Nechronica/component/BattleController.vue'
+import CharacterViewPaneHelp from '@/components/panes/Nechronica/component/CharacterViewPaneHelp.vue'
 import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import ManeuverStackList from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackList.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaSingleton, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
-import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
@@ -146,6 +155,20 @@ const dolls = computed(() => getCharacters('doll'))
 const legions = computed(() => getCharacters('legion'))
 const horrors = computed(() => getCharacters('horror'))
 const servents = computed(() => getCharacters('servent'))
+
+const viewDataNum = computed(() => {
+  let result: number = dolls.value.length
+  if (perspective.value) {
+    result += legions.value.filter(d => !d.data.hide).length
+    result += horrors.value.filter(d => !d.data.hide).length
+    result += servents.value.filter(d => !d.data.hide).length
+  } else {
+    result += legions.value.length
+    result += horrors.value.length
+    result += servents.value.length
+  }
+  return result
+})
 
 const nav = ref(false)
 function onChangeNav() {

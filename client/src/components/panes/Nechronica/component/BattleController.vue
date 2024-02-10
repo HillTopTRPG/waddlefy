@@ -2,7 +2,6 @@
   <v-sheet
     class="w-100 d-flex flex-row flex-wrap align-end position-sticky pa-1"
     style="gap: 0.5rem; top: 0; z-index: 1"
-    v-if="battleOption.characters.length > 0"
   >
     <multi-select-menu
       v-if="!perspective"
