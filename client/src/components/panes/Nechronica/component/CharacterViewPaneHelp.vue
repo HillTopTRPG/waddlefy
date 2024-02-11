@@ -13,7 +13,15 @@
       <v-window v-model="currentTab" class="pt-2">
         <v-window-item value="features">
           <section>
-            <h3>主催者/参加者共通の機能</h3>
+            <h3>Waddlefyの基本機能</h3>
+            基本的な機能については
+            <a
+              href="https://github.com/HillTopTRPG/waddlefy/wiki/%E4%BD%BF%E3%81%84%E6%96%B9-%E2%80%90-%E5%85%B1%E9%80%9A%E6%A9%9F%E8%83%BD"
+              target="_blank"
+              rel="noopener noreferrer"
+              >こちら</a
+            >
+            をご参照ください。
             <ul>
               <li>
                 <p>
