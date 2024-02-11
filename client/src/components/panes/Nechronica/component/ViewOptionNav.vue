@@ -102,6 +102,7 @@ import MultiSwitchListItems from '@/components/panes/Nechronica/component/MultiS
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
+import {watch} from 'vue'
 
 export type NechronicaViewOption = {
   roicePosition: 'before' | 'after' | 'none'
@@ -122,40 +123,35 @@ const emits = defineEmits<{
   (e: 'update:nav', nav: boolean): void
 }>()
 
-function updateViewLabel(v: NechronicaViewOption['viewLabel']) {
+function updateOptionHelper(callback: (option: NechronicaViewOption) => void) {
   const opt = clone(props.option)!
-  opt.viewLabel = v
+  callback(opt)
+  if (JSON.stringify(props.option) === JSON.stringify(opt)) return
   emits('update:option', opt)
+}
+
+function updateViewLabel(v: NechronicaViewOption['viewLabel']) {
+  updateOptionHelper(opt => (opt.viewLabel = v))
 }
 
 function updateRoicePosition(v: NechronicaViewOption['roicePosition']) {
-  const opt = clone(props.option)!
-  opt.roicePosition = v
-  emits('update:option', opt)
+  updateOptionHelper(opt => (opt.roicePosition = v))
 }
 
 function updateViewLost(v: boolean) {
-  const opt = clone(props.option)!
-  opt.viewLost = v
-  emits('update:option', opt)
+  updateOptionHelper(opt => (opt.viewLost = v))
 }
 
 function updateViewUsed(v: boolean) {
-  const opt = clone(props.option)!
-  opt.viewUsed = v
-  emits('update:option', opt)
+  updateOptionHelper(opt => (opt.viewUsed = v))
 }
 
 function updateSelectedTypes(v: number[]) {
-  const opt = clone(props.option)!
-  opt.selectedTypes = v
-  emits('update:option', opt)
+  updateOptionHelper(opt => (opt.selectedTypes = v))
 }
 
 function updateSelectedTimings(v: number[]) {
-  const opt = clone(props.option)!
-  opt.selectedTimings = v
-  emits('update:option', opt)
+  updateOptionHelper(opt => (opt.selectedTimings = v))
 }
 </script>
 
