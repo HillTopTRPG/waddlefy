@@ -22,8 +22,20 @@
                 />
               </template>
               <v-fade-transition>
-                <div class="text-h6 d-inline-block" v-if="!rail">
+                <div class="text-h6 d-inline-flex align-center" v-if="!rail">
                   <ruby style="ruby-position: under">Waddlefy<rt>ワドルフィ</rt></ruby>
+                  <a
+                    href="https://github.com/HillTopTRPG/waddlefy/releases"
+                    class="d-flex ml-2"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    <img
+                      alt="Application Version"
+                      src="https://img.shields.io/github/v/release/HillTopTRPG/waddlefy?style=plastic&label="
+                      height="18"
+                    />
+                  </a>
                 </div>
               </v-fade-transition>
             </v-list-item>
