@@ -32,7 +32,7 @@ const emits = defineEmits<{
       <v-icon icon="mdi-pencil-ruler" />
       でペイン編集モードを切り替えることでペインを追加したり、後から表示するツールを変更できます。
     </p>
-    <p class="mx-5 mt-5">表示するツールを選ぶ</p>
+    <p class="mx-5 mt-5">このペインに表示するツールを選ぶ</p>
     <v-list density="compact" class="mx-5 mb-5" open-strategy="multiple">
       <template v-for="g in componentMap" :key="g.group">
         <v-list-group v-if="g.group">
