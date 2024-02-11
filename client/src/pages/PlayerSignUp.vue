@@ -1,16 +1,16 @@
 <template>
   <top-page-layout>
-    <v-list v-if="players.length">
+    <v-list v-if="players.length" class="pa-1 mb-2 rounded-lg">
       <v-list-subheader>他の参加者</v-list-subheader>
       <template v-for="p in players" :key="p.id">
-        <v-list-item>
-          <v-list-item-title>{{ p.name }}</v-list-item-title>
+        <v-list-item style="min-height: auto">
+          <v-list-item-title>・{{ p.name }}</v-list-item-title>
         </v-list-item>
       </template>
     </v-list>
 
-    <h1 class="text-primary">
-      ようこそ <span class="text-h4">{{ player?.name }}</span> さん
+    <h1 class="text-primary" v-if="player?.name">
+      ようこそ <span class="text-h4">{{ player?.name || '' }}</span> さん
     </h1>
     <v-card
       elevation="3"
@@ -132,7 +132,10 @@ async function init() {
     const result = await appSyncClient?.mutate<QueryResult.GetSessionPlayers>({
       mutation: Queries.getSessionPlayers
     })
-    const getSessionPlayers = result?.data?.getSessionPlayers
+    const getSessionPlayers = result?.data?.getSessionPlayers.sort((d: { id: string }, e: { id: string }) => {
+      if (d.id < e.id) return -1
+      return d.id > e.id ? 1 : 0
+    })
     if (getSessionPlayers) {
       players.value = getSessionPlayers
       player.value = null
