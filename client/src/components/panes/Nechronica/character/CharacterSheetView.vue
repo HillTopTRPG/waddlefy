@@ -50,7 +50,7 @@
           @delete="onDeleteRoice"
         />
         <v-card-text
-          v-if="['doll', 'servent'].includes(character.data.type)"
+          v-if="['doll', 'savant'].includes(character.data.type)"
           class="d-flex flex-row flex-wrap px-0 pb-0 pt-2"
         >
           <maneuver-list-view

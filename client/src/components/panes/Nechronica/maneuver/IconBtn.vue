@@ -287,7 +287,7 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
     @include iconImage(url(/nechronica/requiem.png));
   }
 
-  &.servent {
+  &.savant {
     @include iconImage(url(/nechronica/requiem.png));
   }
 

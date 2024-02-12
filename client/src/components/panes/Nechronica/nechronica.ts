@@ -30,7 +30,7 @@ export const posSelections = new Array(31).fill(null).map((_, idx) => ({
   color: 'black'
 }))
 
-export type NechronicaType = 'doll' | 'legion' | 'horror' | 'servent'
+export type NechronicaType = 'doll' | 'legion' | 'horror' | 'savant'
 
 export type Nechronica = {
   url: string

@@ -26,7 +26,7 @@
         <template v-for="character in characters.filter(c => c.data.type === 'doll')" :key="character.id">
           <manage-character-sheet-card :perspective="perspective" :character="character" />
         </template>
-        <template v-for="character in characters.filter(c => c.data.type === 'servent')" :key="character.id">
+        <template v-for="character in characters.filter(c => c.data.type === 'savant')" :key="character.id">
           <manage-character-sheet-card
             :perspective="perspective"
             v-if="!perspective || !character.data.hide"
@@ -113,7 +113,7 @@ async function onLoadCharacterSheet(url: string, type: NechronicaType) {
   }
 }
 
-const nechronicaTypes: NechronicaType[] = ['doll', 'servent', 'legion', 'horror']
+const nechronicaTypes: NechronicaType[] = ['doll', 'savant', 'legion', 'horror']
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

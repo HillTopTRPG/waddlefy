@@ -37,7 +37,7 @@
             :perspective="perspective"
           />
         </template>
-        <template v-for="data in servents" :key="data.id">
+        <template v-for="data in savants" :key="data.id">
           <character-sheet-view
             v-if="!perspective || !data.data.hide"
             :character-id="data.id"
@@ -154,18 +154,18 @@ const battleTiming = ref('')
 const dolls = computed(() => getCharacters('doll'))
 const legions = computed(() => getCharacters('legion'))
 const horrors = computed(() => getCharacters('horror'))
-const servents = computed(() => getCharacters('servent'))
+const savants = computed(() => getCharacters('savant'))
 
 const viewDataNum = computed(() => {
   let result: number = dolls.value.length
   if (perspective.value) {
     result += legions.value.filter(d => !d.data.hide).length
     result += horrors.value.filter(d => !d.data.hide).length
-    result += servents.value.filter(d => !d.data.hide).length
+    result += savants.value.filter(d => !d.data.hide).length
   } else {
     result += legions.value.length
     result += horrors.value.length
-    result += servents.value.length
+    result += savants.value.length
   }
   return result
 })

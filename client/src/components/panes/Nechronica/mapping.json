@@ -17,7 +17,7 @@
     { "type": "doll", "text": "Nechronica.CHARACTER_TYPE.doll", "color": "#DCE775" },
     { "type": "legion", "text": "Nechronica.CHARACTER_TYPE.legion", "color": "#80CBC4" },
     { "type": "horror", "text": "Nechronica.CHARACTER_TYPE.horror", "color": "#C5CAE9" },
-    { "type": "servent", "text": "Nechronica.CHARACTER_TYPE.servent", "color": "#FFAB91" }
+    { "type": "savant", "text": "Nechronica.CHARACTER_TYPE.savant", "color": "#FFAB91" }
   ],
   "CHARACTER_LOCATION": [
     { "key": "none", "text": "Nechronica.CHARACTER_LOCATION.none", "init-pos-value": "-3", "pos-value": "0" },
