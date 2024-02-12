@@ -47,7 +47,7 @@
             :perspective="perspective"
           />
         </template>
-        <template v-for="data in legions" :key="data.id">
+        <template v-for="data in horrors" :key="data.id">
           <character-sheet-view
             v-if="!perspective || !data.data.hide"
             :character-id="data.id"
@@ -57,7 +57,7 @@
             :perspective="perspective"
           />
         </template>
-        <template v-for="data in horrors" :key="data.id">
+        <template v-for="data in legions" :key="data.id">
           <character-sheet-view
             v-if="!perspective || !data.data.hide"
             :character-id="data.id"
