@@ -102,7 +102,6 @@ import MultiSwitchListItems from '@/components/panes/Nechronica/component/MultiS
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import VSwitchCompact from '@/components/parts/VSwitchCompact.vue'
-import {watch} from 'vue'
 
 export type NechronicaViewOption = {
   roicePosition: 'before' | 'after' | 'none'
