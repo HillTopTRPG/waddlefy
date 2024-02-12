@@ -257,14 +257,11 @@ export const fullDataType: DataType[] = ['maneuver', 'roice', 'basic']
 
 export function mergeNechronica(oldData: Nechronica, mergeData: Nechronica, targets: DataType[]): Nechronica {
   const result: Nechronica = clone<Nechronica>(oldData)!
-  if (targets.some(t => t === 'basic')) {
-    result.basic = clone(mergeData.basic)!
-  }
-  if (targets.some(t => t === 'roice')) {
-    result.roiceList = clone(mergeData.roiceList)!
-  }
-  if (targets.some(t => t === 'maneuver')) {
-    result.maneuverList = clone(mergeData.maneuverList)!
-  }
+
+  result.url = mergeData.url
+  if (targets.some(t => t === 'basic')) result.basic = clone(mergeData.basic)!
+  if (targets.some(t => t === 'roice')) result.roiceList = clone(mergeData.roiceList)!
+  if (targets.some(t => t === 'maneuver')) result.maneuverList = clone(mergeData.maneuverList)!
+
   return result
 }
