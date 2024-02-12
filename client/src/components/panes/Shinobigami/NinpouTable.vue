@@ -20,7 +20,7 @@
           <td class="secret">
             <v-checkbox
               :model-value="arts.secret"
-              @update:model-value="v => onChangeSecret(idx, v)"
+              @update:model-value="v => onChangeSecret(idx, v || false)"
               density="compact"
               :hide-details="true"
             />

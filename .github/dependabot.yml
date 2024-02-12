@@ -29,6 +29,9 @@ updates:
           - "vue*"
           - "@vue*"
           - "@volar/vue-typescript"
+        exclude-patterns:
+          - "@vue/eslint-config-prettier"
+
       vite:
         patterns:
           - "vite*"
