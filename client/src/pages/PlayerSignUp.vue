@@ -121,7 +121,6 @@ async function init() {
       mutation: Queries.getSessionPlayer,
       variables: { playerId: props.playerId }
     })
-    console.log(JSON.stringify(result, null, 2))
     const getSessionPlayer = result?.data?.getSessionPlayer
     if (getSessionPlayer) {
       players.value = []

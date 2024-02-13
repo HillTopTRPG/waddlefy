@@ -284,7 +284,6 @@ async function onUpdatePosition(position: number) {
     beforePlace = c.position
     c.position = position
   })
-  console.log(beforePlace, position)
   await addManeuverStackMove(props.characterId, beforePlace, position)
 }
 

@@ -74,16 +74,6 @@ const singleton = computed((): { id: string; data: NechronicaSingleton } | undef
   graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
 )
 
-watch(
-  singleton,
-  v => {
-    console.log(JSON.stringify(v, null, 2))
-  },
-  {
-    immediate: true
-  }
-)
-
 function updateProgress(total: number, current: number) {
   emits('update:progress', Math.round((current * 100) / total))
 }
@@ -143,13 +133,9 @@ function getBattleDataInfo() {
   let overCountNum = 0
   let usedActionManeuverCharacterNum = 0
   let maxAllCurrentActionValue = Number.MIN_SAFE_INTEGER
-  console.log(JSON.stringify({ battleCount }, null, 2))
   graphQlStore?.state.sessionDataList.forEach(sd => {
     if (sd.type !== 'nechronica-character') return
-    console.log(JSON.stringify({
-      name: sd.data.name,
-      actionValue: sd.data.actionValue
-    }, null, 2))
+
     const nechronicaWrap: NechronicaWrap = sd.data
     const maneuverList = nechronicaWrap.character.maneuverList
     const hasBravado = maneuverList.some(m => m.isBravado)
