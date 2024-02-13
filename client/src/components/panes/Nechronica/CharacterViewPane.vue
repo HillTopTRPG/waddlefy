@@ -23,7 +23,7 @@
     <template #default>
       <maneuver-stack-list />
       <v-sheet
-        class="d-flex flex-row flex-wrap align-start px-2 pt-1 pb-2 overflow-auto"
+        class="d-flex flex-row flex-wrap align-start px-2 pt-1 pb-2 overflow-auto w-100"
         style="gap: 0.5rem"
         :style="nav ? 'padding-right: 250px !important;' : ''"
       >
