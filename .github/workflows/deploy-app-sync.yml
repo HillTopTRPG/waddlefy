@@ -5,6 +5,8 @@ on:
     paths:
       - 'sam/2.app-sync/**'
       - 'sam/lambda/**'
+    branches-ignore:
+      - 'images'
   workflow_dispatch:
 
 env:

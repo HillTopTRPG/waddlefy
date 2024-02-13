@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'client/**'
+    branches-ignore:
+      - 'images'
   workflow_dispatch:
 
 env:
