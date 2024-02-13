@@ -232,7 +232,7 @@ const battleOption = computed(
     const nextTurn = [
       makeUseOptionItem('all-action-values-above-0-to-0', maxAllCurrentActionValue > 0),
       makeUseOptionItem('exempt-damaged-maneuvers-from-the-bravado', ignoreBravadoCharacterNum),
-      makeUseOptionItem('all-action-maneuver-to-unused', usedActionManeuverCharacterNum),
+      makeUseOptionItem('all-maneuver-to-unused', usedManeuverCharacterNum),
       makeUseOptionItem('recover-action-value-by-max-action-value', targets.length > 0),
       makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg),
       makeUseOptionItem('reset-battle-count', targets.length > 0)
