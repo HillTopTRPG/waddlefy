@@ -54,7 +54,7 @@ import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaSingleton, NechronicaWrap, getActionValueNum } from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
-import { computed, inject, watch } from 'vue'
+import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
