@@ -143,7 +143,7 @@
       "color": "primary"
     },
     "down-un-action-character-action-value": {
-      "value": "Nechronica.label.character-count-down",
+      "value": "character-count-down",
       "text": "Nechronica.label.down-un-action-character-action-value",
       "color": "error"
     },
@@ -185,6 +185,11 @@
     "reset-battle-count": {
       "value": "reset-count",
       "text": "Nechronica.label.reset-battle-count",
+      "color": "primary"
+    },
+    "battle-end": {
+      "value": "battle-end",
+      "text": "Nechronica.label.battle-end",
       "color": "primary"
     }
   }

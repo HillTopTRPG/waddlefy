@@ -4,7 +4,7 @@
     style="gap: 0.5rem; top: 0; z-index: 1"
   >
     <multi-select-menu
-      v-if="!perspective"
+      v-if="!perspective && battleCountStatus === NON_BATTLE_COUNT"
       :title="$t('Nechronica.label.start-battle')"
       :items="battleOption.battleStart"
       :color="battleOption.battleStartColor"
@@ -36,6 +36,13 @@
       :items="battleOption.nextTurn"
       :color="battleOption.nextTurnColor"
       @execute="onNextTurn"
+    />
+    <multi-select-menu
+      v-if="!perspective && battleCountStatus > NON_BATTLE_COUNT"
+      :title="$t('Nechronica.label.battle-end')"
+      :items="battleOption.battleEnd"
+      :color="battleOption.battleEndColor"
+      @execute="onBattleEnd"
     />
   </v-sheet>
 </template>
@@ -136,8 +143,13 @@ function getBattleDataInfo() {
   let overCountNum = 0
   let usedActionManeuverCharacterNum = 0
   let maxAllCurrentActionValue = Number.MIN_SAFE_INTEGER
+  console.log(JSON.stringify({ battleCount }, null, 2))
   graphQlStore?.state.sessionDataList.forEach(sd => {
     if (sd.type !== 'nechronica-character') return
+    console.log(JSON.stringify({
+      name: sd.data.name,
+      actionValue: sd.data.actionValue
+    }, null, 2))
     const nechronicaWrap: NechronicaWrap = sd.data
     const maneuverList = nechronicaWrap.character.maneuverList
     const hasBravado = maneuverList.some(m => m.isBravado)
@@ -199,6 +211,8 @@ const battleOption = computed(
     countDownColor: string
     nextTurn: OptionItem[]
     nextTurnColor: string
+    battleEnd: OptionItem[]
+    battleEndColor: string
   } => {
     const {
       targets,
@@ -238,6 +252,11 @@ const battleOption = computed(
       makeUseOptionItem('reset-battle-count', targets.length > 0)
     ].filter((item): item is OptionItem => Boolean(item))
 
+    const battleEnd = [
+      makeUseOptionItem('battle-end', targets.length > 0),
+      makeUseOptionItem('all-maneuver-to-unused', usedManeuverCharacterNum)
+    ].filter((item): item is OptionItem => Boolean(item))
+
     return {
       characters: targets,
       battleStart,
@@ -245,7 +264,9 @@ const battleOption = computed(
       countDown,
       countDownColor: overCountNum ? 'warning' : 'secondary',
       nextTurn,
-      nextTurnColor: maxAllCurrentActionValue ? 'warning' : 'secondary'
+      nextTurnColor: maxAllCurrentActionValue ? 'warning' : 'secondary',
+      battleEnd,
+      battleEndColor: 'secondary'
     }
   }
 )
@@ -403,6 +424,43 @@ async function onNextTurn(option: string[]) {
       }
       if (execResetCount) result.battleCount = maxAllActionValue
       if (execClearManeuverStack) result.maneuverStack = []
+      return result
+    })
+  }
+
+  if (total) updateProgress(total, count)
+}
+
+async function onBattleEnd(option: string[]) {
+  const { targets } = getBattleDataInfo()
+  const execBattleEnd = option.includes('battle-end')
+  const execInitManeuverUsed = option.includes('init-maneuver-used')
+
+  const updateList = targets.filter(t => execInitManeuverUsed && t.usedManeuverNum)
+
+  const total = (execBattleEnd ? 1 : 0) + updateList.length
+  let count = 0
+
+  for (const c of updateList) {
+    updateProgress(total, count)
+    count++
+
+    await graphQlStore?.updateNechronicaCharacterHelper(c.id, cloned => {
+      if (execInitManeuverUsed) {
+        cloned.character.maneuverList.forEach(m => (m.used = false))
+      }
+    })
+  }
+
+  if (execBattleEnd) {
+    updateProgress(total, count)
+    count++
+
+    graphQlStore?.updateNechronicaSingletonHelper(d => {
+      const result: NechronicaSingleton = {
+        ...d
+      }
+      if (execBattleEnd) result.battleCount = NON_BATTLE_COUNT
       return result
     })
   }

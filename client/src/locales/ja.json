@@ -110,6 +110,7 @@
       "reset-battle-count": "カウントの再設定",
       "recover-action-value-by-max-action-value": "全員の行動値を最大値分回復する",
       "all-action-values-above-0-to-0": "0を超える行動値を全て0にする",
+      "battle-end": "戦闘終了",
       "multi-process-description": "上から順番にチェックが入っている処理を行います",
       "to-resolve": "処理済みにする",
       "to-resolve-confirm-message": "このキャラ操作履歴を処理済みにします",
