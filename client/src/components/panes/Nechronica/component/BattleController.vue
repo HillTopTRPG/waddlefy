@@ -356,7 +356,7 @@ async function onNextTurn(option: string[]) {
   const { targets } = getBattleDataInfo()
   const execResetActionValue = option.includes('reset-action-value')
   const execIgnoreBravado = option.includes('ignore-bravado')
-  const execRecoveryActionManeuver = option.includes('recovery-action-maneuver')
+  const execInitManeuverUsed = option.includes('init-maneuver-used')
   const execActionValueRecovery = option.includes('action-value-recovery')
   const execClearManeuverStack = option.includes('clear-maneuver-stack')
   const execResetCount = option.includes('reset-count')
@@ -366,7 +366,7 @@ async function onNextTurn(option: string[]) {
   const updateList = targets.filter(t => {
     if (execResetActionValue && t.data.actionValue > 0) return true
     if (execIgnoreBravado && t.ignoreBravadoManeuverNum) return true
-    if (execRecoveryActionManeuver && t.usedActionManeuverNum) return true
+    if (execInitManeuverUsed && t.usedManeuverNum) return true
     return execActionValueRecovery
   })
 
@@ -384,8 +384,8 @@ async function onNextTurn(option: string[]) {
       if (execIgnoreBravado && c.ignoreBravadoManeuverNum) {
         cloned.character.maneuverList.filter(m => m.lost && !m.ignoreBravado).forEach(m => (m.ignoreBravado = true))
       }
-      if (execRecoveryActionManeuver) {
-        cloned.character.maneuverList.filter(m => m.timing === 1).forEach(m => (m.used = false))
+      if (execInitManeuverUsed) {
+        cloned.character.maneuverList.forEach(m => (m.used = false))
       }
       if (execActionValueRecovery) cloned.actionValue += c.maxActionValues[acIdx]
 
