@@ -15,4 +15,4 @@ For Developers
 [AGPL-3.0](https://opensource.org/license/agpl-v3/)
 
 ---
-Copyright (c) 2023-present, HillTopTRPG
+Copyright &copy; 2023-2024 HillTopTRPG
