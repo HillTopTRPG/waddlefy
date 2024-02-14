@@ -11,6 +11,8 @@
       <slot name="nav" />
       <div
         class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap overflow-auto"
+        :class="viewScrollbar ? 'scrollbar-show' : 'scrollbar-hide'"
+        v-scroll.self="() => onScroll()"
         style="contain: paint"
       >
         <slot />
@@ -20,7 +22,23 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 defineProps<{
   title: string
 }>()
+
+const scrollTimeout = ref<number | null>(null)
+const viewScrollbar = ref(false)
+
+function onScroll() {
+  viewScrollbar.value = true
+  if (scrollTimeout.value !== null) {
+    window.clearTimeout(scrollTimeout.value)
+    scrollTimeout.value = null
+  }
+  scrollTimeout.value = window.setTimeout(() => {
+    viewScrollbar.value = false
+  }, 500)
+}
 </script>

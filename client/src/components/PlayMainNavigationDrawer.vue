@@ -44,63 +44,71 @@
         </template>
 
         <!-- メインナビゲーションドロワー コンテンツ -->
-        <v-list
-          :nav="true"
-          density="compact"
-          select-strategy="single-leaf"
-          open-strategy="single"
-          :selected="[sessionId]"
-          :mandatory="true"
-          class="py-0 px-0"
+        <v-sheet
+          class="h-100 overflow-y-auto bg-transparent"
+          :class="viewScrollbar ? 'scrollbar-show' : 'scrollbar-hide'"
+          v-scroll.self="() => onScroll()"
         >
-          <template v-for="session in graphQlStore?.state.sessions || []" :key="session.id">
-            <user-nav-item
-              :title="session.name"
-              icon="home"
-              :rail="rail"
-              :active="sessionId === session.id"
-              :toggle="true"
-              @click="onClickSession(session.id)"
-            />
-          </template>
-
-          <v-menu
-            v-if="isReady"
-            location="right"
-            :scrim="true"
-            v-model="addSessionMenu"
-            :close-on-content-click="false"
+          <v-list
+            :nav="true"
+            density="compact"
+            select-strategy="single-leaf"
+            open-strategy="single"
+            :selected="[sessionId]"
+            :mandatory="true"
+            class="py-0 px-0"
           >
-            <template #activator="{ props }">
+            <template v-for="session in graphQlStore?.state.sessions || []" :key="session.id">
               <user-nav-item
-                v-bind="props"
-                id="addSessionNavItem"
-                title="セッション追加"
-                icon="home-plus-outline"
+                :title="session.name"
+                icon="home"
                 :rail="rail"
-                :toggle="false"
-                v-if="graphQlStore?.state.user?.token"
+                :active="sessionId === session.id"
+                :toggle="true"
+                @click="onClickSession(session.id)"
               />
             </template>
-            <v-card min-width="20em">
-              <v-card-title class="bg-secondary">セッション追加</v-card-title>
-              <v-card-item>
-                <v-text-field
-                  label="セッション名"
-                  placeholder="No title session"
-                  :autofocus="true"
-                  v-model="addSessionName"
-                  ref="addSessionNameElm"
-                  :hide-details="true"
-                  @keydown.enter="$event.keyCode === 13 && addSession()"
+
+            <v-menu
+              v-if="isReady"
+              location="right"
+              :scrim="true"
+              v-model="addSessionMenu"
+              :close-on-content-click="false"
+            >
+              <template #activator="{ props }">
+                <user-nav-item
+                  v-bind="props"
+                  id="addSessionNavItem"
+                  title="セッション追加"
+                  icon="home-plus-outline"
+                  :rail="rail"
+                  :toggle="false"
+                  v-if="graphQlStore?.state.user?.token"
                 />
-              </v-card-item>
-              <v-card-actions>
-                <v-btn class="d-block flex-grow-1" color="primary" variant="elevated" @click="addSession()">確定</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-menu>
-        </v-list>
+              </template>
+              <v-card min-width="20em">
+                <v-card-title class="bg-secondary">セッション追加</v-card-title>
+                <v-card-item>
+                  <v-text-field
+                    label="セッション名"
+                    placeholder="No title session"
+                    :autofocus="true"
+                    v-model="addSessionName"
+                    ref="addSessionNameElm"
+                    :hide-details="true"
+                    @keydown.enter="$event.keyCode === 13 && addSession()"
+                  />
+                </v-card-item>
+                <v-card-actions>
+                  <v-btn class="d-block flex-grow-1" color="primary" variant="elevated" @click="addSession()"
+                    >確定</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-menu>
+          </v-list>
+        </v-sheet>
 
         <nav-dialog
           title="あなたの設定"
@@ -253,6 +261,20 @@ async function onClickSession(clickSessionId: string) {
     await graphQlStore?.directSessionAccess(clickSessionId)
   }
   emits('update:session-selectable', false)
+}
+
+const scrollTimeout = ref<number | null>(null)
+const viewScrollbar = ref(false)
+
+function onScroll() {
+  viewScrollbar.value = true
+  if (scrollTimeout.value !== null) {
+    window.clearTimeout(scrollTimeout.value)
+    scrollTimeout.value = null
+  }
+  scrollTimeout.value = window.setTimeout(() => {
+    viewScrollbar.value = false
+  }, 500)
 }
 </script>
 
