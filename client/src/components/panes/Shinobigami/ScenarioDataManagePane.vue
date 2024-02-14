@@ -27,7 +27,7 @@
       </v-menu>
     </template>
     <template #layout>
-      <v-sheet class="d-flex flex-row flex-wrap w-100 px-2 pa-2" style="gap: 0.1rem" v-if="!perspective">
+      <v-sheet class="d-flex flex-row flex-wrap w-100 px-2 pa-2 bg-transparent" style="gap: 0.1rem" v-if="!perspective">
         <shinobigami-url-form-menu
           text="シナリオシート読込"
           pass-placeholder="必須"
@@ -50,7 +50,7 @@
       </v-sheet>
     </template>
     <template #default>
-      <v-sheet class="w-100 d-flex flex-row flex-wrap align-start" :class="perspective ? 'pt-3' : ''">
+      <v-sheet class="w-100 d-flex flex-row flex-wrap align-start bg-transparent" :class="perspective ? 'pt-3' : ''">
         <template v-for="handout in handoutList" :key="handout.id">
           <scenario-data-card mode="edit" :data-id="handout.id" :text-rows="textRows" :perspective="perspective" />
         </template>

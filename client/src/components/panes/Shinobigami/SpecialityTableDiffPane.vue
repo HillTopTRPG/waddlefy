@@ -30,7 +30,7 @@
     <template #default>
       <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
         <template v-for="i in [...Array(nums)].map((_, j) => j)" :key="i">
-          <v-sheet class="pa-1 overflow-auto align-start">
+          <v-sheet class="pa-1 overflow-auto align-start bg-transparent">
             <v-select :prefix="`ハンドアウト: `" v-model="selectCharacters[i]" :items="list" />
             <speciality-table
               :info="list.find(cw => cw.value === selectCharacters[i])?.character.character.skill || undefined"

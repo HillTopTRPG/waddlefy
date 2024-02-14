@@ -12,7 +12,7 @@
       </template>
     </template>
     <template #layout>
-      <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.1rem">
+      <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2 bg-transparent" style="gap: 0.1rem">
         <shinobigami-url-form-menu
           text="キャラクターシート読込"
           pass-placeholder="オプション"

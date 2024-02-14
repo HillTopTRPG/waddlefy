@@ -54,7 +54,7 @@
       <span v-if="handoutDataList.length + enigmaList.length + prizeList.length === 0" class="ma-3">
         <data-view-pane-help />
       </span>
-      <v-sheet class="d-flex flex-row flex-wrap justify-start align-start w-100" style="gap: 0">
+      <v-sheet class="d-flex flex-row flex-wrap justify-start align-start w-100 bg-transparent" style="gap: 0">
         <v-divider v-if="handoutDataList.length" class="mb-2" />
         <template v-for="enigma in enigmaList" :key="enigma.id">
           <scenario-data-card mode="view" :data-id="enigma.id" :text-rows="textRows" :perspective="perspective" />
