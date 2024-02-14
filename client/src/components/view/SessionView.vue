@@ -29,94 +29,100 @@
       </v-list>
     </template>
 
-    <v-list :nav="true" density="compact" class="pa-0 pt-0 mb-1 overflow-y-auto" v-if="sessionType !== 'init'">
-      <!-- 画面一覧 -->
-      <v-list-subheader class="pa-0 ma-0">画面</v-list-subheader>
-      <template v-if="graphQlStore">
-        <template v-for="dashboard in graphQlStore.state.dashboards" :key="dashboard.id">
-          <user-nav-item
-            v-if="isViewDashboard(dashboard.option.scope)"
-            :title="dashboard.name"
-            :subtitle="dashboardSubtitle(dashboard.option.scope)"
-            :rail="rail"
-            icon="view-dashboard"
-            :toggle="true"
-            color="primary"
-            :active="dashboardId === dashboard.id"
-            @click="changePane(dashboard.id)"
-          />
-        </template>
-      </template>
-
-      <!-- 画面追加 -->
-      <v-menu
-        v-if="isReady && isUserControl"
-        location="right"
-        :scrim="true"
-        v-model="addDashboardMenu"
-        :close-on-content-click="false"
-      >
-        <template #activator="{ props }">
-          <user-nav-item
-            v-bind="props"
-            title="画面追加"
-            subtitle="主催者専用"
-            :rail="rail"
-            icon="plus"
-            :toggle="false"
-            class="mt-0 mb-1 mx-2"
-          />
-        </template>
-        <v-card min-width="20em">
-          <v-card-title class="bg-secondary">画面追加</v-card-title>
-          <v-card-item>
-            <v-text-field
-              label="画面名"
-              placeholder="No title dashboard"
-              :autofocus="true"
-              v-model="addDashboardName"
-              ref="addDashboardNameElm"
-              :hide-details="true"
-              @keydown.enter="$event.keyCode === 13 && addDashboard()"
+    <v-sheet
+      class="h-100 overflow-y-auto bg-transparent"
+      :class="viewScrollbar ? 'scrollbar-show' : 'scrollbar-hide'"
+      v-scroll.self="() => onScroll()"
+    >
+      <v-list :nav="true" density="compact" class="pa-0 pt-0 mb-1 overflow-y-auto" v-if="sessionType !== 'init'">
+        <!-- 画面一覧 -->
+        <v-list-subheader class="pa-0 ma-0">画面</v-list-subheader>
+        <template v-if="graphQlStore">
+          <template v-for="dashboard in graphQlStore.state.dashboards" :key="dashboard.id">
+            <user-nav-item
+              v-if="isViewDashboard(dashboard.option.scope)"
+              :title="dashboard.name"
+              :subtitle="dashboardSubtitle(dashboard.option.scope)"
+              :rail="rail"
+              icon="view-dashboard"
+              :toggle="true"
+              color="primary"
+              :active="dashboardId === dashboard.id"
+              @click="changePane(dashboard.id)"
             />
-          </v-card-item>
-          <v-card-actions>
-            <v-btn class="d-block flex-grow-1" color="primary" variant="elevated" @click="addDashboard()">確定</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-menu>
+          </template>
+        </template>
 
-      <v-divider />
+        <!-- 画面追加 -->
+        <v-menu
+          v-if="isReady && isUserControl"
+          location="right"
+          :scrim="true"
+          v-model="addDashboardMenu"
+          :close-on-content-click="false"
+        >
+          <template #activator="{ props }">
+            <user-nav-item
+              v-bind="props"
+              title="画面追加"
+              subtitle="主催者専用"
+              :rail="rail"
+              icon="plus"
+              :toggle="false"
+              class="mt-0 mb-1 mx-2"
+            />
+          </template>
+          <v-card min-width="20em">
+            <v-card-title class="bg-secondary">画面追加</v-card-title>
+            <v-card-item>
+              <v-text-field
+                label="画面名"
+                placeholder="No title dashboard"
+                :autofocus="true"
+                v-model="addDashboardName"
+                ref="addDashboardNameElm"
+                :hide-details="true"
+                @keydown.enter="$event.keyCode === 13 && addDashboard()"
+              />
+            </v-card-item>
+            <v-card-actions>
+              <v-btn class="d-block flex-grow-1" color="primary" variant="elevated" @click="addDashboard()">確定</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
 
-      <!-- 主催者 -->
-      <v-list-subheader class="pa-0 ma-0">主催者</v-list-subheader>
-      <user-nav-item
-        :title="`${graphQlStore?.state.user?.name || ''}${graphQlStore?.state.user?.token ? ' (あなた)' : ''}`"
-        :rail="rail"
-        :icon-token="graphQlStore?.state.user!.iconToken"
-        :toggle="true"
-        color="primary"
-        :active="dialog === 'owner'"
-        @click="dialog = dialog === 'owner' ? '' : 'owner'"
-      />
-      <v-divider class="mt-1" />
+        <v-divider />
 
-      <!-- 参加者 -->
-      <v-list-subheader class="pa-0 ma-0">{{
-        rail ? '参加者' : `参加者: ${graphQlStore?.state.players.length || 0}人`
-      }}</v-list-subheader>
-      <template v-for="player in graphQlStore?.state.players" :key="player.id">
+        <!-- 主催者 -->
+        <v-list-subheader class="pa-0 ma-0">主催者</v-list-subheader>
         <user-nav-item
-          :title="`${player.name || ''}${graphQlStore?.state.player?.id === player.id ? ' (あなた)' : ''}`"
+          :title="`${graphQlStore?.state.user?.name || ''}${graphQlStore?.state.user?.token ? ' (あなた)' : ''}`"
           :rail="rail"
-          :icon-token="player.iconToken"
+          :icon-token="graphQlStore?.state.user!.iconToken"
           :toggle="true"
           color="primary"
-          :active="dialog === player.id"
-          @click="selectPlayer(player.id)"
+          :active="dialog === 'owner'"
+          @click="dialog = dialog === 'owner' ? '' : 'owner'"
         />
-      </template>
-    </v-list>
+        <v-divider class="mt-1" />
+
+        <!-- 参加者 -->
+        <v-list-subheader class="pa-0 ma-0">{{
+          rail ? '参加者' : `参加者: ${graphQlStore?.state.players.length || 0}人`
+        }}</v-list-subheader>
+        <template v-for="player in graphQlStore?.state.players" :key="player.id">
+          <user-nav-item
+            :title="`${player.name || ''}${graphQlStore?.state.player?.id === player.id ? ' (あなた)' : ''}`"
+            :rail="rail"
+            :icon-token="player.iconToken"
+            :toggle="true"
+            color="primary"
+            :active="dialog === player.id"
+            @click="selectPlayer(player.id)"
+          />
+        </template>
+      </v-list>
+    </v-sheet>
 
     <nav-dialog
       title="セッションの設定"
@@ -436,6 +442,20 @@ async function changePane(nextDashboardId: string) {
   await graphQlStore?.changeDashboard(nextDashboardId)
   isLoading.value = false
 }
+
+const scrollTimeout = ref<number | null>(null)
+const viewScrollbar = ref(false)
+
+function onScroll() {
+  viewScrollbar.value = true
+  if (scrollTimeout.value !== null) {
+    window.clearTimeout(scrollTimeout.value)
+    scrollTimeout.value = null
+  }
+  scrollTimeout.value = window.setTimeout(() => {
+    viewScrollbar.value = false
+  }, 500)
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
@@ -449,7 +469,7 @@ async function changePane(nextDashboardId: string) {
 #session-nav:deep(.v-navigation-drawer__content) {
   display: flex !important;
   flex-direction: column !important;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .splitpanes--vertical > .splitpanes__splitter {
