@@ -453,7 +453,6 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
 <style deep lang="css">
 .splitpanes.root {
   height: 100%;
-  background: rgb(var(--v-theme-surface));
 }
 
 .splitpanes.blur {

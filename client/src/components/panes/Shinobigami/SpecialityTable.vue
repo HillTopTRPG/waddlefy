@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="overflow-auto">
+  <v-sheet class="overflow-auto bg-transparent">
     <table class="speciality-table bg-white" :class="`${info ? '' : 'disabled'} ${editing ? 'editing' : ''}`">
       <thead>
         <tr class="bg-grey-darken-4">

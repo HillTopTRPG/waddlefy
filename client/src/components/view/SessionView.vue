@@ -237,7 +237,7 @@
   </v-app-bar>
 
   <v-layout full-height>
-    <div class="position-relative w-100 h-100 overflow-hidden">
+    <div class="main-screen position-relative w-100 h-100 overflow-hidden">
       <split-panes-layer
         :id="dashboardId"
         :layout="layout"
@@ -505,5 +505,28 @@ function onScroll() {
 }
 .v-navigation-drawer > :deep(*) {
   margin-right: -1px;
+}
+
+.main-screen {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  &::before {
+    z-index: -1;
+    backdrop-filter: blur(3px);
+  }
+
+  &::after {
+    z-index: -2;
+    background-color: white;
+    background-repeat: repeat;
+  }
 }
 </style>

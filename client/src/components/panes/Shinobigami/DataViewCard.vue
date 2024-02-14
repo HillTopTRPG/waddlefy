@@ -12,7 +12,13 @@
           <basic-info-card :character-sheet="characterSheet" />
         </v-menu>
         <v-defaults-provider :defaults="{ VBtn: { size: 'small', variant: 'flat' } }">
-          <v-btn icon="mdi-open-in-new" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
+          <v-btn
+            icon="mdi-open-in-new"
+            class="bg-transparent"
+            target="_blank"
+            rel="noopener noreferrer"
+            :href="characterSheet.url"
+          />
         </v-defaults-provider>
         <span class="text-body-2">({{ handoutCharacterPlayerName }})</span>
       </template>
@@ -38,8 +44,8 @@
       </template>
     </v-card-title>
     <v-card-text class="py-0">
-      <v-sheet class="w-100 d-flex flex-wrap" style="gap: 5px">
-        <v-sheet v-if="tokugiView && characterSheet">
+      <v-sheet class="w-100 d-flex flex-wrap bg-transparent" style="gap: 5px">
+        <v-sheet class="bg-transparent" v-if="tokugiView && characterSheet">
           <speciality-table
             class="mb-2"
             :select-skill="selectSkill"
@@ -51,7 +57,7 @@
             :editable="true"
           />
         </v-sheet>
-        <v-sheet v-if="characterSheet && (ninpouView || specialArtsView)">
+        <v-sheet class="bg-transparent" v-if="characterSheet && (ninpouView || specialArtsView)">
           <ninpou-table
             v-if="ninpouView"
             class="mb-2"
@@ -70,7 +76,7 @@
             @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
           />
         </v-sheet>
-        <v-sheet v-if="textView && handoutId">
+        <v-sheet class="bg-transparent" v-if="textView && handoutId">
           <data-view-card-tab-container
             class="mb-2"
             :handout-id="handoutId"

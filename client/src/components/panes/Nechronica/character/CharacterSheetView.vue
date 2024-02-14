@@ -1,9 +1,9 @@
 <template>
-  <v-sheet class="d-flex flex-row flex-wrap overflow-y-auto" style="gap: 0.5rem">
+  <v-sheet class="d-flex flex-row flex-wrap overflow-y-auto bg-transparent" style="gap: 0.5rem">
     <template v-if="character">
       <v-card
         variant="outlined"
-        class="d-flex flex-column px-2 pb-2 rounded-xl"
+        class="d-flex flex-column px-2 pb-2 rounded-xl bg-white"
         :class="isCurrent ? '' : 'bg-grey-lighten-2'"
         style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${

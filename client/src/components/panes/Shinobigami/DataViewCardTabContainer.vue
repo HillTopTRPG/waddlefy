@@ -1,5 +1,5 @@
 <template>
-  <v-card class="d-flex flex-row" variant="outlined" rounded="lg" :height="(textRows + 2) * 24 + 22">
+  <v-card class="d-flex flex-row bg-white" variant="outlined" rounded="lg" :height="(textRows + 2) * 24 + 22">
     <v-tabs
       color="primary"
       direction="vertical"
