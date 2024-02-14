@@ -71,10 +71,10 @@ import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ManageCharacterSheetCard from '@/components/panes/Nechronica/character/ManageCharacterSheetCard.vue'
+import PerspectiveSelect from '@/components/panes/Nechronica/component/PerspectiveSelect.vue'
 import UrlFormMenu from '@/components/panes/Nechronica/component/UrlFormMenu.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaHelper, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
-import PerspectiveSelect from '@/components/panes/Nechronica/PerspectiveSelect.vue'
 import { useI18n } from 'vue-i18n'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)

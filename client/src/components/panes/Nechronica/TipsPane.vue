@@ -2,9 +2,24 @@
   <pane-frame :title="$t('Nechronica.label.tips-pane-title')">
     <template #title-action></template>
     <template #layout></template>
-    <template #nav></template>
-    <template #default>
+    <template #nav>
       <v-sheet class="pa-2 d-flex flex-row flex-wrap align-start bg-transparent" style="gap: 0.5rem">
+        <link-text
+          href="https://github.com/HillTopTRPG/waddlefy/wiki/%E4%BD%BF%E3%81%84%E6%96%B9-%E2%80%90-%E3%83%8D%E3%82%AF%E3%83%AD%E3%83%8B%E3%82%AB%E5%B0%82%E7%94%A8%E6%A9%9F%E8%83%BD"
+          src="https://img.shields.io/badge/wiki-%E3%83%8D%E3%82%AF%E3%83%AD%E3%83%8B%E3%82%AB%E5%B0%82%E7%94%A8%E6%A9%9F%E8%83%BD-mediumslateblue?style=for-the-badge&logo=github"
+          alt="Static Badge"
+          style="border-radius: 0.5em"
+        />
+        <link-text
+          href="https://github.com/HillTopTRPG/waddlefy/wiki/%E4%BD%BF%E3%81%84%E6%96%B9-%E2%80%90-%E5%85%B1%E9%80%9A%E6%A9%9F%E8%83%BD"
+          src="https://img.shields.io/badge/wiki-%E5%85%B1%E9%80%9A%E6%A9%9F%E8%83%BD-blue?style=for-the-badge&logo=github"
+          alt="Static Badge"
+          style="border-radius: 0.5em"
+        />
+      </v-sheet>
+    </template>
+    <template #default>
+      <v-sheet class="px-2 pb-2 d-flex flex-row flex-wrap align-start bg-transparent" style="gap: 0.5rem">
         <v-card color="cyan-lighten-4">
           <v-card-title>マニューバのアイコンの決まり方</v-card-title>
           <v-card-subtitle>１．基本パーツかどうか</v-card-subtitle>
@@ -205,6 +220,7 @@ import { Layout } from '@/components/panes'
 import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
+import LinkText from '@/components/parts/LinkText.vue'
 
 defineProps<{
   layout: Layout
