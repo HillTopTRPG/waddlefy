@@ -13,19 +13,10 @@ export const componentInfo = {
 import { Layout } from '@/components/panes'
 import { componentMap } from '../index'
 
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
-
-const isEqualLayout = (layout: Layout): boolean => {
-  const replaceFunc = (str: string) =>
-    str
-      .replace(/"uuid": ?".+?"/g, '')
-      .replace(/"payload": ?[^,}]+/g, '')
-      .replace(/"size": ?[^,}]+/g, '')
-  return replaceFunc(JSON.stringify(layout)) === replaceFunc(JSON.stringify(props.rootLayout))
-}
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
