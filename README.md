@@ -1,4 +1,5 @@
-# Waddlefy (ワドルフィ) 
+![waddlefy](https://socialify.git.ci/HillTopTRPG/waddlefy/image?description=1&font=KoHo&logo=https%3A%2F%2Fraw.githubusercontent.com%2FHillTopTRPG%2Fwaddlefy%2Fimages%2Fimages%2Fwaddlefy4.png&name=1&pattern=Formal%20Invitation&theme=Light)
+
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fwaddlefy.net&label=https://waddlefy.net)](https://waddlefy.net) [![GitHub Release](https://img.shields.io/github/v/release/HillTopTRPG/waddlefy?label=version)](https://github.com/HillTopTRPG/waddlefy/releases)
 
 For Developers  
