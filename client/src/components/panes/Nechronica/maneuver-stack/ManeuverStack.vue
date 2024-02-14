@@ -42,6 +42,7 @@
             size="small"
             class="align-self-center"
             :maneuver="currentManeuver"
+            :disable-button="true"
           />
         </v-sheet>
       </template>

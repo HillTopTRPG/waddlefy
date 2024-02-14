@@ -7,8 +7,7 @@
       rounded="pill"
       density="comfortable"
       :class="classWrap"
-      :ripple="!disableButton"
-      :style="`cursor: ${disableButton ? 'auto' : 'pointer'}`"
+      :style="`pointer-events: ${disableButton ? 'none' : 'auto'};`"
       v-bind="activateProps || {}"
     />
     <span v-if="underText" class="maneuver-label text-center" :class="size">{{ underText }}</span>
