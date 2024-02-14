@@ -32,6 +32,7 @@ defineProps<{
 .roice-name {
   max-width: 4rem;
   box-sizing: content-box;
+  overflow-y: hidden;
   line-height: 1em;
 }
 </style>
