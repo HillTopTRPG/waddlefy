@@ -35,7 +35,7 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
 .maneuver-label {
   line-height: 1em;
   font-size: 11px;
-  overflow-x: hidden;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-family: 'M PLUS Rounded 1c', sans-serif !important;
