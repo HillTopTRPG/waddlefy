@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    class="w-100 d-flex flex-row flex-wrap align-end position-sticky pa-1"
+    class="w-100 d-flex flex-row flex-wrap align-end position-sticky pa-1 bg-transparent"
     style="gap: 0.5rem; top: 0; z-index: 1"
   >
     <multi-select-menu

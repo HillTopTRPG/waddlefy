@@ -4,7 +4,7 @@
       <perspective-select v-model="perspective" />
     </template>
     <template #layout>
-      <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2" style="gap: 0.3rem">
+      <v-sheet class="d-flex flex-row flex-wrap w-100 pa-2 bg-transparent" style="gap: 0.3rem">
         <template v-for="type in nechronicaTypes" :key="type">
           <url-form-menu
             v-if="!perspective || type === 'doll'"
@@ -22,7 +22,7 @@
       </v-sheet>
     </template>
     <template #default>
-      <v-sheet class="d-flex flex-row flex-wrap align-start w-100 px-2 pb-2" style="gap: 0.5rem">
+      <v-sheet class="d-flex flex-row flex-wrap align-start w-100 px-2 pb-2 bg-transparent" style="gap: 0.5rem">
         <template v-for="character in characters.filter(c => c.data.type === 'doll')" :key="character.id">
           <manage-character-sheet-card :perspective="perspective" :character="character" />
         </template>

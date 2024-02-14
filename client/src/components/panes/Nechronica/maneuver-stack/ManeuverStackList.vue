@@ -1,5 +1,9 @@
 <template>
-  <v-sheet class="d-flex flex-row flex-wrap px-2 pb-1" style="gap: 0.3rem 0.5rem">
+  <v-sheet
+    class="d-flex flex-row flex-wrap px-2 pb-1 bg-transparent"
+    v-if="unDraggableStackList.length + draggableStackList.length > 0"
+    style="gap: 0.3rem 0.5rem"
+  >
     <template v-for="(_, idx) in unDraggableStackList" :key="idx">
       <maneuver-stack :index="idx" :dataList="unDraggableStackList" />
     </template>

@@ -4,7 +4,7 @@
     <template #layout></template>
     <template #nav></template>
     <template #default>
-      <v-sheet class="pa-2 d-flex flex-row flex-wrap align-start" style="gap: 0.5rem">
+      <v-sheet class="pa-2 d-flex flex-row flex-wrap align-start bg-transparent" style="gap: 0.5rem">
         <v-card color="cyan-lighten-4">
           <v-card-title>マニューバのアイコンの決まり方</v-card-title>
           <v-card-subtitle>１．基本パーツかどうか</v-card-subtitle>
