@@ -5,27 +5,29 @@
     style="box-sizing: content-box; gap: 5px"
   >
     <template v-for="(structure, idx) in structures" :key="idx">
-      <v-divider v-if="idx" />
-      <v-sheet class="d-flex flex-row w-100 bg-transparent">
-        <icon-btn :class="structure.headerClass" size="normal" :disable-button="true" />
-        <v-sheet class="d-flex flex-row flex-wrap ml-3 bg-transparent" style="gap: 0.5rem">
-          <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-            <template v-if="structure.targetParts.some(n => n === maneuver.parts) && judgeView(maneuver)">
-              <maneuver-btn-menu
-                :character="character"
-                :maneuver="maneuver"
-                :type="type"
-                :view-label="viewOption?.viewLabel || ''"
-                :battle-timing="battleTiming"
-                @update:lost="v => emits('update:lost', mIdx, v)"
-                @update:used="(v, cost) => emits('update:used', mIdx, v, cost)"
-                @update:ignore-bravado="v => emits('update:ignore-bravado', mIdx, v)"
-                @update="v => emits('update', mIdx, v)"
-              />
+      <template v-if="type === 'doll' || idx > 0 || skillManeuverNum">
+        <v-sheet class="d-flex flex-row w-100 bg-transparent">
+          <icon-btn :class="structure.headerClass" size="normal" :disable-button="true" />
+          <v-sheet class="d-flex flex-row flex-wrap ml-3 bg-transparent" style="gap: 0.5rem">
+            <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
+              <template v-if="structure.targetParts.some(n => n === maneuver.parts) && judgeView(maneuver)">
+                <maneuver-btn-menu
+                  :character="character"
+                  :maneuver="maneuver"
+                  :type="type"
+                  :view-label="viewOption?.viewLabel || ''"
+                  :battle-timing="battleTiming"
+                  @update:lost="v => emits('update:lost', mIdx, v)"
+                  @update:used="(v, cost) => emits('update:used', mIdx, v, cost)"
+                  @update:ignore-bravado="v => emits('update:ignore-bravado', mIdx, v)"
+                  @update="v => emits('update', mIdx, v)"
+                />
+              </template>
             </template>
-          </template>
+          </v-sheet>
         </v-sheet>
-      </v-sheet>
+        <v-divider v-if="idx < structures.length - 1" />
+      </template>
     </template>
   </v-sheet>
 </template>
@@ -35,6 +37,7 @@ import { NechronicaViewOption } from '@/components/panes/Nechronica/component/Vi
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
+import { computed } from 'vue'
 
 const props = defineProps<{
   character: Nechronica
@@ -66,6 +69,10 @@ function judgeView(maneuver: NechronicaManeuver) {
   if (props.viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
   return props.viewOption.selectedTypes.some(t => t === maneuver.type)
 }
+
+const skillManeuverNum = computed(
+  () => props.character.maneuverList.filter(m => structures[0].targetParts.includes(m.parts) && judgeView(m)).length
+)
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
