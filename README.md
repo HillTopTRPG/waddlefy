@@ -1,5 +1,6 @@
-# Waddlefy (ワドルフィ) 
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fwaddlefy.net&label=https://waddlefy.net)](https://waddlefy.net) [![GitHub Release](https://img.shields.io/github/v/release/HillTopTRPG/waddlefy?label=version)](https://github.com/HillTopTRPG/waddlefy/releases)
+![waddlefy](https://socialify.git.ci/HillTopTRPG/waddlefy/image?description=1&font=KoHo&logo=https%3A%2F%2Fraw.githubusercontent.com%2FHillTopTRPG%2Fwaddlefy%2Fimages%2Fimages%2Fwaddlefy4.png&name=1&pattern=Formal%20Invitation&theme=Light)
+
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fwaddlefy.net&label=https://waddlefy.net)](https://waddlefy.net) [![GitHub Release](https://img.shields.io/github/v/release/HillTopTRPG/waddlefy?label=version)](https://github.com/HillTopTRPG/waddlefy/releases) [![GitHub Sponsors](https://img.shields.io/github/sponsors/HillTopTRPG)](https://github.com/sponsors/HillTopTRPG)
 
 For Developers  
 [![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/HillTopTRPG/waddlefy/typescript?filename=client%2Fpackage.json)](https://github.com/Microsoft/TypeScript)
@@ -15,4 +16,4 @@ For Developers
 [AGPL-3.0](https://opensource.org/license/agpl-v3/)
 
 ---
-Copyright (c) 2023-present, HillTopTRPG
+Copyright &copy; 2023-2024 HillTopTRPG
