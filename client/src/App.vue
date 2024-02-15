@@ -31,6 +31,7 @@ preload(
 html {
   overscroll-behavior-x: none;
   overscroll-behavior-y: none;
+  overflow-y: hidden !important;
 }
 
 $body-font-family: 'M PLUS Rounded 1c', sans-serif !important;
@@ -67,5 +68,19 @@ $htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, sm
 
 textarea {
   font-family: 'M PLUS Rounded 1c', sans-serif !important;
+}
+
+.ellipsis {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 </style>
