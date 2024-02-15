@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.4",
-    "@aws-sdk/client-appsync": "^3.513.0",
+    "@aws-sdk/client-appsync": "^3.514.0",
     "@mdi/font": "7.4.47",
     "@types/lodash": "^4.14.202",
     "@types/splitpanes": "^2.2.6",
