@@ -4,10 +4,13 @@ on:
   push:
     paths:
       - 'client/**'
+    branches-ignore:
+      - 'images'
+  workflow_dispatch:
 
 env:
   AWS_S3_BUCKET: ${{ github.ref == 'refs/heads/main' && secrets.AWS_S3_BUCKET || secrets.AWS_S3_BUCKET_DEV }}
-  AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV: ${{ github.ref == 'refs/heads/main' && secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID || secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV }}
+  AWS_CLOUD_FRONT_DISTRIBUTION_ID: ${{ github.ref == 'refs/heads/main' && secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID || secrets.AWS_CLOUD_FRONT_DISTRIBUTION_ID_DEV }}
 
 jobs:
   execute:
@@ -32,7 +35,9 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.MY_AWS_REGION }}
+          aws-region: ap-northeast-1
+      - name: empty the bucket
+        run: aws s3 rm s3://${{env.AWS_S3_BUCKET}} --recursive
       - name: upload files to S3
         working-directory: ./client
         run: aws s3 cp --recursive dist/ s3://${{env.AWS_S3_BUCKET}}/ --exclude '.*git*'
