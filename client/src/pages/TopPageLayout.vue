@@ -14,7 +14,7 @@
         class="d-flex flex-column align-center overflow-y-auto align-self-stretch pt-2"
         :class="xs ? 'top-back-content-xs' : 'top-back-content'"
       >
-        <v-sheet class="d-flex flex-column bg-transparent mb-3" style="gap: 0.3rem">
+        <v-sheet class="d-flex flex-column align-center bg-transparent mb-3" style="gap: 0.3rem">
           <a
             href="https://github.com/HillTopTRPG/waddlefy/releases"
             class="d-flex"
@@ -24,6 +24,13 @@
             <img
               alt="Application Version"
               src="https://img.shields.io/github/v/release/HillTopTRPG/waddlefy?style=plastic&label=version"
+              height="20"
+            />
+          </a>
+          <a href="https://github.com/sponsors/HillTopTRPG" class="d-flex" target="_blank" rel="noopener noreferrer">
+            <img
+              alt="GitHub Sponsors"
+              src="https://img.shields.io/github/sponsors/HillTopTRPG?style=plastic&logo=github&label=%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B5%E3%83%BC"
               height="18"
             />
           </a>
