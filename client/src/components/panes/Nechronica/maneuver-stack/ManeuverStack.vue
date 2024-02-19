@@ -38,6 +38,8 @@
           </v-sheet>
           <maneuver-btn
             v-if="currentManeuver"
+            :type="currentCharacter?.data.type"
+            :character="currentCharacter?.data.character"
             mode="icon"
             size="small"
             class="align-self-center"

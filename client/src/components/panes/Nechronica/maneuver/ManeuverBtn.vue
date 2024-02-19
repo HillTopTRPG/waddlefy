@@ -14,12 +14,14 @@
 <script setup lang="ts">
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
-import { NechronicaManeuver } from '@/components/panes/Nechronica/nechronica'
+import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   maneuver: NechronicaManeuver
+  type: NechronicaType | undefined
+  character: Nechronica | undefined
   disableButton?: boolean
   activateProps?: any
   size: 'x-small' | 'small' | 'normal'
@@ -61,6 +63,21 @@ const isBattleTarget = computed((): number => {
 
 const partClassMap = ['', 'skill', 'skill', 'skill', 'head', 'arm', 'body', 'leg']
 
+function getSkillManeuverText(): string {
+  const basic = props.character?.basic
+  if (!basic) return ''
+  switch (props.maneuver.parts) {
+    case 1:
+      return mapping.CHARACTER_POSITION[basic.position]?.text || ''
+    case 2:
+      return mapping.CHARACTER_CLASS[basic.mainClass]?.text || ''
+    case 3:
+      return mapping.CHARACTER_CLASS[basic.subClass]?.text || ''
+    default:
+  }
+  return ''
+}
+
 const classText = computed(() => {
   const result: string[] = []
 
@@ -69,17 +86,19 @@ const classText = computed(() => {
     result.push(partsClass)
   }
 
-  const basicClass = mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.text === props.maneuver.name)?.class || ''
+  let basicClass = mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.text === props.maneuver.name)?.class || ''
+  basicClass ||= mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.text === props.maneuver.shozoku)?.class || ''
   if (basicClass) {
     result.push(basicClass)
   } else {
-    const shozokuClass = mapping.ICON_CLASS_MAP.find(sc => props.maneuver.shozoku.includes(sc.text))?.class || ''
+    const shozokuText = props.maneuver.shozoku || getSkillManeuverText()
+    const shozokuClass = mapping.ICON_CLASS_MAP.find(sc => shozokuText.includes(sc.text))?.class || ''
     if (shozokuClass) {
       result.push(shozokuClass)
     }
   }
   if (!result.length) {
-    result.push('skill')
+    result.push(['doll', 'savant'].includes(props.type || '') ? 'unknown' : 'skill')
   }
 
   if (props.mode === 'normal') {

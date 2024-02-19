@@ -183,16 +183,16 @@ function updateHelper(wrapFunc: (m: NechronicaManeuver) => boolean) {
 
 function onUpdateName(name: string) {
   updateHelper(m => {
-    if (m.name === name) return false
-    m.name = name
+    if (m.name === name.trim()) return false
+    m.name = name.trim()
     return true
   })
 }
 
 function onUpdateCost(cost: string) {
   updateHelper(m => {
-    if (m.cost === cost) return false
-    m.cost = cost
+    if (m.cost === cost.trim()) return false
+    m.cost = cost.trim()
     return true
   })
 }
@@ -223,24 +223,24 @@ function onUpdateTiming(timing: number) {
 
 function onUpdateRange(range: string) {
   updateHelper(m => {
-    if (m.range === range) return false
-    m.range = range
+    if (m.range === range.trim()) return false
+    m.range = range.trim()
     return true
   })
 }
 
 function onUpdateMemo(memo: string) {
   updateHelper(m => {
-    if (m.memo === memo) return false
-    m.memo = memo
+    if (m.memo === memo.trim()) return false
+    m.memo = memo.trim()
     return true
   })
 }
 
 function onUpdateShozoku(shozoku: string) {
   updateHelper(m => {
-    if (m.shozoku === shozoku) return false
-    m.shozoku = shozoku
+    if (m.shozoku === shozoku.trim()) return false
+    m.shozoku = shozoku.trim()
     return true
   })
 }

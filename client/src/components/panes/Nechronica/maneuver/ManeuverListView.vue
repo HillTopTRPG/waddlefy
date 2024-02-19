@@ -5,12 +5,12 @@
     style="box-sizing: content-box; gap: 5px"
   >
     <template v-for="(structure, idx) in structures" :key="idx">
-      <template v-if="type === 'doll' || idx > 0 || skillManeuverNum">
+      <template v-if="isViewParts(idx)">
         <v-sheet class="d-flex flex-row w-100 bg-transparent">
           <icon-btn :class="structure.headerClass" size="normal" :disable-button="true" />
           <v-sheet class="d-flex flex-row flex-wrap ml-3 bg-transparent" style="gap: 0.5rem">
             <template v-for="(maneuver, mIdx) in character.maneuverList" :key="mIdx">
-              <template v-if="structure.targetParts.some(n => n === maneuver.parts) && judgeView(maneuver)">
+              <template v-if="structure.isView(maneuver)">
                 <maneuver-btn-menu
                   :character="character"
                   :maneuver="maneuver"
@@ -26,7 +26,7 @@
             </template>
           </v-sheet>
         </v-sheet>
-        <v-divider v-if="idx < structures.length - 1" />
+        <v-divider v-if="isViewParts(idx + 1)" />
       </template>
     </template>
   </v-sheet>
@@ -37,7 +37,6 @@ import { NechronicaViewOption } from '@/components/panes/Nechronica/component/Vi
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
-import { computed } from 'vue'
 
 const props = defineProps<{
   character: Nechronica
@@ -54,12 +53,48 @@ const emits = defineEmits<{
   (e: 'update', idx: number, maneuver: NechronicaManeuver): Promise<void>
 }>()
 
-const structures = [
-  { headerClass: 'skill', targetParts: [1, 2, 3] },
-  { headerClass: 'head', targetParts: [4] },
-  { headerClass: 'arm', targetParts: [5] },
-  { headerClass: 'body', targetParts: [6] },
-  { headerClass: 'leg', targetParts: [7] }
+const structures: { headerClass: string; isView: (maneuver: NechronicaManeuver) => boolean }[] = [
+  {
+    headerClass: 'parts-skill',
+    isView: (maneuver: NechronicaManeuver): boolean => {
+      if (!judgeView(maneuver)) return false
+      return [1, 2, 3].includes(maneuver.parts)
+    }
+  },
+  {
+    headerClass: 'parts-head',
+    isView: (maneuver: NechronicaManeuver): boolean => {
+      if (!judgeView(maneuver)) return false
+      return maneuver.parts === 4
+    }
+  },
+  {
+    headerClass: 'parts-arm',
+    isView: (maneuver: NechronicaManeuver): boolean => {
+      if (!judgeView(maneuver)) return false
+      return maneuver.parts === 5
+    }
+  },
+  {
+    headerClass: 'parts-body',
+    isView: (maneuver: NechronicaManeuver): boolean => {
+      if (!judgeView(maneuver)) return false
+      return maneuver.parts === 6
+    }
+  },
+  {
+    headerClass: 'parts-leg',
+    isView: (maneuver: NechronicaManeuver): boolean => {
+      if (!judgeView(maneuver)) return false
+      return maneuver.parts === 7
+    }
+  },
+  {
+    headerClass: 'unknown',
+    isView: (maneuver: NechronicaManeuver): boolean => {
+      return ![1, 2, 3, 4, 5, 6, 7].includes(maneuver.parts)
+    }
+  }
 ]
 
 function judgeView(maneuver: NechronicaManeuver) {
@@ -70,9 +105,24 @@ function judgeView(maneuver: NechronicaManeuver) {
   return props.viewOption.selectedTypes.some(t => t === maneuver.type)
 }
 
-const skillManeuverNum = computed(
-  () => props.character.maneuverList.filter(m => structures[0].targetParts.includes(m.parts) && judgeView(m)).length
-)
+function getViewPartsNum(idx: number) {
+  return props.character.maneuverList.filter(m => structures[idx].isView(m)).length
+}
+
+const isViewParts = (idx: number): boolean => {
+  // スキル
+  if (idx === 0) {
+    return props.type === 'doll' || getViewPartsNum(0) > 0
+  }
+
+  // 部位不明
+  if (idx === 5) {
+    return getViewPartsNum(5) > 0
+  }
+
+  // 上記以外の部位は必ず表示（部位不明より大きいindexはfalse）
+  return idx < 5
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->

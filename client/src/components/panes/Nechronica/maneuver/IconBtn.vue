@@ -190,76 +190,100 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
     @include statusImage(url(/nechronica/used.png));
   }
 
+  &.parts-skill {
+    @include iconImage(url(/nechronica/parts-skill.png));
+  }
+
   &.skill {
     @include iconImage(url(/nechronica/skill.png));
+  }
+
+  &.parts-head {
+    @include iconImage(url(/nechronica/parts-head.png));
   }
 
   &.head {
     @include iconImage(url(/nechronica/head.png));
   }
 
+  &.parts-arm {
+    @include iconImage(url(/nechronica/parts-arm.png));
+  }
+
   &.arm {
     @include iconImage(url(/nechronica/arm.png));
+  }
+
+  &.parts-body {
+    @include iconImage(url(/nechronica/parts-body.png));
   }
 
   &.body {
     @include iconImage(url(/nechronica/body.png));
   }
 
+  &.parts-leg {
+    @include iconImage(url(/nechronica/parts-leg.png));
+  }
+
   &.leg {
     @include iconImage(url(/nechronica/leg.png));
   }
 
+  &.unknown {
+    @include iconImage(url(/nechronica/unknown.png));
+  }
+
   &.armed {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/armed.png));
   }
 
   &.mutation {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/mutation.png));
   }
 
   &.modification {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/modification.png));
   }
 
   &.alice {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/alice.png));
   }
 
   &.holic {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/holic.png));
   }
 
   &.automaton {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/automaton.png));
   }
 
   &.junk {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/junk.png));
   }
 
-  &.coat {
-    @include iconImage(url(/nechronica/skill.png));
+  &.court {
+    @include iconImage(url(/nechronica/court.png));
   }
 
   &.sorority {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/sorority.png));
   }
 
   &.psychedelic {
-    @include iconImage(url(/nechronica/skill.png));
+    @include iconImage(url(/nechronica/psychedelic.png));
   }
 
   &.stacy {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/stacey.png));
   }
 
   &.thanatos {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/thanatos.png));
   }
 
   &.gothic {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/gothic.png));
   }
 
   &.requiem {
@@ -267,11 +291,11 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   }
 
   &.baroque {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/baroque.png));
   }
 
   &.romanesque {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/romanesque.png));
   }
 
   &.treasure {
@@ -279,15 +303,15 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   }
 
   &.legion {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/legion.png));
   }
 
   &.horror {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/horror.png));
   }
 
   &.savant {
-    @include iconImage(url(/nechronica/requiem.png));
+    @include iconImage(url(/nechronica/savant.png));
   }
 
   &.basic-brain {

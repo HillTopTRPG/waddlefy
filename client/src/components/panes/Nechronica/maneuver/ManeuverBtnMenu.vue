@@ -4,6 +4,8 @@
       <maneuver-btn
         mode="normal"
         size="small"
+        :type="type"
+        :character="character"
         :maneuver="maneuver"
         :view-label="viewLabel"
         :battle-timing="battleTiming"

@@ -33,7 +33,7 @@
     { "val": "holic", "text": "ホリック" },
     { "val": "automaton", "text": "オートマトン" },
     { "val": "junk", "text": "ジャンク" },
-    { "val": "coat", "text": "コート" },
+    { "val": "court", "text": "コート" },
     { "val": "sorority", "text": "ソロリティ" }
   ],
   "CHARACTER_CLASS": [
@@ -70,8 +70,8 @@
     { "text": "ｵｰﾄﾏﾄﾝ", "class": "automaton" },
     { "text": "ジャンク", "class": "junk" },
     { "text": "ｼﾞｬﾝｸ", "class": "junk" },
-    { "text": "コート", "class": "coat" },
-    { "text": "ｺｰﾄ", "class": "coat" },
+    { "text": "コート", "class": "court" },
+    { "text": "ｺｰﾄ", "class": "court" },
     { "text": "ソロリティ", "class": "sorority" },
     { "text": "ｿﾛﾘﾃｨ", "class": "sorority" },
     { "text": "サイケデリック", "class": "psychedelic" },
