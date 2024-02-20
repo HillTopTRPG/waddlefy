@@ -23,12 +23,12 @@
             <template v-if="currentData?.type === 'use'">
               <span>{{ $t('Nechronica.label.use') }}</span>
               <span class="ellipsis text thin">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
-              <span class="ellipsis text thin">{{ currentManeuver?.name || '' }}</span>
+              <span class="ellipsis text thin">{{ wrapUnknown(currentManeuver?.name || '') }}</span>
             </template>
             <template v-if="currentData?.type === 'lost'">
               <span>{{ $t('Nechronica.label.lost') }}</span>
               <span class="ellipsis text thin">{{ currentCharacter?.data.character.basic.characterName || '' }}</span>
-              <span class="ellipsis text thin">{{ currentManeuver?.name || '' }}</span>
+              <span class="ellipsis text thin">{{ wrapUnknown(currentManeuver?.name || '') }}</span>
             </template>
             <template v-if="currentData?.type === 'move'">
               <span>{{ $t('Nechronica.label.move') }}</span>
@@ -45,6 +45,7 @@
             class="align-self-center"
             :maneuver="currentManeuver"
             :disable-button="true"
+            :perspective="perspective"
           />
         </v-sheet>
       </template>
@@ -59,6 +60,7 @@
             <maneuver-stack-content
               :index="viewDataList.length - idx"
               :data="data.data"
+              :perspective="perspective"
               @cancel="onCancel(data.index)"
             />
           </template>
@@ -97,6 +99,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   index: number
   dataList: (NechronicaManeuverStack & { id: string })[]
+  perspective: string
 }>()
 
 const emits = defineEmits<{
@@ -178,6 +181,12 @@ function onResolved() {
 
 function onCancel(idx: number) {
   emits('cancel', idx)
+}
+
+function wrapUnknown(text: string) {
+  if (!currentManeuver.value?.isUnknown) return text
+  if (!props.perspective) return text
+  return '???'
 }
 </script>
 

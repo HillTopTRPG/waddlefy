@@ -72,6 +72,32 @@
               :model-value="option.viewUsed"
               @update:model-value="v => updateViewUsed(v)"
             />
+            <v-switch-compact
+              :label="$t('Nechronica.label.unknown')"
+              :model-value="option.viewUnknown"
+              @update:model-value="v => updateViewUnknown(v)"
+            />
+            <v-divider />
+            <v-switch-compact
+              :label="$t('Nechronica.label.only-added')"
+              :model-value="option.viewOnlyAdded"
+              @update:model-value="v => updateViewOnlyAdded(v)"
+            />
+            <v-switch-compact
+              :label="$t('Nechronica.label.only-is-bravado')"
+              :model-value="option.viewOnlyIsBravado"
+              @update:model-value="v => updateViewOnlyIsBravado(v)"
+            />
+            <v-switch-compact
+              :label="$t('Nechronica.label.only-bravado-target')"
+              :model-value="option.viewOnlyBravadoTarget"
+              @update:model-value="v => updateViewOnlyBravadoTarget(v)"
+            />
+            <v-switch-compact
+              :label="$t('Nechronica.label.only-ignore-bravado')"
+              :model-value="option.viewOnlyIgnoreBravado"
+              @update:model-value="v => updateViewOnlyIgnoreBravado(v)"
+            />
           </v-list-item>
         </v-sheet>
         <v-sheet>
@@ -108,6 +134,11 @@ export type NechronicaViewOption = {
   viewLabel: '' | 'timing' | 'cost' | 'range'
   viewLost: boolean
   viewUsed: boolean
+  viewUnknown: boolean
+  viewOnlyAdded: boolean
+  viewOnlyIsBravado: boolean
+  viewOnlyBravadoTarget: boolean
+  viewOnlyIgnoreBravado: boolean
   selectedTimings: number[]
   selectedTypes: number[]
 }
@@ -143,6 +174,54 @@ function updateViewLost(v: boolean) {
 
 function updateViewUsed(v: boolean) {
   updateOptionHelper(opt => (opt.viewUsed = v))
+}
+
+function updateViewUnknown(v: boolean) {
+  updateOptionHelper(opt => (opt.viewUnknown = v))
+}
+
+function updateViewOnlyAdded(v: boolean) {
+  updateOptionHelper(opt => {
+    opt.viewOnlyAdded = v
+    if (v) {
+      opt.viewOnlyIsBravado = false
+      opt.viewOnlyBravadoTarget = false
+      opt.viewOnlyIgnoreBravado = false
+    }
+  })
+}
+
+function updateViewOnlyIsBravado(v: boolean) {
+  updateOptionHelper(opt => {
+    opt.viewOnlyIsBravado = v
+    if (v) {
+      opt.viewOnlyAdded = false
+      opt.viewOnlyBravadoTarget = false
+      opt.viewOnlyIgnoreBravado = false
+    }
+  })
+}
+
+function updateViewOnlyBravadoTarget(v: boolean) {
+  updateOptionHelper(opt => {
+    opt.viewOnlyBravadoTarget = v
+    if (v) {
+      opt.viewOnlyAdded = false
+      opt.viewOnlyIsBravado = false
+      opt.viewOnlyIgnoreBravado = false
+    }
+  })
+}
+
+function updateViewOnlyIgnoreBravado(v: boolean) {
+  updateOptionHelper(opt => {
+    opt.viewOnlyIgnoreBravado = v
+    if (v) {
+      opt.viewOnlyAdded = false
+      opt.viewOnlyIsBravado = false
+      opt.viewOnlyBravadoTarget = false
+    }
+  })
 }
 
 function updateSelectedTypes(v: number[]) {

@@ -1,9 +1,18 @@
 <template>
   <v-menu width="auto" v-model="opened" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn data-cy="open-btn" :color="color || 'error'" variant="text" :class="classText || ''" v-bind="props">
+      <v-btn
+        data-cy="open-btn"
+        :color="color || 'error'"
+        variant="text"
+        :size="noText ? 'small' : 'default'"
+        :density="noText ? 'comfortable' : 'default'"
+        :icon="noText ? 'mdi-delete-outline' : undefined"
+        :class="classText || ''"
+        v-bind="props"
+      >
         <v-icon icon="mdi-delete-outline" />
-        <span data-cy="text" class="text-decoration-underline">{{
+        <span v-if="!noText" data-cy="text" class="text-decoration-underline">{{
           $t('label.delete-this').replace('$$', i18n ? $t(type) : type)
         }}</span>
       </v-btn>
@@ -55,6 +64,7 @@ defineProps<{
   classText?: string
   color?: string
   i18n?: boolean
+  noText?: boolean
 }>()
 
 const emits = defineEmits<{

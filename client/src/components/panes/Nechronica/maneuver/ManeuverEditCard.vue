@@ -153,6 +153,7 @@ const width = 20
 const props = defineProps<{
   maneuver: NechronicaManeuver
   mode: 'view' | 'edit'
+  perspective: string
 }>()
 
 const emits = defineEmits<{

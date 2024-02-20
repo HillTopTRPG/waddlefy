@@ -21,7 +21,7 @@
       />
     </template>
     <template #default>
-      <maneuver-stack-list />
+      <maneuver-stack-list :perspective="perspective" />
       <v-sheet
         class="d-flex flex-row flex-wrap align-start px-2 pt-1 pb-2 overflow-auto w-100 bg-transparent"
         style="gap: 0.5rem"
@@ -128,7 +128,7 @@ defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
 }>()
 
-const perspective = ref<string>(isUserControl.value ? '' : graphQlStore?.state.player?.id || '')
+const perspective = ref<string>(isUserControl.value ? '' : graphQlStore?.state.player?.id ? 'player' : '')
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
   graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
@@ -138,6 +138,11 @@ const viewOption = ref<NechronicaViewOption>({
   roicePosition: 'before',
   viewLost: true,
   viewUsed: true,
+  viewUnknown: true,
+  viewOnlyAdded: false,
+  viewOnlyIsBravado: false,
+  viewOnlyBravadoTarget: false,
+  viewOnlyIgnoreBravado: false,
   viewLabel: '',
   selectedTypes: mapping.MANEUVER_TYPE.map((_, idx) => idx),
   selectedTimings: mapping.MANEUVER_TIMING.map((_, idx) => idx)

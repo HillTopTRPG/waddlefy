@@ -50,15 +50,18 @@
           <v-spacer v-if="hasBravado && actionValueManeuvers.some(m => m.lost)" style="min-height: 28px" />
         </span>
         <template v-for="(maneuver, idx) in character?.data.character.maneuverList || []" :key="idx">
-          <v-sheet v-if="maneuver.type === 3" class="d-flex flex-column align-center pa-1">
+          <v-sheet v-if="!maneuver.isUnknown && maneuver.type === 3" class="d-flex flex-column align-center pa-1">
             <maneuver-btn-menu
               :character="character!.data.character"
               :disable-button="true"
               :maneuver="maneuver"
               :type="character!.data.type"
+              :perspective="perspective"
               @update:lost="v => onUpdateManeuverLost(characterId, idx, v)"
               @update:used="(v, cost) => onUpdateManeuverUsed(characterId, idx, v, cost)"
+              @update:unknown="v => onUpdateManeuverUnknown(characterId, idx, v)"
               @update:ignore-bravado="v => onUpdateManeuverIgnoreBravado(characterId, idx, v)"
+              @delete="emits('delete', characterId, idx)"
             />
             <span
               class="text-body-1 font-weight-bold"
@@ -130,13 +133,16 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const props = defineProps<{
   characterId: string
+  perspective: string
 }>()
 
 const emits = defineEmits<{
   (e: 'update:action-value', value: number): Promise<void>
   (e: 'update:maneuver-used', characterId: string, idx: number, value: boolean, cost: number): Promise<void>
   (e: 'update:maneuver-lost', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'update:maneuver-unknown', characterId: string, idx: number, value: boolean): Promise<void>
   (e: 'update:maneuver-ignore-bravado', characterId: string, idx: number, value: boolean): Promise<void>
+  (e: 'delete', characterId: string, idx: number): Promise<void>
   (e: 'update:roice', characterId: string, idx: number, roice: NechronicaRoice): Promise<void>
 }>()
 
@@ -145,11 +151,11 @@ const character = computed((): { id: string; data: NechronicaWrap } | undefined 
 })
 
 const hasBravado = computed(() => {
-  return character.value?.data.character.maneuverList.some(m => m.isBravado)
+  return character.value?.data.character.maneuverList.some(m => !m.isUnknown && !m.lost && m.isBravado)
 })
 
 const actionValueManeuvers = computed((): NechronicaManeuver[] => {
-  return character.value?.data.character.maneuverList.filter(m => m.type === 3) || []
+  return character.value?.data.character.maneuverList?.filter(m => !m.isUnknown && m.type === 3) || []
 })
 const maneuverActionValue = computed((): number => {
   return actionValueManeuvers.value.reduce((p, c) => p + getActionValueNum(c.memo), 6) || 0
@@ -214,6 +220,10 @@ function onUpdateManeuverUsed(characterId: string, idx: number, used: boolean, c
 
 function onUpdateManeuverLost(characterId: string, idx: number, lost: boolean) {
   emits('update:maneuver-lost', characterId, idx, lost)
+}
+
+function onUpdateManeuverUnknown(characterId: string, idx: number, isUnknown: boolean) {
+  emits('update:maneuver-unknown', characterId, idx, isUnknown)
 }
 
 function onUpdateManeuverIgnoreBravado(characterId: string, idx: number, value: boolean) {

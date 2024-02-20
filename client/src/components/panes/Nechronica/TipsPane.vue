@@ -227,7 +227,6 @@ export const componentInfo = {
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
 import BravadoBtn from '@/components/panes/Nechronica/component/BravadoBtn.vue'
-import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import PaneFrame from '@/components/panes/PaneFrame.vue'
 import LinkText from '@/components/parts/LinkText.vue'
 

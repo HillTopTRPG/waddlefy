@@ -14,11 +14,14 @@
           <action-value-menu
             v-if="character.data.type !== 'legion'"
             :character-id="characterId"
+            :perspective="perspective"
             @update:action-value="onUpdateActionValue"
             @update:maneuver-used="onUpdateManeuverUsed"
             @update:maneuver-lost="onUpdateManeuverLost"
+            @update:maneuver-unknown="onUpdateManeuverUnknown"
             @update:maneuver-ignore-bravado="onUpdateManeuverIgnoreBravado"
             @update:roice="onUpdateRoice"
+            @delete="onDeleteManeuver"
           />
           <action-value-menu-legion
             v-else
@@ -59,12 +62,15 @@
             :battle-timing="battleTiming"
             :columns="columns || 10"
             :type="character.data.type"
+            :perspective="perspective"
             @update:used="(idx, used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
             @update:lost="(idx, lost) => onUpdateManeuverLost(characterId, idx, lost)"
+            @update:unknown="(idx, v) => onUpdateManeuverUnknown(characterId, idx, v)"
             @update:ignore-bravado="
               (idx, ignoreBravado) => onUpdateManeuverIgnoreBravado(characterId, idx, ignoreBravado)
             "
             @update="(idx, maneuver) => onUpdateManeuver(characterId, idx, maneuver)"
+            @delete="idx => onDeleteManeuver(characterId, idx)"
           />
         </v-card-text>
         <v-card-text
@@ -75,16 +81,19 @@
         >
           <template v-for="(maneuver, idx) in character.data.character.maneuverList" :key="idx">
             <maneuver-btn-menu
-              v-if="judgeView(maneuver)"
+              v-if="judgeView(viewOption, maneuver)"
               :character="character.data.character"
               :maneuver="maneuver"
               :type="character.data.type"
               :view-label="viewOption?.viewLabel || ''"
               :battle-timing="battleTiming"
+              :perspective="perspective"
               @update:lost="lost => onUpdateManeuverLost(characterId, idx, lost)"
               @update:used="(used, cost) => onUpdateManeuverUsed(characterId, idx, used, cost)"
+              @update:unknown="v => onUpdateManeuverUnknown(characterId, idx, v)"
               @update:ignore-bravado="ignoreBravado => onUpdateManeuverIgnoreBravado(characterId, idx, ignoreBravado)"
               @update="updateManeuver => onUpdateManeuver(characterId, idx, updateManeuver)"
+              @delete="onDeleteManeuver(characterId, idx)"
             />
           </template>
         </v-card-text>
@@ -104,6 +113,7 @@
 <script setup lang="ts">
 import ManeuverListView from '@/components/panes/Nechronica/maneuver/ManeuverListView.vue'
 import {
+  judgeView,
   NechronicaManeuver,
   NechronicaManeuverStack,
   NechronicaManeuverStackBase,
@@ -144,14 +154,6 @@ const isCurrent = computed(() => {
 })
 
 const columns = ref(10)
-
-function judgeView(maneuver: NechronicaManeuver) {
-  if (!props.viewOption) return true
-  if (maneuver.lost && !props.viewOption.viewLost) return false
-  if (maneuver.used && !props.viewOption.viewUsed) return false
-  if (props.viewOption.selectedTimings.every((timing: number) => timing !== maneuver.timing)) return false
-  return props.viewOption.selectedTypes.some((timing: number) => timing === maneuver.type)
-}
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
   graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
@@ -231,18 +233,26 @@ async function onUpdateManeuverLost(characterId: string, idx: number, lost: bool
     const maneuver = c.character.maneuverList.at(idx)
     if (!maneuver) return
     maneuver.lost = lost
-    maneuver.ignoreBravado = undefined
+    maneuver.ignoreBravado = false
   })
   if (lost) {
     await addManeuverStackLost(characterId, idx)
   }
 }
 
+async function onUpdateManeuverUnknown(characterId: string, idx: number, isUnknown: boolean) {
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
+    const maneuver = c.character.maneuverList.at(idx)
+    if (!maneuver) return
+    maneuver.isUnknown = isUnknown
+  })
+}
+
 async function onUpdateManeuverIgnoreBravado(characterId: string, idx: number, value: boolean) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     const maneuver = c.character.maneuverList.at(idx)
     if (!maneuver) return
-    maneuver.ignoreBravado = value || undefined
+    maneuver.ignoreBravado = value
   })
 }
 
@@ -250,6 +260,13 @@ async function onUpdateManeuver(characterId: string, idx: number, maneuver: Nech
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     if (!c.character.maneuverList.at(idx)) return
     c.character.maneuverList[idx] = maneuver
+  })
+}
+
+async function onDeleteManeuver(characterId: string, idx: number) {
+  await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
+    if (!c.character.maneuverList.at(idx)) return
+    c.character.maneuverList.splice(idx, 1)
   })
 }
 

@@ -72,18 +72,50 @@
           }}</span>
         </v-card-text>
         <v-card-text v-if="isDoll" class="d-flex flex-column align-start py-0">
-          <span class="text-body-2">{{ wrapText('Nechronica.label.age', 'age') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.hair-color', 'hairColor') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.eye-color', 'eyeColor') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.skin-color', 'skinColor') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.height', 'height') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.weight', 'weight') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.shuzoku', 'shuzoku') }}</span>
-          <span class="text-body-2">{{ wrapText('Nechronica.label.carma', 'carma') }}</span>
-          <span class="text-body-2">{{ basePositionText }}</span>
+          <table class="basic-info-table">
+            <tr>
+              <th>{{ $t('Nechronica.label.shuzoku') }}</th>
+              <td>{{ character?.data.character.basic.shuzoku || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.age') }}</th>
+              <td>{{ character?.data.character.basic.age || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.init-placement') }}</th>
+              <td>{{ basePositionText }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.height') }}</th>
+              <td>{{ character?.data.character.basic.height || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.weight') }}</th>
+              <td>{{ character?.data.character.basic.weight || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.carma') }}</th>
+              <td>{{ character?.data.character.basic.carma || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.hair-color') }}</th>
+              <td>{{ character?.data.character.basic.hairColor || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.eye-color') }}</th>
+              <td>{{ character?.data.character.basic.eyeColor || '' }}</td>
+            </tr>
+            <tr>
+              <th>{{ $t('Nechronica.label.skin-color') }}</th>
+              <td>{{ character?.data.character.basic.skinColor || '' }}</td>
+            </tr>
+          </table>
         </v-card-text>
         <v-card-text class="py-1 px-2" v-if="character.data.type === 'doll' || !perspective">
           <reload-character-sheet-btn :character-id="characterId" />
+        </v-card-text>
+        <v-card-text class="pt-0 pb-1 px-2" v-if="!perspective">
+          <add-unknown-maneuver-btn @execute="onAddUnknownManeuver()" />
         </v-card-text>
       </v-card>
     </v-menu>
@@ -93,13 +125,13 @@
 <script setup lang="ts">
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
-import { NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import { NechronicaManeuver, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ReloadCharacterSheetBtn from '@/components/panes/Nechronica/component/ReloadCharacterSheetBtn.vue'
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
-import { Nechronica } from '@/components/panes/Nechronica/nechronica'
+import AddUnknownManeuverBtn from '@/components/panes/Nechronica/maneuver/AddUnknownManeuverBtn.vue'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -130,18 +162,58 @@ const icon = computed(() => {
 
 const { t } = useI18n()
 
-function wrapText(target: string, property: keyof Nechronica['basic']) {
-  return `${t(target)}: ${character.value?.data.character.basic[property].toString() || ''}`
-}
-
-const basePositionText = computed(() => {
-  const label = t('Nechronica.label.init-placement')
+const basePositionText = computed((): string => {
   const basePosition = character.value?.data.character.basic.basePosition.toString(10) || '0'
   const contentRaw = mapping.CHARACTER_LOCATION.find((cp: any) => cp['init-pos-value'] === basePosition)?.text || ''
-  const content = t(contentRaw)
-  return `${label}: ${content}`
+  return t(contentRaw)
 })
+
+async function onAddUnknownManeuver() {
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
+    const newManeuver: NechronicaManeuver = {
+      lost: false,
+      used: false,
+      type: 0,
+      parts: 0,
+      name: `マニューバ${c.character.maneuverList.length + 1}`,
+      timing: 0,
+      cost: '',
+      range: '',
+      memo: '',
+      shozoku: '',
+      ignoreBravado: false,
+      isBravado: false,
+      isUnknown: true,
+      isAdded: true
+    }
+    c.character.maneuverList.push(newManeuver)
+  })
+}
 </script>
 
 <!--suppress HtmlUnknownAttribute -->
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.basic-info-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  tr:nth-child(odd) {
+    background-color: #eee;
+  }
+
+  th {
+    background-color: #aaaaaa22;
+    text-align: center;
+    min-width: 4rem;
+    max-width: 4rem;
+    width: 4rem;
+    height: 1.5rem;
+  }
+
+  td {
+    text-align: center;
+    overflow: hidden;
+  }
+}
+</style>

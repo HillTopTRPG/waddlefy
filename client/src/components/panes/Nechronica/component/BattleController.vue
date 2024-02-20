@@ -80,7 +80,7 @@ function updateProgress(total: number, current: number) {
 
 function getMaxActionValues(characterId: string, data: NechronicaWrap): number[] {
   if (data.type === 'legion') return [data.maxActionValue, data.maxActionValue]
-  const hasBravado = data.character.maneuverList.some(m => m.isBravado)
+  const hasBravado = data.character.maneuverList.some(m => !m.isUnknown && !m.lost && m.isBravado)
   const dependenceRoiceNum = data.character.roiceList.filter(r => r.damage === 4 && r.id % 10 === 3).length
   const characterType = graphQlStore?.state.sessionDataList.find(sd => sd.id === characterId)?.data.type
   const otherInsanityRoice: number =
@@ -138,7 +138,7 @@ function getBattleDataInfo() {
 
     const nechronicaWrap: NechronicaWrap = sd.data
     const maneuverList = nechronicaWrap.character.maneuverList
-    const hasBravado = maneuverList.some(m => m.isBravado)
+    const hasBravado = maneuverList.some(m => !m.isUnknown && !m.lost && m.isBravado)
     const position = nechronicaWrap.position
     const afterPosition = nechronicaWrap.character.basic.basePosition + 3
     const nextActionValue = Math.min(nechronicaWrap.actionValue, battleCount - 1)

@@ -18,12 +18,13 @@
         </v-card-text>
         <v-card-text class="pt-0 pb-1 px-2" v-if="character && maneuver">
           <maneuver-view-card
-            mode="view-simple"
+            mode="history-stack"
             :history-type="data.type"
             :over-cost="overCost"
             :has-bravado="false"
             :type="character?.data.type!"
             :maneuver="maneuver!"
+            :perspective="perspective"
           />
         </v-card-text>
       </v-card>
@@ -51,6 +52,7 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const props = defineProps<{
   index: number
   data: NechronicaManeuverStack
+  perspective: string
 }>()
 
 const emits = defineEmits<{

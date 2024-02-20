@@ -17,10 +17,13 @@
                   :type="type"
                   :view-label="viewOption?.viewLabel || ''"
                   :battle-timing="battleTiming"
+                  :perspective="perspective"
                   @update:lost="v => emits('update:lost', mIdx, v)"
                   @update:used="(v, cost) => emits('update:used', mIdx, v, cost)"
+                  @update:unknown="v => emits('update:unknown', mIdx, v)"
                   @update:ignore-bravado="v => emits('update:ignore-bravado', mIdx, v)"
                   @update="v => emits('update', mIdx, v)"
+                  @delete="emits('delete', mIdx)"
                 />
               </template>
             </template>
@@ -36,7 +39,7 @@
 import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import IconBtn from '@/components/panes/Nechronica/maneuver/IconBtn.vue'
 import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnMenu.vue'
-import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
+import { judgeView, Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 
 const props = defineProps<{
   character: Nechronica
@@ -44,48 +47,51 @@ const props = defineProps<{
   type: NechronicaType
   viewOption: NechronicaViewOption | null
   battleTiming: string
+  perspective: string
 }>()
 
 const emits = defineEmits<{
   (e: 'update:used', idx: number, value: boolean, cost: number): Promise<void>
   (e: 'update:lost', idx: number, value: boolean): Promise<void>
+  (e: 'update:unknown', idx: number, value: boolean): Promise<void>
   (e: 'update:ignore-bravado', idx: number, value: boolean): Promise<void>
   (e: 'update', idx: number, maneuver: NechronicaManeuver): Promise<void>
+  (e: 'delete', idx: number): Promise<void>
 }>()
 
 const structures: { headerClass: string; isView: (maneuver: NechronicaManeuver) => boolean }[] = [
   {
     headerClass: 'parts-skill',
     isView: (maneuver: NechronicaManeuver): boolean => {
-      if (!judgeView(maneuver)) return false
+      if (!judgeView(props.viewOption, maneuver)) return false
       return [1, 2, 3].includes(maneuver.parts)
     }
   },
   {
     headerClass: 'parts-head',
     isView: (maneuver: NechronicaManeuver): boolean => {
-      if (!judgeView(maneuver)) return false
+      if (!judgeView(props.viewOption, maneuver)) return false
       return maneuver.parts === 4
     }
   },
   {
     headerClass: 'parts-arm',
     isView: (maneuver: NechronicaManeuver): boolean => {
-      if (!judgeView(maneuver)) return false
+      if (!judgeView(props.viewOption, maneuver)) return false
       return maneuver.parts === 5
     }
   },
   {
     headerClass: 'parts-body',
     isView: (maneuver: NechronicaManeuver): boolean => {
-      if (!judgeView(maneuver)) return false
+      if (!judgeView(props.viewOption, maneuver)) return false
       return maneuver.parts === 6
     }
   },
   {
     headerClass: 'parts-leg',
     isView: (maneuver: NechronicaManeuver): boolean => {
-      if (!judgeView(maneuver)) return false
+      if (!judgeView(props.viewOption, maneuver)) return false
       return maneuver.parts === 7
     }
   },
@@ -96,14 +102,6 @@ const structures: { headerClass: string; isView: (maneuver: NechronicaManeuver) 
     }
   }
 ]
-
-function judgeView(maneuver: NechronicaManeuver) {
-  if (!props.viewOption) return true
-  if (maneuver.lost && !props.viewOption.viewLost) return false
-  if (maneuver.used && !props.viewOption.viewUsed) return false
-  if (props.viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
-  return props.viewOption.selectedTypes.some(t => t === maneuver.type)
-}
 
 function getViewPartsNum(idx: number) {
   return props.character.maneuverList.filter(m => structures[idx].isView(m)).length

@@ -1,5 +1,6 @@
-import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
+import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import { clone, convertNumberZero } from '../PrimaryDataUtility'
+import { getJsonByGet, getJsonByJsonp } from '../fetch-util'
 
 export type NechronicaManeuver = {
   lost: boolean
@@ -12,8 +13,10 @@ export type NechronicaManeuver = {
   range: string
   memo: string
   shozoku: string
-  ignoreBravado?: boolean
-  isBravado?: boolean
+  ignoreBravado: boolean
+  isBravado: boolean
+  isUnknown: boolean
+  isAdded: boolean
 }
 
 export type NechronicaRoice = {
@@ -200,7 +203,10 @@ export class NechronicaHelper {
         range: textFilter(list[7]),
         memo: textFilter(list[8]),
         shozoku: textFilter(list[9]),
-        isBravado: ['平気', '自動制御装置'].includes(name)
+        isBravado: ['平気', '自動制御装置'].includes(name),
+        ignoreBravado: false,
+        isAdded: false,
+        isUnknown: false
       }
       return data
     })
@@ -261,7 +267,26 @@ export function mergeNechronica(oldData: Nechronica, mergeData: Nechronica, targ
   result.url = mergeData.url
   if (targets.some(t => t === 'basic')) result.basic = clone(mergeData.basic)!
   if (targets.some(t => t === 'roice')) result.roiceList = clone(mergeData.roiceList)!
-  if (targets.some(t => t === 'maneuver')) result.maneuverList = clone(mergeData.maneuverList)!
+  if (targets.some(t => t === 'maneuver')) {
+    // 主催者が追加したマニューバは引き継がせる
+    const addedManeuvers = result.maneuverList.filter(m => m.isAdded)
+    result.maneuverList = clone(mergeData.maneuverList)!
+    result.maneuverList.push(...addedManeuvers)
+  }
 
   return result
+}
+
+export function judgeView(viewOption: NechronicaViewOption | null, maneuver: NechronicaManeuver): boolean {
+  if (!viewOption) return true
+  if (viewOption.viewOnlyAdded) return maneuver.isAdded || false
+  if (maneuver.isUnknown && !viewOption.viewUnknown) return false
+  if (maneuver.isUnknown) return true
+  if (viewOption.viewOnlyIsBravado) return maneuver.isBravado || false
+  if (viewOption.viewOnlyBravadoTarget) return maneuver.lost && !maneuver.ignoreBravado
+  if (viewOption.viewOnlyIgnoreBravado) return maneuver.ignoreBravado || false
+  if (maneuver.lost && !viewOption.viewLost) return false
+  if (maneuver.used && !viewOption.viewUsed) return false
+  if (viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
+  return viewOption.selectedTypes.some(t => t === maneuver.type)
 }

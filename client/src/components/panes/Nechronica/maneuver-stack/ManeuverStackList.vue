@@ -5,7 +5,7 @@
     style="gap: 0.3rem 0.5rem"
   >
     <template v-for="(_, idx) in unDraggableStackList" :key="idx">
-      <maneuver-stack :index="idx" :dataList="unDraggableStackList" />
+      <maneuver-stack :index="idx" :dataList="unDraggableStackList" :perspective="perspective" />
     </template>
     <draggable
       :list="draggableStackList"
@@ -21,6 +21,7 @@
         <maneuver-stack
           :index="index"
           :dataList="draggableStackList"
+          :perspective="perspective"
           @resolve="onResolveStack(unDraggableStackList.length + index)"
           @cancel="idx => onCancelStack(idx + unDraggableStackList.length)"
         />
@@ -38,6 +39,10 @@ import { omit } from 'lodash'
 import { computed, inject, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+
+defineProps<{
+  perspective: string
+}>()
 
 const singleton = computed((): { id: string; data: NechronicaSingleton } | undefined =>
   graphQlStore?.state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
