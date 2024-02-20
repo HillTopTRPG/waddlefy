@@ -24,7 +24,7 @@
           <v-card-title>マニューバのアイコンの決まり方</v-card-title>
           <v-card-subtitle>１．基本パーツかどうか</v-card-subtitle>
           <v-card-text>
-            マニューバの名前が以下のテキストと一致したら基本パーツのアイコンになります。<br />
+            マニューバの「名前」か「取得元」が以下のテキストと一致したら<br />基本パーツのアイコンになります。<br />
             <v-sheet class="d-flex flex-row bg-cyan-lighten-5 my-2" style="gap: 1rem; flex-grow: 1">
               <v-sheet
                 class="d-flex flex-row flex-wrap overflow-hidden bg-transparent"
@@ -51,12 +51,20 @@
               </v-sheet>
             </v-sheet>
 
-            ※ マニューバの名前に【】などを含めないように注意してください。
+            ※ テキストに【】などを含めないように注意してください。
           </v-card-text>
-          <v-card-subtitle>２．取得先</v-card-subtitle>
+          <v-card-subtitle>２．部位がスキルの場合</v-card-subtitle>
           <v-card-text class="d-flex flex-column align-stretch">
             <span>
-              基本パーツではない場合、取得先で判別を行います。<br />
+              基本パーツではなく、マニューバの部位として「ﾎﾟｼﾞｼｮﾝ」「ﾒｲﾝｸﾗｽ」「ｻﾌﾞｸﾗｽ」<br />
+              が選択されていた場合、それらに準じたアイコンになります。<br />
+              キャラクターにポジションやクラスが設定されていない場合は無視されます。
+            </span>
+          </v-card-text>
+          <v-card-subtitle>３．取得元</v-card-subtitle>
+          <v-card-text class="d-flex flex-column align-stretch">
+            <span>
+              基本パーツでもスキル系のマニューバでもない場合、「取得元」で判別します。<br />
               以下のテキストを<b>含んでいる</b>場合、それに準じたアイコンになります。
             </span>
 
@@ -108,10 +116,11 @@
               </v-sheet>
             </v-sheet>
           </v-card-text>
-          <v-card-subtitle>３．それ以外の場合</v-card-subtitle>
+          <v-card-subtitle>４．それ以外の場合</v-card-subtitle>
           <v-card-text>
-            基本パーツでなく取得先でも判断できなかった場合、部位のアイコンとなります。<br />
-            部位も設定されていなければ、スキルのアイコン <icon-btn class="skill" size="x-small" /> になります。
+            上記で判断できなかった場合、部位のアイコンとなります。<br />
+            部位も設定されていなければ、未指定のアイコンになります。<br />
+            ホラー・レギオンの場合は代わりにスキルのアイコンになります。
           </v-card-text>
           <v-card-subtitle>背景</v-card-subtitle>
           <v-card-text>
