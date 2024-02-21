@@ -60,7 +60,7 @@
               :disable-button="true"
               size="normal"
               :under-text="$t(`Nechronica.CHARACTER_TYPE.${character.data.type}`)"
-              :class="character.data.type"
+              :class="`type-${character.data.type}`"
             />
           </template>
           <v-spacer />
@@ -157,7 +157,7 @@ const icon = computed(() => {
   if (character.value?.data.type === 'doll') {
     return mapping.CHARACTER_POSITION[character.value?.data.character.basic.position].val
   }
-  return character.value?.data.type
+  return `type-${character.value?.data.type}`
 })
 
 const { t } = useI18n()

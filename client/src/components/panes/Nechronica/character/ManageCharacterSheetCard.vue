@@ -11,7 +11,7 @@
         :class="
           character.data.type === 'doll'
             ? mapping.CHARACTER_POSITION[character.data.character.basic.position].val
-            : character.data.type
+            : `type-${character.data.type}`
         "
         size="x-small"
       />

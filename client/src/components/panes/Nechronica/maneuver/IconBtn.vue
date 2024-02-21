@@ -150,207 +150,207 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   }
 
   &.type0 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-00.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/0.png));
   }
 
   &.type1 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-01.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/1.png));
   }
 
   &.type2 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-02.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/2.png));
   }
 
   &.type3 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-03.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/3.png));
   }
 
   &.type4 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-04.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/4.png));
   }
 
   &.type5 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-05.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/5.png));
   }
 
   &.type6 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-06.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/6.png));
   }
 
   &.type7 {
-    @include maneuverBackFrame(url('/nechronica/maneuver-back-type-07.png'));
+    @include maneuverBackFrame(url(/nechronica/maneuver-back/7.png));
   }
 
   &.lost {
-    @include statusImage(url(/nechronica/lost.png));
+    @include statusImage(url(/nechronica/mark/lost.png));
   }
 
   &.used {
-    @include statusImage(url(/nechronica/used.png));
+    @include statusImage(url(/nechronica/mark/used.png));
   }
 
   &.parts-skill {
-    @include iconImage(url(/nechronica/parts-skill.png));
+    @include iconImage(url(/nechronica/parts/skill.png));
   }
 
-  &.skill {
-    @include iconImage(url(/nechronica/skill.png));
+  &.maneuver-skill {
+    @include iconImage(url(/nechronica/maneuver/skill.png));
   }
 
   &.parts-head {
-    @include iconImage(url(/nechronica/parts-head.png));
+    @include iconImage(url(/nechronica/parts/head.png));
   }
 
-  &.head {
-    @include iconImage(url(/nechronica/head.png));
+  &.maneuver-head {
+    @include iconImage(url(/nechronica/maneuver/head.png));
   }
 
   &.parts-arm {
-    @include iconImage(url(/nechronica/parts-arm.png));
+    @include iconImage(url(/nechronica/parts/arm.png));
   }
 
-  &.arm {
-    @include iconImage(url(/nechronica/arm.png));
+  &.maneuver-arm {
+    @include iconImage(url(/nechronica/maneuver/arm.png));
   }
 
   &.parts-body {
-    @include iconImage(url(/nechronica/parts-body.png));
+    @include iconImage(url(/nechronica/parts/body.png));
   }
 
-  &.body {
-    @include iconImage(url(/nechronica/body.png));
+  &.maneuver-body {
+    @include iconImage(url(/nechronica/maneuver/body.png));
   }
 
   &.parts-leg {
-    @include iconImage(url(/nechronica/parts-leg.png));
+    @include iconImage(url(/nechronica/parts/leg.png));
   }
 
-  &.leg {
-    @include iconImage(url(/nechronica/leg.png));
+  &.maneuver-leg {
+    @include iconImage(url(/nechronica/maneuver/leg.png));
   }
 
   &.unknown {
     @include iconImage(url(/nechronica/unknown.png));
   }
 
-  &.armed {
-    @include iconImage(url(/nechronica/armed.png));
+  &.maneuver-armed {
+    @include iconImage(url(/nechronica/maneuver/armed.png));
   }
 
-  &.mutation {
-    @include iconImage(url(/nechronica/mutation.png));
+  &.maneuver-mutation {
+    @include iconImage(url(/nechronica/maneuver/mutation.png));
   }
 
-  &.modification {
-    @include iconImage(url(/nechronica/modification.png));
+  &.maneuver-modification {
+    @include iconImage(url(/nechronica/maneuver/modification.png));
   }
 
-  &.alice {
-    @include iconImage(url(/nechronica/alice.png));
+  &.position-alice {
+    @include iconImage(url(/nechronica/position/alice.png));
   }
 
-  &.holic {
-    @include iconImage(url(/nechronica/holic.png));
+  &.position-holic {
+    @include iconImage(url(/nechronica/position/holic.png));
   }
 
-  &.automaton {
-    @include iconImage(url(/nechronica/automaton.png));
+  &.position-automaton {
+    @include iconImage(url(/nechronica/position/automaton.png));
   }
 
-  &.junk {
-    @include iconImage(url(/nechronica/junk.png));
+  &.position-junk {
+    @include iconImage(url(/nechronica/position/junk.png));
   }
 
-  &.court {
-    @include iconImage(url(/nechronica/court.png));
+  &.position-court {
+    @include iconImage(url(/nechronica/position/court.png));
   }
 
-  &.sorority {
-    @include iconImage(url(/nechronica/sorority.png));
+  &.position-sorority {
+    @include iconImage(url(/nechronica/position/sorority.png));
   }
 
-  &.psychedelic {
-    @include iconImage(url(/nechronica/psychedelic.png));
+  &.class-psychedelic {
+    @include iconImage(url(/nechronica/class/psychedelic.png));
   }
 
-  &.stacy {
-    @include iconImage(url(/nechronica/stacey.png));
+  &.class-stacy {
+    @include iconImage(url(/nechronica/class/stacy.png));
   }
 
-  &.thanatos {
-    @include iconImage(url(/nechronica/thanatos.png));
+  &.class-thanatos {
+    @include iconImage(url(/nechronica/class/thanatos.png));
   }
 
-  &.gothic {
-    @include iconImage(url(/nechronica/gothic.png));
+  &.class-gothic {
+    @include iconImage(url(/nechronica/class/gothic.png));
   }
 
-  &.requiem {
-    @include iconImage(url(/nechronica/requiem.png));
+  &.class-requiem {
+    @include iconImage(url(/nechronica/class/requiem.png));
   }
 
-  &.baroque {
-    @include iconImage(url(/nechronica/baroque.png));
+  &.class-baroque {
+    @include iconImage(url(/nechronica/class/baroque.png));
   }
 
-  &.romanesque {
-    @include iconImage(url(/nechronica/romanesque.png));
+  &.class-romanesque {
+    @include iconImage(url(/nechronica/class/romanesque.png));
   }
 
-  &.treasure {
-    @include iconImage(url(/nechronica/treasure.png));
+  &.maneuver-treasure {
+    @include iconImage(url(/nechronica/maneuver/treasure.png));
   }
 
-  &.legion {
-    @include iconImage(url(/nechronica/legion.png));
+  &.type-legion {
+    @include iconImage(url(/nechronica/type/legion.png));
   }
 
-  &.horror {
-    @include iconImage(url(/nechronica/horror.png));
+  &.type-horror {
+    @include iconImage(url(/nechronica/type/horror.png));
   }
 
-  &.savant {
-    @include iconImage(url(/nechronica/savant.png));
+  &.type-savant {
+    @include iconImage(url(/nechronica/type/savant.png));
   }
 
   &.basic-brain {
-    @include iconImage(url(/nechronica/head.png));
+    @include iconImage(url(/nechronica/maneuver/head.png));
   }
 
   &.basic-eye {
-    @include iconImage(url(/nechronica/head.png));
+    @include iconImage(url(/nechronica/maneuver/head.png));
   }
 
   &.basic-jaw {
-    @include iconImage(url(/nechronica/head.png));
+    @include iconImage(url(/nechronica/maneuver/head.png));
   }
 
   &.basic-fist {
-    @include iconImage(url(/nechronica/arm.png));
+    @include iconImage(url(/nechronica/maneuver/arm.png));
   }
 
   &.basic-arm {
-    @include iconImage(url(/nechronica/arm.png));
+    @include iconImage(url(/nechronica/maneuver/arm.png));
   }
 
   &.basic-shoulder {
-    @include iconImage(url(/nechronica/arm.png));
+    @include iconImage(url(/nechronica/maneuver/arm.png));
   }
 
   &.basic-backbone {
-    @include iconImage(url(/nechronica/body.png));
+    @include iconImage(url(/nechronica/maneuver/body.png));
   }
 
   &.basic-viscera {
-    @include iconImage(url(/nechronica/body.png));
+    @include iconImage(url(/nechronica/maneuver/body.png));
   }
 
   &.basic-bone {
-    @include iconImage(url(/nechronica/leg.png));
+    @include iconImage(url(/nechronica/maneuver/leg.png));
   }
 
   &.basic-leg {
-    @include iconImage(url(/nechronica/leg.png));
+    @include iconImage(url(/nechronica/maneuver/leg.png));
   }
 }
 </style>
