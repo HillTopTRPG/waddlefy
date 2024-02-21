@@ -279,12 +279,12 @@ export function mergeNechronica(oldData: Nechronica, mergeData: Nechronica, targ
 
 export function judgeView(viewOption: NechronicaViewOption | null, maneuver: NechronicaManeuver): boolean {
   if (!viewOption) return true
-  if (viewOption.viewOnlyAdded) return maneuver.isAdded || false
-  if (maneuver.isUnknown && !viewOption.viewUnknown) return false
+  if (viewOption.viewOnlyAdded && !maneuver.isAdded) return false
+  if (!viewOption.viewUnknown && maneuver.isUnknown) return false
+  if (viewOption.viewOnlyIsBravado && (!maneuver.isBravado || maneuver.isUnknown)) return false
+  if (viewOption.viewOnlyBravadoTarget && (!maneuver.lost || maneuver.ignoreBravado)) return false
+  if (viewOption.viewOnlyIgnoreBravado && !maneuver.ignoreBravado) return false
   if (maneuver.isUnknown) return true
-  if (viewOption.viewOnlyIsBravado) return maneuver.isBravado || false
-  if (viewOption.viewOnlyBravadoTarget) return maneuver.lost && !maneuver.ignoreBravado
-  if (viewOption.viewOnlyIgnoreBravado) return maneuver.ignoreBravado || false
   if (maneuver.lost && !viewOption.viewLost) return false
   if (maneuver.used && !viewOption.viewUsed) return false
   if (!viewOption.selectedTimings.includes(maneuver.timing)) return false

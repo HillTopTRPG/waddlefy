@@ -78,7 +78,16 @@ const isBattleTarget = computed((): number => {
   return props.maneuver.timing === 0 ? 1 : 0
 })
 
-const partClassMap = ['', 'maneuver-skill', 'maneuver-skill', 'maneuver-skill', 'maneuver-head', 'maneuver-arm', 'maneuver-body', 'maneuver-leg']
+const partClassMap = [
+  '',
+  'maneuver-skill',
+  'maneuver-skill',
+  'maneuver-skill',
+  'maneuver-head',
+  'maneuver-arm',
+  'maneuver-body',
+  'maneuver-leg'
+]
 
 function getSkillManeuverText(): string {
   const basic = props.character?.basic
