@@ -265,9 +265,9 @@ export function mergeNechronica(oldData: Nechronica, mergeData: Nechronica, targ
   const result: Nechronica = clone<Nechronica>(oldData)!
 
   result.url = mergeData.url
-  if (targets.some(t => t === 'basic')) result.basic = clone(mergeData.basic)!
-  if (targets.some(t => t === 'roice')) result.roiceList = clone(mergeData.roiceList)!
-  if (targets.some(t => t === 'maneuver')) {
+  if (targets.includes('basic')) result.basic = clone(mergeData.basic)!
+  if (targets.includes('roice')) result.roiceList = clone(mergeData.roiceList)!
+  if (targets.includes('maneuver')) {
     // 主催者が追加したマニューバは引き継がせる
     const addedManeuvers = result.maneuverList.filter(m => m.isAdded)
     result.maneuverList = clone(mergeData.maneuverList)!
@@ -287,6 +287,6 @@ export function judgeView(viewOption: NechronicaViewOption | null, maneuver: Nec
   if (viewOption.viewOnlyIgnoreBravado) return maneuver.ignoreBravado || false
   if (maneuver.lost && !viewOption.viewLost) return false
   if (maneuver.used && !viewOption.viewUsed) return false
-  if (viewOption.selectedTimings.every(t => t !== maneuver.timing)) return false
-  return viewOption.selectedTypes.some(t => t === maneuver.type)
+  if (!viewOption.selectedTimings.includes(maneuver.timing)) return false
+  return viewOption.selectedTypes.includes(maneuver.type)
 }

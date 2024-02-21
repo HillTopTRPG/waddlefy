@@ -111,7 +111,7 @@ function onClickSkill(skill: string): void {
 }
 
 function isIncludeSkills(skill: string): boolean {
-  return SkillTable.some(t => t.some(s => s === skill))
+  return SkillTable.flat().includes(skill)
 }
 
 function onChangeSecret(idx: number, secret: boolean) {

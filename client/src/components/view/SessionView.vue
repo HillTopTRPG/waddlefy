@@ -3,10 +3,7 @@
   <share-overlay :model-value="dialog === 'share'" @close="dialog = ''" />
   <owner-overlay :model-value="dialog === 'owner'" @close="dialog = ''" />
   <setting-overlay :model-value="dialog === 'setting'" @close="dialog = ''" />
-  <player-overlay
-    :model-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog"
-    @close="dialog = ''"
-  />
+  <player-overlay :model-value="['share', 'owner', 'setting'].includes(dialog) ? '' : dialog" @close="dialog = ''" />
 
   <v-navigation-drawer :permanent="true" location="left" :rail="rail" :elevation="0" id="session-nav">
     <template #prepend>
@@ -397,11 +394,11 @@ function selectPlayer(playerId: string) {
 
 const bNavVal = ref<string[]>([])
 watch(bNavVal, v => {
-  const a = v.some(s => s === 'show-bar')
+  const a = v.includes('show-bar')
   const b = showBar.value
   if ((a && !b) || (!a && b)) showBar.value = !showBar.value
 
-  const c = v.some(s => s === 'dialog-setting')
+  const c = v.includes('dialog-setting')
   const d = dialog.value === 'setting'
   if (c && !d) dialog.value = 'setting'
   else if (!c && d) dialog.value = ''
@@ -418,7 +415,7 @@ watch(dialog, v => {
 function isViewDashboard(scope: DashboardOption['scope']): boolean {
   if (scope === 'all' || Boolean(graphQlStore?.state.user?.token)) return true
   if (scope === 'owner') return false
-  return scope.some(s => s === graphQlStore?.state.player?.id)
+  return scope.includes(graphQlStore?.state.player?.id || '')
 }
 
 function dashboardSubtitle(scope: DashboardOption['scope']): string {
@@ -426,7 +423,7 @@ function dashboardSubtitle(scope: DashboardOption['scope']): string {
   if (scope === 'owner') return '主催者専用'
   if (!graphQlStore) return ''
   return graphQlStore.state.players
-    .filter(p => scope.some(s => s === p.id))
+    .filter(p => scope.includes(p.id))
     .map(p => p.name)
     .join(', ')
 }

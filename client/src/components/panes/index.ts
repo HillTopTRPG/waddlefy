@@ -19,7 +19,7 @@ export default panes
 const map: { group: string; items: { [key: string]: string } }[] = []
 const groups: string[] = []
 panes.forEach(p => {
-  if (!groups.some(g => g === p.group)) {
+  if (!groups.includes(p.group)) {
     groups.push(p.group)
   }
 })

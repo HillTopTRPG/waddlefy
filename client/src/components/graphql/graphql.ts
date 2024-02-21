@@ -404,7 +404,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       () => state.session?.id,
       sessionId => {
         if (!sessionId) return
-        if (subscribedSessionId.some(id => id === sessionId)) return
+        if (subscribedSessionId.includes(sessionId)) return
         subscribedSessionId.push(sessionId)
         onAddPlayerSubscription(sessionId)
         onAddDashboardSubscription(sessionId)

@@ -83,7 +83,7 @@ function onClickSkill(skill: string): void {
 }
 
 function isIncludeSkills(skill: string) {
-  return SkillTable.some(t => t.some(s => s === skill))
+  return SkillTable.flat().includes(skill)
 }
 </script>
 

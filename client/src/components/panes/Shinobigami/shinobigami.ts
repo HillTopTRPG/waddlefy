@@ -121,23 +121,23 @@ export const fullDataType: DataType[] = ['basic', 'tokugi', 'ninpou', 'backgroun
 
 export function mergeShinobigami(oldData: ShinobiGami, mergeData: ShinobiGami, targets: DataType[]): ShinobiGami {
   const result: ShinobiGami = clone<ShinobiGami>(oldData)!
-  if (targets.some(t => t === 'basic')) {
+  if (targets.includes('basic')) {
     basicParams.forEach(p => {
       const resultAny: any = result
       const mergeDataAny: any = mergeData
       resultAny[p.path] = mergeDataAny[p.path]
     })
   }
-  if (targets.some(t => t === 'tokugi')) {
+  if (targets.includes('tokugi')) {
     result.skill = clone(mergeData.skill)!
   }
-  if (targets.some(t => t === 'ninpou')) {
+  if (targets.includes('ninpou')) {
     result.ninjaArtsList = clone(mergeData.ninjaArtsList)!
   }
-  if (targets.some(t => t === 'background')) {
+  if (targets.includes('background')) {
     result.backgroundList = clone(mergeData.backgroundList)!
   }
-  if (targets.some(t => t === 'specialArts')) {
+  if (targets.includes('specialArts')) {
     result.specialArtsList = clone(mergeData.specialArtsList)!
   }
   return result
@@ -514,18 +514,18 @@ export function calcTargetValue(name: string, skill: SaikoroFictionTokugi): Targ
         return [...Array(Math.abs(t.column - c))].reduce((accumulator, currentValue_, idx) => {
           const currentColumn = Math.min(t.column, c) + idx
           const targetGapNum = currentColumn === 5 ? 0 : currentColumn + 1
-          const isContain = skill.spaceList.some(s => s === targetGapNum)
+          const isContain = skill.spaceList.includes(targetGapNum)
           return accumulator + (isContain ? 1 : 2)
         }, 0)
       }
       let cMove = calcHorizontalMove()
       // 一番左のギャップが埋まっていたら、左右が繋がっているものとして扱う
-      if (skill.spaceList.some(s => s === 0)) {
+      if (skill.spaceList.includes(0)) {
         const cMoveRight: number = [...Array(6 - Math.abs(t.column - c))].reduce((accumulator, currentValue_, idx) => {
           let currentColumn = Math.max(t.column, c) + idx
           if (currentColumn >= 6) currentColumn -= 6
           const targetGapNum = currentColumn === 5 ? 0 : currentColumn + 1
-          const isContain = skill.spaceList.some(s => s === targetGapNum)
+          const isContain = skill.spaceList.includes(targetGapNum)
           return accumulator + (isContain ? 1 : 2)
         }, 0)
         cMove = Math.min(cMove, cMoveRight)

@@ -9,7 +9,7 @@
                 density="compact"
                 :hide-details="true"
                 v-if="editing"
-                :model-value="info?.spaceList.some(s => s === idx)"
+                :model-value="info?.spaceList.includes(idx)"
                 @update:model-value="v => onChangeBlank(idx, v || false)"
               />
             </th>
@@ -19,7 +19,7 @@
                 <v-checkbox
                   density="compact"
                   :hide-details="true"
-                  :model-value="info?.damagedColList.some(c => c === idx)"
+                  :model-value="info?.damagedColList.includes(idx)"
                   @update:model-value="v => onChangeDamaged(idx, v || false)"
                 />
               </span>
@@ -33,7 +33,7 @@
           <template v-for="i in [...Array(6)].map((_, j) => j)" :key="i">
             <td :class="spaceClass(i)"></td>
             <td
-              v-if="targetValues && targetValues.some(tv => tv.name === skills[i])"
+              v-if="targetValues && targetValues.map(tv => tv.name).includes(skills[i])"
               class="bg-amber"
               :class="cellClass(skills[i])"
               @click="onClickSkill(skills[i])"
@@ -148,7 +148,7 @@ function onClickSkill(skill: string) {
     if (!tokugi.value) return
     const idx = tokugi.value.learnedList.findIndex(ls => ls.name === skill)
     if (idx < 0) {
-      const row = SkillTable.findIndex(r => r.some(c => c === skill))
+      const row = SkillTable.findIndex(r => r.includes(skill))
       const column = SkillTable[row].findIndex(c => c === skill)
       tokugi.value.learnedList.push({ name: skill, row, column })
     } else {
@@ -164,13 +164,13 @@ function cellClass(skill: string): string {
   const result: string[] = []
   if (skill.length > 4) result.push('font-small')
   if (skill === props.selectSkill) result.push('selected')
-  if (props.info?.learnedList.some(lt => lt.name === skill)) result.push('learned')
+  if (props.info?.learnedList.map(lt => lt.name).includes(skill)) result.push('learned')
   return result.join(' ')
 }
 
 function spaceClass(idx: number): string {
   const result: string[] = ['blank']
-  if (props.info?.spaceList.some(s => s === idx)) result.push('filled')
+  if (props.info?.spaceList.includes(idx)) result.push('filled')
   return result.join(' ')
 }
 

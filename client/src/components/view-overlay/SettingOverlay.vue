@@ -45,10 +45,10 @@
                     @click.prevent.stop="toggleScopePlayer(item.value)"
                     :title="item.title"
                     :value="item.value"
-                    :active="dashboard?.option.scope.some(s => s === item.value)"
+                    :active="dashboard?.option.scope.includes(item.value)"
                   >
                     <template #prepend>
-                      <v-checkbox-btn :model-value="dashboard?.option.scope.some(s => s === item.value)" />
+                      <v-checkbox-btn :model-value="dashboard?.option.scope.includes(item.value)" />
                     </template>
                   </v-list-item>
                 </template>
@@ -139,8 +139,8 @@ async function updateScope(scope: DashboardOption['scope'] | string) {
   let useScope: DashboardOption['scope']
   if (scope === 'all' || scope === 'owner') useScope = scope
   else if (typeof scope === 'string') useScope = [scope]
-  else if (scope.some(s => s === 'all')) useScope = 'all'
-  else if (scope.some(s => s === 'owner')) useScope = 'owner'
+  else if (scope.includes('all')) useScope = 'all'
+  else if (scope.includes('owner')) useScope = 'owner'
   else useScope = scope
 
   if (JSON.stringify(graphQlStore.state.dashboard?.option.scope) === JSON.stringify(useScope)) return

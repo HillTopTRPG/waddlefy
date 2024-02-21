@@ -549,20 +549,17 @@ const otherHandouts = computed(() => {
 const prizeKnow = computed(() => {
   if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return true
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(sd =>
-      dataObj.value?.data.readableList.some((r: string) => r === sd.id)
-    ) || []
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.readableList.includes(sd.id)) || []
   const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
-  return characters.some(c => c?.data.player === props.perspective)
+  return characters.map(c => c?.data.player).includes(props.perspective)
 })
 
 const prizeSecret = computed(() => {
   if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return false
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.leakedList.some((r: string) => r === sd.id)) ||
-    []
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.leakedList.includes(sd.id)) || []
   const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
-  return characters.some(c => c?.data.player === props.perspective)
+  return characters.map(c => c?.data.player).includes(props.perspective)
 })
 
 const handoutSecretOpen = computed((): boolean => {
@@ -725,7 +722,7 @@ const hasEmptyPlayers = computed(() => {
 const dataObjPlayerId = computed(() => {
   if (!dataObj.value) return ''
   const playerId = dataObj.value.data.player
-  return hasEmptyPlayers.value.some(p => p.id === playerId) ? playerId : ''
+  return hasEmptyPlayers.value.map(p => p.id).includes(playerId) ? playerId : ''
 })
 
 const hasEmptyCharacterList = computed(() => {
@@ -749,7 +746,7 @@ const hasEmptyCharacterList = computed(() => {
 const dataObjPerson = computed(() => {
   if (!dataObj.value) return ''
   const person = dataObj.value.data.person
-  return hasEmptyCharacterList.value.some(p => p.id === person) ? person : ''
+  return hasEmptyCharacterList.value.map(p => p.id).includes(person) ? person : ''
 })
 
 async function onUpdateSecret(index: number, value: boolean) {

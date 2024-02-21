@@ -130,7 +130,7 @@ const showBorderChildren = (event: { target: HTMLElement }) => {
   const idx = parseInt(btnElm.dataset.idx || '0')
   Array.from(document.getElementsByClassName('splitpanes__pane'))
     .filter((elm: Element) =>
-      cLayout.value.panes[idx].panes.map(p => p.uuid).some(uuid => uuid === (elm as HTMLElement).dataset.uuid)
+      cLayout.value.panes[idx].panes.map(p => p.uuid).includes((elm as HTMLElement).dataset.uuid || '')
     )
     .forEach(elm => elm.classList.add('on-hold'))
 }
@@ -140,7 +140,7 @@ const hideBorderChildren = (event: { target: HTMLElement }) => {
   const idx = parseInt(btnElm.dataset.idx || '0')
   Array.from(document.getElementsByClassName('splitpanes__pane'))
     .filter((elm: Element) =>
-      cLayout.value.panes[idx].panes.map(p => p.uuid).some(uuid => uuid === (elm as HTMLElement).dataset.uuid)
+      cLayout.value.panes[idx].panes.map(p => p.uuid).includes((elm as HTMLElement).dataset.uuid || '')
     )
     .forEach(elm => elm.classList.remove('on-hold'))
 }
