@@ -22,5 +22,4 @@ const emits = defineEmits<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

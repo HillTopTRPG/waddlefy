@@ -324,5 +324,4 @@ async function onDeleteRoice(characterId: string, idx: number) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

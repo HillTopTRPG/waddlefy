@@ -38,7 +38,7 @@ const props = defineProps<{
 }>()
 </script>
 
-<!--suppress CssUnusedSymbol, HtmlUnknownAttribute -->
+<!--suppress CssUnusedSymbol -->
 <style scoped lang="css">
 .nav-icon-item {
   margin-right: 1px;

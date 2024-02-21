@@ -24,7 +24,6 @@ defineProps<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .special-arts-card {
   background-image: url('/white_00053.jpg') !important;

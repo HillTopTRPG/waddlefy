@@ -119,7 +119,6 @@ import { ref } from 'vue'
 const currentTab = ref('features')
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 ul,
 ol {

@@ -135,5 +135,4 @@ async function confirm() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

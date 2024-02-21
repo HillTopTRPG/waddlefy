@@ -328,7 +328,6 @@ async function onUpdateRelationEmotion(emotionValue: ShinobigamiEmotion | '') {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .emotion-select {
   width: 9em;

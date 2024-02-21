@@ -71,5 +71,4 @@ async function onSubmit() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

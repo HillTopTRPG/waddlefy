@@ -233,5 +233,4 @@ function updateSelectedTimings(v: number[]) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

@@ -40,7 +40,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'CharacterSheetManagePane',
   label: 'キャラクターシート管理'
@@ -101,7 +101,6 @@ async function onLoadCharacterSheet(url: string, password: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .menu-select {
   flex-grow: 0;

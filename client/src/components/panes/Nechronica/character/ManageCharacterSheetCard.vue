@@ -178,7 +178,6 @@ async function onUpdateCharacterBasePosition(characterId: string, position: numb
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 $title-height: 2rem;
 

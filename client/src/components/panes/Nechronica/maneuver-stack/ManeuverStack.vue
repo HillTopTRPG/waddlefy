@@ -190,7 +190,6 @@ function wrapUnknown(text: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .text {
   font-size: 11px;

@@ -21,7 +21,6 @@ defineProps<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .roice-chip {
   height: 3em;

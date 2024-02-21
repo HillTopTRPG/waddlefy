@@ -217,7 +217,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'TipsPane',
   label: 'ネクロニカ専用機能のTips'
@@ -240,7 +240,6 @@ defineEmits<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 :deep(.v-card-title) {
   white-space: pre-wrap;

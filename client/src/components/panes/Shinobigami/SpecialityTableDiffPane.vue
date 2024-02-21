@@ -68,7 +68,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'SpecialityTableDiffPane',
   label: '特技比較'
@@ -210,7 +210,6 @@ function onClickSkill(skill: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .character-select {
   max-width: 30em;

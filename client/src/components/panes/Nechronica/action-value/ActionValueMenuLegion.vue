@@ -89,7 +89,6 @@ function onUpdateHealth(v: number) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .underline {
   position: relative;

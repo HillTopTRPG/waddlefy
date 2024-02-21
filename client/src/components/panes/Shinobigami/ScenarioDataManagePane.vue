@@ -88,7 +88,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'HandoutManagePane',
   label: 'シナリオデータ管理'
@@ -215,7 +215,6 @@ async function onLoadScenarioSheet(url: string, password: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .menu-select {
   flex-grow: 0;

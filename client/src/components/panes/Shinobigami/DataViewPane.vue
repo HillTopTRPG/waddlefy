@@ -71,7 +71,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'CharacterSheetViewPane',
   label: 'データ閲覧'
@@ -172,7 +172,6 @@ watch(selectSkill, v => {
 })
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .notify-snackbar {
   :deep(.v-snackbar__wrapper) {

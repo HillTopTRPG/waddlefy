@@ -68,5 +68,4 @@ const selection = computed((): { value: number; text: string; color: string }[] 
 })
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

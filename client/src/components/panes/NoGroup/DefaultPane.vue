@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'DefaultPane',
   label: '初期画面'
@@ -68,7 +68,6 @@ const emits = defineEmits<{
   </div>
 </template>
 
-<!--suppress HtmlUnknownAttribute -->
 <style deep lang="css">
 .v-card.chat-input-container {
   border-radius: 0;

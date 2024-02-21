@@ -16,7 +16,6 @@ const colors = ['#f8f8d6', '#f90050', '#5d7e62', '#C7EA46', '#FFC300']
   <Avatar variant="beam" class="avatar" :size="32" :name="token" :colors="colors" @click="emits('click')" />
 </template>
 
-<!--suppress CssUnusedSymbol, HtmlUnknownAttribute, CssUnresolvedCustomProperty -->
 <style deep lang="css">
 .avatar {
   cursor: pointer;

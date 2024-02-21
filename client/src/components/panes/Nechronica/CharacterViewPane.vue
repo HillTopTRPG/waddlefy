@@ -95,7 +95,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'CharacterViewPane',
   label: 'キャラクター閲覧'
@@ -183,5 +183,4 @@ function onChangeNav() {
 const progress = ref(100)
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

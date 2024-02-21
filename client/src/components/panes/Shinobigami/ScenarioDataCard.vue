@@ -1152,7 +1152,6 @@ async function onDeleteSessionData() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .emotion-select {
   width: 9em;

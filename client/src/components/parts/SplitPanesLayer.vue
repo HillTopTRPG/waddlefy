@@ -406,7 +406,6 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
             </template>
           </div>
         </v-sheet>
-        <!--suppress HtmlUnknownTag -->
         <SplitPanesLayer
           :key="pane.uuid"
           :layout="pane"
@@ -449,7 +448,7 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
   </keep-alive>
 </template>
 
-<!--suppress HtmlUnknownAttribute, CssUnusedSymbol, CssUnresolvedCustomProperty -->
+<!--suppress CssUnusedSymbol -->
 <style deep lang="css">
 .splitpanes.root {
   height: 100%;

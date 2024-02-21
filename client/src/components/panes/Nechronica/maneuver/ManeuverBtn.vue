@@ -138,7 +138,6 @@ const classText = computed(() => {
 })
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .maneuver-label {
   line-height: 1em;

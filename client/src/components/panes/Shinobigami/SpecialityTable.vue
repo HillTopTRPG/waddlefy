@@ -207,7 +207,6 @@ function onChangeOutRow(outRow: boolean | null) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .speciality-table {
   border-left: 1px solid #aaa;

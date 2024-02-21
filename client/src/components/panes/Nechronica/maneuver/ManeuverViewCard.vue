@@ -187,7 +187,6 @@ function onDeleteManeuver() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .edging {
   color: white !important;

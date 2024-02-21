@@ -36,5 +36,4 @@ function isPrizeSecret(prizeLeakedList: string[]) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

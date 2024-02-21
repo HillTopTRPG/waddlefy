@@ -29,7 +29,6 @@ const props = defineProps<{
 const classWrap = computed(() => `${props.class} ${props.size}`)
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .maneuver-label {
   line-height: 1em;

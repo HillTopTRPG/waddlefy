@@ -119,7 +119,6 @@ function onChangeSecret(idx: number, secret: boolean) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .ninpou-table {
   border-left: 1px solid #aaa;

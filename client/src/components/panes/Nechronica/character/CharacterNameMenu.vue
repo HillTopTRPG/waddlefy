@@ -191,7 +191,6 @@ async function onAddUnknownManeuver() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .basic-info-table {
   width: 100%;

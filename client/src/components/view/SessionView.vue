@@ -452,7 +452,6 @@ function onScroll() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
 <style scoped lang="scss">
 .nav-dialog {
   background-image: url('/paint_00003.jpg');

@@ -297,5 +297,4 @@ const secretText = computed((): string => {
 })
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

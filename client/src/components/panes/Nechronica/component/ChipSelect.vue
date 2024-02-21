@@ -56,7 +56,6 @@ function textWrap(text: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .chip-select {
   flex-grow: 0;

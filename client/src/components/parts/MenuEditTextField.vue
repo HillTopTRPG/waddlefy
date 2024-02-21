@@ -112,7 +112,6 @@ function onSave() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .v-text-field.editable:deep(input[readonly]) {
   cursor: pointer;

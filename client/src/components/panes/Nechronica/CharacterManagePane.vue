@@ -57,7 +57,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'CharacterManagePane',
   label: 'キャラクター管理'
@@ -116,5 +116,4 @@ async function onLoadCharacterSheet(url: string, type: NechronicaType) {
 const nechronicaTypes: NechronicaType[] = ['doll', 'savant', 'horror', 'legion']
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

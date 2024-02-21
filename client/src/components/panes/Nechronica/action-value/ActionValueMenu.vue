@@ -235,7 +235,6 @@ function onUpdateRoice(characterId: string, idx: number, roice: NechronicaRoice)
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .underline {
   position: relative;

@@ -33,5 +33,4 @@
 
 <script setup lang="ts"></script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

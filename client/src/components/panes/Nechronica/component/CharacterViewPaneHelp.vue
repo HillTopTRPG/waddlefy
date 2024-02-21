@@ -48,7 +48,6 @@
 import LinkText from '@/components/parts/LinkText.vue'
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 ul,
 ol {

@@ -111,7 +111,6 @@ function onSave() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .v-textarea {
   grid-template-rows: 1fr auto;

@@ -50,7 +50,6 @@ const emits = defineEmits<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .menu-select {
   flex-grow: 0;

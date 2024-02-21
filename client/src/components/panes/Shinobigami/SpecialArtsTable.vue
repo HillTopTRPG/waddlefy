@@ -87,7 +87,6 @@ function isIncludeSkills(skill: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .special-arts-table {
   border-left: 1px solid #aaa;

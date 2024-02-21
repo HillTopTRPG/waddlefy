@@ -455,5 +455,4 @@ async function onBattleEnd(option: string[]) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

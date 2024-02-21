@@ -35,7 +35,6 @@ defineProps<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .base-info {
   background-image: url('/paint_00001.jpg') !important;

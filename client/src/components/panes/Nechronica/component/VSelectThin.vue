@@ -26,7 +26,6 @@ const emits = defineEmits<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 $padding-size: 2px;
 .select-thin :deep(.v-field--no-label) {

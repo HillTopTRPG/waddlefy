@@ -138,7 +138,6 @@ async function onCancelStack(index: number) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .ghost {
   opacity: 0.5;
