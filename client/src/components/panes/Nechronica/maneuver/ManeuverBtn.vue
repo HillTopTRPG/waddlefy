@@ -118,20 +118,20 @@ const classText = computed(() => {
     result.push(['doll', 'savant'].includes(props.type || '') ? 'unknown' : 'maneuver-skill')
   }
 
-  if (props.mode === 'normal') {
-    if (props.maneuver.lost) {
-      result.push('lost')
-    } else if (props.maneuver.used) {
-      result.push('used')
-    }
-  }
-
   if (props.mode !== 'simple') {
     result.push(`type${props.maneuver.type}`)
   }
 
   if (props.maneuver.isUnknown) {
     result.splice(0, result.length, 'unknown')
+  }
+
+  if (props.mode === 'normal') {
+    if (props.maneuver.lost) {
+      result.push('lost')
+    } else if (props.maneuver.used) {
+      result.push('used')
+    }
   }
 
   return result.join(' ')
