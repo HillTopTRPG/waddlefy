@@ -7,6 +7,7 @@ on:
       - 'sam/lambda/**'
     branches-ignore:
       - 'images'
+      - 'dependabot/npm_and_yarn/**'
   workflow_dispatch:
 
 env:
