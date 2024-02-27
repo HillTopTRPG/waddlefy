@@ -314,43 +314,47 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   }
 
   &.basic-brain {
-    @include iconImage(url(/nechronica/maneuver/head.png));
+    @include iconImage(url(/nechronica/maneuver-base/brain.png));
   }
 
   &.basic-eye {
-    @include iconImage(url(/nechronica/maneuver/head.png));
+    @include iconImage(url(/nechronica/maneuver-base/eye.png));
   }
 
   &.basic-jaw {
-    @include iconImage(url(/nechronica/maneuver/head.png));
+    @include iconImage(url(/nechronica/maneuver-base/jaw.png));
   }
 
   &.basic-fist {
-    @include iconImage(url(/nechronica/maneuver/arm.png));
+    @include iconImage(url(/nechronica/maneuver-base/fist.png));
   }
 
   &.basic-arm {
-    @include iconImage(url(/nechronica/maneuver/arm.png));
+    @include iconImage(url(/nechronica/maneuver-base/arm.png));
   }
 
   &.basic-shoulder {
-    @include iconImage(url(/nechronica/maneuver/arm.png));
+    @include iconImage(url(/nechronica/maneuver-base/shoulder.png));
   }
 
-  &.basic-backbone {
-    @include iconImage(url(/nechronica/maneuver/body.png));
+  &.basic-spine {
+    @include iconImage(url(/nechronica/maneuver-base/spine.png));
   }
 
   &.basic-viscera {
-    @include iconImage(url(/nechronica/maneuver/body.png));
+    @include iconImage(url(/nechronica/maneuver-base/viscera.png));
   }
 
   &.basic-bone {
-    @include iconImage(url(/nechronica/maneuver/leg.png));
+    @include iconImage(url(/nechronica/maneuver-base/bone.png));
   }
 
   &.basic-leg {
-    @include iconImage(url(/nechronica/maneuver/leg.png));
+    @include iconImage(url(/nechronica/maneuver-base/leg.png));
+  }
+
+  &.error {
+    @include iconImage(url(/nechronica/error.png));
   }
 }
 </style>

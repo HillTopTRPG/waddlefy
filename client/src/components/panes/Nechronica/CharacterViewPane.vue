@@ -68,6 +68,7 @@
           />
         </template>
       </v-sheet>
+      <sponsorship />
     </template>
     <template #nav>
       <view-option-nav v-model:nav="nav" v-model:option="viewOption" />
@@ -113,6 +114,7 @@ import BattleController from '@/components/panes/Nechronica/component/BattleCont
 import CharacterViewPaneHelp from '@/components/panes/Nechronica/component/CharacterViewPaneHelp.vue'
 import PerspectiveSelect from '@/components/panes/Nechronica/component/PerspectiveSelect.vue'
 import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
+import Sponsorship from '@/components/panes/Nechronica/component/sponsorship.vue'
 import ManeuverStackList from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackList.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaSingleton, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'

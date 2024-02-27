@@ -117,14 +117,19 @@ const classText = computed(() => {
   if (basicClass) {
     result.push(basicClass)
   } else {
-    const shozokuText = props.maneuver.shozoku || getSkillManeuverText()
-    const shozokuClass = mapping.ICON_CLASS_MAP.find(sc => shozokuText.includes(sc.text))?.class || ''
-    if (shozokuClass) {
+    const pushIncludesClass = (text: string): boolean => {
+      const shozokuClass = mapping.ICON_CLASS_MAP.find(sc => text.includes(sc.text))?.class || ''
+      if (!shozokuClass) return false
       result.push(shozokuClass)
+      return true
+    }
+    if (!pushIncludesClass(props.maneuver.shozoku)) {
+      pushIncludesClass(getSkillManeuverText())
     }
   }
+
   if (!result.length) {
-    result.push(['doll', 'savant'].includes(props.type || '') ? 'unknown' : 'maneuver-skill')
+    result.push(['doll', 'savant'].includes(props.type || '') ? 'error' : 'maneuver-skill')
   }
 
   if (props.mode !== 'simple') {
@@ -132,7 +137,7 @@ const classText = computed(() => {
   }
 
   if (props.maneuver.isUnknown) {
-    result.splice(0, result.length, 'unknown')
+    result.splice(0, result.length, 'unknown', 'type0')
   }
 
   if (props.mode === 'normal') {

@@ -53,7 +53,7 @@
     { "text": "こぶし", "class": "basic-fist" },
     { "text": "うで", "class": "basic-arm" },
     { "text": "かた", "class": "basic-shoulder" },
-    { "text": "せぼね", "class": "basic-backbone" },
+    { "text": "せぼね", "class": "basic-spine" },
     { "text": "はらわた", "class": "basic-viscera" },
     { "text": "ほね", "class": "basic-bone" },
     { "text": "あし", "class": "basic-leg" }
