@@ -14,11 +14,19 @@
       <span>皆様のセッションの成功のため、資料をご用意しました。</span>
     </v-card-text>
 
+    <iframe
+      width="560"
+      height="315"
+      src="https://www.youtube-nocookie.com/embed/videoseries?si=4enHdPwB4kEKDa6g&amp;list=PLWLAIpCpqQ5FlbqLPQKs6eYaxB5OTJvgk"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+
     <v-card-item class="pa-0">
       <v-sheet class="d-flex flex-column flex-wrap align-start bg-transparent">
-        <p class="text-caption">
-          まずは次の資料でセッションの準備の仕方からセッション中の操作までを一通り確認しておきましょう。
-        </p>
+        <p class="text-caption">ドキュメントでの解説をご希望の方はこちらをご覧ください。</p>
         <link-text
           href="https://github.com/HillTopTRPG/waddlefy/wiki/%E4%BD%BF%E3%81%84%E6%96%B9-%E2%80%90-%E3%83%8D%E3%82%AF%E3%83%AD%E3%83%8B%E3%82%AB%E5%B0%82%E7%94%A8%E6%A9%9F%E8%83%BD"
           src="https://img.shields.io/badge/wiki-%E3%83%8D%E3%82%AF%E3%83%AD%E3%83%8B%E3%82%AB%E5%B0%82%E7%94%A8%E6%A9%9F%E8%83%BD-mediumslateblue?style=for-the-badge&logo=github"
@@ -30,9 +38,7 @@
     <v-spacer class="mt-3" />
     <v-card-item class="pa-0">
       <v-sheet class="d-flex flex-column flex-wrap align-start bg-transparent">
-        <p class="text-caption">
-          余裕があれば次の資料でWaddlefyに備わっている共通機能についても一読されることをお勧めします。
-        </p>
+        <p class="text-caption">余裕があれば共通機能についても一読されるのをお勧めします。</p>
         <link-text
           href="https://github.com/HillTopTRPG/waddlefy/wiki/%E4%BD%BF%E3%81%84%E6%96%B9-%E2%80%90-%E5%85%B1%E9%80%9A%E6%A9%9F%E8%83%BD"
           src="https://img.shields.io/badge/wiki-%E5%85%B1%E9%80%9A%E6%A9%9F%E8%83%BD-blue?style=for-the-badge&logo=github"

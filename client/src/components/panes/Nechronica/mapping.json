@@ -120,7 +120,7 @@
     { "value": "cost", "label": "Nechronica.label.cost" },
     { "value": "range", "label": "Nechronica.label.range" }
   ],
-  "MANEUVER_PARTS": ["", "ﾎﾟｼﾞｼｮﾝ", "ﾒｲﾝｸﾗｽ", "ｻﾌﾞｸﾗｽ", "頭", "腕", "胴", "足"],
+  "MANEUVER_PARTS": ["", "ﾎﾟｼﾞｼｮﾝ", "ﾒｲﾝｸﾗｽ", "ｻﾌﾞｸﾗｽ", "頭", "腕", "胴", "脚"],
   "optionItems": {
     "open-underling": {
       "value": "open-pawns",
