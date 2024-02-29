@@ -21,7 +21,7 @@ const props = defineProps<{
   activateProps?: any
   disableButton?: boolean
   text?: string
-  size: 'x-small' | 'small' | 'normal'
+  size: 'x-small' | 'small' | 'normal' | 'large'
   underText?: string
   class: string
 }>()
@@ -38,6 +38,9 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   text-overflow: ellipsis;
   font-family: 'M PLUS Rounded 1c', sans-serif !important;
 
+  &.large {
+    max-width: 92px;
+  }
   &.normal {
     max-width: 64px;
   }
@@ -102,7 +105,7 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
     }
   }
 
-  &:not(.small):not(.x-small) {
+  &:not(.small):not(.x-small):not(.large) {
     $width: 64px;
     @include allFixedSize($width);
   }
@@ -114,6 +117,11 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
 
   &.x-small {
     $width: 32px;
+    @include allFixedSize($width);
+  }
+
+  &.large {
+    $width: 92px;
     @include allFixedSize($width);
   }
 

@@ -3,7 +3,7 @@
     <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
       <template #activator="{ props }">
         <v-sheet class="d-flex flex-row text-left align-center bg-transparent">
-          <icon-btn :disable-button="true" size="normal" :class="icon" class="mr-1" />
+          <icon-btn :disable-button="true" size="large" :class="icon" class="mr-1" />
           <v-sheet class="d-flex flex-column flex-grow-1 bg-transparent">
             <v-sheet class="d-flex flex-row bg-transparent">
               <v-sheet
@@ -22,6 +22,14 @@
               :items="mapping.CHARACTER_LOCATION.map(d => ({ value: d['pos-value'], text: $t(d.text) }))"
               :model-value="character?.data.position.toString() || '0'"
               @update:model-value="v => emits('update:position', parseInt(v, 10))"
+            />
+            <v-select-thin
+              :prefix="$t('Nechronica.label.spine')"
+              style="max-width: 8em"
+              :items="[...Array(4)].map((_, j) => j.toString()).map(n => ({ value: n, text: n }))"
+              :model-value="character?.data.spineCount?.toString() || '0'"
+              class="mt-1"
+              @update:model-value="v => emits('update:spine-count', parseInt(v, 10))"
             />
           </v-sheet>
         </v-sheet>
@@ -144,6 +152,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: 'update:position', position: number): void
+  (e: 'update:spine-count', spineCount: number): void
 }>()
 
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {

@@ -42,6 +42,7 @@
             :character-id="characterId"
             :perspective="perspective"
             @update:position="onUpdatePosition"
+            @update:spine-count="onUpdateSpineCount"
           />
         </v-card-text>
         <character-sheet-view-roice-area
@@ -302,6 +303,12 @@ async function onUpdatePosition(position: number) {
     c.position = position
   })
   await addManeuverStackMove(props.characterId, beforePlace, position)
+}
+
+async function onUpdateSpineCount(spineCount: number) {
+  await graphQlStore?.updateNechronicaCharacterHelper(props.characterId, c => {
+    c.spineCount = spineCount
+  })
 }
 
 const { t } = useI18n()
