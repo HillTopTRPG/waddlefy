@@ -45,6 +45,13 @@ const characterViewConfig = computed(() => {
   })
 })
 
+watch(
+  () => characterViewConfig.value?.data.data.columns,
+  columns => {
+    useColumns.value = columns
+  }
+)
+
 const useColumns = ref<number>(characterViewConfig.value?.data.data.columns || 10)
 
 let timeout: number | null = null

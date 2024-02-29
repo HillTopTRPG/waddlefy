@@ -74,7 +74,6 @@ const viewCharacters = computed((): { id: string; data: NechronicaWrap }[] => {
 })
 
 const useActionValues = computed(() => {
-  console.log(JSON.stringify(viewCharacters.value, null, 2))
   return viewCharacters.value
     .map(vc => vc.data.actionValue)
     .filter((actionValue, idx, arr) => arr.indexOf(actionValue) === idx)
