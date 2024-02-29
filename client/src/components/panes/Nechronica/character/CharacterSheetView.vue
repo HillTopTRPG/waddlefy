@@ -164,13 +164,14 @@ async function addManeuverStack(
   characterId: string,
   callback: (base: NechronicaManeuverStackBase) => NechronicaManeuverStack
 ) {
+  const character: { id: string; data: NechronicaWrap } | undefined = graphQlStore?.state.sessionDataList.find(
+    sd => sd.id === characterId
+  )
+  if (character?.data.hide) return
   await graphQlStore?.updateNechronicaSingletonHelper<NechronicaSingleton>(d => {
     const maneuverStack = singleton.value?.data.maneuverStack || []
     const cloned = clone(maneuverStack)!
     const idx = cloned.findIndex(c => !c.status)
-    const character: { id: string; data: NechronicaWrap } | undefined = graphQlStore?.state.sessionDataList.find(
-      sd => sd.id === characterId
-    )
     const base: NechronicaManeuverStackBase = {
       characterId,
       place: character?.data.position || 0,
