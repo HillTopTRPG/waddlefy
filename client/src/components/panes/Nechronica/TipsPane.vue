@@ -30,7 +30,7 @@
           <v-card-title>マニューバのアイコンの決まり方</v-card-title>
           <v-card-subtitle>１．基本パーツかどうか</v-card-subtitle>
           <v-card-text>
-            マニューバの「名前」か「取得元」が以下のテキストと一致したら<br />基本パーツのアイコンになります。<br />
+            マニューバの「名前」が以下のテキストと一致したら<br />基本パーツのアイコンになります。<br />
             <v-sheet class="d-flex flex-row bg-cyan-lighten-5 my-2" style="gap: 1rem; flex-grow: 1">
               <v-sheet
                 class="d-flex flex-row flex-wrap overflow-hidden bg-transparent"
@@ -80,6 +80,18 @@
                 style="gap: 1rem; width: 1em; flex-grow: 1"
               >
                 <ul class="ml-5">
+                  <li>基本のうみそ</li>
+                  <li>基本めだま</li>
+                  <li>基本あご</li>
+                  <li>基本こぶし</li>
+                  <li>基本うで</li>
+                  <li>基本かた</li>
+                  <li>基本せぼね</li>
+                  <li>基本はらわた</li>
+                  <li>基本ほね</li>
+                  <li>基本あし</li>
+                </ul>
+                <ul class="ml-5">
                   <li>武装</li>
                   <li>変異</li>
                   <li>改造</li>
@@ -88,28 +100,26 @@
                   <li>ﾀｶﾗﾓﾉ</li>
                   <li>アリス</li>
                   <li>ｱﾘｽ</li>
-                </ul>
-                <ul class="ml-5">
                   <li>ホリック</li>
                   <li>ﾎﾘｯｸ</li>
+                </ul>
+                <ul class="ml-5">
                   <li>オートマトン</li>
                   <li>ｵｰﾄﾏﾄﾝ</li>
                   <li>ジャンク</li>
                   <li>ｼﾞｬﾝｸ</li>
                   <li>コート</li>
                   <li>ｺｰﾄ</li>
-                </ul>
-                <ul class="ml-5">
                   <li>ソロリティ</li>
                   <li>ｿﾛﾘﾃｨ</li>
                   <li>サイケデリック</li>
                   <li>ｻｲｹﾃﾞﾘｯｸ</li>
+                </ul>
+                <ul class="ml-5">
                   <li>ステーシー</li>
                   <li>ｽﾃｰｼｰ</li>
                   <li>タナトス</li>
                   <li>ﾀﾅﾄｽ</li>
-                </ul>
-                <ul class="ml-5">
                   <li>ゴシック</li>
                   <li>ｺﾞｼｯｸ</li>
                   <li>レクイエム</li>

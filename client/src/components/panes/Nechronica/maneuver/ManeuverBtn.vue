@@ -112,8 +112,8 @@ const classText = computed(() => {
     result.push(partsClass)
   }
 
-  let basicClass = mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.text === props.maneuver.name)?.class || ''
-  basicClass ||= mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.text === props.maneuver.shozoku)?.class || ''
+  let basicClass = mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => b.name === props.maneuver.name)?.class || ''
+  basicClass ||= mapping.BASIC_PARTS_ICON_CLASS_MAP.find(b => props.maneuver.shozoku.includes(b.shozoku))?.class || ''
   if (basicClass) {
     result.push(basicClass)
   } else {

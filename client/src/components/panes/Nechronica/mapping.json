@@ -47,16 +47,16 @@
     { "val": "class-psychedelic", "text": "サイケデリック" }
   ],
   "BASIC_PARTS_ICON_CLASS_MAP": [
-    { "text": "のうみそ", "class": "basic-brain" },
-    { "text": "めだま", "class": "basic-eye" },
-    { "text": "あご", "class": "basic-jaw" },
-    { "text": "こぶし", "class": "basic-fist" },
-    { "text": "うで", "class": "basic-arm" },
-    { "text": "かた", "class": "basic-shoulder" },
-    { "text": "せぼね", "class": "basic-spine" },
-    { "text": "はらわた", "class": "basic-viscera" },
-    { "text": "ほね", "class": "basic-bone" },
-    { "text": "あし", "class": "basic-leg" }
+    { "name": "のうみそ", "shozoku": "基本のうみそ", "class": "basic-brain" },
+    { "name": "めだま", "shozoku": "基本めだま", "class": "basic-eye" },
+    { "name": "あご", "shozoku": "基本あご", "class": "basic-jaw" },
+    { "name": "こぶし", "shozoku": "基本こぶし", "class": "basic-fist" },
+    { "name": "うで", "shozoku": "基本うで", "class": "basic-arm" },
+    { "name": "かた", "shozoku": "基本かた", "class": "basic-shoulder" },
+    { "name": "せぼね", "shozoku": "基本せぼね", "class": "basic-spine" },
+    { "name": "はらわた", "shozoku": "基本はらわた", "class": "basic-viscera" },
+    { "name": "ほね", "shozoku": "基本ほね", "class": "basic-bone" },
+    { "name": "あし", "shozoku": "基本あし", "class": "basic-leg" }
   ],
   "ICON_CLASS_MAP": [
     { "text": "武装", "class": "maneuver-armed" },
