@@ -1066,8 +1066,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       health: type === 'legion' ? 5 : 0,
       hide: type !== 'doll',
       maxActionValue: type === 'legion' ? 8 : 0,
+      spineCount: 0,
       ...copy,
-      backboneStack: false,
       character: dataObj
     }
     await addSessionDataHelper('nechronica-character', JSON.stringify(characterWrap))

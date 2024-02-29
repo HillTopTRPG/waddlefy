@@ -94,12 +94,12 @@ export type NechronicaCopiableWrap = {
   health: number
   hide: boolean
   maxActionValue: number
+  spineCount: number
 }
 
 export type NechronicaWrap = NechronicaCopiableWrap & {
   player: string
   type: NechronicaType
-  backboneStack: boolean
   character: Nechronica
 }
 
