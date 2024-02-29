@@ -72,7 +72,12 @@
             />
           </template>
           <v-spacer />
-          <link-btn class="align-self-start" size="small" v-if="isDoll || !perspective" :href="character.data.character.url" />
+          <link-btn
+            class="align-self-start"
+            size="small"
+            v-if="isDoll || !perspective"
+            :href="character.data.character.url"
+          />
         </v-card-text>
         <v-card-text class="d-flex flex-row align-center py-0">
           <span class="text-body-1 ellipsis" :style="`max-width: ${isDoll ? 20 : 18}rem`">{{

@@ -192,6 +192,7 @@ export class NechronicaHelper {
     ]
     const maneuverList = transpose(maneuvers).map(list => {
       const name = textFilter(list[4])
+      const shozoku = textFilter(list[9])
       const data: NechronicaManeuver = {
         lost: list[0] !== '0',
         used: list[1] !== '0',
@@ -202,11 +203,11 @@ export class NechronicaHelper {
         cost: textFilter(list[6]),
         range: textFilter(list[7]),
         memo: textFilter(list[8]),
-        shozoku: textFilter(list[9]),
+        shozoku,
         isBravado: ['平気', '自動制御装置'].includes(name),
         ignoreBravado: false,
         isAdded: false,
-        isUnknown: false
+        isUnknown: shozoku.includes('隠匿')
       }
       return data
     })

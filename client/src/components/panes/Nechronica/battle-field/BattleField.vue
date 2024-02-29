@@ -43,7 +43,7 @@ import BattleFieldCharacter from '@/components/panes/Nechronica/battle-field/Bat
 import CharacterSheetView from '@/components/panes/Nechronica/character/CharacterSheetView.vue'
 import { NechronicaViewOption } from '@/components/panes/Nechronica/component/ViewOptionNav.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
-import {NechronicaType, NechronicaWrap} from '@/components/panes/Nechronica/nechronica'
+import { NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject, ref } from 'vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -56,18 +56,20 @@ const props = defineProps<{
 
 const viewCharacters = computed((): { id: string; data: NechronicaWrap }[] => {
   return (
-    graphQlStore?.state.sessionDataList.filter(sd => {
-      if (sd.type !== 'nechronica-character') return false
-      return !props.perspective || !sd.data.hide
-    }).sort((cOne, cTwo) => {
-      const cOneType: NechronicaType = cOne.data.type
-      const cTwoType: NechronicaType = cTwo.data.type
-      if (cOneType === cTwoType) return 0
-      if (cOneType === 'doll') return 1
-      if (cOneType === 'savant') return -1
-      if (cOneType === 'horror') return cTwoType === 'savant' ? 1 : -1
-      return cTwoType === 'doll' ? -1 : 1
-    }) || []
+    graphQlStore?.state.sessionDataList
+      .filter(sd => {
+        if (sd.type !== 'nechronica-character') return false
+        return !props.perspective || !sd.data.hide
+      })
+      .sort((cOne, cTwo) => {
+        const cOneType: NechronicaType = cOne.data.type
+        const cTwoType: NechronicaType = cTwo.data.type
+        if (cOneType === cTwoType) return 0
+        if (cOneType === 'doll') return 1
+        if (cOneType === 'savant') return -1
+        if (cOneType === 'horror') return cTwoType === 'savant' ? 1 : -1
+        return cTwoType === 'doll' ? -1 : 1
+      }) || []
   )
 })
 

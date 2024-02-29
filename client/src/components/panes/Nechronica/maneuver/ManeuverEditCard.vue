@@ -240,8 +240,14 @@ function onUpdateMemo(memo: string) {
 
 function onUpdateShozoku(shozoku: string) {
   updateHelper(m => {
-    if (m.shozoku === shozoku.trim()) return false
-    m.shozoku = shozoku.trim()
+    const trimedShozoku = shozoku.trim()
+    if (m.shozoku === trimedShozoku) return false
+
+    if (m.shozoku.includes('隠匿') && m.isUnknown && !trimedShozoku.includes('隠匿')) {
+      m.isUnknown = false
+    }
+
+    m.shozoku = trimedShozoku
     return true
   })
 }

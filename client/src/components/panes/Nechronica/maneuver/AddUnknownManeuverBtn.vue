@@ -8,8 +8,7 @@
     </template>
     <v-card>
       <v-card-text class="pt-2 pb-0 d-flex flex-column">
-        <span>{{ $t('Nechronica.label.add-unknown-maneuver-message1') }}</span>
-        <span>{{ $t('Nechronica.label.add-unknown-maneuver-message2') }}</span>
+        <span>{{ $t('Nechronica.label.add-unknown-maneuver-message') }}</span>
       </v-card-text>
       <v-card-text class="py-2 d-flex flex-row justify-end">
         <v-btn @click="execute" density="comfortable" :text="$t('label.decision')" />

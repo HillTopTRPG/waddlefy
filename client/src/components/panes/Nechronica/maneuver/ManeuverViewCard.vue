@@ -104,7 +104,7 @@
         @execute="onManeuverUse"
       />
       <maneuver-unknown-btn
-        v-if="!perspective && maneuver.isAdded"
+        v-if="!perspective && (maneuver.isAdded || maneuver.shozoku.includes('隠匿'))"
         :is-unknown="maneuver.isUnknown"
         @execute="onManeuverUnknown"
       />
