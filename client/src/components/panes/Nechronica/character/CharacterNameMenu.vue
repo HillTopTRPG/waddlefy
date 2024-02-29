@@ -72,7 +72,7 @@
             />
           </template>
           <v-spacer />
-          <link-btn class="align-self-start" size="small" :href="character.data.character.url" />
+          <link-btn class="align-self-start" size="small" v-if="isDoll || !perspective" :href="character.data.character.url" />
         </v-card-text>
         <v-card-text class="d-flex flex-row align-center py-0">
           <span class="text-body-1 ellipsis" :style="`max-width: ${isDoll ? 20 : 18}rem`">{{
@@ -119,7 +119,7 @@
             </tr>
           </table>
         </v-card-text>
-        <v-card-text class="py-1 px-2" v-if="character.data.type === 'doll' || !perspective">
+        <v-card-text class="py-1 px-2" v-if="isDoll || !perspective">
           <reload-character-sheet-btn :character-id="characterId" />
         </v-card-text>
         <v-card-text class="pt-0 pb-1 px-2" v-if="!perspective">

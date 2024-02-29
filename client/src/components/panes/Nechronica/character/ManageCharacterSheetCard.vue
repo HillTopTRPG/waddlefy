@@ -16,7 +16,7 @@
         size="x-small"
       />
       <span class="ellipsis flex-grow-1" style="width: 1em">{{ character.data.character.basic.characterName }}</span>
-      <link-btn :href="character.data.character.url" />
+      <link-btn :href="character.data.character.url" v-if="!perspective || character.data.type === 'doll'" />
     </v-card-title>
     <v-card-text
       class="py-0 px-2 d-flex flex-column flex-wrap align-end"
