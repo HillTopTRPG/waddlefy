@@ -290,3 +290,5 @@ export function judgeView(viewOption: NechronicaViewOption | null, maneuver: Nec
   if (!viewOption.selectedTimings.includes(maneuver.timing)) return false
   return viewOption.selectedTypes.includes(maneuver.type)
 }
+
+export const NON_BATTLE_COUNT = Number.MIN_SAFE_INTEGER + 1

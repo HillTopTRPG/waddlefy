@@ -52,7 +52,12 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import MultiSelectMenu from '@/components/panes/Nechronica/component/MultiSelectMenu.vue'
 import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
-import { NechronicaSingleton, NechronicaWrap, getActionValueNum } from '@/components/panes/Nechronica/nechronica'
+import {
+  NON_BATTLE_COUNT,
+  NechronicaSingleton,
+  NechronicaWrap,
+  getActionValueNum
+} from '@/components/panes/Nechronica/nechronica'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -115,8 +120,6 @@ type BattleDataWrap = {
   afterPosition: number | null
   data: NechronicaWrap
 }
-
-const NON_BATTLE_COUNT = Number.MIN_SAFE_INTEGER + 1
 
 const battleCountStatus = computed<number>(() => {
   if (singleton.value?.data.battleCount === undefined) return NON_BATTLE_COUNT

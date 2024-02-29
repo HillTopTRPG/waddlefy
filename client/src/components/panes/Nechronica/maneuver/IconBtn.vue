@@ -3,6 +3,7 @@
     <span v-if="text" class="maneuver-label text-left" :class="size">{{ text }}</span>
     <v-btn
       class="maneuver"
+      :color="color || 'transparent'"
       variant="flat"
       rounded="pill"
       density="comfortable"
@@ -21,6 +22,7 @@ const props = defineProps<{
   activateProps?: any
   disableButton?: boolean
   text?: string
+  color?: string
   size: 'x-small' | 'small' | 'normal' | 'large'
   underText?: string
   class: string
@@ -60,6 +62,7 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   align-items: center;
   justify-content: flex-start;
   text-transform: none;
+  background-color: white;
 
   @mixin absoluteFullSize {
     position: absolute;

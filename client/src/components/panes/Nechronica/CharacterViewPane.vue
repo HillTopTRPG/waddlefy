@@ -22,6 +22,13 @@
     </template>
     <template #default>
       <maneuver-stack-list :perspective="perspective" />
+      <battle-field
+        v-if="singleton?.data.battleCount !== NON_BATTLE_COUNT"
+        :perspective="perspective"
+        :battle-count="singleton?.data.battleCount || 0"
+        :battle-timing="battleTiming"
+        :view-option="viewOption"
+      />
       <v-sheet
         class="d-flex flex-row flex-wrap align-start px-2 pt-1 pb-2 overflow-auto w-100 bg-transparent"
         style="gap: 0.5rem"
@@ -109,6 +116,7 @@ import PaneFrame from '@/components/panes/PaneFrame.vue'
 import { computed, inject, ref } from 'vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
+import BattleField from '@/components/panes/Nechronica/battle-field/BattleField.vue'
 import CharacterSheetView from '@/components/panes/Nechronica/character/CharacterSheetView.vue'
 import BattleController from '@/components/panes/Nechronica/component/BattleController.vue'
 import CharacterViewPaneHelp from '@/components/panes/Nechronica/component/CharacterViewPaneHelp.vue'
@@ -117,7 +125,12 @@ import ViewOptionNav, { NechronicaViewOption } from '@/components/panes/Nechroni
 import Sponsorship from '@/components/panes/Nechronica/component/sponsorship.vue'
 import ManeuverStackList from '@/components/panes/Nechronica/maneuver-stack/ManeuverStackList.vue'
 import mapping from '@/components/panes/Nechronica/mapping.json'
-import { NechronicaSingleton, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
+import {
+  NON_BATTLE_COUNT,
+  NechronicaSingleton,
+  NechronicaType,
+  NechronicaWrap
+} from '@/components/panes/Nechronica/nechronica'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
