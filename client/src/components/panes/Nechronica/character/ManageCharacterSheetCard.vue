@@ -143,7 +143,8 @@ async function onCopyCharacter() {
     actionValue: character.data.actionValue,
     health: character.data.health,
     hide: true,
-    maxActionValue: character.data.maxActionValue
+    maxActionValue: character.data.maxActionValue,
+    spineCount: character.data.spineCount || 0
   }
   await graphQlStore?.addNechronicaCharacter(
     character.data.player,
