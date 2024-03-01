@@ -23,7 +23,7 @@
     <template #default>
       <maneuver-stack-list :perspective="perspective" />
       <battle-field
-        v-if="singleton?.data.battleCount !== NON_BATTLE_COUNT"
+        v-if="singleton?.data.battleCount !== undefined && singleton?.data.battleCount !== NON_BATTLE_COUNT"
         :perspective="perspective"
         :battle-count="singleton?.data.battleCount || 0"
         :battle-timing="battleTiming"
