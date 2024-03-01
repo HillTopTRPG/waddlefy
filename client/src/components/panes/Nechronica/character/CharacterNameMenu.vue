@@ -26,7 +26,7 @@
             <v-select-thin
               :prefix="$t('Nechronica.label.spine')"
               style="max-width: 8em"
-              :items="[...Array(4)].map((_, j) => j.toString()).map(n => ({ value: n, text: n }))"
+              :items="[...Array(10)].map((_, j) => j.toString()).map(n => ({ value: n, text: n }))"
               :model-value="character?.data.spineCount?.toString() || '0'"
               class="mt-1"
               @update:model-value="v => emits('update:spine-count', parseInt(v, 10))"
