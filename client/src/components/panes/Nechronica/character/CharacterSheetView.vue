@@ -4,7 +4,6 @@
       <v-card
         variant="outlined"
         class="d-flex flex-column px-2 pb-2 rounded-xl bg-white"
-        :class="isCurrent ? '' : 'bg-grey-lighten-2'"
         style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${
           mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color || 'black'
@@ -148,10 +147,6 @@ const props = defineProps<{
 
 const character = computed((): { id: string; data: NechronicaWrap } | undefined => {
   return graphQlStore?.state.sessionDataList.find(sd => sd.id === props.characterId)
-})
-
-const isCurrent = computed(() => {
-  return (character.value?.data.actionValue || 0) >= props.battleCount
 })
 
 const columns = ref(10)
