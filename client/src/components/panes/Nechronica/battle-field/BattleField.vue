@@ -1,5 +1,9 @@
 <template>
-  <v-sheet class="d-flex flex-row w-100 flex-wrap align-start px-1 bg-transparent" style="gap: 5px">
+  <v-sheet
+    class="d-flex flex-row w-100 flex-wrap align-start px-1 bg-transparent"
+    v-if="viewCharacters.length"
+    style="gap: 5px"
+  >
     <table class="battle-field-table">
       <tr>
         <th></th>
@@ -59,6 +63,7 @@ const viewCharacters = computed((): { id: string; data: NechronicaWrap }[] => {
     graphQlStore?.state.sessionDataList
       .filter(sd => {
         if (sd.type !== 'nechronica-character') return false
+        if (!sd.data.position) return false
         return !props.perspective || !sd.data.hide
       })
       .sort((cOne, cTwo) => {
