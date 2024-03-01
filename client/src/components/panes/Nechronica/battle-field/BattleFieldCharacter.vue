@@ -1,10 +1,10 @@
 <template>
   <v-sheet
-    class="battle-field-character d-flex flex-column bg-transparent"
+    class="battle-field-character d-flex flex-column align-center bg-transparent"
     :class="selected ? 'selected' : ''"
     @click="emits('click')"
   >
-    <span class="ellipsis text-caption bg-transparent">{{ character.data.character.basic.characterName }}</span>
+    <span class="ellipsis text-caption bg-transparent w-100">{{ character.data.character.basic.characterName }}</span>
     <v-badge
       :model-value="Boolean(badgeContent)"
       color="black"
@@ -55,12 +55,16 @@ const badgeContent = computed(() => {
 
 <style lang="scss" scoped>
 .battle-field-character {
-  width: 4em;
+  width: 70px;
+  padding-bottom: 2px;
   cursor: pointer;
+  box-sizing: border-box;
+  border: transparent 2px solid;
 }
 
 .selected {
-  outline: red 4px solid;
+  border: yellow 2px solid;
+  outline: darkblue 3px solid;
 }
 
 :deep(.v-badge__badge) {

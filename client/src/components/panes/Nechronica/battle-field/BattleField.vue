@@ -9,7 +9,7 @@
         <tr v-if="p">
           <th>{{ $t(cl.text) }}</th>
           <td v-for="ac in useActionValues" :key="ac">
-            <v-sheet class="d-flex flex-row align-center justify-center bg-transparent pa-1 character-container">
+            <v-sheet class="d-flex flex-row align-center justify-center bg-transparent px-1 character-container">
               <template v-for="c in viewCharacters" :key="c.id">
                 <template v-if="c.data.position === p && c.data.actionValue === ac">
                   <battle-field-character
