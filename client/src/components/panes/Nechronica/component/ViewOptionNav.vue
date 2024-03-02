@@ -57,6 +57,15 @@
           </v-list-item>
         </v-sheet>
         <v-sheet>
+          <multi-switch-list-items
+            :label="$t('Nechronica.label.view-timing')"
+            :texts="mapping.MANEUVER_TIMING"
+            :model-value="option.selectedTimings"
+            :i18n="true"
+            @update:model-value="updateSelectedTimings"
+          />
+        </v-sheet>
+        <v-sheet>
           <v-list-subheader class="position-sticky" style="top: 1.5rem; z-index: 1">{{
             $t('Nechronica.label.status')
           }}</v-list-subheader>
@@ -107,15 +116,6 @@
             :model-value="option.selectedTypes"
             :i18n="true"
             @update:model-value="updateSelectedTypes"
-          />
-        </v-sheet>
-        <v-sheet>
-          <multi-switch-list-items
-            :label="$t('Nechronica.label.view-timing')"
-            :texts="mapping.MANEUVER_TIMING"
-            :model-value="option.selectedTimings"
-            :i18n="true"
-            @update:model-value="updateSelectedTimings"
           />
         </v-sheet>
       </v-defaults-provider>
