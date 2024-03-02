@@ -43,7 +43,7 @@ const icon = computed(() => {
 })
 
 const badgeContent = computed(() => {
-  if (props.character.data.type === 'horror') {
+  if (['savant', 'horror'].includes(props.character.data.type)) {
     return props.character.data.character.maneuverList.filter(m => !m.lost).length.toString()
   }
   if (props.character.data.type === 'legion') {
