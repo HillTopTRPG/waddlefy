@@ -243,6 +243,7 @@ const battleOption = computed(
 
     const battleEnd = [
       makeUseOptionItem('battle-end', targets.length > 0),
+      makeUseOptionItem('delete-character-history', deleteCharacterHistoryFlg),
       makeUseOptionItem('all-maneuver-to-unused', usedManeuverCharacterNum)
     ].filter((item): item is OptionItem => Boolean(item))
 
@@ -423,11 +424,12 @@ async function onNextTurn(option: string[]) {
 async function onBattleEnd(option: string[]) {
   const { targets } = getBattleDataInfo()
   const execBattleEnd = option.includes('battle-end')
+  const execClearManeuverStack = option.includes('clear-maneuver-stack')
   const execInitManeuverUsed = option.includes('init-maneuver-used')
 
   const updateList = targets.filter(t => execInitManeuverUsed && t.usedManeuverNum)
 
-  const total = (execBattleEnd ? 1 : 0) + updateList.length
+  const total = (execBattleEnd || execClearManeuverStack ? 1 : 0) + updateList.length
   let count = 0
 
   for (const c of updateList) {
@@ -441,7 +443,7 @@ async function onBattleEnd(option: string[]) {
     })
   }
 
-  if (execBattleEnd) {
+  if (execBattleEnd || execClearManeuverStack) {
     updateProgress(total, count)
     count++
 
@@ -450,6 +452,7 @@ async function onBattleEnd(option: string[]) {
         ...d
       }
       if (execBattleEnd) result.battleCount = NON_BATTLE_COUNT
+      if (execClearManeuverStack) result.maneuverStack = []
       return result
     })
   }
