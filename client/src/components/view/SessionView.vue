@@ -129,7 +129,6 @@
       v-if="isReady"
     >
       <v-list class="nav-dialog h-100">
-        <v-list-subheader style="min-height: auto; background: none">セッション名</v-list-subheader>
         <v-list-item>
           <menu-edit-text-field
             :editable="true"
