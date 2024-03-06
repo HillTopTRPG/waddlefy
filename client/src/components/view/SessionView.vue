@@ -138,13 +138,16 @@
             @update="updateSessionName"
           />
         </v-list-item>
-        <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length || 0 > 1">
+        <v-list-item class="mt-2" v-if="sessionId">
           <delete-menu-btn
-            v-if="sessionId"
+            v-if="(graphQlStore?.state.sessions.length || 0) > 1"
             :target-name="graphQlStore?.state.session?.name || ''"
             type="セッション"
             @execute="graphQlStore?.deleteSession(sessionId)"
           />
+          <span class="text-caption" v-else>
+            あなたのセッションは１つだけなので、セッションを削除することはできません
+          </span>
         </v-list-item>
       </v-list>
     </nav-dialog>
