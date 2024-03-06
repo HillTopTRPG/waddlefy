@@ -52,7 +52,7 @@
           :variant="!perspective || character.data.type === 'doll' ? 'solo-filled' : 'outlined'"
           :flat="true"
           :model-value="character.data.character.basic.basePosition.toString() || '0'"
-          @update:model-value="v => onUpdateCharacterBasePosition(character.id, parseInt(v, 10))"
+          @update:model-value="v => v !== null && onUpdateCharacterBasePosition(character.id, parseInt(v, 10))"
         >
           <template #label>
             <v-icon icon="mdi-map-marker-outline" />

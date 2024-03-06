@@ -18,7 +18,7 @@
       item-title="text"
       :prefix="prefix ? `${prefix}: ` : ''"
       :model-value="modelValue"
-      @update:model-value="v => emits('update:model-value', v)"
+      @update:model-value="v => v !== null && emits('update:model-value', v)"
     >
       <template #item="{ item, props }">
         <v-list-item v-bind="props">

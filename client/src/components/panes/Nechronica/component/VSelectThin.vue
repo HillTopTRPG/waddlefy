@@ -10,12 +10,12 @@
     item-title="text"
     :prefix="prefix ? `${prefix}: ` : ''"
     :model-value="modelValue"
-    @update:model-value="v => emits('update:model-value', v)"
+    @update:model-value="update"
   />
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   modelValue: string
   prefix: string
   items: { value: string; text: string }[]
@@ -24,6 +24,11 @@ defineProps<{
 const emits = defineEmits<{
   (e: 'update:model-value', modelValue: string): void
 }>()
+
+function update(v: string | null) {
+  if (v === null || props.modelValue === v) return
+  emits('update:model-value', v)
+}
 </script>
 
 <style lang="scss" scoped>

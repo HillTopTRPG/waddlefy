@@ -23,20 +23,18 @@
           :items="typeSelection"
           :color="mapping.MANEUVER_TYPE[maneuver.type].color"
           :model-value="maneuver.type"
-          @update:model-value="v => onUpdateType(v)"
+          @update:model-value="v => v !== null && onUpdateType(v)"
         >
           <template #label>
             <v-icon icon="mdi-cards-spade-outline" class="mr-1" />
             {{ $t('Nechronica.label.category') }}
           </template>
-          <template #selection="{ item }">
-            <v-list-item density="compact" class="pa-0" :title="$t(item.title)" />
-          </template>
-          <template #item="{ item, props }">
-            <v-list-item v-bind="props" :title="$t(item.title)" />
-          </template>
         </v-select>
-        <v-select :items="partsSelection" :model-value="maneuver.parts" @update:model-value="v => onUpdateParts(v)">
+        <v-select
+          :items="partsSelection"
+          :model-value="maneuver.parts"
+          @update:model-value="v => v !== null && onUpdateParts(v)"
+        >
           <template #label>
             <v-icon icon="mdi-hand-back-right-outline" class="mr-1" />
             {{ $t('Nechronica.label.parts-position') }}
@@ -59,17 +57,11 @@
           :items="timingSelection"
           style="max-width: 9em"
           :model-value="maneuver.timing"
-          @update:model-value="v => onUpdateTiming(v)"
+          @update:model-value="v => v !== null && onUpdateTiming(v)"
         >
           <template #label>
             <v-icon icon="mdi-timer-outline" class="mr-1" />
             {{ $t('Nechronica.label.timing') }}
-          </template>
-          <template #item="{ item, props }">
-            <v-list-item v-bind="props" density="compact" class="py-0" :title="$t(item.title)" />
-          </template>
-          <template #selection="{ item }">
-            <v-list-item density="compact" class="pa-0" :title="$t(item.title)" />
           </template>
         </v-select>
         <menu-edit-text-field
@@ -139,6 +131,9 @@ import { clone } from '@/components/panes/PrimaryDataUtility'
 import MenuEditTextArea from '@/components/parts/MenuEditTextArea.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const vSelectDefaults = {
   hideDetails: true,
   persistentPlaceholder: true,
@@ -168,12 +163,12 @@ const partsSelection = mapping.MANEUVER_PARTS.map((p, idx) => ({
 
 const typeSelection = mapping.MANEUVER_TYPE.map((p, idx) => ({
   value: idx,
-  text: p.text
+  text: t(p.text)
 }))
 
-const timingSelection = mapping.MANEUVER_TIMING.map((t, idx) => ({
+const timingSelection = mapping.MANEUVER_TIMING.map((p, idx) => ({
   value: idx,
-  text: t.text
+  text: t(p.text)
 }))
 
 function updateHelper(wrapFunc: (m: NechronicaManeuver) => boolean) {

@@ -8,7 +8,7 @@
     item-title="name"
     item-value="value"
     :model-value="modelValue"
-    @update:model-value="v => emits('update:model-value', v)"
+    @update:model-value="v => v !== null && emits('update:model-value', v)"
   >
     <template #prepend-inner>
       <div class="d-flex flex-row align-center h-100 text-body-2">
