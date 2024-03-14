@@ -27,7 +27,7 @@
       </v-sheet>
     </template>
     <template #default>
-      <v-sheet class="w-100 d-flex flex-row align-start justify-start flex-wrap px-0">
+      <v-sheet class="w-100 d-flex flex-row align-start justify-start flex-wrap px-0 bg-transparent">
         <template v-for="cw in characterWraps" :key="cw.id">
           <scenario-data-card mode="edit" :data-id="cw.id" :text-rows="textRows" :perspective="perspective" />
         </template>
@@ -40,7 +40,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'CharacterSheetManagePane',
   label: 'キャラクターシート管理'
@@ -79,16 +79,13 @@ const characterWraps = computed<CharacterWrap[]>(() => {
     .map(sd => sd.data as CharacterWrap)
 })
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
+defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 
 const textRows = ref(3)
@@ -104,7 +101,6 @@ async function onLoadCharacterSheet(url: string, password: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .menu-select {
   flex-grow: 0;

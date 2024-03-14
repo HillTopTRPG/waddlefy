@@ -2,7 +2,7 @@
   <contents-overlay
     title="画面の設定"
     color="bg-light-green"
-    :modal-value="modalValue"
+    :model-value="modelValue"
     image="paint_00019.jpg"
     @close="emits('close')"
   >
@@ -45,10 +45,10 @@
                     @click.prevent.stop="toggleScopePlayer(item.value)"
                     :title="item.title"
                     :value="item.value"
-                    :active="dashboard?.option.scope.some(s => s === item.value)"
+                    :active="dashboard?.option.scope.includes(item.value)"
                   >
                     <template #prepend>
-                      <v-checkbox-btn :model-value="dashboard?.option.scope.some(s => s === item.value)" />
+                      <v-checkbox-btn :model-value="dashboard?.option.scope.includes(item.value)" />
                     </template>
                   </v-list-item>
                 </template>
@@ -69,12 +69,7 @@
           </v-select>
         </v-list-item>
         <v-list-item>
-          <delete-menu-btn
-            :target-name="dashboard?.name || ''"
-            :session-id="graphQlStore?.state.session?.id || ''"
-            type="画面"
-            @execute="deleteDashboardExecute()"
-          />
+          <delete-menu-btn :target-name="dashboard?.name || ''" type="画面" @execute="deleteDashboardExecute()" />
         </v-list-item>
       </v-list>
     </v-card-text>
@@ -92,7 +87,7 @@ import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 defineProps<{
-  modalValue: boolean
+  modelValue: boolean
 }>()
 
 const emits = defineEmits<{
@@ -107,8 +102,8 @@ async function updateDashboardName(name: string) {
 }
 
 async function deleteDashboardExecute() {
-  console.log('deleteDashboardExecute')
   if (!graphQlStore) return
+  window.logger.info('deleteDashboardExecute')
   await graphQlStore.deleteDashboard(graphQlStore?.state.session?.id || '', dashboard.value?.id || '')
 }
 
@@ -141,12 +136,11 @@ async function toggleScopePlayer(playerId: string) {
 async function updateScope(scope: DashboardOption['scope'] | string) {
   if (!graphQlStore) return
 
-  console.log(scope)
   let useScope: DashboardOption['scope']
   if (scope === 'all' || scope === 'owner') useScope = scope
   else if (typeof scope === 'string') useScope = [scope]
-  else if (scope.some(s => s === 'all')) useScope = 'all'
-  else if (scope.some(s => s === 'owner')) useScope = 'owner'
+  else if (scope.includes('all')) useScope = 'all'
+  else if (scope.includes('owner')) useScope = 'owner'
   else useScope = scope
 
   if (JSON.stringify(graphQlStore.state.dashboard?.option.scope) === JSON.stringify(useScope)) return

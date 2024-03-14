@@ -71,7 +71,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'CharacterSheetViewPane',
   label: 'データ閲覧'
@@ -89,16 +89,13 @@ import DataViewPaneHelp from '@/components/panes/Shinobigami/DataViewPaneHelp.vu
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
+defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 
 const navigationDrawer = ref(false)
@@ -173,12 +170,8 @@ const selectSkill = ref('')
 watch(selectSkill, v => {
   if (v) navigationDrawer.value = false
 })
-
-const tokugiTableEditing = ref(false)
-watch(tokugiTableEditing, v => console.log(v))
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .notify-snackbar {
   :deep(.v-snackbar__wrapper) {

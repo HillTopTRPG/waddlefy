@@ -92,6 +92,7 @@
                   variant="solo"
                   label="効果／強み／弱み"
                   placeholder=""
+                  :offset="-textRows * 24 + 18"
                   :text="arts.effect || ''"
                   @update="v => onUpdateSpecialArtsEffect(idx, v)"
                 />
@@ -104,13 +105,13 @@
                   variant="solo"
                   label="演出"
                   placeholder=""
+                  :offset="-textRows * 24 + 18"
                   :text="arts.direction || ''"
                   @update="v => onUpdateSpecialArtsDirection(idx, v)"
                 />
                 <delete-menu-btn
                   class-text="align-self-end"
                   :target-name="arts.name"
-                  :session-id="graphQlStore?.state.session?.id || ''"
                   type="奥義"
                   @execute="onDeleteSpecialArts(idx)"
                 />
@@ -482,7 +483,6 @@
           :target-name="
             dataObj.type === 'shinobigami-character' ? dataObj.data.character.characterName : dataObj.data.name
           "
-          :session-id="graphQlStore?.state.session?.id || ''"
           :type="typeList.find(t => t.value === dataObj?.type)?.label || ''"
           @execute="onDeleteSessionData"
         />
@@ -495,9 +495,9 @@
 import { computed, inject } from 'vue'
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import AddSpecialArtsButton from '@/components/panes/Shinobigami/AddSpecialArtsButton.vue'
 import HandoutMultiCheckbox from '@/components/panes/Shinobigami/HandoutMultiCheckbox.vue'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import ReloadCharacterSheetButton from '@/components/panes/Shinobigami/ReloadCharacterSheetButton.vue'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import TokugiSelector from '@/components/panes/Shinobigami/TokugiSelector.vue'
@@ -510,7 +510,6 @@ import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vu
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   dataId: string
   textRows: number
@@ -550,20 +549,17 @@ const otherHandouts = computed(() => {
 const prizeKnow = computed(() => {
   if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return true
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(sd =>
-      dataObj.value?.data.readableList.some((r: string) => r === sd.id)
-    ) || []
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.readableList.includes(sd.id)) || []
   const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
-  return characters.some(c => c?.data.player === props.perspective)
+  return characters.map(c => c?.data.player).includes(props.perspective)
 })
 
 const prizeSecret = computed(() => {
   if (!dataObj.value || dataObj.value.type !== 'shinobigami-prize') return false
   const knowHandouts =
-    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.leakedList.some((r: string) => r === sd.id)) ||
-    []
+    graphQlStore?.state.sessionDataList.filter(sd => dataObj.value?.data.leakedList.includes(sd.id)) || []
   const characters = knowHandouts.map(h => graphQlStore?.state.sessionDataList.find(sd => sd.id === h.data.person))
-  return characters.some(c => c?.data.player === props.perspective)
+  return characters.map(c => c?.data.player).includes(props.perspective)
 })
 
 const handoutSecretOpen = computed((): boolean => {
@@ -726,7 +722,7 @@ const hasEmptyPlayers = computed(() => {
 const dataObjPlayerId = computed(() => {
   if (!dataObj.value) return ''
   const playerId = dataObj.value.data.player
-  return hasEmptyPlayers.value.some(p => p.id === playerId) ? playerId : ''
+  return hasEmptyPlayers.value.map(p => p.id).includes(playerId) ? playerId : ''
 })
 
 const hasEmptyCharacterList = computed(() => {
@@ -750,7 +746,7 @@ const hasEmptyCharacterList = computed(() => {
 const dataObjPerson = computed(() => {
   if (!dataObj.value) return ''
   const person = dataObj.value.data.person
-  return hasEmptyCharacterList.value.some(p => p.id === person) ? person : ''
+  return hasEmptyCharacterList.value.map(p => p.id).includes(person) ? person : ''
 })
 
 async function onUpdateSecret(index: number, value: boolean) {
@@ -1156,7 +1152,6 @@ async function onDeleteSessionData() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .emotion-select {
   width: 9em;

@@ -1,6 +1,6 @@
 <template>
   <v-layout class="root h-100 flex-column">
-    <v-sheet color="amber-lighten-5" height="2rem" class="px-4 d-flex flex-row align-center">
+    <v-sheet color="amber-lighten-5" height="2rem" class="px-4 d-flex flex-row align-center bg-transparent">
       <span class="flex-grow-1" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden">{{
         title
       }}</span>
@@ -10,7 +10,7 @@
       <slot name="layout" />
       <slot name="nav" />
       <div
-        class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap overflow-auto"
+        class="d-flex align-start align-content-start position-relative w-100 h-100 flex-wrap overflow-auto bg-transparent"
         :class="viewScrollbar ? 'scrollbar-show' : 'scrollbar-hide'"
         v-scroll.self="() => onScroll()"
         style="contain: paint"

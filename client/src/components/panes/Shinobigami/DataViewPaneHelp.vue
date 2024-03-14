@@ -3,10 +3,8 @@
     <v-card-item class="text-caption py-0"> このTipsはセッション情報が追加されると表示されなくなります。 </v-card-item>
     <v-card-item>
       <v-tabs v-model="currentTab">
-        <v-defaults-provider :defaults="{ VTab: { variant: 'text', density: 'comfortable' } }">
-          <v-tab text="特徴" value="features" />
-          <v-tab text="おすすめの準備手順" value="preparation-steps" />
-        </v-defaults-provider>
+        <v-tab variant="text" density="comfortable" text="特徴" value="features" />
+        <v-tab variant="text" density="comfortable" text="おすすめの準備手順" value="preparation-steps" />
       </v-tabs>
       <v-window v-model="currentTab">
         <v-window-item value="features">
@@ -121,7 +119,6 @@ import { ref } from 'vue'
 const currentTab = ref('features')
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 ul,
 ol {

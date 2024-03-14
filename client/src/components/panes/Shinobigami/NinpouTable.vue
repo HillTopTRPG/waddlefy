@@ -62,7 +62,6 @@
 import { NinjaArts, SkillTable } from '@/components/panes/Shinobigami/shinobigami'
 import { computed } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   list: NinjaArts[] | undefined
   mode?: 'secret'
@@ -112,7 +111,7 @@ function onClickSkill(skill: string): void {
 }
 
 function isIncludeSkills(skill: string): boolean {
-  return SkillTable.some(t => t.some(s => s === skill))
+  return SkillTable.flat().includes(skill)
 }
 
 function onChangeSecret(idx: number, secret: boolean) {
@@ -120,7 +119,6 @@ function onChangeSecret(idx: number, secret: boolean) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .ninpou-table {
   border-left: 1px solid #aaa;

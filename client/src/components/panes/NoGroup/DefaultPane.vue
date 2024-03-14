@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'DefaultPane',
   label: '初期画面'
@@ -20,7 +20,6 @@ defineProps<{
 
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 </script>
 
@@ -38,12 +37,16 @@ const emits = defineEmits<{
       <template v-for="g in componentMap" :key="g.group">
         <v-list-group v-if="g.group">
           <template #activator="{ props }">
-            <v-list-item v-bind="props" :title="g.group" @keydown.enter.stop="$event.target.click()" />
+            <v-list-item
+              v-bind="props"
+              :title="$t(`pane.${g.group}.group`)"
+              @keydown.enter.stop="$event.target.click()"
+            />
           </template>
 
           <v-list-item
             v-for="n in Object.keys(g.items)"
-            :title="n"
+            :title="$t(`pane.${g.group}.${n}`)"
             :value="n"
             :key="n"
             @click="emits('change-component', g.group, n)"
@@ -53,7 +56,7 @@ const emits = defineEmits<{
         <template v-else>
           <v-list-item
             v-for="n in Object.keys(g.items).filter(m => m !== '初期画面')"
-            :title="n"
+            :title="$t(n)"
             :value="n"
             :key="n"
             @click="emits('change-component', g.group, n)"
@@ -65,7 +68,6 @@ const emits = defineEmits<{
   </div>
 </template>
 
-<!--suppress HtmlUnknownAttribute -->
 <style deep lang="css">
 .v-card.chat-input-container {
   border-radius: 0;

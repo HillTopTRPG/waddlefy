@@ -18,7 +18,7 @@
           <div class="tree">
             <ul>
               <li v-if="characterSheet.stylerule">{{ characterSheet.stylerule }}</li>
-              <li v-if="characterSheet.foe">仇敵：{{ characterSheet.foe }}</li>
+              <li v-if="characterSheet.foe">仇敵: {{ characterSheet.foe }}</li>
             </ul>
           </div>
         </v-card-text>
@@ -35,7 +35,6 @@ defineProps<{
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .base-info {
   background-image: url('/paint_00001.jpg') !important;

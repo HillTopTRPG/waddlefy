@@ -88,7 +88,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({})
-//noinspection JSUnusedGlobalSymbols
+
 export const componentInfo = {
   name: 'HandoutManagePane',
   label: 'シナリオデータ管理'
@@ -108,16 +108,13 @@ const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   layout: Layout
   rootLayout: Layout
 }>()
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const emits = defineEmits<{
+defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
 }>()
 
 const perspectiveList = computed(() => [
@@ -218,7 +215,6 @@ async function onLoadScenarioSheet(url: string, password: string) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .menu-select {
   flex-grow: 0;

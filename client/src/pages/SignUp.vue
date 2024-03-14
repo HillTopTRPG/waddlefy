@@ -112,12 +112,12 @@ watch(userId, () => {
     if (!appSyncClient) {
       return
     }
-    console.log('Queries.checkDuplicateUserId')
+    window.logger.info('Queries.checkDuplicateUserId')
     const result = await appSyncClient.mutate<QueryResult.CheckDuplicateUserId>({
       mutation: Queries.checkDuplicateUserId,
       variables: { userId: userId.value }
     })
-    console.log(result.data)
+    window.logger.info(JSON.stringify(result.data, null, 2))
     const checkDuplicateUserId = result.data?.checkDuplicateUserId
     if (checkDuplicateUserId) {
       const { ok } = checkDuplicateUserId

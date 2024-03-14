@@ -16,7 +16,13 @@ import {
   User
 } from '@/components/graphql/schema'
 import { Layout } from '@/components/panes'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
+import {
+  Nechronica,
+  NechronicaCopiableWrap,
+  NechronicaType,
+  NechronicaWrap
+} from '@/components/panes/Nechronica/nechronica'
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import { ShinobiGami, ShinobigamiEmotion, getCharacterDiffMessages } from '@/components/panes/Shinobigami/shinobigami'
 import router from '@/router'
 import { Observable } from '@apollo/client'
@@ -93,12 +99,12 @@ export async function userSignIn(
   graphql: string,
   region: string
 ): Promise<void> {
-  console.log('Mutations.userSignIn')
+  window.logger.info('Mutations.userSignIn')
   const result = await appSyncClient.mutate<MutationResult.UserSignIn>({
     mutation: Mutations.userSignIn,
     variables: { userId, userPassword }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.userSignIn
   if (!data) return
   const { token, secret } = data
@@ -126,7 +132,7 @@ export async function userSignUp(
   userName: string,
   userPassword: string
 ): Promise<void> {
-  console.log('Mutations.userSignUp')
+  window.logger.info('Mutations.userSignUp')
   const result = await appSyncClient.mutate<MutationResult.UserSignUp>({
     mutation: Mutations.userSignUp,
     variables: {
@@ -137,7 +143,7 @@ export async function userSignUp(
       sessionType: DEFAULT_SESSION_TYPE
     }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.userSignUp
   if (!data) return
   const { token, secret, firstSession } = data
@@ -152,19 +158,19 @@ export async function playerSignUp(
   playerPassword: string,
   router: Router
 ): Promise<void> {
-  console.log('Mutations.addPlayerByPlayer')
+  window.logger.info('Mutations.addPlayerByPlayer')
   const result = await appSyncClient.mutate<MutationResult.AddPlayerByPlayer>({
     mutation: Mutations.addPlayerByPlayer,
     variables: { playerName, playerPassword }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.addPlayerByPlayer
   if (!data) return
   const { id, token, secret, sessionId } = data
   const player = JSON.stringify(omit(data, 'token', 'secret', 'session'))
   localStorage.setItem(token, JSON.stringify({ secret }))
 
-  console.log('Mutations.notify')
+  window.logger.info('Mutations.notify')
   await appSyncClient.mutate<MutationResult.Notify>({
     mutation: Mutations.notify,
     variables: { sessionId, from: id, type: 'add-player', data: player }
@@ -179,12 +185,12 @@ export async function playerFirstSignIn(
   playerPassword: string,
   router: Router
 ): Promise<void> {
-  console.log('Mutations.playerFirstSignIn')
+  window.logger.info('Mutations.playerFirstSignIn')
   const result = await appSyncClient.mutate<MutationResult.PlayerFirstSignIn>({
     mutation: Mutations.playerFirstSignIn,
     variables: { playerId, playerPassword }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.playerFirstSignIn
   if (!data) return
   const { token, secret } = data
@@ -198,12 +204,12 @@ export async function playerSignIn(
   playerPassword: string,
   router: Router
 ): Promise<void> {
-  console.log('Mutations.playerSignIn')
+  window.logger.info('Mutations.playerSignIn')
   const result = await appSyncClient.mutate<MutationResult.PlayerSignIn>({
     mutation: Mutations.playerSignIn,
     variables: { playerId, playerPassword }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.playerSignIn
   if (!data) return
   const { token, secret } = data
@@ -218,12 +224,12 @@ export async function resetPlayerPassword(
   playerPassword: string,
   router: Router
 ): Promise<void> {
-  console.log('Mutations.resetPlayerPassword')
+  window.logger.info('Mutations.resetPlayerPassword')
   const result = await appSyncClient.mutate<MutationResult.ResetPlayerPassword>({
     mutation: Mutations.resetPlayerPassword,
     variables: { playerId, resetCode, playerPassword }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.resetPlayerPassword
   if (!data) return
   const { token, secret } = data
@@ -238,12 +244,12 @@ async function callAddSession(
   callback: (data: Session) => void
 ): Promise<void> {
   if (!appSyncClient) return
-  console.log('Mutations.addSession')
+  window.logger.info('Mutations.addSession')
   const result = await appSyncClient.mutate<MutationResult.AddSession>({
     mutation: Mutations.addSession,
     variables: { name, sessionType }
   })
-  console.log(JSON.stringify(result.data, null, 2))
+  window.logger.info(JSON.stringify(result.data, null, 2))
   const data = result.data?.addSession
   if (!data) return
   callback({
@@ -263,8 +269,8 @@ export async function fetchGraphQlConnectionInfo() {
     const apiInfoResult = await fetch('/api')
     apiInfoJson = await apiInfoResult.json()
   } catch (error) {
-    console.warn('/apiで情報が取得できませんでした')
-    console.warn('ローカル開発中ですね？')
+    window.logger.warn('/apiで情報が取得できませんでした')
+    window.logger.warn('ローカル開発中ですね？')
   }
 
   if (!apiInfoJson) {
@@ -274,7 +280,7 @@ export async function fetchGraphQlConnectionInfo() {
     }
   }
 
-  console.log(JSON.stringify(apiInfoJson, null, 2))
+  window.logger.info(JSON.stringify(apiInfoJson, null, 2))
   return apiInfoJson
 }
 
@@ -361,7 +367,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         break
       default:
     }
-    // console.log(JSON.stringify({ operation, authorize }))
+    // logger.info(JSON.stringify({ operation, authorize }))
     return authorize
   }
 
@@ -398,7 +404,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       () => state.session?.id,
       sessionId => {
         if (!sessionId) return
-        if (subscribedSessionId.some(id => id === sessionId)) return
+        if (subscribedSessionId.includes(sessionId)) return
         subscribedSessionId.push(sessionId)
         onAddPlayerSubscription(sessionId)
         onAddDashboardSubscription(sessionId)
@@ -434,7 +440,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function addDashboard(dashboardName: string, layout: Layout, option: DashboardOption): Promise<void> {
     if (!appSyncClient) return
-    console.log('Mutations.addDashboard')
+    window.logger.info('Mutations.addDashboard')
     operation = 'mutation addDashboard'
     const result = await appSyncClient.mutate<MutationResult.AddDashboard>({
       mutation: Mutations.addDashboard,
@@ -445,40 +451,40 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         sessionId: state.session?.id || ''
       }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
   async function updateUserName(userName: string) {
     if (!appSyncClient) return
     if (!state.user?.token) return
-    console.log('Mutations.updateUserName')
+    window.logger.info('Mutations.updateUserName')
     operation = 'mutation updateUserName'
     const result = await appSyncClient.mutate<MutationResult.UpdateUserName>({
       mutation: Mutations.updateUserName,
       variables: { userId: state.user.id, userName }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
   async function updateUserIcon() {
     if (!appSyncClient) return
     if (!state.user?.token) return
-    console.log('Mutations.updateUserIcon')
+    window.logger.info('Mutations.updateUserIcon')
     operation = 'mutation updateUserIcon'
     const result = await appSyncClient.mutate<MutationResult.UpdateUserIcon>({
       mutation: Mutations.updateUserIcon,
       variables: { userId: state.user.id }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
   async function updateSession(name: string, sessionType: string, defaultDashboardId: string) {
     if (!appSyncClient) return
     if (!state.user?.token) return
-    console.log('Mutations.updateSession')
+    window.logger.info('Mutations.updateSession')
     operation = 'mutation updateSession'
     const result = await appSyncClient.mutate<MutationResult.UpdateSession>({
       mutation: Mutations.updateSession,
@@ -489,13 +495,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         defaultDashboardId
       }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
   async function updateSessionDataHelper(id: string, data: string) {
     if (!appSyncClient) return
-    console.log('Mutations.updateSessionData')
+    window.logger.info('Mutations.updateSessionData')
     operation = 'mutation updateSessionData'
     const result = await appSyncClient.mutate<MutationResult.UpdateSessionData>({
       mutation: Mutations.updateSessionData,
@@ -505,8 +511,20 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         data
       }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
+  }
+
+  async function updateTargetConfig(configId: string, owner: string, target: string, type: string, data: any) {
+    await updateSessionDataHelper(
+      configId,
+      JSON.stringify({
+        owner,
+        target,
+        type,
+        data
+      })
+    )
   }
 
   async function updateShinobigamiCharacter(
@@ -523,6 +541,19 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         character: data
       })
     )
+  }
+
+  async function updateNechronicaCharacter(characterId: string, wrapObj: NechronicaWrap) {
+    await updateSessionDataHelper(characterId, JSON.stringify(wrapObj))
+  }
+
+  async function updateNechronicaCharacterHelper(characterId: string, wrapFunc: (cloned: NechronicaWrap) => void) {
+    const character = state.sessionDataList.find(sd => sd.id === characterId)
+    if (!character) return
+    const cloned = clone<NechronicaWrap>(character.data)!
+    wrapFunc(cloned)
+    if (JSON.stringify(cloned) === JSON.stringify(character.data)) return
+    await updateNechronicaCharacter(characterId, cloned)
   }
 
   async function updateShinobigamiHandoutSessionMemo(sessionMemoId: string, handoutId: string, text: string) {
@@ -659,7 +690,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function updateDashboardHelper(name: string | null, layout: Layout | null, option: DashboardOption | null) {
     if (!appSyncClient) return
     if (!state.user?.token) return
-    console.log('Mutations.updateDashboard')
+    window.logger.info('Mutations.updateDashboard')
     operation = 'mutation updateDashboard'
     const result = await appSyncClient.mutate<MutationResult.UpdateDashboard>({
       mutation: Mutations.updateDashboard,
@@ -671,7 +702,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
         option: JSON.stringify(option || state.dashboard?.option || {})
       }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
@@ -689,39 +720,39 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function updatePlayerName(playerId: string, playerName: string) {
     if (!appSyncClient) return
-    console.log('Mutations.updatePlayerName')
+    window.logger.info('Mutations.updatePlayerName')
     operation = 'mutation updatePlayerName'
     const result = await appSyncClient.mutate<MutationResult.UpdatePlayerName>({
       mutation: Mutations.updatePlayerName,
       variables: { playerId, playerName }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
   async function updatePlayerIcon(playerId: string) {
     if (!appSyncClient) return
-    console.log('Mutations.updatePlayerIcon')
+    window.logger.info('Mutations.updatePlayerIcon')
     operation = 'mutation updatePlayerIcon'
-    console.log('Mutations.updatePlayerIcon')
+    window.logger.info('Mutations.updatePlayerIcon')
     const result = await appSyncClient.mutate<MutationResult.UpdatePlayerIcon>({
       mutation: Mutations.updatePlayerIcon,
       variables: { playerId }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて更新される
   }
 
   async function deleteSession(sessionId: string) {
     if (!appSyncClient) return
     if (state.sessions.length === 1) return
-    console.log('Mutations.deleteSession')
+    window.logger.info('Mutations.deleteSession')
     operation = 'mutation deleteSession'
     const result = await appSyncClient.mutate<MutationResult.DeleteSession>({
       mutation: Mutations.deleteSession,
       variables: { sessionId }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     const data = result.data?.deleteSession
     if (!data) return
     const idx = state.sessions.findIndex(d => d.id === data.id)
@@ -733,19 +764,19 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function deleteDashboard(sessionId: string, dashboardId: string) {
     if (!appSyncClient) return
     if (state.dashboards.length === 1) return
-    console.log('Mutations.deleteDashboard')
+    window.logger.info('Mutations.deleteDashboard')
     operation = 'mutation deleteDashboard'
     const result = await appSyncClient.mutate<MutationResult.DeleteDashboard>({
       mutation: Mutations.deleteDashboard,
       variables: { sessionId, dashboardId }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     // subscriptionにて削除される
   }
 
   async function deletePlayer(playerId: string) {
     if (!appSyncClient) return
-    console.log('Mutations.deletePlayer')
+    window.logger.info('Mutations.deletePlayer')
     operation = 'mutation deletePlayer'
     await appSyncClient.mutate<MutationResult.DeletePlayer>({
       mutation: Mutations.deletePlayer,
@@ -756,7 +787,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function deleteSessionData(sessionDataId: string) {
     if (!appSyncClient) return
-    console.log('Mutations.deleteSessionData')
+    window.logger.info('Mutations.deleteSessionData')
     operation = 'mutation deleteSessionData'
     await appSyncClient.mutate<MutationResult.DeleteSessionData>({
       mutation: Mutations.deleteSessionData,
@@ -771,13 +802,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     operation = 'query directSessionAccess'
     let data: SessionForUser | undefined = undefined
 
-    console.log('Queries.directSessionAccess')
+    window.logger.info('Queries.directSessionAccess')
     async function requestDirectSessionAccess(useSessionId: string) {
       const result = await appSyncClient!.mutate<QueryResult.DirectSessionAccess>({
         mutation: Queries.directSessionAccess,
         variables: { sessionId: useSessionId }
       })
-      console.log(JSON.stringify(result.data, null, 2))
+      window.logger.info(JSON.stringify(result.data, null, 2))
       return result.data?.directSessionAccess
     }
     try {
@@ -863,13 +894,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function directDashboardAccess(dashboardId: string) {
     if (!appSyncClient) return
-    console.log('Queries.directDashboardAccess')
+    window.logger.info('Queries.directDashboardAccess')
     operation = 'query directDashboardAccess'
     const result = await appSyncClient.mutate<QueryResult.DirectDashboardAccess>({
       mutation: Queries.directDashboardAccess,
       variables: { dashboardId }
     })
-    console.log(JSON.stringify(result.data, null, 2))
+    window.logger.info(JSON.stringify(result.data, null, 2))
     const data = result.data?.directDashboardAccess
     if (!data) return
     state.dashboard = null
@@ -886,7 +917,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
   async function directPlayerAccess() {
     if (!appSyncClient) return
-    console.log('Queries.directPlayerAccess')
+    window.logger.info('Queries.directPlayerAccess')
     operation = 'query directPlayerAccess'
     let data: PlayerForPlayer | undefined = undefined
 
@@ -894,7 +925,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       const result = await appSyncClient.mutate<QueryResult.DirectPlayerAccess>({
         mutation: Queries.directPlayerAccess
       })
-      console.log(JSON.stringify(result.data, null, 2))
+      window.logger.info(JSON.stringify(result.data, null, 2))
       data = result.data?.directPlayerAccess
     } catch (err) {
       await router.replace({ name: 'Home' })
@@ -954,13 +985,13 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function generatePlayerResetCode(playerId: string): Promise<string | null> {
     if (!appSyncClient) return null
     try {
-      console.log('Mutations.generatePlayerResetCode')
+      window.logger.info('Mutations.generatePlayerResetCode')
       operation = 'mutation generatePlayerResetCode'
       const result = await appSyncClient.mutate<MutationResult.GeneratePlayerResetCode>({
         mutation: Mutations.generatePlayerResetCode,
         variables: { playerId }
       })
-      console.log(JSON.stringify(result.data, null, 2))
+      window.logger.info(JSON.stringify(result.data, null, 2))
       const data = result.data?.generatePlayerResetCode
       return data?.resetCode || null
     } catch (e) {
@@ -974,7 +1005,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     const sessionId = state.session?.id || ''
 
-    console.log('Mutations.addPlayerByUser')
+    window.logger.info('Mutations.addPlayerByUser')
     operation = 'mutation addPlayerByUser'
     await appSyncClient.mutate<MutationResult.AddPlayerByUser>({
       mutation: Mutations.addPlayerByUser,
@@ -988,7 +1019,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
 
     const from = state.user?.token ? 'user' : state.player?.id || ''
 
-    console.log('Mutations.notify')
+    window.logger.info('Mutations.notify')
     operation = 'mutation notify'
     await appSyncClient.mutate<MutationResult.Notify>({
       mutation: Mutations.notify,
@@ -999,12 +1030,16 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
   async function addSessionDataHelper(type: string, data: string) {
     if (!appSyncClient) return
 
-    console.log('Mutations.addSessionData')
+    window.logger.info('Mutations.addSessionData')
     operation = 'mutation addSessionData'
     await appSyncClient.mutate<MutationResult.AddSessionData>({
       mutation: Mutations.addSessionData,
       variables: { sessionId: state.session?.id || '', type, data }
     })
+  }
+
+  async function addTargetConfig(owner: string, target: string, type: string, data: any) {
+    await addSessionDataHelper('target-config', JSON.stringify({ owner, target, type, data }))
   }
 
   async function addShinobigamiCharacter(perspective: string, dataObj: ShinobiGami, password: string): Promise<void> {
@@ -1014,6 +1049,33 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
       character: dataObj
     }
     await addSessionDataHelper('shinobigami-character', JSON.stringify(characterWrap))
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addNechronicaCharacter(
+    perspective: string,
+    type: NechronicaType,
+    dataObj: Nechronica,
+    copy: Partial<NechronicaCopiableWrap>
+  ): Promise<void> {
+    const characterWrap: NechronicaWrap = {
+      player: perspective || 'user',
+      type,
+      position: 0,
+      actionValue: type === 'legion' ? 8 : 0,
+      health: type === 'legion' ? 5 : 0,
+      hide: type !== 'doll',
+      maxActionValue: type === 'legion' ? 8 : 0,
+      spineCount: 0,
+      ...copy,
+      character: dataObj
+    }
+    await addSessionDataHelper('nechronica-character', JSON.stringify(characterWrap))
+    // Subscriptionによってstateに登録される
+  }
+
+  async function addNechronicaSingleton(dataObj: any): Promise<void> {
+    await addSessionDataHelper('nechronica-singleton', JSON.stringify(dataObj))
     // Subscriptionによってstateに登録される
   }
 
@@ -1150,7 +1212,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnAddPlayer>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onAddPlayer
         if (data && state.session?.id === sessionId) {
           state.players.push(data)
@@ -1174,7 +1236,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnAddDashboard>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onAddDashboard
         if (data && state.session?.id === sessionId) {
           const dashboard: AbstractDashboard = {
@@ -1203,7 +1265,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnAddSessionData>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onAddSessionData
         if (data && state.session?.id === sessionId) {
           const raw = JSON.parse(data.data)
@@ -1240,7 +1302,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnUpdateUser>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateUser
         if (!data || !state.user) return
         state.user.name = data.name
@@ -1264,7 +1326,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnUpdateSession>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateSession
         if (!data) return
         if (state.session && state.session.id === sessionId) {
@@ -1295,7 +1357,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnUpdateDashboard>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateDashboard
         if (data && state.session && state.session.id === sessionId) {
           const dashboard = state.dashboards.find(d => d.id === data.id)
@@ -1339,7 +1401,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnUpdateSessionData>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdateSessionData
         if (!data) return
         if (state.session && state.session.id === sessionId) {
@@ -1359,7 +1421,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
               )
             }
             if (dataType === 'shinobigami-handout-session-memo') {
-              console.log(JSON.stringify(next, null, 2))
+              window.logger.info(JSON.stringify(next, null, 2))
               const handoutName = state.sessionDataList.find(c => c.id === next.handoutId)?.data.name
               addNotification(`${handoutName}の共有メモが更新されました`, 'mdi-pencil-circle-outline', 'lime-lighten-4')
             }
@@ -1384,7 +1446,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnUpdatePlayer>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onUpdatePlayer
         if (data && state.session?.id === sessionId) {
           const idx = state.players.findIndex(p => p.id === data.id)
@@ -1416,7 +1478,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnDeletePlayer>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onDeletePlayer
         if (data && state.session?.id === sessionId) {
           const idx = state.players.findIndex(p => p.id === data.id)
@@ -1441,7 +1503,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnDeleteSessionData>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onDeleteSessionData
         if (data && state.session?.id === sessionId) {
           const idx = state.sessionDataList.findIndex(sd => sd.id === data.id)
@@ -1490,7 +1552,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     })
     subscriber.subscribe({
       next(value: FetchResult<SubscriptionResult.OnNotify>) {
-        console.log(JSON.stringify(value.data, null, 2))
+        window.logger.info(JSON.stringify(value.data, null, 2))
         const data = value.data?.onNotify
         if (!data || state.session?.id !== sessionId) return
         if (data.from === 'user' && state.user?.token) return
@@ -1501,7 +1563,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
           const { text, icon, color } = contents
           addNotification(text, icon, color)
         } else if (type === 'add-player') {
-          console.log(JSON.stringify(contents, null, 2))
+          window.logger.info(JSON.stringify(contents, null, 2))
           state.players.push(contents)
           addNotification(`${contents.name}が参加しました。`, 'mdi-account', 'lime-lighten-4')
         }
@@ -1541,6 +1603,23 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     }, 300)
   }
 
+  async function updateNechronicaSingletonHelper<T>(makeData: (data: Partial<T>) => T | null) {
+    const singleton = state.sessionDataList.find(sd => sd.type === 'nechronica-singleton')
+    if (singleton) {
+      const cloned = clone(singleton.data)!
+      const updateData = makeData(cloned)
+      if (!updateData) return
+      const updateDataStr = JSON.stringify(updateData)
+      if (JSON.stringify(singleton.data) !== updateDataStr) {
+        await updateSessionDataHelper(singleton.id, updateDataStr)
+      }
+    } else {
+      const data = makeData({})
+      if (!data) return
+      await addNechronicaSingleton(data)
+    }
+  }
+
   return {
     state,
     addDefaultSession,
@@ -1566,6 +1645,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addNotification,
     closeNotification,
     closeNotificationAll,
+    addTargetConfig,
     addShinobigamiCharacter,
     addShinobigamiHandoutSessionMemo,
     addShinobigamiHandoutPrivateMemo,
@@ -1574,6 +1654,8 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     addShinobigamiEnigma,
     addShinobigamiPersona,
     addShinobigamiPrize,
+    addNechronicaCharacter,
+    updateTargetConfig,
     updateShinobigamiCharacter,
     updateShinobigamiHandoutSessionMemo,
     updateShinobigamiHandoutPrivateMemo,
@@ -1581,7 +1663,9 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     updateShinobigamiHandoutRelation,
     updateShinobigamiEnigma,
     updateShinobigamiPersona,
-    updateShinobigamiPrize
+    updateShinobigamiPrize,
+    updateNechronicaCharacterHelper,
+    updateNechronicaSingletonHelper
   }
 }
 

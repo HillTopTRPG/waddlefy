@@ -15,7 +15,6 @@ interface Props {
 }
 const emits = defineEmits<{
   (e: 'change-component', componentGroup: string, component: string): void
-  (e: 'change-layout', newLayout: Layout): void
   (e: 'change-root-layout', newLayout: Layout): void
 }>()
 
@@ -131,7 +130,7 @@ const showBorderChildren = (event: { target: HTMLElement }) => {
   const idx = parseInt(btnElm.dataset.idx || '0')
   Array.from(document.getElementsByClassName('splitpanes__pane'))
     .filter((elm: Element) =>
-      cLayout.value.panes[idx].panes.map(p => p.uuid).some(uuid => uuid === (elm as HTMLElement).dataset.uuid)
+      cLayout.value.panes[idx].panes.map(p => p.uuid).includes((elm as HTMLElement).dataset.uuid || '')
     )
     .forEach(elm => elm.classList.add('on-hold'))
 }
@@ -141,7 +140,7 @@ const hideBorderChildren = (event: { target: HTMLElement }) => {
   const idx = parseInt(btnElm.dataset.idx || '0')
   Array.from(document.getElementsByClassName('splitpanes__pane'))
     .filter((elm: Element) =>
-      cLayout.value.panes[idx].panes.map(p => p.uuid).some(uuid => uuid === (elm as HTMLElement).dataset.uuid)
+      cLayout.value.panes[idx].panes.map(p => p.uuid).includes((elm as HTMLElement).dataset.uuid || '')
     )
     .forEach(elm => elm.classList.remove('on-hold'))
 }
@@ -407,7 +406,6 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
             </template>
           </div>
         </v-sheet>
-        <!--suppress HtmlUnknownTag -->
         <SplitPanesLayer
           :key="pane.uuid"
           :layout="pane"
@@ -421,7 +419,6 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
               cLayout.component = componentObj
             }
           "
-          @change-layout="(newLayout: any) => emits('change-layout', newLayout)"
           ref="childLayer"
         />
       </div>
@@ -446,17 +443,15 @@ function setPaneComponent(pane: Layout, n: string, g: { group: string }) {
           cLayout.component = componentObj
         }
       "
-      @change-layout="(newLayout: any) => emits('change-layout', newLayout)"
       ref="component"
     />
   </keep-alive>
 </template>
 
-<!--suppress HtmlUnknownAttribute, CssUnusedSymbol, CssUnresolvedCustomProperty -->
+<!--suppress CssUnusedSymbol -->
 <style deep lang="css">
 .splitpanes.root {
   height: 100%;
-  background: rgb(var(--v-theme-surface));
 }
 
 .splitpanes.blur {

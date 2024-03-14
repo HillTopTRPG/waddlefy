@@ -14,7 +14,6 @@
       <desc>Created with Fabric.js 5.3.0</desc>
       <defs></defs>
       <g transform="matrix(1.1482580233 0 0 1.1482580233 225.6335008444 320.4962267981)" id="CiQZmcKFQacBrHscwjfs3">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -35,7 +34,6 @@
         />
       </g>
       <g transform="matrix(1.1482580233 0 0 1.1482580233 212.2788512766 375.1453937109)" id="n7jIBGEcDISmIEB7RGzTV">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -57,7 +55,6 @@
         />
       </g>
       <g transform="matrix(1.008627294 0 0 1.008627294 341.8439650733 620.1282528782)" id="UcmS41-ig2BKsljRWAEfN">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -78,7 +75,6 @@
         />
       </g>
       <g transform="matrix(1.1423455128 0 0 1.1423455128 454.9649447037 452.5002784949)" id="APnEXzCzGAG1KVJk_ciCl">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -100,7 +96,6 @@
         />
       </g>
       <g transform="matrix(1 0 0 1 597.7310369743 498.2342182865)" id="-RjwJdujGl3YljGfZ6KPp">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -120,7 +115,6 @@
         />
       </g>
       <g transform="matrix(1 0 0 1 529.9964192782 578.3452742371)" id="GuWYx5coMi0_DJkPq61Np">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -142,7 +136,6 @@
         />
       </g>
       <g transform="matrix(1 0 0 1 553.9239708003 446.6729818335)" id="KHn2LY2KWrPJ9gV-2zsny">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -162,7 +155,6 @@
         />
       </g>
       <g transform="matrix(1 0 0 1 530.6085885122 451.3963025971)" id="eIzqgOzI-Hr4CB5GB6jnG">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);
@@ -182,7 +174,6 @@
         />
       </g>
       <g transform="matrix(1 0 0 1 476.6427998089 609.380444607)" id="ZeI_LZwp7HZyFdAe8YiJ_">
-        <!--suppress CssUnresolvedCustomProperty -->
         <path
           :style="`
             stroke: var(--img-color);

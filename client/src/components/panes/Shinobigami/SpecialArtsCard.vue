@@ -19,13 +19,11 @@
 <script setup lang="ts">
 import { SpecialArts } from '@/components/panes/Shinobigami/shinobigami'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const props = defineProps<{
+defineProps<{
   arts: SpecialArts
 }>()
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .special-arts-card {
   background-image: url('/white_00053.jpg') !important;

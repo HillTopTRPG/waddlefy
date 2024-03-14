@@ -58,4 +58,14 @@ export default defineConfig(() => ({
   server: {
     port: 82,
   },
+  test: {
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    globals: true,
+    server: {
+      deps: {
+        inline: ["vuetify"],
+      },
+    },
+    environment: 'happy-dom'
+  },
 }))

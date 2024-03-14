@@ -13,10 +13,13 @@ import { createApp } from 'vue'
 import { register } from '@/components/panes/plugin'
 import { registerPlugins } from '@/plugins'
 import { createI18n } from 'vue-i18n'
+import ja from './locales/ja.json'
 
 const i18n = createI18n({
-  locale: 'ja-JP', // set locale
-  fallbackLocale: 'en-US', // set fallback locale
+  locale: 'ja', // set locale
+  fallbackLocale: 'ja', // set fallback locale
+  messages: { ja },
+  legacy: false,
   datetimeFormats: {
     'en-US': {
       short: {
@@ -62,6 +65,19 @@ const i18n = createI18n({
     }
   }
 })
+
+const LOG_LEVEL = (import.meta.env as any).VITE_LOG_LEVEL
+
+function setDebug() {
+  const noOp = function () {}
+  window.logger = {
+    info: ['info'].includes(LOG_LEVEL) ? window.console.info.bind(window.console, '%s') : noOp,
+    warn: ['info', 'warn'].includes(LOG_LEVEL) ? window.console.warn.bind(window.console, '%s') : noOp,
+    error: ['info', 'warn', 'error'].includes(LOG_LEVEL) ? window.console.error.bind(window.console, '%s') : noOp
+  }
+}
+
+setDebug()
 
 const app = createApp(App)
 

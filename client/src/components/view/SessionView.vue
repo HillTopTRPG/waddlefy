@@ -1,12 +1,9 @@
 <template>
-  <progress-circular-overlay :modal-value="!graphQlStore?.state.session" color="primary" />
-  <share-overlay :modal-value="dialog === 'share'" @close="dialog = ''" />
-  <owner-overlay :modal-value="dialog === 'owner'" @close="dialog = ''" />
-  <setting-overlay :modal-value="dialog === 'setting'" @close="dialog = ''" />
-  <player-overlay
-    :modal-value="['share', 'owner', 'setting'].some(s => s === dialog) ? '' : dialog"
-    @close="dialog = ''"
-  />
+  <progress-circular-overlay :model-value="!graphQlStore?.state.session" color="primary" />
+  <share-overlay :model-value="dialog === 'share'" @close="dialog = ''" />
+  <owner-overlay :model-value="dialog === 'owner'" @close="dialog = ''" />
+  <setting-overlay :model-value="dialog === 'setting'" @close="dialog = ''" />
+  <player-overlay :model-value="['share', 'owner', 'setting'].includes(dialog) ? '' : dialog" @close="dialog = ''" />
 
   <v-navigation-drawer :permanent="true" location="left" :rail="rail" :elevation="0" id="session-nav">
     <template #prepend>
@@ -126,13 +123,12 @@
 
     <nav-dialog
       title="セッションの設定"
-      :modal-value="dialogInNav === 'setting'"
+      :model-value="dialogInNav === 'setting'"
       @close="dialogInNav = ''"
       class="mb-11 mt-12 session-setting-nav-dialog"
       v-if="isReady"
     >
       <v-list class="nav-dialog h-100">
-        <v-list-subheader style="min-height: auto; background: none">セッション名</v-list-subheader>
         <v-list-item>
           <menu-edit-text-field
             :editable="true"
@@ -142,14 +138,16 @@
             @update="updateSessionName"
           />
         </v-list-item>
-        <v-list-item class="mt-2" v-if="graphQlStore?.state.sessions.length || 0 > 1">
+        <v-list-item class="mt-2" v-if="sessionId">
           <delete-menu-btn
-            v-if="sessionId"
+            v-if="(graphQlStore?.state.sessions.length || 0) > 1"
             :target-name="graphQlStore?.state.session?.name || ''"
             type="セッション"
-            :sessionId="sessionId"
             @execute="graphQlStore?.deleteSession(sessionId)"
           />
+          <span class="text-caption" v-else>
+            あなたのセッションは１つだけなので、セッションを削除することはできません
+          </span>
         </v-list-item>
       </v-list>
     </nav-dialog>
@@ -238,7 +236,7 @@
   </v-app-bar>
 
   <v-layout full-height>
-    <div class="position-relative w-100 h-100 overflow-hidden">
+    <div class="main-screen position-relative w-100 h-100 overflow-hidden">
       <split-panes-layer
         :id="dashboardId"
         :layout="layout"
@@ -313,8 +311,6 @@ watch(
 async function updateSessionName(value: string) {
   const session = graphQlStore?.state.session
   if (!session) return
-  console.log(session.sessionType)
-  console.log(session.defaultDashboardId)
   await graphQlStore?.updateSession(value, session.sessionType, session.defaultDashboardId)
   editSessionName.value = false
 }
@@ -400,11 +396,11 @@ function selectPlayer(playerId: string) {
 
 const bNavVal = ref<string[]>([])
 watch(bNavVal, v => {
-  const a = v.some(s => s === 'show-bar')
+  const a = v.includes('show-bar')
   const b = showBar.value
   if ((a && !b) || (!a && b)) showBar.value = !showBar.value
 
-  const c = v.some(s => s === 'dialog-setting')
+  const c = v.includes('dialog-setting')
   const d = dialog.value === 'setting'
   if (c && !d) dialog.value = 'setting'
   else if (!c && d) dialog.value = ''
@@ -421,7 +417,7 @@ watch(dialog, v => {
 function isViewDashboard(scope: DashboardOption['scope']): boolean {
   if (scope === 'all' || Boolean(graphQlStore?.state.user?.token)) return true
   if (scope === 'owner') return false
-  return scope.some(s => s === graphQlStore?.state.player?.id)
+  return scope.includes(graphQlStore?.state.player?.id || '')
 }
 
 function dashboardSubtitle(scope: DashboardOption['scope']): string {
@@ -429,7 +425,7 @@ function dashboardSubtitle(scope: DashboardOption['scope']): string {
   if (scope === 'owner') return '主催者専用'
   if (!graphQlStore) return ''
   return graphQlStore.state.players
-    .filter(p => scope.some(s => s === p.id))
+    .filter(p => scope.includes(p.id))
     .map(p => p.name)
     .join(', ')
 }
@@ -458,7 +454,6 @@ function onScroll() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute, SpellCheckingInspection -->
 <style scoped lang="scss">
 .nav-dialog {
   background-image: url('/paint_00003.jpg');
@@ -508,5 +503,28 @@ function onScroll() {
 }
 .v-navigation-drawer > :deep(*) {
   margin-right: -1px;
+}
+
+.main-screen {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  &::before {
+    z-index: -1;
+    backdrop-filter: blur(3px);
+  }
+
+  &::after {
+    z-index: -2;
+    background-color: white;
+    background-repeat: repeat;
+  }
 }
 </style>

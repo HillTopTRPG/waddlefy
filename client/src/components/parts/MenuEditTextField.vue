@@ -30,14 +30,18 @@
       <v-card-item class="pa-2">
         <v-text-field
           :label="label"
+          :type="type || 'text'"
+          :min="min || 1"
+          :step="step || 1"
           variant="solo-filled"
           :placeholder="placeholder || ''"
           :flat="true"
-          :style="`width: ${width}rem; max-width: ${width}rem`"
+          :style="`width: ${Math.max(width, 10.5)}rem; max-width: ${Math.max(width, 10.5)}rem`"
           :persistent-placeholder="true"
           :hide-details="true"
           :autofocus="true"
-          v-model="editingText"
+          :model-value="editingText"
+          @update:model-value="v => (editingText = v.toString())"
           ref="editElm"
         >
           <template #label>
@@ -48,8 +52,13 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
-        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()">保存</v-btn>
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="opened = false"
+          :text="$t('label.cancel')"
+        />
+        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()" :text="$t('label.save')" />
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -58,7 +67,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   label: string
   text: string
@@ -68,6 +76,9 @@ const props = defineProps<{
   width: number
   editable: boolean
   classText?: string
+  type?: string
+  min?: number
+  step?: number
 }>()
 
 const emits = defineEmits<{
@@ -96,14 +107,16 @@ watch(opened, v => {
 })
 
 function onSave() {
-  emits('update', editingText.value)
   opened.value = false
+  emits('update', editingText.value)
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .v-text-field.editable:deep(input[readonly]) {
   cursor: pointer;
+}
+:deep(.v-field__input) {
+  min-height: auto !important;
 }
 </style>

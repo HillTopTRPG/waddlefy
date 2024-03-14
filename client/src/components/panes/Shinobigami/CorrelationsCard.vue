@@ -177,7 +177,6 @@ import SpecialArtsCard from '@/components/panes/Shinobigami/SpecialArtsCard.vue'
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   ownerId: string
   targetId: string
@@ -329,7 +328,6 @@ async function onUpdateRelationEmotion(emotionValue: ShinobigamiEmotion | '') {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .emotion-select {
   width: 9em;

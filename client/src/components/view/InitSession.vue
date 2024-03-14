@@ -19,7 +19,7 @@
         </v-select>
       </v-card-title>
       <v-card-text>
-        <p class="mt-3">忍術バトルRPG シノビガミを遊ぶのに適しています。</p>
+        <p class="mt-3">{{ items.find(item => item.val === sessionType)?.text || '' }}</p>
       </v-card-text>
     </v-card>
     <v-defaults-provider :defaults="{ VAlert: vAlertDefault }">
@@ -28,29 +28,28 @@
     <v-defaults-provider :defaults="{ VAlert: vAlertDefault }">
       <v-alert type="warning" text="一度決定するとセッションのタイプは後から変更できません" />
     </v-defaults-provider>
-    <v-btn color="primary" class="align-self-start" @click="emits('submit', sessionType)">決定</v-btn>
+    <v-btn
+      color="primary"
+      class="align-self-start"
+      @click="emits('submit', sessionType)"
+      :text="$t('label.decision')"
+    />
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const emits = defineEmits<{
   (e: 'submit', sessionType: string): void
 }>()
 
-const items = [{ label: 'シノビガミ', val: 'Shinobigami' }]
+const items = [
+  { label: 'シノビガミ', val: 'Shinobigami', text: '忍術バトルRPG シノビガミを遊ぶのに適しています。' },
+  { label: 'ネクロニカ', val: 'Nechronica', text: '永い後日談のネクロニカを遊ぶのに適しています。' }
+]
 
 const sessionType = ref('Shinobigami')
-watch(
-  sessionType,
-  v => {
-    console.log(v)
-  },
-  { immediate: true }
-)
-// eslint-disable-next-line unused-imports/no-unused-vars
-const label = computed(() => items.find(item => item.val === sessionType.value)?.label || '')
 
 const vAlertDefault = {
   border: 'start',

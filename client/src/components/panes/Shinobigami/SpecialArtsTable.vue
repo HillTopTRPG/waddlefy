@@ -36,7 +36,6 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import SpecialArtsCard from '@/components/panes/Shinobigami/SpecialArtsCard.vue'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   ownerId: string
   list?: SpecialArts[]
@@ -84,11 +83,10 @@ function onClickSkill(skill: string): void {
 }
 
 function isIncludeSkills(skill: string) {
-  return SkillTable.some(t => t.some(s => s === skill))
+  return SkillTable.flat().includes(skill)
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .special-arts-table {
   border-left: 1px solid #aaa;

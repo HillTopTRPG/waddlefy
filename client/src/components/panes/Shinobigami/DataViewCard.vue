@@ -12,7 +12,13 @@
           <basic-info-card :character-sheet="characterSheet" />
         </v-menu>
         <v-defaults-provider :defaults="{ VBtn: { size: 'small', variant: 'flat' } }">
-          <v-btn icon="mdi-open-in-new" target="_blank" rel="noopener noreferrer" :href="characterSheet.url" />
+          <v-btn
+            icon="mdi-open-in-new"
+            class="bg-transparent"
+            target="_blank"
+            rel="noopener noreferrer"
+            :href="characterSheet.url"
+          />
         </v-defaults-provider>
         <span class="text-body-2">({{ handoutCharacterPlayerName }})</span>
       </template>
@@ -38,8 +44,8 @@
       </template>
     </v-card-title>
     <v-card-text class="py-0">
-      <v-sheet class="w-100 d-flex flex-wrap" style="gap: 5px">
-        <v-sheet v-if="tokugiView && characterSheet">
+      <v-sheet class="w-100 d-flex flex-wrap bg-transparent" style="gap: 5px">
+        <v-sheet class="bg-transparent" v-if="tokugiView && characterSheet">
           <speciality-table
             class="mb-2"
             :select-skill="selectSkill"
@@ -51,7 +57,7 @@
             :editable="true"
           />
         </v-sheet>
-        <v-sheet v-if="characterSheet && (ninpouView || specialArtsView)">
+        <v-sheet class="bg-transparent" v-if="characterSheet && (ninpouView || specialArtsView)">
           <ninpou-table
             v-if="ninpouView"
             class="mb-2"
@@ -70,7 +76,7 @@
             @click-skill="v => emits('update:select-skill', v === selectSkill ? '' : v)"
           />
         </v-sheet>
-        <v-sheet v-if="textView && handoutId">
+        <v-sheet class="bg-transparent" v-if="textView && handoutId">
           <data-view-card-tab-container
             class="mb-2"
             :handout-id="handoutId"
@@ -85,15 +91,15 @@
 
 <script setup lang="ts">
 import { Layout } from '@/components/panes'
+import { SaikoroFictionTokugi } from '@/components/panes/SaikoroFiction'
 import BackgroundChip from '@/components/panes/Shinobigami/BackgroundChip.vue'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
-import { SaikoroFictionTokugi } from '@/components/panes/Shinobigami/SaikoroFiction'
 import { ShinobiGami } from '@/components/panes/Shinobigami/shinobigami'
 import SpecialityTable from '@/components/panes/Shinobigami/SpecialityTable.vue'
 import { computed, inject, ref, watch } from 'vue'
 
+import { clone } from '@/components/panes/PrimaryDataUtility'
 import DataViewCardTabContainer from '@/components/panes/Shinobigami/DataViewCardTabContainer.vue'
-import { clone } from '@/components/panes/Shinobigami/PrimaryDataUtility'
 import SpecialArtsTable from '@/components/panes/Shinobigami/SpecialArtsTable.vue'
 
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
@@ -200,5 +206,4 @@ async function updateInfo(info: SaikoroFictionTokugi) {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped></style>

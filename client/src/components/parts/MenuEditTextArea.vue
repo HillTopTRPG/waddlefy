@@ -58,8 +58,13 @@
       </v-card-item>
       <v-divider />
       <v-card-actions class="px-2">
-        <v-btn class="flex-0-1-100 text-decoration-underline" variant="text" @click="opened = false">キャンセル</v-btn>
-        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()">保存</v-btn>
+        <v-btn
+          class="flex-0-1-100 text-decoration-underline"
+          variant="text"
+          @click="opened = false"
+          :text="$t('label.cancel')"
+        />
+        <v-btn color="primary" class="flex-0-1-100" variant="flat" @click="onSave()" :text="$t('label.save')" />
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -68,7 +73,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const props = defineProps<{
   label: string
   icon: string
@@ -107,7 +111,6 @@ function onSave() {
 }
 </script>
 
-<!--suppress HtmlUnknownAttribute -->
 <style lang="scss" scoped>
 .v-textarea {
   grid-template-rows: 1fr auto;

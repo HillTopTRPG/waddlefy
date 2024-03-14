@@ -27,9 +27,10 @@ services:
     ports:
       - "82:82"
       - "83:83"
+      - "6006:6006"
     volumes:
       - './client:/app/waddlefy'
-    command: bash -c "npm i -f && npm run dev"
+    command: bash -c "npm i --force && npm run dev"
     logging:
       driver: "json-file"
       options:
