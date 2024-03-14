@@ -74,7 +74,7 @@
     "eslint-plugin-storybook": "^0.8.0",
     "eslint-plugin-vue": "^9.22.0",
     "eslint-todo-generator": "^0.1.0",
-    "happy-dom": "^13.3.8",
+    "happy-dom": "^13.8.5",
     "jest": "^29.7.0",
     "prettier": "^3.2.5",
     "prettier-plugin-organize-imports": "^3.2.4",
