@@ -34,7 +34,7 @@
     "lodash": "^4.17.21",
     "roboto-fontface": "*",
     "splitpanes": "^3.1.5",
-    "typescript": "^5.3.3",
+    "typescript": "^5.4.2",
     "vite-plugin-fonts": "^0.7.0",
     "vue": "^3.4.19",
     "vue-boring-avatars": "^1.4.0",
