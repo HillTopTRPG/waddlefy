@@ -18,7 +18,7 @@ jobs:
     name: Deploy client to ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.2
         with:
