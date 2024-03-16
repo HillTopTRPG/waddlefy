@@ -51,10 +51,13 @@ describe('VSelectThin.vue', (): void => {
     it('選択されるとupdate:model-valueが発火されること', async () => {
       const wrapper: VueWrapper = factoryWrap({ modelValue: '' })
       const select = wrapper.findComponent({ name: 'v-select' })
-      await select.vm.select({ value: 'val1' })
+      await select.setValue('val1')
       expect(wrapper.emitted('update:model-value')).toEqual([['val1']])
       // 選択肢はまだ変わらない
       expect(wrapper.text()).toEqual('テスト選択肢: 無選択')
+
+      await wrapper.setProps({ modelValue: 'val1' })
+      expect(wrapper.text()).toEqual('テスト選択肢: 選択肢1')
       wrapper.unmount()
     })
   })
