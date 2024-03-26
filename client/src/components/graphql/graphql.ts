@@ -1074,11 +1074,6 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     // Subscriptionによってstateに登録される
   }
 
-  async function addNechronicaSingleton(dataObj: any): Promise<void> {
-    await addSessionDataHelper('nechronica-singleton', JSON.stringify(dataObj))
-    // Subscriptionによってstateに登録される
-  }
-
   async function addShinobigamiHandoutSessionMemo(handoutId: string, text: string): Promise<void> {
     await addSessionDataHelper(
       'shinobigami-handout-session-memo',
@@ -1616,7 +1611,7 @@ export default function useGraphQl(userToken: string, playerToken: string, sessi
     } else {
       const data = makeData({})
       if (!data) return
-      await addNechronicaSingleton(data)
+      await addSessionDataHelper('nechronica-singleton', JSON.stringify(data))
     }
   }
 
