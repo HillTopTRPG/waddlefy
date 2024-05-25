@@ -11,13 +11,16 @@
     </v-app-bar-nav-icon>
     <ruby class="text-h5 ml-2" style="ruby-position: over">Waddlefy<rt>ワドルフィ</rt></ruby>
     <v-spacer />
+
+    <!-- テーマ -->
+    <v-btn icon="mdi-brightness-6" value="show-bar" style="transition-duration: 0s" @click="onChangeTheme()" />
   </v-app-bar>
 
   <v-main class="">
     <v-container class="top-back d-flex flex-row justify-center pa-0 h-100">
       <v-sheet
         class="d-flex flex-column align-center overflow-y-auto align-self-stretch pt-2"
-        :class="xs ? 'top-back-content-xs' : 'top-back-content'"
+        :class="[xs ? 'top-back-content-xs' : 'top-back-content', theme.global.name.value]"
       >
         <v-sheet class="d-flex flex-column align-center bg-transparent mb-3" style="gap: 0.3rem">
           <a
@@ -45,7 +48,7 @@
     </v-container>
   </v-main>
 
-  <v-bottom-navigation>
+  <v-bottom-navigation style="transition-duration: 0s">
     <v-divider vertical />
     <v-btn
       prepend-icon="mdi-wikipedia"
@@ -68,9 +71,16 @@
 
 <script lang="ts" setup>
 import LogoComponent from '@/components/parts/LogoComponent.vue'
-import { useDisplay } from 'vuetify'
+import { useDisplay, useTheme } from 'vuetify'
+
+const theme = useTheme()
 
 const { xs } = useDisplay()
+
+async function onChangeTheme() {
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  localStorage.setItem('dark', theme.global.name.value === 'dark')
+}
 </script>
 
 <style>
@@ -92,7 +102,13 @@ const { xs } = useDisplay()
 .top-back-content {
   z-index: 2;
   padding: 0 12em;
-  background: linear-gradient(to right, transparent, #eee 8em, #eee 34em, transparent);
+
+  &.dark {
+    background: linear-gradient(to right, transparent, #333 8em, #333 34em, transparent);
+  }
+  &.light {
+    background: linear-gradient(to right, transparent, #eee 8em, #eee 34em, transparent);
+  }
 }
 
 .top-back-content-xs {
@@ -100,6 +116,12 @@ const { xs } = useDisplay()
   justify-self: stretch;
   width: 100%;
   padding: 0 2em;
-  background: linear-gradient(to right, transparent, #eee 4em, #eee calc(100% - 4em), transparent);
+
+  &.dark {
+    background: linear-gradient(to right, transparent, #333 4em, #333 calc(100% - 4em), transparent);
+  }
+  &.light {
+    background: linear-gradient(to right, transparent, #eee 4em, #eee calc(100% - 4em), transparent);
+  }
 }
 </style>

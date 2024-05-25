@@ -1,6 +1,11 @@
 <template>
-  <v-sheet class="ma-3 d-flex flex-column" max-width="40em">
-    <p class="text-h5 mb-2">新しいセッションへようこそ！</p>
+  <v-sheet class="ma-3 d-flex flex-column bg-transparent" max-width="40em">
+    <v-sheet class="d-flex flex-row bg-transparent mb-2 align-center w-100">
+      <p class="text-h5">新しいセッションへようこそ！</p>
+      <v-spacer />
+      <!-- テーマ -->
+      <v-btn icon="mdi-brightness-6" size="small" style="transition-duration: 0s" @click="onChangeTheme()" />
+    </v-sheet>
 
     <v-card class="mb-4" variant="text" density="compact" elevation="4" max-width="30em">
       <v-card-title class="bg-secondary pb-1 pt-3 px-0">
@@ -39,6 +44,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
 
 const emits = defineEmits<{
   (e: 'submit', sessionType: string): void
@@ -57,6 +65,11 @@ const vAlertDefault = {
   elevation: '2',
   class: 'mb-3',
   variant: 'tonal'
+}
+
+async function onChangeTheme() {
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  localStorage.setItem('dark', theme.global.name.value === 'dark')
 }
 </script>
 
