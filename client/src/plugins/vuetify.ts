@@ -12,10 +12,20 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
+
+const isDark = localStorage.getItem('dark') === 'true'
+
 export default createVuetify({
   theme: {
+    defaultTheme: isDark ? 'dark' : 'light',
     themes: {
       light: {
+        colors: {
+          primary: '#1867C0',
+          secondary: '#5CBBF6'
+        }
+      },
+      dark: {
         colors: {
           primary: '#1867C0',
           secondary: '#5CBBF6'

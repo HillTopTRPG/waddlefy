@@ -85,4 +85,9 @@ textarea {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+.set-theme-surface-color {
+  background-color: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+}
 </style>

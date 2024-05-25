@@ -23,13 +23,14 @@
             @update="onUpdateCharacterName"
           />
           <v-select
+            v-ripple
             :items="hasEmptyPlayers"
             item-value="id"
             item-title="name"
             variant="solo"
             :flat="true"
             label="担当者"
-            class="align-self-start"
+            class="align-self-start set-theme-surface-color"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
             :persistent-placeholder="true"
@@ -121,6 +122,7 @@
         </template>
         <template v-if="dataObj.type === 'shinobigami-handout'">
           <v-checkbox-btn
+            v-ripple
             label="存在の公開"
             class="card-item-check"
             v-if="editable"
@@ -179,6 +181,7 @@
             @update="onUpdateHandoutSecret"
           />
           <v-checkbox-btn
+            v-ripple="editable"
             label="自身の秘密を知っている"
             class="card-item-check"
             :class="editable ? '' : 'readonly'"
@@ -187,6 +190,7 @@
             @update:model-value="v => onUpdateHandoutKnowSelfSecret(v)"
           />
           <v-select
+            v-ripple="editable"
             :items="hasEmptyCharacterList"
             item-value="id"
             item-title="name"
@@ -194,6 +198,7 @@
             :flat="true"
             label="担当キャラ"
             class="align-self-start"
+            :class="editable ? 'set-theme-surface-color' : ''"
             :readonly="!editable"
             :hide-details="true"
             style="width: 20rem; max-width: 20rem"
@@ -254,11 +259,12 @@
             />
             <v-sheet class="d-flex flex-row flex-wrap bg-transparent" style="gap: 0.5rem">
               <v-select
+                v-ripple="editable"
                 :items="[1, 2, 3, 4, 5]"
                 label="脅威度"
                 :readonly="!editable"
                 :variant="editable ? 'solo' : 'outlined'"
-                :class="editable ? '' : 'mt-2'"
+                :class="editable ? 'set-theme-surface-color' : 'mt-2'"
                 :flat="true"
                 class="align-self-start"
                 :hide-details="true"
@@ -298,6 +304,7 @@
               @update="onUpdateEnigmaEffect"
             />
             <v-select
+              v-ripple="editable"
               :items="hasEmptyHandoutList"
               item-value="id"
               item-title="name"
@@ -307,7 +314,7 @@
               :hide-details="true"
               :readonly="!editable"
               :variant="editable ? 'solo' : 'outlined'"
-              :class="editable ? '' : 'mt-2'"
+              :class="editable ? 'set-theme-surface-color' : 'mt-2'"
               style="width: 20rem; max-width: 20rem"
               :persistent-placeholder="true"
               :model-value="dataObj.data.bind"
@@ -320,6 +327,7 @@
             </v-select>
           </template>
           <v-checkbox-btn
+            v-ripple="editable"
             label="戦力の公開"
             class="card-item-check"
             :class="editable ? '' : 'readonly'"
@@ -328,6 +336,7 @@
             @update:model-value="v => onUpdateEnigmaUsed(v)"
           />
           <v-checkbox-btn
+            v-ripple="editable"
             label="解除"
             class="card-item-check"
             :class="editable ? '' : 'readonly'"
@@ -364,12 +373,13 @@
             />
           </template>
           <v-select
+            v-ripple="editable"
             :items="hasEmptyHandoutList"
             item-value="id"
             item-title="name"
             :readonly="!editable"
             :variant="editable ? 'solo' : 'outlined'"
-            :class="editable ? '' : 'mt-3'"
+            :class="editable ? 'set-theme-surface-color' : 'mt-3'"
             :flat="true"
             label="所有されるハンドアウト"
             class="align-self-start"
@@ -385,6 +395,7 @@
             </template>
           </v-select>
           <v-checkbox-btn
+            v-ripple="editable"
             label="真実の公開"
             class="card-item-check"
             :class="editable ? '' : 'readonly'"
@@ -433,12 +444,13 @@
             @update="onUpdatePrizeSecret"
           />
           <v-select
+            v-ripple="editable"
             :items="hasEmptyHandoutList"
             item-value="id"
             item-title="name"
             :readonly="!editable"
             :variant="editable ? 'solo' : 'outlined'"
-            :class="editable ? '' : 'mt-3'"
+            :class="editable ? 'set-theme-surface-color' : 'mt-3'"
             :flat="true"
             label="所有者"
             class="align-self-start"
@@ -453,7 +465,11 @@
               {{ label }}
             </template>
           </v-select>
-          <v-card :variant="editable ? 'text' : 'outlined'" class="pa-3" :class="editable ? 'bg-white' : ''">
+          <v-card
+            :variant="editable ? 'text' : 'outlined'"
+            class="pa-3 multi-check-box-container"
+            :class="editable ? 'editable' : ''"
+          >
             <v-card-subtitle class="text-subtitle-2">このプライズの存在を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
               <handout-multi-checkbox
@@ -464,7 +480,11 @@
               />
             </v-sheet>
           </v-card>
-          <v-card :variant="editable ? 'text' : 'outlined'" class="pa-3" :class="editable ? 'bg-white' : ''">
+          <v-card
+            :variant="editable ? 'text' : 'outlined'"
+            class="pa-3 multi-check-box-container"
+            :class="editable ? 'editable' : ''"
+          >
             <v-card-subtitle class="text-subtitle-2">このプライズの秘密を知るハンドアウト</v-card-subtitle>
             <v-sheet class="d-flex flex-column bg-transparent">
               <handout-multi-checkbox
@@ -1168,7 +1188,8 @@ async function onDeleteSessionData() {
 
   &:not(.readonly) {
     align-self: flex-start;
-    background-color: white;
+    background-color: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
     border-radius: 0.3rem;
   }
 
@@ -1178,6 +1199,14 @@ async function onDeleteSessionData() {
 
   &:not(.flex-column-reverse) .v-label {
     padding-right: 12px;
+  }
+}
+
+.multi-check-box-container {
+  transition-duration: 0s;
+  &.editable {
+    background-color: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
   }
 }
 </style>

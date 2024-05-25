@@ -17,7 +17,7 @@
     <tbody v-if="list">
       <tr v-for="(arts, idx) in useList" :key="idx">
         <template v-if="mode === 'secret'">
-          <td class="secret">
+          <td class="secret set-theme-surface-color">
             <v-checkbox
               :model-value="arts.secret"
               @update:model-value="v => onChangeSecret(idx, v || false)"
@@ -28,12 +28,12 @@
         </template>
         <v-menu :close-on-content-click="false" :z-index="10000000">
           <template #activator="{ props }">
-            <td class="name" v-bind="props">
+            <td class="name set-theme-surface-color" v-ripple v-bind="props">
               <v-icon :icon="getArtsIcon(arts)" style="width: 1.5rem" />
               {{ arts.name }}
             </td>
           </template>
-          <v-card class="border arts-detail" style="max-width: 20rem">
+          <v-card class="border arts-detail text-black" style="max-width: 20rem">
             <v-card-title class="text-pre-wrap">{{ arts.name }}</v-card-title>
             <v-card-text class="pb-2">
               <v-label class="text-caption">効果</v-label>
@@ -47,11 +47,16 @@
           </v-card>
         </v-menu>
         <template v-if="mode !== 'secret'">
-          <td class="target" :class="targetClass(arts.targetSkill)" @click="onClickSkill(arts.targetSkill)">
+          <td
+            class="target set-theme-surface-color"
+            v-ripple
+            :class="targetClass(arts.targetSkill)"
+            @click="onClickSkill(arts.targetSkill)"
+          >
             {{ arts.targetSkill }}
           </td>
-          <td class="range">{{ arts.range }}</td>
-          <td class="cost">{{ arts.cost }}</td>
+          <td class="range set-theme-surface-color">{{ arts.range }}</td>
+          <td class="cost set-theme-surface-color">{{ arts.cost }}</td>
         </template>
       </tr>
     </tbody>

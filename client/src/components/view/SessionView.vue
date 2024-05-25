@@ -223,6 +223,7 @@
         text="画面の設定"
         value="dialog-setting"
         v-if="isUserControl"
+        style="transition-duration: 0s"
         @click="dialog = dialog === 'setting' ? '' : 'setting'"
       />
       <v-btn
@@ -230,12 +231,20 @@
         text="レイアウト"
         value="show-bar"
         v-if="isUserControl"
+        style="transition-duration: 0s"
         @click="showBar = !showBar"
+      />
+      <v-btn
+        prepend-icon="mdi-brightness-6"
+        text="テーマ"
+        value="show-bar"
+        style="transition-duration: 0s"
+        @click="onChangeTheme()"
       />
     </v-defaults-provider>
   </v-app-bar>
 
-  <v-layout full-height>
+  <v-layout full-height class="bg-transparent">
     <div class="main-screen position-relative w-100 h-100 overflow-hidden">
       <split-panes-layer
         :id="dashboardId"
@@ -255,6 +264,7 @@
 </template>
 
 <script setup lang="ts">
+import { DEFAULT_DASHBOARD_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import NavDialog from '@/components/NavDialog.vue'
 import SplitPanesLayer from '@/components/parts/SplitPanesLayer.vue'
 import OwnerOverlay from '@/components/view-overlay/OwnerOverlay.vue'
@@ -265,9 +275,10 @@ import ShareOverlay from '@/components/view-overlay/ShareOverlay.vue'
 import InitSession from '@/components/view/InitSession.vue'
 import 'splitpanes/dist/splitpanes.css'
 import { computed, inject, onMounted, ref, watch } from 'vue'
+import { useTheme } from 'vuetify'
 
-import { DEFAULT_DASHBOARD_NAME, GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+const theme = useTheme()
 
 import DeleteMenuBtn from '@/components/DeleteMenuBtn.vue'
 import { DashboardOption } from '@/components/graphql/schema'
@@ -452,6 +463,11 @@ function onScroll() {
     viewScrollbar.value = false
   }, 500)
 }
+
+async function onChangeTheme() {
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  localStorage.setItem('dark', theme.global.name.value === 'dark')
+}
 </script>
 
 <style scoped lang="scss">
@@ -523,7 +539,7 @@ function onScroll() {
 
   &::after {
     z-index: -2;
-    background-color: white;
+    background-color: transparent;
     background-repeat: repeat;
   }
 }

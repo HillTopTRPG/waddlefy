@@ -2,6 +2,7 @@
   <v-card class="d-flex flex-row bg-white" variant="outlined" rounded="lg" :height="(textRows + 2) * 24 + 22">
     <v-tabs
       color="primary"
+      class="set-theme-surface-color"
       direction="vertical"
       prev-icon="mdi-chevron-up"
       next-icon="mdi-chevron-down"
@@ -121,7 +122,7 @@
       </v-window-item>
       <v-window-item
         value="correlations"
-        class="h-100 pa-2"
+        class="h-100 pa-2 set-theme-surface-color"
         :style="`height: ${(textRows + 2) * 24 + 20}px`"
         v-if="handout"
       >
@@ -297,4 +298,8 @@ const secretText = computed((): string => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-slide-group__content) {
+  transition-duration: 0s !important;
+}
+</style>

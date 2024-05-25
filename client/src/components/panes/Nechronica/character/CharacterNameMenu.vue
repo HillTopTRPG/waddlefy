@@ -212,7 +212,8 @@ async function onAddUnknownManeuver() {
   border-spacing: 0;
 
   tr:nth-child(odd) {
-    background-color: #eee;
+    background-color: #444;
+    color: white;
   }
 
   th {

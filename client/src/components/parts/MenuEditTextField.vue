@@ -9,6 +9,7 @@
   >
     <template #activator="{ props }">
       <v-text-field
+        v-ripple="editable"
         :variant="variant || ('solo' as 'solo')"
         :placeholder="placeholder || ''"
         :readonly="true"
@@ -16,7 +17,7 @@
         :style="`width: ${width}rem; max-width: ${width}rem`"
         :persistent-placeholder="true"
         :hide-details="true"
-        :class="`${classText || ''} ${editable ? 'editable' : ''}`"
+        :class="`${classText || ''} ${editable ? 'editable set-theme-surface-color' : ''}`"
         :model-value="text"
         v-bind="props"
       >

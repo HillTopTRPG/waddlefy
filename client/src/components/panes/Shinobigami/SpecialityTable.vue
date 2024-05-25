@@ -33,6 +33,7 @@
           <template v-for="i in [...Array(6)].map((_, j) => j)" :key="i">
             <td :class="spaceClass(i)"></td>
             <td
+              v-ripple
               v-if="targetValues && targetValues.map(tv => tv.name).includes(skills[i])"
               class="bg-amber"
               :class="cellClass(skills[i])"
@@ -41,7 +42,7 @@
               >=
               {{ targetValues.find(tv => tv.name === skills[i])?.targetValue }}
             </td>
-            <td v-else :class="cellClass(skills[i])" @click="onClickSkill(skills[i])">
+            <td v-else v-ripple :class="cellClass(skills[i])" @click="onClickSkill(skills[i])">
               {{ skills[i] }}
             </td>
           </template>

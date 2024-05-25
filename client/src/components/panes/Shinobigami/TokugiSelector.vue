@@ -9,6 +9,8 @@
   >
     <template #activator="{ props }">
       <v-text-field
+        v-ripple
+        class="set-theme-surface-color"
         :model-value="value"
         :hide-details="true"
         variant="solo"

@@ -1,8 +1,8 @@
 <template>
   <v-menu v-model="opened" location="bottom left" :close-on-content-click="false" scroll-strategy="close">
     <template #activator="{ props }">
-      <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
-        <v-btn class="text-decoration-underline" v-bind="props">{{ text }}</v-btn>
+      <v-defaults-provider :defaults="{ VBtn: { variant: 'text', density: 'comfortable' } }">
+        <v-btn class="text-decoration-underline" v-bind="props" :color="textColor">{{ text }}</v-btn>
       </v-defaults-provider>
     </template>
     <v-card>
@@ -45,6 +45,9 @@
 <script setup lang="ts">
 import ShinobigamiUrlForm from '@/components/panes/Shinobigami/ShinobigamiUrlForm.vue'
 import { computed, onMounted, ref, watch } from 'vue'
+import { useTheme } from 'vuetify'
+const theme = useTheme()
+const textColor = computed(() => (theme.global.name.value === 'dark' ? 'secondary' : 'primary'))
 
 const props = defineProps<{
   text: string

@@ -1,6 +1,6 @@
 <template>
   <v-select
-    class="select-thin rounded-lg"
+    class="select-thin rounded-lg bg-transparent"
     :hide-details="true"
     color="primary"
     variant="outlined"
@@ -49,6 +49,9 @@ $padding-size: 2px;
   }
   .v-select__selection {
     margin-top: 0;
+  }
+  .v-select__menu-icon {
+    transition-duration: 0s;
   }
 }
 </style>

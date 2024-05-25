@@ -3,8 +3,9 @@
     <template v-if="character">
       <v-card
         variant="outlined"
-        class="d-flex flex-column px-2 pb-2 rounded-xl bg-white"
-        style="box-sizing: border-box; border-width: 3px"
+        class="d-flex flex-column px-2 pb-2 rounded-xl"
+        :class="theme.global.name.value === 'dark' ? 'bg-blue-grey-darken-4' : 'bg-white'"
+        style="box-sizing: border-box; border-width: 3px; transition-duration: 0s !important"
         :style="`border-color: ${
           mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color || 'black'
         }`"
@@ -134,6 +135,8 @@ import ManeuverBtnMenu from '@/components/panes/Nechronica/maneuver/ManeuverBtnM
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { clone } from '@/components/panes/PrimaryDataUtility'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
+const theme = useTheme()
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 

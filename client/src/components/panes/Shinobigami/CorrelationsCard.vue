@@ -46,7 +46,7 @@
             }
           }"
         >
-          <v-card-item class="bg-white">
+          <v-card-item class="set-theme-surface-color" v-ripple>
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
               :model-value="locationValue"
@@ -58,7 +58,7 @@
             </v-checkbox-btn>
           </v-card-item>
           <v-divider :vertical="true" />
-          <v-card-item :class="perspective ? '' : 'bg-white'">
+          <v-card-item :class="perspective ? '' : 'set-theme-surface-color'" v-ripple>
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
               :readonly="Boolean(perspective)"
@@ -71,7 +71,7 @@
             </v-checkbox-btn>
           </v-card-item>
           <v-divider :vertical="true" />
-          <v-card-item class="flex-0-1-100">
+          <v-card-item class="flex-0-1-100 set-theme-surface-color" v-ripple>
             <v-select
               class="emotion-select"
               :items="emotionList"
@@ -122,6 +122,7 @@
       >
         <v-sheet class="bg-transparent d-flex flex-row align-center justify-start mt-1" style="gap: 0.3rem">
           <v-checkbox-btn
+            v-ripple="!(mode === 'view' || Boolean(perspective))"
             class="card-item-check mr-0 flex-0-0"
             :class="mode === 'view' || Boolean(perspective) ? 'readonly' : ''"
             :readonly="mode === 'view' || Boolean(perspective)"
