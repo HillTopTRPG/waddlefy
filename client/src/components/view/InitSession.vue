@@ -69,7 +69,7 @@ const vAlertDefault = {
 
 async function onChangeTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-  localStorage.setItem('dark', theme.global.name.value === 'dark')
+  localStorage.setItem('dark', (theme.global.name.value === 'dark').toString())
 }
 </script>
 
