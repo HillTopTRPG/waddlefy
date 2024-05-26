@@ -22,7 +22,9 @@ export default createVuetify({
       light: {
         colors: {
           primary: '#1867C0',
-          secondary: '#5CBBF6'
+          secondary: '#5CBBF6',
+          deleteText: '#B00020',
+          deleteTextSub: '#ffdd44'
         }
       },
       dark: {
@@ -38,7 +40,9 @@ export default createVuetify({
           info: '#135a91',
           'on-info': '#ccc',
           'on-error': '#ccc',
-          border: '#ccc'
+          border: '#ccc',
+          deleteText: '#B00020',
+          deleteTextSub: '#ffdd44'
         }
       }
     }
