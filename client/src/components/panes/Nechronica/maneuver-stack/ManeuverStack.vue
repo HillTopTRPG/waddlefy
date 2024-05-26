@@ -5,7 +5,7 @@
     :style="isResolvedStack ? 'margin-right: -7rem;' : ''"
     rounded="xl"
     v-if="currentData"
-    :color="typeMapping[currentData?.type][theme.global.name.value]"
+    :color="(typeMapping[currentData?.type] as any)[theme.global.name.value]"
   >
     <v-btn
       icon="mdi-drag-vertical"

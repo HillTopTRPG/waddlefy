@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="px-0 d-flex flex-column" :class="battleTargetClass.at(isBattleTarget)[theme.global.name.value] || ''">
+  <v-sheet class="px-0 d-flex flex-column" :class="backgroundColor">
     <icon-btn
       :class="classText"
       :size="size"
@@ -41,6 +41,10 @@ const battleTargetClass = [
   { light: 'bg-cyan-lighten-4', dark: 'bg-blue-grey-darken-2' },
   { light: 'bg-yellow-accent-2', dark: 'bg-light-blue-darken-4' }
 ]
+
+const backgroundColor = computed(() => {
+  return (battleTargetClass.at(isBattleTarget.value) as any)?.[theme.global.name.value] || ''
+})
 
 const text = computed(() => {
   if (props.mode !== 'normal') return ''

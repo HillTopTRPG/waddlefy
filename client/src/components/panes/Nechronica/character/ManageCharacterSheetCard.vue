@@ -3,7 +3,7 @@
     variant="elevated"
     rounded="lg"
     class="pb-2"
-    :color="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.color[theme.global.name.value] || ''"
+    :color="getCharacterTypeColor(character.data.type)"
     style="color: rgb(var(--v-theme-on-surface))"
   >
     <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
@@ -181,6 +181,10 @@ async function onUpdateCharacterBasePosition(characterId: string, position: numb
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, cloned => {
     cloned.character.basic.basePosition = position
   })
+}
+
+function getCharacterTypeColor(type: string) {
+  return (mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color as any)[theme.global.name.value] || ''
 }
 </script>
 

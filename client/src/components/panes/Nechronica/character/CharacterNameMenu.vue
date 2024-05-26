@@ -5,9 +5,7 @@
         <v-sheet class="d-flex flex-row text-left align-center bg-transparent">
           <icon-btn
             :disable-button="true"
-            :gradation="
-              mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color[theme.global.name.value]
-            "
+            :gradation="getCharacterTypeColor(character?.data.type)"
             size="large"
             :class="icon"
             class="mr-1"
@@ -213,6 +211,10 @@ async function onAddUnknownManeuver() {
     }
     c.character.maneuverList.push(newManeuver)
   })
+}
+
+function getCharacterTypeColor(type: string) {
+  return (mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color as any)[theme.global.name.value] || ''
 }
 </script>
 

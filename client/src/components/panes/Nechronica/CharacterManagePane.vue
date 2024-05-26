@@ -14,7 +14,7 @@
                 $t(mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.text || 'Nechronica.CHARACTER_TYPE.none')
               )
             "
-            :color="mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color[theme.global.name.value] || ''"
+            :color="getCharacterTypeColor(type)"
             @execute="url => onLoadCharacterSheet(url, type)"
             :tips="[]"
           />
@@ -119,6 +119,10 @@ async function onLoadCharacterSheet(url: string, type: NechronicaType) {
 }
 
 const nechronicaTypes: NechronicaType[] = ['doll', 'savant', 'horror', 'legion']
+
+function getCharacterTypeColor(type: string) {
+  return (mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color as any)[theme.global.name.value] || ''
+}
 </script>
 
 <style lang="scss" scoped></style>

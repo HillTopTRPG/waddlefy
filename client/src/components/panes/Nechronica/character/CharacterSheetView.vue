@@ -6,9 +6,7 @@
         class="d-flex flex-column px-2 pb-2 rounded-xl no-transition"
         :class="theme.global.name.value === 'dark' ? 'bg-blue-grey-darken-4' : 'bg-white'"
         style="box-sizing: border-box; border-width: 3px; color: rgb(var(--v-theme-on-surface)) !important"
-        :style="`border-color: ${
-          mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color[theme.global.name.value] || 'black'
-        }`"
+        :style="`border-color: ${getCharacterTypeColor(character?.data.type) || 'black'}`"
       >
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
           <action-value-menu
@@ -327,6 +325,10 @@ async function onDeleteRoice(characterId: string, idx: number) {
   await graphQlStore?.updateNechronicaCharacterHelper(characterId, c => {
     c.character.roiceList.splice(idx, 1)
   })
+}
+
+function getCharacterTypeColor(type: string) {
+  return (mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color as any)[theme.global.name.value] || ''
 }
 </script>
 
