@@ -1,7 +1,7 @@
 <template>
   <table class="ninpou-table bg-white">
     <v-defaults-provider :defaults="{ VIcon: {} }"></v-defaults-provider>
-    <thead class="bg-grey-darken-4">
+    <thead class="bg-grey-darken-4 surface-text-color">
       <tr>
         <template v-if="mode === 'secret'">
           <th class="secret">秘</th>

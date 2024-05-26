@@ -11,7 +11,7 @@
     <template #activator="{ props }">
       <v-textarea
         v-ripple="editable"
-        :class="`${textareaClass} ${editable ? 'editable set-theme-surface-color' : ''}`"
+        :class="[textareaClass, editable ? 'editable' : '', variant === 'outlined' ? '' : 'set-theme-surface-color']"
         :rows="editable ? textRows : 1"
         :max-rows="editable ? undefined : textRows"
         :auto-grow="!editable"

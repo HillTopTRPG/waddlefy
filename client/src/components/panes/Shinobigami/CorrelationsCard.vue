@@ -50,6 +50,7 @@
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
               :model-value="locationValue"
+              :ripple="false"
               @update:model-value="onUpdateRelationFlag('location')"
             >
               <template #label>
@@ -58,11 +59,12 @@
             </v-checkbox-btn>
           </v-card-item>
           <v-divider :vertical="true" />
-          <v-card-item :class="perspective ? '' : 'set-theme-surface-color'" v-ripple>
+          <v-card-item :class="perspective ? '' : 'set-theme-surface-color'" v-ripple="!perspective">
             <v-checkbox-btn
               class="flex-column-reverse align-stretch"
               :readonly="Boolean(perspective)"
               :model-value="secretValue"
+              :ripple="false"
               @update:model-value="onUpdateRelationFlag('secret')"
             >
               <template #label>
@@ -123,6 +125,7 @@
         <v-sheet class="bg-transparent d-flex flex-row align-center justify-start mt-1" style="gap: 0.3rem">
           <v-checkbox-btn
             v-ripple="!(mode === 'view' || Boolean(perspective))"
+            :ripple="false"
             class="card-item-check mr-0 flex-0-0"
             :class="mode === 'view' || Boolean(perspective) ? 'readonly' : ''"
             :readonly="mode === 'view' || Boolean(perspective)"

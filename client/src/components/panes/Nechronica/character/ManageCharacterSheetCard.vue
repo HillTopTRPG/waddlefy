@@ -2,9 +2,8 @@
   <v-card
     variant="elevated"
     rounded="lg"
-    class="pb-2"
+    class="pb-2 surface-text-color"
     :color="getCharacterTypeColor(character.data.type)"
-    style="color: rgb(var(--v-theme-on-surface))"
   >
     <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
       <icon-btn

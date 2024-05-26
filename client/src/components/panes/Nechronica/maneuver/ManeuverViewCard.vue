@@ -7,7 +7,7 @@
     :style="perspective && maneuver.isUnknown ? '' : `outline-color: ${mapping.MANEUVER_TYPE[maneuver.type].color}`"
   >
     <v-card-text class="px-2 pt-2 pb-0">
-      <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem; color: rgb(var(--v-theme-on-surface))">
+      <v-sheet class="d-flex flex-row flex-wrap mb-1 surface-text-color" style="gap: 0.5rem">
         <v-chip
           class="font-weight-bold"
           size="small"

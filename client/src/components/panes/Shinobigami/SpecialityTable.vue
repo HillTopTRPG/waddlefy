@@ -2,7 +2,7 @@
   <v-sheet class="overflow-auto bg-transparent">
     <table class="speciality-table bg-white" :class="`${info ? '' : 'disabled'} ${editing ? 'editing' : ''}`">
       <thead>
-        <tr class="bg-grey-darken-4">
+        <tr class="bg-grey-darken-4 text-grey-lighten-2">
           <template v-for="(kind, idx) in SkillKind" :key="idx">
             <th class="blank">
               <v-checkbox
@@ -46,13 +46,13 @@
               {{ skills[i] }}
             </td>
           </template>
-          <td class="blank bg-black">{{ idx + 2 }}</td>
+          <td class="blank bg-grey-darken-4">{{ idx + 2 }}</td>
         </tr>
         <tr>
           <td
             colspan="13"
             class="text-left"
-            :class="info?.outRow ? 'bg-black' : 'bg-white'"
+            :class="info?.outRow ? 'bg-grey-darken-4' : 'bg-text-grey-lighten-2'"
             style="height: 1em !important"
           >
             <v-checkbox
@@ -256,13 +256,13 @@ function onChangeOutRow(outRow: boolean | null) {
     }
 
     &.filled {
-      border-top-color: black;
+      border-top-color: #212121;
     }
 
     &.filled,
     &.learned {
-      background-color: black;
-      color: white;
+      background-color: #212121;
+      color: #e0e0e0;
     }
   }
 
