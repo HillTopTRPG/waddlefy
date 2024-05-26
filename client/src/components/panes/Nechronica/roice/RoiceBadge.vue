@@ -8,10 +8,10 @@
   >
     <template #activator="{ props }">
       <v-defaults-provider :defaults="{ VBadge: { location: 'bottom right', offsetX: 12 } }">
-        <v-badge v-if="roice.damage < 3" :value="getValue()" :content="getValue()" :color="getColor()">
+        <v-badge v-if="roice.damage < 3" bordered :value="getValue()" :content="getValue()" :color="getColor()">
           <roice-chip :roice="roice" :color="mapping.ROICE_DAMAGE[roice.damage].color" :bind-props="props" />
         </v-badge>
-        <v-badge v-else-if="roice.damage === 3" :value="getValue()" :content="getValue()" :color="getColor()">
+        <v-badge v-else-if="roice.damage === 3" bordered :value="getValue()" :content="getValue()" :color="getColor()">
           <roice-chip :roice="roice" :color="mapping.ROICE_DAMAGE[roice.damage].color" :bind-props="props" />
         </v-badge>
         <roice-chip v-else :roice="roice" :color="mapping.ROICE_DAMAGE[roice.damage].color" :bind-props="props" />

@@ -20,6 +20,7 @@
     <v-defaults-provider :defaults="{ VSelect: vSelectDefaults }">
       <v-card-actions class="py-0" style="gap: 0.5rem">
         <v-select
+          v-ripple
           :items="typeSelection"
           :color="mapping.MANEUVER_TYPE[maneuver.type].color"
           :model-value="maneuver.type"
@@ -31,6 +32,7 @@
           </template>
         </v-select>
         <v-select
+          v-ripple
           :items="partsSelection"
           :model-value="maneuver.parts"
           @update:model-value="v => v !== null && onUpdateParts(v)"
@@ -54,6 +56,7 @@
       </v-card-text>
       <v-card-text class="px-2 py-1 d-flex flex-row" style="gap: 0.5rem">
         <v-select
+          v-ripple
           :items="timingSelection"
           style="max-width: 9em"
           :model-value="maneuver.timing"

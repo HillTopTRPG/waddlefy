@@ -7,8 +7,8 @@
       variant="flat"
       rounded="pill"
       density="comfortable"
-      :class="classWrap"
-      :style="`pointer-events: ${disableButton ? 'none' : 'auto'};`"
+      :class="[classWrap, size === 'large' ? 'bg-gradation' : '']"
+      :style="`pointer-events: ${disableButton ? 'none' : 'auto'}; --bg-color: ${gradation}`"
       v-bind="activateProps || {}"
     />
     <span v-if="underText" class="maneuver-label text-center" :class="size">{{ underText }}</span>
@@ -23,6 +23,7 @@ const props = defineProps<{
   disableButton?: boolean
   text?: string
   color?: string
+  gradation?: string
   size: 'x-small' | 'small' | 'normal' | 'large'
   underText?: string
   class: string
@@ -52,6 +53,10 @@ const classWrap = computed(() => `${props.class} ${props.size}`)
   &.x-small {
     max-width: 32px;
   }
+}
+
+.bg-gradation {
+  background-image: radial-gradient(var(--bg-color), var(--bg-color) 60%, transparent 75%);
 }
 
 .maneuver {

@@ -3,8 +3,8 @@
     <template #activator="{ props }">
       <v-btn
         data-cy="open-btn"
-        :color="color || 'error'"
-        variant="text"
+        :color="color || textColor"
+        :variant="theme.global.name.value === 'dark' ? 'plain' : 'text'"
         :size="noText ? 'small' : 'default'"
         :density="noText ? 'comfortable' : 'default'"
         :icon="noText ? 'mdi-delete-outline' : undefined"
@@ -56,7 +56,11 @@
 
 <script setup lang="ts">
 import 'splitpanes/dist/splitpanes.css'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
+const textColor = computed(() => (theme.global.name.value === 'dark' ? '#fd4' : 'error'))
 
 defineProps<{
   type: string

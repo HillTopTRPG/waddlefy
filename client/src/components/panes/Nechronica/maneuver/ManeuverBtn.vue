@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="px-0 d-flex flex-column" :class="battleTargetClass.at(isBattleTarget) || ''">
+  <v-sheet class="px-0 d-flex flex-column" :class="battleTargetClass.at(isBattleTarget)[theme.global.name.value] || ''">
     <icon-btn
       :class="classText"
       :size="size"
@@ -17,6 +17,9 @@ import mapping from '@/components/panes/Nechronica/mapping.json'
 import { Nechronica, NechronicaManeuver, NechronicaType } from '@/components/panes/Nechronica/nechronica'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
 
 const props = defineProps<{
   maneuver: NechronicaManeuver
@@ -33,7 +36,11 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const battleTargetClass = ['bg-transparent', 'bg-cyan-lighten-4', 'bg-yellow-accent-2']
+const battleTargetClass = [
+  { light: 'bg-transparent', dark: 'bg-transparent' },
+  { light: 'bg-cyan-lighten-4', dark: 'bg-blue-grey-darken-2' },
+  { light: 'bg-yellow-accent-2', dark: 'bg-light-blue-darken-4' }
+]
 
 const text = computed(() => {
   if (props.mode !== 'normal') return ''

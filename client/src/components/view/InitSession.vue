@@ -4,7 +4,7 @@
       <p class="text-h5">新しいセッションへようこそ！</p>
       <v-spacer />
       <!-- テーマ -->
-      <v-btn icon="mdi-brightness-6" size="small" style="transition-duration: 0s" @click="onChangeTheme()" />
+      <v-btn icon="mdi-brightness-6" size="small" class="no-transition" @click="onChangeTheme()" />
     </v-sheet>
 
     <v-card class="mb-4" variant="text" density="compact" elevation="4" max-width="30em">

@@ -14,10 +14,38 @@
     { "value": 4, "label": "狂", "text": "発狂", "subTitle": "", "color": "error" }
   ],
   "CHARACTER_TYPE": [
-    { "type": "doll", "text": "Nechronica.CHARACTER_TYPE.doll", "color": "#DCE775" },
-    { "type": "legion", "text": "Nechronica.CHARACTER_TYPE.legion", "color": "#80CBC4" },
-    { "type": "horror", "text": "Nechronica.CHARACTER_TYPE.horror", "color": "#C5CAE9" },
-    { "type": "savant", "text": "Nechronica.CHARACTER_TYPE.savant", "color": "#FFAB91" }
+    {
+      "type": "doll",
+      "text": "Nechronica.CHARACTER_TYPE.doll",
+      "color": {
+        "light": "#DCE775",
+        "dark": "#606812"
+      }
+    },
+    {
+      "type": "legion",
+      "text": "Nechronica.CHARACTER_TYPE.legion",
+      "color": {
+        "light": "#80CBC4",
+        "dark": "#4c7975"
+      }
+    },
+    {
+      "type": "horror",
+      "text": "Nechronica.CHARACTER_TYPE.horror",
+      "color": {
+        "light": "#C5CAE9",
+        "dark": "#51546f"
+      }
+    },
+    {
+      "type": "savant",
+      "text": "Nechronica.CHARACTER_TYPE.savant",
+      "color": {
+        "light": "#FFAB91",
+        "dark": "#815250"
+      }
+    }
   ],
   "CHARACTER_LOCATION": [
     { "key": "none", "text": "Nechronica.CHARACTER_LOCATION.none", "init-pos-value": "-3", "pos-value": "0" },

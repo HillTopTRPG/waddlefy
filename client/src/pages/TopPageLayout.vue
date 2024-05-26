@@ -13,7 +13,7 @@
     <v-spacer />
 
     <!-- テーマ -->
-    <v-btn icon="mdi-brightness-6" value="show-bar" style="transition-duration: 0s" @click="onChangeTheme()" />
+    <v-btn icon="mdi-brightness-6" value="show-bar" class="no-transition" @click="onChangeTheme()" />
   </v-app-bar>
 
   <v-main class="">
@@ -48,7 +48,7 @@
     </v-container>
   </v-main>
 
-  <v-bottom-navigation style="transition-duration: 0s">
+  <v-bottom-navigation class="no-transition">
     <v-divider vertical />
     <v-btn
       prepend-icon="mdi-wikipedia"

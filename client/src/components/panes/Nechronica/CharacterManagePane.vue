@@ -14,7 +14,7 @@
                 $t(mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.text || 'Nechronica.CHARACTER_TYPE.none')
               )
             "
-            :color="mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color || ''"
+            :color="mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color[theme.global.name.value] || ''"
             @execute="url => onLoadCharacterSheet(url, type)"
             :tips="[]"
           />
@@ -78,6 +78,9 @@ import Sponsorship from '@/components/panes/Nechronica/component/sponsorship.vue
 import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaHelper, NechronicaType, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))

@@ -3,7 +3,8 @@
     variant="elevated"
     rounded="lg"
     class="pb-2"
-    :color="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.color || ''"
+    :color="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.color[theme.global.name.value] || ''"
+    style="color: rgb(var(--v-theme-on-surface))"
   >
     <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
       <icon-btn
@@ -43,6 +44,7 @@
         :class="!perspective || character.data.type === 'doll' ? '' : 'pt-1'"
       >
         <v-select
+          v-ripple
           style="max-width: 8em"
           :items="mapping.CHARACTER_LOCATION.map(d => ({ value: d['init-pos-value'], text: d.text }))"
           :readonly="Boolean(perspective) && character.data.type !== 'doll'"
@@ -126,7 +128,10 @@ import mapping from '@/components/panes/Nechronica/mapping.json'
 import { NechronicaCopiableWrap, NechronicaWrap } from '@/components/panes/Nechronica/nechronica'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 import MenuEditTextField from '@/components/parts/MenuEditTextField.vue'
+import { useTheme } from 'vuetify'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+
+const theme = useTheme()
 
 const props = defineProps<{
   character: { id: string; data: NechronicaWrap }
@@ -199,5 +204,11 @@ $title-height: 2rem;
   top: $title-height;
   z-index: 1;
   opacity: 1;
+}
+
+:deep(.v-switch) {
+  label {
+    opacity: 1;
+  }
 }
 </style>

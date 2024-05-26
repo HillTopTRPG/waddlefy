@@ -3,7 +3,15 @@
     <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
       <template #activator="{ props }">
         <v-sheet class="d-flex flex-row text-left align-center bg-transparent">
-          <icon-btn :disable-button="true" size="large" :class="icon" class="mr-1" />
+          <icon-btn
+            :disable-button="true"
+            :gradation="
+              mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color[theme.global.name.value]
+            "
+            size="large"
+            :class="icon"
+            class="mr-1"
+          />
           <v-sheet class="d-flex flex-column flex-grow-1 bg-transparent">
             <v-sheet class="d-flex flex-row bg-transparent">
               <v-sheet
@@ -147,6 +155,9 @@ import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue
 import AddUnknownManeuverBtn from '@/components/panes/Nechronica/maneuver/AddUnknownManeuverBtn.vue'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -213,7 +224,7 @@ async function onAddUnknownManeuver() {
 
   tr:nth-child(odd) {
     background-color: #444;
-    color: white;
+    color: rgb(var(--v-theme-on-surface));
   }
 
   th {

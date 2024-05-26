@@ -223,7 +223,7 @@
         text="画面の設定"
         value="dialog-setting"
         v-if="isUserControl"
-        style="transition-duration: 0s"
+        class="no-transition"
         @click="dialog = dialog === 'setting' ? '' : 'setting'"
       />
       <v-btn
@@ -231,14 +231,14 @@
         text="レイアウト"
         value="show-bar"
         v-if="isUserControl"
-        style="transition-duration: 0s"
+        class="no-transition"
         @click="showBar = !showBar"
       />
       <v-btn
         prepend-icon="mdi-brightness-6"
         text="テーマ"
         value="show-bar"
-        style="transition-duration: 0s"
+        class="no-transition"
         @click="onChangeTheme()"
       />
     </v-defaults-provider>

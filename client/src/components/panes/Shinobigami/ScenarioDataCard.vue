@@ -467,7 +467,7 @@
           </v-select>
           <v-card
             :variant="editable ? 'text' : 'outlined'"
-            class="pa-3 multi-check-box-container"
+            class="pa-3 multi-check-box-container no-transition"
             :class="editable ? 'editable' : ''"
           >
             <v-card-subtitle class="text-subtitle-2">このプライズの存在を知るハンドアウト</v-card-subtitle>
@@ -1203,7 +1203,6 @@ async function onDeleteSessionData() {
 }
 
 .multi-check-box-container {
-  transition-duration: 0s;
   &.editable {
     background-color: rgb(var(--v-theme-surface));
     color: rgb(var(--v-theme-on-surface));

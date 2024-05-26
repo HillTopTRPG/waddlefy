@@ -1,5 +1,5 @@
 <template>
-  <v-card variant="flat" class="overflow-x-auto bg-transparent" style="transition-duration: 0s">
+  <v-card variant="flat" class="overflow-x-auto bg-transparent no-transition">
     <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row">
       <span class="ml-4 text-h5">{{ scenarioData?.data.name || '' }}</span>
       <template v-if="characterSheet">

@@ -3,11 +3,11 @@
     <template v-if="character">
       <v-card
         variant="outlined"
-        class="d-flex flex-column px-2 pb-2 rounded-xl"
+        class="d-flex flex-column px-2 pb-2 rounded-xl no-transition"
         :class="theme.global.name.value === 'dark' ? 'bg-blue-grey-darken-4' : 'bg-white'"
-        style="box-sizing: border-box; border-width: 3px; transition-duration: 0s !important"
+        style="box-sizing: border-box; border-width: 3px; color: rgb(var(--v-theme-on-surface)) !important"
         :style="`border-color: ${
-          mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color || 'black'
+          mapping.CHARACTER_TYPE.find(nc => nc.type === character?.data.type)?.color[theme.global.name.value] || 'black'
         }`"
       >
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
