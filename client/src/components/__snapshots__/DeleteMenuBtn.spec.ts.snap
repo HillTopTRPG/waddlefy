@@ -10,7 +10,7 @@ exports[`DeleteMenuBtn.vue > ボタンの確認 > コンテンツの確認 > ス
     aria-expanded="false"
     aria-haspopup="menu"
     aria-owns="v-menu-0"
-    class="v-btn v-theme--light text-error v-btn--density-default v-btn--size-default v-btn--variant-text additional-class"
+    class="v-btn v-theme--light text-deleteText v-btn--density-default v-btn--size-default v-btn--variant-text additional-class"
     data-cy="open-btn"
     targetref="[object Object]"
     type="button"
