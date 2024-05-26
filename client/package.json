@@ -15,8 +15,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.7",
-    "@aws-sdk/client-appsync": "^3.533.0",
+    "@apollo/client": "^3.10.4",
+    "@aws-sdk/client-appsync": "^3.583.0",
     "@mdi/font": "7.4.47",
     "@types/lodash": "^4.17.0",
     "@types/splitpanes": "^2.2.6",
