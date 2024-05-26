@@ -11,11 +11,18 @@
         <template v-if="isOpen(arts._id)">
           <v-menu :close-on-content-click="false" scroll-strategy="close" :z-index="10000000">
             <template #activator="{ props }">
-              <td class="name" style="min-width: 14em; max-width: 14em" v-bind="props">{{ arts.name }}</td>
+              <td class="name set-theme-surface-color" v-ripple style="min-width: 14em; max-width: 14em" v-bind="props">
+                {{ arts.name }}
+              </td>
             </template>
             <special-arts-card :arts="arts" />
           </v-menu>
-          <td class="target" :class="targetClass(arts.skill)" @click="onClickSkill(arts.skill)">
+          <td
+            class="target set-theme-surface-color"
+            v-ripple
+            :class="targetClass(arts.skill)"
+            @click="onClickSkill(arts.skill)"
+          >
             {{ arts.skill }}
           </td>
         </template>

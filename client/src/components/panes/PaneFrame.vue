@@ -1,12 +1,12 @@
 <template>
-  <v-layout class="root h-100 flex-column">
-    <v-sheet color="amber-lighten-5" height="2rem" class="px-4 d-flex flex-row align-center bg-transparent">
+  <v-layout class="root h-100 flex-column bg-transparent">
+    <v-sheet :color="titleColor" height="2rem" class="px-4 d-flex flex-row align-center bg-transparent">
       <span class="flex-grow-1" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden">{{
         title
       }}</span>
       <slot name="title-action" />
     </v-sheet>
-    <v-layout class="w-100 h-100 d-flex flex-column align-self-start" style="justify-self: flex-start">
+    <v-layout class="w-100 h-100 d-flex flex-column align-self-start bg-transparent" style="justify-self: flex-start">
       <slot name="layout" />
       <slot name="nav" />
       <div
@@ -22,7 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
+const titleColor = computed(() => (theme.global.name.value === 'dark' ? 'grey-darken-3' : 'amber-lighten-5'))
 
 defineProps<{
   title: string

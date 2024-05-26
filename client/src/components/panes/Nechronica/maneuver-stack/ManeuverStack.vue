@@ -1,11 +1,11 @@
 <template>
   <v-card
-    class="maneuver-stack d-flex flex-row align-center my-0 pr-1"
+    class="maneuver-stack d-flex flex-row align-center my-0 pr-1 no-transition"
     style="outline-offset: -3px; min-width: 8rem"
     :style="isResolvedStack ? 'margin-right: -7rem;' : ''"
     rounded="xl"
     v-if="currentData"
-    :color="typeMapping[currentData?.type]"
+    :color="(typeMapping[currentData?.type] as any)[theme.global.name.value]"
   >
     <v-btn
       icon="mdi-drag-vertical"
@@ -94,7 +94,9 @@ import {
 } from '@/components/panes/Nechronica/nechronica'
 import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+const theme = useTheme()
 
 const props = defineProps<{
   index: number
@@ -107,10 +109,10 @@ const emits = defineEmits<{
   (e: 'cancel', idx: number): void
 }>()
 
-const typeMapping: { [type in NechronicaManeuverStackType]: string } = {
-  use: 'blue-lighten-3',
-  lost: 'deep-orange-lighten-2',
-  move: 'green-lighten-2'
+const typeMapping: { [type in NechronicaManeuverStackType]: { light: string; dark: string } } = {
+  use: { light: 'blue-lighten-3', dark: 'info' },
+  lost: { light: 'deep-orange-lighten-2', dark: 'error' },
+  move: { light: 'green-lighten-2', dark: 'success' }
 }
 
 const viewDataList = computed(() => {
@@ -215,7 +217,6 @@ function wrapUnknown(text: string) {
     display: contents;
   }
 
-  $bg-color: rgba(var(--v-theme-info), 1);
   $bg-color: #c51162;
   .contents {
     position: relative;

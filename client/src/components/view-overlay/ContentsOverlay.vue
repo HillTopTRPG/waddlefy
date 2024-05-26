@@ -39,6 +39,7 @@ const emits = defineEmits<{
 <style lang="scss" scoped>
 .v-overlay {
   :deep(.v-card) {
+    color: black;
     background: var(--img);
     background-color: rgba(255, 255, 255, 0.4);
     background-blend-mode: lighten;

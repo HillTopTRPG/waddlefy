@@ -197,7 +197,6 @@ watch(selectSkill, v => {
     padding-top: 0;
     padding-left: 0;
     margin-top: 2px;
-    color: black;
     font-size: 14px;
     min-height: auto;
   }

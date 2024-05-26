@@ -5,7 +5,7 @@
         :text="title"
         :color="color || 'secondary'"
         density="comfortable"
-        class="text-decoration-underline"
+        class="text-decoration-underline no-transition"
         variant="flat"
         v-bind="props"
       />

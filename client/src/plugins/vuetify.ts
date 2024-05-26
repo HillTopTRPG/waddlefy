@@ -12,13 +12,33 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
+
+const isDark = localStorage.getItem('dark') === 'true'
+
 export default createVuetify({
   theme: {
+    defaultTheme: isDark ? 'dark' : 'light',
     themes: {
       light: {
         colors: {
           primary: '#1867C0',
           secondary: '#5CBBF6'
+        }
+      },
+      dark: {
+        dark: true,
+        colors: {
+          primary: '#2470c5',
+          secondary: '#5CBBF6',
+          'on-surface': '#ccc',
+          warning: '#883',
+          error: '#7c3d48',
+          success: '#2d6930',
+          'on-success': '#ccc',
+          info: '#135a91',
+          'on-info': '#ccc',
+          'on-error': '#ccc',
+          border: '#ccc'
         }
       }
     }

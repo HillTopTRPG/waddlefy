@@ -3,7 +3,13 @@
     <v-menu :close-on-content-click="false" scroll-strategy="close" location="top left">
       <template #activator="{ props }">
         <v-sheet class="d-flex flex-row text-left align-center bg-transparent">
-          <icon-btn :disable-button="true" size="large" :class="icon" class="mr-1" />
+          <icon-btn
+            :disable-button="true"
+            :gradation="getCharacterTypeColor(character?.data.type)"
+            size="large"
+            :class="icon"
+            class="mr-1"
+          />
           <v-sheet class="d-flex flex-column flex-grow-1 bg-transparent">
             <v-sheet class="d-flex flex-row bg-transparent">
               <v-sheet
@@ -147,6 +153,9 @@ import VSelectThin from '@/components/panes/Nechronica/component/VSelectThin.vue
 import AddUnknownManeuverBtn from '@/components/panes/Nechronica/maneuver/AddUnknownManeuverBtn.vue'
 import LinkBtn from '@/components/parts/LinkBtn.vue'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
+
+const theme = useTheme()
 
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
 
@@ -203,6 +212,10 @@ async function onAddUnknownManeuver() {
     c.character.maneuverList.push(newManeuver)
   })
 }
+
+function getCharacterTypeColor(type: string) {
+  return (mapping.CHARACTER_TYPE.find(tp => tp.type === type)?.color as any)[theme.global.name.value] || ''
+}
 </script>
 
 <style lang="scss" scoped>
@@ -212,7 +225,8 @@ async function onAddUnknownManeuver() {
   border-spacing: 0;
 
   tr:nth-child(odd) {
-    background-color: #eee;
+    background-color: #444;
+    color: rgb(var(--v-theme-on-surface));
   }
 
   th {

@@ -7,7 +7,7 @@
     :style="perspective && maneuver.isUnknown ? '' : `outline-color: ${mapping.MANEUVER_TYPE[maneuver.type].color}`"
   >
     <v-card-text class="px-2 pt-2 pb-0">
-      <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem">
+      <v-sheet class="d-flex flex-row flex-wrap mb-1" style="gap: 0.5rem; color: rgb(var(--v-theme-on-surface))">
         <v-chip
           class="font-weight-bold"
           size="small"
@@ -19,7 +19,7 @@
         <v-chip
           class="font-weight-bold"
           size="small"
-          color="secondary"
+          color="info"
           variant="flat"
           v-if="maneuver.used"
           :text="$t('Nechronica.label.used')"
@@ -56,7 +56,10 @@
       <v-container class="pa-0" style="min-width: 20rem; max-width: 20rem">
         <v-row :no-gutters="true">
           <v-col class="v-col-12 text-no-wrap bg-grey-darken-3 font-weight-bold overflow-hidden">
-            <p class="text-h6 ellipsis" style="width: 77%; transform: scale(1.3, 1); transform-origin: left">
+            <p
+              class="text-h6 ellipsis"
+              style="width: 77%; transform: scale(1.3, 1); transform-origin: left; color: #ccc"
+            >
               【{{ wrapUnknown(maneuver.name) }}】
             </p>
           </v-col>

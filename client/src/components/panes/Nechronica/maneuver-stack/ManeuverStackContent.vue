@@ -2,7 +2,7 @@
   <v-timeline-item icon="mdi-chevron-up" :dot-color="typeMapping[data.type].color">
     <template #opposite>
       <v-card class="text-left pr-2" variant="flat">
-        <v-card-title class="pa-0" :class="`text-${typeMapping[data.type].color}`">
+        <v-card-title class="pa-0 font-weight-bold surface">
           {{ index }}. {{ $t(typeMapping[data.type].label) }}
         </v-card-title>
         <maneuver-stack-cancel-btn v-if="!data.status" @execute="emits('cancel')" />
@@ -11,7 +11,7 @@
     <template #default>
       <v-card class="text-left pr-2" variant="flat">
         <v-card-text class="pt-1 pb-0 px-2 d-flex flex-row align-baseline">
-          <v-sheet class="ellipsis" style="width: 24em">
+          <v-sheet class="ellipsis" style="width: 24em; color: rgb(var(--v-theme-on-surface))">
             <span class="text-body-2">{{ maneuverCardLabel }}</span>
             <span class="text-caption d-block text-pre-wrap">{{ moveText }}</span>
           </v-sheet>

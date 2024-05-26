@@ -2,11 +2,13 @@
   <v-menu :close-on-content-click="false" scroll-strategy="close">
     <template #activator="{ props }">
       <v-btn variant="text" class="text-body-1 px-0" v-bind="props">
-        <div class="d-flex flex-row align-end underline">
+        <div class="d-flex flex-row align-end border border-b-sm border-opacity-100 border-t-0 border-s-0 border-e-0">
           <span class="text-caption">{{ $t('Nechronica.label.action-value') }}: </span>
           <span class="text-h5">{{ character?.data.actionValue || 0 }}/{{ character?.data.maxActionValue || 0 }}</span>
         </div>
-        <div class="d-flex flex-row align-end underline ml-2">
+        <div
+          class="d-flex flex-row align-end pl-2 border border-b-sm border-opacity-100 border-t-0 border-s-0 border-e-0"
+        >
           <span class="text-caption text-justify">{{ $t('Nechronica.label.legion-health') }}: </span>
           <span class="text-h5">{{ character?.data.health || 0 }}</span>
         </div>

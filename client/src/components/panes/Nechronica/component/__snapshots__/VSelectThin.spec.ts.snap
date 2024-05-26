@@ -2,7 +2,7 @@
 
 exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場合 > スナップショットテスト 1`] = `
 <div
-  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg"
+  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg bg-transparent"
   data-v-014df6f2=""
 >
   <!---->
@@ -161,7 +161,7 @@ exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場�
 
 exports[`VSelectThin.vue > コンテンツの確認 > 選択肢が2番目から3番目に変わった場合 > スナップショットテスト 1`] = `
 <div
-  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-input--dirty v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg"
+  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-input--dirty v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg bg-transparent"
   data-v-014df6f2=""
 >
   <!---->

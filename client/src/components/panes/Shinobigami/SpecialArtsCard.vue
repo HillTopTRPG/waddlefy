@@ -1,5 +1,5 @@
 <template>
-  <v-card class="border special-arts-card" style="max-width: 20rem">
+  <v-card class="border special-arts-card text-black" style="max-width: 20rem">
     <v-card-title class="text-pre-wrap">{{ arts.name }}</v-card-title>
     <v-card-text class="pb-2">
       <v-label class="text-caption">指定特技</v-label>

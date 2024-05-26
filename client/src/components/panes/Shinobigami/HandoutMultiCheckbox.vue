@@ -1,5 +1,8 @@
 <template>
   <v-checkbox
+    v-ripple="editable"
+    class="handout-multi-checkbox"
+    width="100%"
     v-for="data in dataList"
     :key="data.id"
     :value="data.id"
@@ -17,9 +20,7 @@
     "
   >
     <template #label="{ label }">
-      <span style="text-overflow: ellipsis; max-width: 16.5rem; overflow: hidden; white-space: nowrap">{{
-        label
-      }}</span>
+      <span style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap" class="w-100">{{ label }}</span>
     </template>
   </v-checkbox>
 </template>
@@ -86,4 +87,10 @@ const dataList = computed(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-selection-control) {
+  .v-label {
+    width: 100%;
+  }
+}
+</style>

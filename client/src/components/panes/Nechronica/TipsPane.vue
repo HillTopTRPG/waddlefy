@@ -5,7 +5,7 @@
     <template #nav>
       <v-sheet class="pa-2 d-flex flex-row flex-wrap align-start bg-transparent" style="gap: 0.5rem">
         <link-text
-          href="https://www.youtube.com/watch?v=jbp38OUBZBk&list=PLWLAIpCpqQ5FlbqLPQKs6eYaxB5OTJvgk"
+          href="https://www.youtube.com/playlist?list=PLWLAIpCpqQ5FlbqLPQKs6eYaxB5OTJvgk"
           src="https://img.shields.io/badge/youtube-%E5%AE%9F%E8%B7%B5%E8%A7%A3%E8%AA%AC%E5%8B%95%E7%94%BB-DA1725?style=for-the-badge&logo=youtube"
           alt="Static Badge"
           style="border-radius: 0.5em"

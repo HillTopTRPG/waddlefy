@@ -41,7 +41,7 @@
           ]"
         />
         <v-divider :vertical="true" />
-        <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: 'primary', density: 'comfortable' } }">
+        <v-defaults-provider :defaults="{ VBtn: { variant: 'text', color: textColor, density: 'comfortable' } }">
           <v-btn class="text-decoration-underline" @click="onAddData('handout')">ハンドアウト追加</v-btn>
           <v-btn class="text-decoration-underline" @click="onAddData('enigma')">エニグマ追加</v-btn>
           <v-btn class="text-decoration-underline" @click="onAddData('prize')">プライズ追加</v-btn>
@@ -104,7 +104,11 @@ import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import ScenarioDataCard from '@/components/panes/Shinobigami/ScenarioDataCard.vue'
 import { ShinobigamiScenarioHelper } from '@/components/panes/Shinobigami/shinobigami-scenario'
 import ShinobigamiUrlFormMenu from '@/components/panes/Shinobigami/ShinobigamiUrlFormMenu.vue'
+import { useTheme } from 'vuetify'
+
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+const theme = useTheme()
+const textColor = computed(() => (theme.global.name.value === 'dark' ? 'secondary' : 'primary'))
 
 const isUserControl = computed(() => Boolean(graphQlStore?.state.user?.token))
 
@@ -234,7 +238,6 @@ async function onLoadScenarioSheet(url: string, password: string) {
     padding-top: 0;
     padding-left: 0;
     margin-top: 2px;
-    color: black;
     font-size: 14px;
     min-height: auto;
   }

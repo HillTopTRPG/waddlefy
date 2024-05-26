@@ -73,5 +73,9 @@ const badgeContent = computed(() => {
   font-size: 1.1em;
   height: 1.5em;
   min-width: 2em;
+
+  &:after {
+    border-color: white !important;
+  }
 }
 </style>
