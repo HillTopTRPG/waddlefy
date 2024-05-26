@@ -51,7 +51,7 @@
     <v-card-actions class="py-0 d-flex flex-row justify-end" style="min-height: auto">
       <delete-menu-btn
         :type="$t('Nechronica.label.roice')"
-        useDarkSubColor
+        use-dark-sub-color
         :target-name="roice.name"
         @execute="emits('delete')"
       />

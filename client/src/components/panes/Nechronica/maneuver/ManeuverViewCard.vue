@@ -40,7 +40,7 @@
         <delete-menu-btn
           v-if="!perspective && maneuver.isAdded && mode === 'view'"
           :target-name="maneuver.name"
-          useDarkSubColor
+          use-dark-sub-color
           :type="$t('Nechronica.label.maneuver')"
           :no-text="true"
           @execute="onDeleteManeuver()"

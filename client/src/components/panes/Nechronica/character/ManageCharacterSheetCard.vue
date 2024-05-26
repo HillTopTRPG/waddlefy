@@ -107,7 +107,7 @@
         <delete-menu-btn
           :target-name="character.data.character.basic.characterName"
           :type="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.text || ''"
-          useDarkSubColor
+          use-dark-sub-color
           location="bottom center"
           :i18n="true"
           @execute="() => graphQlStore?.deleteSessionData(character.id)"
