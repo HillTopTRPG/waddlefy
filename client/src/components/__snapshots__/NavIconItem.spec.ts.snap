@@ -2,7 +2,7 @@
 
 exports[`NavIconItem.vue > classの確認 > スナップショットテスト 1`] = `
 <div
-  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  class="v-list-item v-theme--light v-list-item--density-default rounded-0 v-list-item--variant-text"
   data-v-29e98768=""
 >
   
@@ -49,7 +49,7 @@ exports[`NavIconItem.vue > classの確認 > スナップショットテスト 1`
 
 exports[`NavIconItem.vue > rail=falseの場合 > スナップショットテスト 1`] = `
 <div
-  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  class="v-list-item v-theme--light v-list-item--density-default rounded-0 v-list-item--variant-text"
   data-v-29e98768=""
 >
   
@@ -96,7 +96,7 @@ exports[`NavIconItem.vue > rail=falseの場合 > スナップショットテス�
 
 exports[`NavIconItem.vue > rail=trueの場合 > スナップショットテスト 1`] = `
 <div
-  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  class="v-list-item v-theme--light v-list-item--density-default rounded-0 v-list-item--variant-text"
   data-v-29e98768=""
 >
   
@@ -138,7 +138,7 @@ exports[`NavIconItem.vue > rail=trueの場合 > スナップショットテス�
 
 exports[`NavIconItem.vue > toggle=falseの場合 > スナップショットテスト 1`] = `
 <div
-  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text"
+  class="v-list-item v-theme--light v-list-item--density-default rounded-0 v-list-item--variant-text"
   data-v-29e98768=""
 >
   
@@ -185,7 +185,7 @@ exports[`NavIconItem.vue > toggle=falseの場合 > スナップショットテ�
 
 exports[`NavIconItem.vue > toggle=trueの場合 > スナップショットテスト 1`] = `
 <div
-  class="v-list-item v-theme--light v-list-item--density-default v-list-item--variant-text radius-border"
+  class="v-list-item v-theme--light v-list-item--density-default rounded-0 v-list-item--variant-text radius-border"
   data-v-29e98768=""
 >
   

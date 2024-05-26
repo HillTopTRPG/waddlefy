@@ -2,7 +2,7 @@
 
 exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場合 > スナップショットテスト 1`] = `
 <div
-  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg bg-transparent"
+  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-theme--light v-locale--is-ltr v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg bg-transparent"
   data-v-014df6f2=""
 >
   <!---->
@@ -29,12 +29,16 @@ exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場�
           aria-valuemin="0"
           class="v-progress-linear v-theme--light v-locale--is-ltr"
           role="progressbar"
-          style="top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);"
+          style="top: 0px; height: 0px; --v-progress-linear-height: 2px;"
         >
           <!---->
           <div
             class="v-progress-linear__background bg-primary"
-            style="width: 100%;"
+            style="opacity: NaN;"
+          />
+          <div
+            class="v-progress-linear__buffer bg-primary"
+            style="opacity: NaN; width: 0%;"
           />
           <transition-stub
             appear="false"
@@ -161,7 +165,7 @@ exports[`VSelectThin.vue > コンテンツの確認 > 最初の選択肢の場�
 
 exports[`VSelectThin.vue > コンテンツの確認 > 選択肢が2番目から3番目に変わった場合 > スナップショットテスト 1`] = `
 <div
-  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-locale--is-ltr v-input--dirty v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg bg-transparent"
+  class="v-input v-input--horizontal v-input--center-affix v-input--density-default v-theme--light v-locale--is-ltr v-input--dirty v-text-field v-text-field--prefixed v-select v-select--single v-select--selected select-thin rounded-lg bg-transparent"
   data-v-014df6f2=""
 >
   <!---->
@@ -188,12 +192,16 @@ exports[`VSelectThin.vue > コンテンツの確認 > 選択肢が2番目から3
           aria-valuemin="0"
           class="v-progress-linear v-theme--light v-locale--is-ltr"
           role="progressbar"
-          style="top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);"
+          style="top: 0px; height: 0px; --v-progress-linear-height: 2px;"
         >
           <!---->
           <div
             class="v-progress-linear__background bg-primary"
-            style="width: 100%;"
+            style="opacity: NaN;"
+          />
+          <div
+            class="v-progress-linear__buffer bg-primary"
+            style="opacity: NaN; width: 0%;"
           />
           <transition-stub
             appear="false"
