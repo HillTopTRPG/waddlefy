@@ -41,6 +41,7 @@ exports[`NavDialog.vue > ダイアログの開閉制御の確認 > modelValueが
     >
       <div
         class="v-overlay__content"
+        tabindex="-1"
       >
         
         
@@ -59,12 +60,16 @@ exports[`NavDialog.vue > ダイアログの開閉制御の確認 > modelValueが
               aria-valuemin="0"
               class="v-progress-linear v-theme--light v-locale--is-ltr"
               role="progressbar"
-              style="top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);"
+              style="top: 0px; height: 0px; --v-progress-linear-height: 2px;"
             >
               <!---->
               <div
                 class="v-progress-linear__background"
-                style="width: 100%;"
+                style="opacity: NaN;"
+              />
+              <div
+                class="v-progress-linear__buffer"
+                style="opacity: NaN; width: 0%;"
               />
               <transition-stub
                 appear="false"
