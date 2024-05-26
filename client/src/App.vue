@@ -91,6 +91,10 @@ textarea {
   color: rgb(var(--v-theme-on-surface));
 }
 
+.surface-text-color {
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
 .no-transition {
   transition-duration: 0s !important;
 }

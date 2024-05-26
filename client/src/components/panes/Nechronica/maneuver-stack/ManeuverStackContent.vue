@@ -11,7 +11,7 @@
     <template #default>
       <v-card class="text-left pr-2" variant="flat">
         <v-card-text class="pt-1 pb-0 px-2 d-flex flex-row align-baseline">
-          <v-sheet class="ellipsis" style="width: 24em; color: rgb(var(--v-theme-on-surface))">
+          <v-sheet class="ellipsis surface-text-color" style="width: 24em">
             <span class="text-body-2">{{ maneuverCardLabel }}</span>
             <span class="text-caption d-block text-pre-wrap">{{ moveText }}</span>
           </v-sheet>

@@ -1,8 +1,8 @@
 <template>
   <v-card
     v-if="dataObj && (prizeKnow || !perspective)"
-    :color="typeList.find(t => t.value === dataObj?.type)?.color || ''"
-    class="ml-3 mb-3 border elevation-4"
+    :color="(typeList.find(t => t.value === dataObj?.type)?.color as any)[theme.global.name.value] || ''"
+    class="ml-3 mb-3 border elevation-4 no-transition surface-text-color"
     rounded="lg"
   >
     <v-card-title class="ma-0 py-2" color="red">
@@ -113,6 +113,7 @@
                 <delete-menu-btn
                   class-text="align-self-end"
                   :target-name="arts.name"
+                  use-dark-sub-color
                   type="奥義"
                   @execute="onDeleteSpecialArts(idx)"
                 />
@@ -123,6 +124,7 @@
         <template v-if="dataObj.type === 'shinobigami-handout'">
           <v-checkbox-btn
             v-ripple
+            :ripple="false"
             label="存在の公開"
             class="card-item-check"
             v-if="editable"
@@ -182,6 +184,7 @@
           />
           <v-checkbox-btn
             v-ripple="editable"
+            :ripple="false"
             label="自身の秘密を知っている"
             class="card-item-check"
             :class="editable ? '' : 'readonly'"
@@ -503,6 +506,7 @@
           :target-name="
             dataObj.type === 'shinobigami-character' ? dataObj.data.character.characterName : dataObj.data.name
           "
+          use-dark-sub-color
           :type="typeList.find(t => t.value === dataObj?.type)?.label || ''"
           @execute="onDeleteSessionData"
         />
@@ -528,7 +532,9 @@ import { uuid } from 'vue-uuid'
 import { GraphQlKey, GraphQlStore } from '@/components/graphql/graphql'
 import CorrelationsCard from '@/components/panes/Shinobigami/CorrelationsCard.vue'
 import NinpouTable from '@/components/panes/Shinobigami/NinpouTable.vue'
+import { useTheme } from 'vuetify'
 const graphQlStore = inject<GraphQlStore>(GraphQlKey)
+const theme = useTheme()
 
 const props = defineProps<{
   dataId: string
@@ -607,26 +613,51 @@ const handoutSecretOpen = computed((): boolean => {
 })
 
 const typeList = [
-  { value: 'shinobigami-character', label: 'キャラクター', color: 'cyan-lighten-4', icon: () => 'mdi-human' },
+  {
+    value: 'shinobigami-character',
+    label: 'キャラクター',
+    color: {
+      light: 'cyan-lighten-4',
+      dark: '#475e60'
+    },
+    icon: () => 'mdi-human'
+  },
   {
     value: 'shinobigami-handout',
     label: 'ハンドアウト',
-    color: 'teal-lighten-4',
+    color: {
+      light: 'teal-lighten-4',
+      dark: '#475957'
+    },
     icon: () => 'mdi-smart-card-outline'
   },
   {
     value: 'shinobigami-enigma',
     label: 'エニグマ',
-    color: 'indigo-lighten-4',
+    color: {
+      light: 'indigo-lighten-4',
+      dark: '#626574'
+    },
     icon: (data: { disabled: boolean }) => (data.disabled ? 'mdi-bomb-off' : 'mdi-bomb')
   },
   {
     value: 'shinobigami-persona',
     label: 'ペルソナ',
-    color: 'purple-lighten-4',
+    color: {
+      light: 'purple-lighten-4',
+      dark: '#5a4c5c'
+    },
     icon: () => 'mdi-badge-account-outline'
   },
-  { value: 'shinobigami-prize', label: 'プライズ', color: 'amber-lighten-4', icon: () => 'mdi-treasure-chest-outline' }
+  {
+    value: 'shinobigami-prize',
+    label: 'プライズ',
+    color: {
+      light: 'amber-lighten-4',
+      dark: '#665e47'
+    },
+    icon: () => 'mdi-treasure-chest-outline'
+  }
 ]
 
 const hasEmptyHandoutList = computed(() => {

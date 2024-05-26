@@ -60,13 +60,17 @@ import { computed, ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 
 const theme = useTheme()
-const textColor = computed(() => (theme.global.name.value === 'dark' ? '#fd4' : 'error'))
+const textColor = computed(() => {
+  if (theme.global.name.value !== 'dark') return 'deleteText'
+  return props.useDarkSubColor ? 'deleteTextSub' : 'deleteText'
+})
 
-defineProps<{
+const props = defineProps<{
   type: string
   targetName: string
   classText?: string
   color?: string
+  useDarkSubColor?: boolean
   i18n?: boolean
   noText?: boolean
 }>()

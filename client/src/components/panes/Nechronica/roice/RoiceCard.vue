@@ -49,7 +49,12 @@
       />
     </v-card-text>
     <v-card-actions class="py-0 d-flex flex-row justify-end" style="min-height: auto">
-      <delete-menu-btn :type="$t('Nechronica.label.roice')" :target-name="roice.name" @execute="emits('delete')" />
+      <delete-menu-btn
+        :type="$t('Nechronica.label.roice')"
+        use-dark-sub-color
+        :target-name="roice.name"
+        @execute="emits('delete')"
+      />
     </v-card-actions>
   </v-card>
 </template>

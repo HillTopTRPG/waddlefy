@@ -1,6 +1,6 @@
 <template>
-  <v-card variant="flat" class="overflow-x-auto bg-transparent no-transition">
-    <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row">
+  <v-card variant="flat" class="overflow-x-auto bg-transparent no-transition surface-text-color">
+    <v-card-title class="pt-0 pl-0 pb-0 d-flex align-center flex-row surface-text-color">
       <span class="ml-4 text-h5">{{ scenarioData?.data.name || '' }}</span>
       <template v-if="characterSheet">
         <v-menu :close-on-content-click="false" scroll-strategy="close">

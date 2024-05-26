@@ -41,7 +41,7 @@ describe('DeleteMenuBtn.vue', (): void => {
     describe('classの確認', (): void => {
       describe('color無指定', (): void => {
         const patterns: SimpleClassTestInfo[] = [
-          { title: 'colorがerrorであること', selector: '.v-btn', containClass: 'text-error' },
+          { title: 'colorがerrorであること', selector: '.v-btn', containClass: 'text-deleteText' },
           { title: 'decsityがdefaultであること', selector: '.v-btn', containClass: 'v-btn--density-default' },
           { title: 'variantがtextであること', selector: '.v-btn', containClass: 'v-btn--variant-text' },
           { title: 'sizeがdefaultであること', selector: '.v-btn', containClass: 'v-btn--size-default' },

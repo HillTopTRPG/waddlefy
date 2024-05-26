@@ -2,9 +2,8 @@
   <v-card
     variant="elevated"
     rounded="lg"
-    class="pb-2"
+    class="pb-2 surface-text-color"
     :color="getCharacterTypeColor(character.data.type)"
-    style="color: rgb(var(--v-theme-on-surface))"
   >
     <v-card-title class="text-body-1 d-flex flex-row justify-start align-center px-2 pt-1 pb-0">
       <icon-btn
@@ -108,6 +107,7 @@
         <delete-menu-btn
           :target-name="character.data.character.basic.characterName"
           :type="mapping.CHARACTER_TYPE.find(t => t.type === character.data.type)?.text || ''"
+          use-dark-sub-color
           location="bottom center"
           :i18n="true"
           @execute="() => graphQlStore?.deleteSessionData(character.id)"

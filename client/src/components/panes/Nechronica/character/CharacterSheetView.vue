@@ -3,9 +3,9 @@
     <template v-if="character">
       <v-card
         variant="outlined"
-        class="d-flex flex-column px-2 pb-2 rounded-xl no-transition"
+        class="d-flex flex-column px-2 pb-2 rounded-xl no-transition surface-text-color"
         :class="theme.global.name.value === 'dark' ? 'bg-blue-grey-darken-4' : 'bg-white'"
-        style="box-sizing: border-box; border-width: 3px; color: rgb(var(--v-theme-on-surface)) !important"
+        style="box-sizing: border-box; border-width: 3px"
         :style="`border-color: ${getCharacterTypeColor(character?.data.type) || 'black'}`"
       >
         <v-card-title class="d-flex flex-row text-no-wrap flex-wrap pa-0 align-center">
